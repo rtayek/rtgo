@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="code">
+	<property environment="env" />
+	<property name="ECLIPSE_HOME" value="D:/dev/jee-2021-12/eclipse/" />
+	<property name="junit.output.dir" value="junit" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="17" />
+	<property name="source" value="17" />
+	<path id="code.classpath">
+		<pathelement location="nibtna" />
+		<pathelement location="lib/hamcrest-core-1.3.jar" />
+		<pathelement location="lib/junit-4.13.2.jar" />
+	</path>
+	<path id="run.tst (18).classpath">
+		<path refid="code.classpath" />
+		<pathelement location="lib/hamcrest-core-1.3.jar" />
+		<pathelement location="lib/junit-4.13.2.jar" />
+	</path>
+	<path id="run.ParameterizedGoServerTestCase.classpath">
+		<path refid="code.classpath" />
+		<pathelement location="lib/hamcrest-core-1.3.jar" />
+		<pathelement location="lib/junit-4.13.2.jar" />
+	</path>
+	<path id="run.controller (7).classpath">
+		<path refid="code.classpath" />
+		<pathelement location="lib/hamcrest-core-1.3.jar" />
+		<pathelement location="lib/junit-4.13.2.jar" />
+	</path>
+	<path id="run.GTPDirectTestGameTestSuite.classpath">
+		<path refid="code.classpath" />
+		<pathelement location="lib/hamcrest-core-1.3.jar" />
+		<pathelement location="lib/junit-4.13.2.jar" />
+	</path>
+	<target name="init">
+		<mkdir dir="nibtna" />
+		<copy includeemptydirs="false" todir="nibtna">
+			<fileset dir="src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="nibtna">
+			<fileset dir="tst">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="nibtna">
+			<fileset dir="suites">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="nibtna">
+			<fileset dir="slow">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="nibtna">
+			<fileset dir="resources">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="nibtna" />
+	</target>
+	<target depends="clean" name="cleanall" />
+	<target depends="build-subprojects,build-project" name="build" />
+	<target name="build-subprojects" />
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="nibtna" includeantruntime="false" source="${source}" target="${target}">
+			<src path="src" />
+			<src path="tst" />
+			<src path="suites" />
+			<src path="slow" />
+			<src path="resources" />
+			<compilerarg line="--enable-preview" />
+			<classpath refid="code.classpath" />
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
+	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+		<copy todir="${ant.library.dir}">
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
+		</copy>
+		<unzip dest="${ant.library.dir}">
+			<patternset includes="jdtCompilerAdapter.jar" />
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
+		</unzip>
+	</target>
+	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
+		<antcall target="build" />
+	</target>
+	<target name="tst (18)">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="audio.AudioTestCase" todir="${junit.output.dir}" />
+			<test name="controller.ABothTestCase" todir="${junit.output.dir}" />
+			<test name="controller.BasicGameTestCase" todir="${junit.output.dir}" />
+			<test name="controller.BothAbstractTestCase$BothDuplexTestCase" todir="${junit.output.dir}" />
+			<test name="controller.BothAbstractTestCase$BothSocketTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GTPDirectAbstractTestCase$GTPDirectRunTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GTPDirectAbstractTestCase$GTPDirectThreadTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GTPDirectNavigationTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GTPShoveTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GameAbstractTestCase$GameDuplexTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GameAbstractTestCase$GameSocketTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GameFixtureAbstractTestCase$GameFixtureDuplexTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GameFixtureAbstractTestCase$GameFixtureSocketTestCase" todir="${junit.output.dir}" />
+			<test name="controller.ParameterizedGTPDirectTestCase" todir="${junit.output.dir}" />
+			<test name="controller.ParameterizedGameDuplexTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.BigBoardTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.BlockTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.BoardFactoryTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.BoardImplTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.CoordinateSystemTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.JunkTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.NonSquareBoardtestCase" todir="${junit.output.dir}" />
+			<test name="equipment.ParameterizedTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.ScreenCoordinatesTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.StoneTestCase" todir="${junit.output.dir}" />
+			<test name="equipment.ToStringTestCase" todir="${junit.output.dir}" />
+			<test name="experiment.ConnectWithoutAcceptTestCase" todir="${junit.output.dir}" />
+			<test name="gui.JitterTestCase" todir="${junit.output.dir}" />
+			<test name="gui.MediatorTestCase" todir="${junit.output.dir}" />
+			<test name="gui.TreeViewTestCase" todir="${junit.output.dir}" />
+			<test name="io.CopyTestCase" todir="${junit.output.dir}" />
+			<test name="io.DuplexTestCase" todir="${junit.output.dir}" />
+			<test name="io.LoggerTestCase" todir="${junit.output.dir}" />
+			<test name="io.PipeTestCase" todir="${junit.output.dir}" />
+			<test name="io.ThreadTestCase" todir="${junit.output.dir}" />
+			<test name="io.TimeoutTestCase" todir="${junit.output.dir}" />
+			<test name="io.WatchdogTestCase" todir="${junit.output.dir}" />
+			<test name="model.ColorBugTestCase" todir="${junit.output.dir}" />
+			<test name="model.ConsecutiveMovesTestCase" todir="${junit.output.dir}" />
+			<test name="model.GetAudioResourceAsStreamTestCase" todir="${junit.output.dir}" />
+			<test name="model.ModelTestCase" todir="${junit.output.dir}" />
+			<test name="model.MoveTestCase" todir="${junit.output.dir}" />
+			<test name="model.ParametersTestCase" todir="${junit.output.dir}" />
+			<test name="model.RoleTestCase" todir="${junit.output.dir}" />
+			<test name="model.SaveTestCase" todir="${junit.output.dir}" />
+			<test name="model.SaveTestCaseBug" todir="${junit.output.dir}" />
+			<test name="model.SgfMoveTestCase" todir="${junit.output.dir}" />
+			<test name="model.ShapeTestCase" todir="${junit.output.dir}" />
+			<test name="server.AGoServerTestCase" todir="${junit.output.dir}" />
+			<test name="server.AbstractGoServerTestCase$GoServerDuplexTestCase" todir="${junit.output.dir}" />
+			<test name="server.AbstractGoServerTestCase$GoServerSocketTestCase" todir="${junit.output.dir}" />
+			<test name="server.BoundTestCase" todir="${junit.output.dir}" />
+			<test name="server.ConcreteGoServerTestCase" todir="${junit.output.dir}" />
+			<test name="server.GoServerTestCase" todir="${junit.output.dir}" />
+			<test name="server.NamedThreadsTestCase" todir="${junit.output.dir}" />
+			<test name="server.OneTestCase" todir="${junit.output.dir}" />
+			<test name="server.ParameterizedGoServerTestCase" todir="${junit.output.dir}" />
+			<test name="server.PlayGameOnServerTestCase" todir="${junit.output.dir}" />
+			<test name="server.StopWatchTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.FinderTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.HexAsciiTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.IllegalSgfTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.KogoTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.KogosJosekiDictionaryTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.LizzieTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.ParserTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.RoundTripForOneFileTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.RoundTripTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.SgfMoveCoordinateSystemTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.SgfNodeTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.SgfTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.SimpleParserTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.SimpleTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.ToStringTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.WierdSGFTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.combine.ParameterizedCombineTestCase" todir="${junit.output.dir}" />
+			<test name="tree.BinaryTestCase" todir="${junit.output.dir}" />
+			<test name="tree.CatalanTestCase" todir="${junit.output.dir}" />
+			<test name="tree.MultiwayTestCase" todir="${junit.output.dir}" />
+			<test name="tree.NodeTestCase" todir="${junit.output.dir}" />
+			<test name="utilities.ATestSuite" todir="${junit.output.dir}" />
+			<test name="utilities.ATestSuite$TestCase1" todir="${junit.output.dir}" />
+			<test name="utilities.ATestSuite$TestCase2" todir="${junit.output.dir}" />
+			<test name="utilities.TestSuiteRunner$ATestCase" todir="${junit.output.dir}" />
+			<jvmarg line="-ea" />
+			<classpath refid="run.tst (18).classpath" />
+		</junit>
+	</target>
+	<target name="ParameterizedGoServerTestCase">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="server.ParameterizedGoServerTestCase" todir="${junit.output.dir}" />
+			<jvmarg line="-ea" />
+			<classpath refid="run.ParameterizedGoServerTestCase.classpath" />
+		</junit>
+	</target>
+	<target name="controller (7)">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="controller.ABothTestCase" todir="${junit.output.dir}" />
+			<test name="controller.BasicGameTestCase" todir="${junit.output.dir}" />
+			<test name="controller.BothAbstractTestCase$BothDuplexTestCase" todir="${junit.output.dir}" />
+			<test name="controller.BothAbstractTestCase$BothSocketTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GTPDirectAbstractTestCase$GTPDirectRunTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GTPDirectAbstractTestCase$GTPDirectThreadTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GTPDirectNavigationTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GTPShoveTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GameAbstractTestCase$GameDuplexTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GameAbstractTestCase$GameSocketTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GameFixtureAbstractTestCase$GameFixtureDuplexTestCase" todir="${junit.output.dir}" />
+			<test name="controller.GameFixtureAbstractTestCase$GameFixtureSocketTestCase" todir="${junit.output.dir}" />
+			<test name="controller.ParameterizedGTPDirectTestCase" todir="${junit.output.dir}" />
+			<test name="controller.ParameterizedGameDuplexTestCase" todir="${junit.output.dir}" />
+			<jvmarg line="-ea" />
+			<classpath refid="run.controller (7).classpath" />
+		</junit>
+	</target>
+	<target name="GTPDirectTestGameTestSuite">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="controller.GTPDirectTestGameTestSuite" todir="${junit.output.dir}" />
+			<jvmarg line="-ea" />
+			<classpath refid="run.GTPDirectTestGameTestSuite.classpath" />
+		</junit>
+	</target>
+	<target name="junitreport">
+		<junitreport todir="${junit.output.dir}">
+			<fileset dir="${junit.output.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${junit.output.dir}" />
+		</junitreport>
+	</target>
+</project>

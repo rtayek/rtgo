@@ -1,0 +1,385 @@
+git config --global http.sslverify "false"
+make the keys work in the gui! rubout and home/end etc.
+maybe find an interface for model. note: model is am observable.
+and observable is deprecated for some reason.
+i broke the frog branch. could not revert.
+made another branch frog2 from frog.
+broke again, now on frog3.
+frog3 should become master.
+gtp seems to be reasonable now.
+// how to run junit from command line. see various batch file and shell scripts.
+java --enable-preview -cp bin server.SampleGame 2>xx.txt 1>&2 will redirect outputs
+don't let the model make a move unless we are waiting? 
+java --enable-preview -cp bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar x.ATestSuite // run as main
+java --enable-preview -cp bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar org.junit.runner.JUnitCore x.ATestSuite
+most threads get terminated - seems like they all do now except for those tests that timeout.
+maybe, but some use the watchdog.
+
+refactoring both fixture. the plan is to make everything have-a or be an End. (done - have-a)
+do be-a later maybe.
+
+having some trouble getting move stack in finder test case.
+found duplicate code for non-binary tree in model.
+but finder used to work fine (i think) so what happened?
+
+        for(;node!=null&&node.right==null;node=node.left) {
+            visit(node);
+            //acceptor.accept(node);
+            }
+
+replacing accept with visit made it work. so old code must be bad somehow.
+take a look at this sometime.
+old code did not handle right in root correctly.
+
+(Window -> Preferences -> Java -> Appearance -> Members Sort Order
+maybe better. in any case it shows some names and colors.
+
+from readme 3/1/21
+
+had a bunch of enums like play, what, mode etc. in Model tossed them all and added Role.
+these correspond to the gtp (go transfer protocol) commands that i added like tgo_black, tgo__white, etc.
+
+the idea here was to instruct the model to only allow a player to move when it is their turn.
+or at least keep the response from the move from being sent back to the server.
+
+these are set by the model after connecting when start gtp is called.
+then the role is changed in the model and observers are notified.
+
+maybe these should be set by the server to tell the client what color to play and what else he can do.
+
+i set git's diff.algorithm patience to minimal. always use git diff -w since reformat can mess stuff up.
+
+line feeds in source files are messed up. figure out a way to fix this once and for all.
+
+got gtp pipe out of model. it is not a gtp, it's just some code that talks to a gtp.
+
+dec 2021 current branch is frog3
+
+3/19/22
+refactored test cases with fixtures seems good. found duplicate setup code for the front an back ends.
+now we have some of the server tests hanging. probably need to use the watchdog.
+
+3/27/22 no watchdog timeouts, just a few intermittent shortTime timeouts.
+
+both many faces and smart go fail with https://online-go.com/game/42342507
+this is a 15x17 game. try and open this guy.
+ 
+4/13/22 having problems sending sgf through gtp when it has spaces and linefiieds.
+How can i send it through gtp? hexascii maybe? ...
+5/25/22 hexasxii works fine. incorporated into gtp back end.
+all tests pass except for twoemptywthsemicolon, newvariationsmf, and twogamesinonefilefromsmartgo.
+these fail whether use hex ascii is on or off!
+i suspect that it's the remove whitespace.
+goal is to get rid of remove whitespace
+and just always encode the sgf into hex ascii when sending across gtp.
+may need to adopt a cannonical form for the sgf that i test. 
+we did this with the options class in parser with prepare and round trip.
+
+5/4/22 working on goto node gtp command. looks like we may have two finders.
+one may be in sgf.SgfAcceptor
+sgf.Finder has a static find method.
+another seems to be in model.Acceptor. there is a finder class there.
+
+run wsl in admin mode. su raz. ininstall/reinstall vscode. ...
+install remote dev expansion pack. install from vscode app.	...
+see: https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode
+
+5/12/22 working on buffered reader hang problem. Similar to our problem maybe.
+My game fixture main is currently hung on closing in for the recorder.
+thread: name: main, state: RUNNABLE, is alive: true, is interrupted:  false
+thread: name: server, state: TIMED_WAITING, is alive: true, is interrupted:  false
+thread: name: reader, state: RUNNABLE, is alive: true, is interrupted:  false
+thread: name: closer, state: BLOCKED, is alive: true, is interrupted:  false
+interrupt server, reader and closer.
+thread: name: main, state: RUNNABLE, is alive: true, is interrupted:  false
+thread: name: server, state: TIMED_WAITING, is alive: true, is interrupted:  false
+thread: name: reader, state: RUNNABLE, is alive: true, is interrupted:  true
+thread: name: closer, state: BLOCKED, is alive: true, is interrupted:  true
+so closer stays blocked and reader stays runnable.
+in my game fixture main:
+thread: name: recorder-18 (1,3), state: BLOCKED, is alive: true, is interrupted:  false
+then gets stuck in closing in.
+https://stackoverflow.com/questions/3595926/how-to-interrupt-bufferedreaders-readline
+5/10/22 lots of hangs and failure in the game and server tests :(
+one hang is closing in. maybe just leave that open?
+also, maybe some interference with controller tests (most of which start no threads)  .
+investigate this.
+06/29/22 game fixture main is still hangs
+07/10/22 dtrt2 in game fixture seems to sorta work ok except for a few leftover threads.
+always seems to have the white thread leftover.
+order of start and stop does not seem to matter.
+dtrt2 put in a loop with sleeps, only a bunch of white threads are leftover.
+the first white thread (white-1-17) seems to be waiting for a move.
+how to interrupt this?
+added a test to see if the thread is interrupted and if so then break out.
+too many printouts of threads.
+let's turn them all off or take them out and then add back in. 
+got rid of some. getting some log messages in red.
+8/18/22
+had a switch on(restoreAndShove) that was causing games to not be created.
+there are 2 pieces of wait for a game code.
+waitForGameFromServer and connectAndPlayGame
+try to consolidate. 
+
+put eclipse preferences into git control!
+
+8/2/22 parameterized basic game test case and got it to work with no timeouts!
+
+8/7/22 controller tests seem to be working find without timeout (timeout=0). no hangs!
+
+put code in once to save start up stats (like initiali ids)
+now all we need is to put a call in the last test case static tearddown
+no way to know which test is last. works in static teardown if it's a suite.
+useful:  find -name "*.java" -exec grep -HA1 'class .*Test[CS]' "{}" ";" | tr '\n' '|' | grep -v MyTestWatcher
+
+8/11/22 controller, game and server tests seem to work pretty well. no hangs and some timeouts.
+set timeout to zero in all of the tst/controller test cases.
+try to do this with the game and server folders.
+had to put one timeout back in in one of the server tests
+tst/ now runs all of the tests in less than one minute.
+maybe it would be nice to have all of the code in the server class only be run by the server thread.
+maybe subclass the server thread.
+maybe make all of these (server,game,backend) subclass named thread?
+controller test case mostly work and none have timeouts.
+game test cases mostly work with timeouts. 
+basic game test case plays silly games and has no timeouts.
+game test case is empty. it just has setup and teardown.
+we have to many copies of game tests that are very similar.
+and some test cases have only one test.
+refactor this.
+8/13/22 ignored tests in tst/controller tear down order test case.
+the rest of tst/controller tests pass without timeouts 5/81 threads left.
+the tests in tst/game pass without timeouts 0/152 threads left
+the tests in server mostly pass with tieouts and 8/193 threads left.
+server tests should test the server more as opposed to testing making moves.
+i have 4 methods that start up a game. consolidate!
+all controller, games, and server tests in tst/ pass!
+maybe IO.anyPort is a mistake. maybe not
+the dtrts in go server and game fixture both work.
+so that leaves just 2 setuo game methods that we need.
+so get rid of the other 2.
+8/22/22
+trying to remove wait for opponents board in play one move and wait.
+some tests are hanging now. so stopping that and 
+looking at exceptions in controller tests.
+8/25/22 discovered that we have implemented the sgf "RE" command.
+this is result not resign, so it's broken in a few places.
+discovered this by looking for problem in 25x15 game.
+next command in sgf was SZ[25,15], so it was not getting executed.
+
+fixing RE broke the resign tests - fix
+consider removing all of the last gtp stuff from model.
+why do we need it? 
+
+added custom sgf ZB and ZW for resign.  
+made basic move test case to fool around with this stuff.
+
+8/29/22 most tests seem to be working sans timeouts.
+wrote find main programs class.
+it finds most main program but fails when there are keywords like class, enum, and interface.
+// find a way to put in some kind of exclude?
+8/30/22 cleaned up generate move area.
+take a look at some of the stuff that still hangs.
+
+added sgf/movepassresign.sgf made from main gui program.
+(;B[qd];W[];ZB[black Resign]RE[W Resign])
+// why none of the useual stuff like: (;FF[4]GM[1] ... ?
+
+main gui removes north panel before adding one back in.
+should they all do this?
+
+alll of the wait stuff is not used by the model when it is connected.
+maybe these are or are not related?
+seems line we had an isConnected? 
+maybe: boolean isInAGame() { return gtp!=null; }
+and itsYourTurn?
+
+09/23/22 added buttons with enum classes.
+reworking west panel and it's action stuff so we can run
+multiple copies of gui.Main that don't step on each other. 
+09/25/22 made new west and east panels and inlined their action methods in mediator.
+investigate action map and input map. input map may help with keyboard shortcuts.
+new west panel and new east penel seem to work with multiple unstances in the same jvm.
+09/28/22 new top and bottom panels seem to wok.
+new spiners seem to work, but some problem starting a new game. 
+new game does not seem to set the properties or something.
+10/9/22 did a bunch of stuff with options.
+so i could run multiple instances of the client in one jvm.
+the newest options suff in the x package looks good.
+work on that later.
+but all of the static id's and things are fighting with each other (i think).
+using https://stackoverflow.com/questions/10077937/using-atomicinteger-as-a-static-shared-counter
+in the static init for the parser gets what looks like
+8 copies of the same thread calling the static init.
+this makes no sense at all.
+so i got exex to print the outputs.
+added 2 runners to print sysout and syserr from the process
+so maybe i will just exec the server and the clients.
+10/10/22 got exec working.
+fixed west/left panel problem with connect buttons.
+exec now starts the server and 3 clients.
+finding bugs in diamond shape.
+need to treat the diamond as a shape even thought it's a topology type.
+10/11/22 all of the strange board shapes seem to not be working.
+seems like they are commented out in model.setRoot().
+making more equipment tests for various board topologies and shapes.
+added edges to diamond. added some more equipment test cases.
+looks like the edges on the diamond should be jagged.
+moved shapes from model to board.
+test cases are breaking because parameters are set to diamond shape!
+we need a way of resetting parameters without stepping on the properties file.
+do we have a reset to defaults?
+maybe some code to check legal combinations of parameters.
+board interface is way over-engineered.
+10/13/22 seems like out git history starts on sep 8 2021!
+https://hackage.haskell.org/package/sgf-0.1.3.1/docs/Data-SGF.html
+discovered why the sgf stuff goes away when saving.
+a while back, we tossed the root node to make some of the files with multiple games work.
+yes, we did so:
+
+maybe combine sgf node and mnode or eliminate mnode (lots of work)
+and the sgf node still needs a parent.
+
+maybe i can add node and execute when a new game is started?
+the alternative is to not toss the root?
+
+seems like not tossing is easiest experiment to try.
+but this will break multiple games.
+10/14/22
+so thinking about getting sgf node round trip to work well with forest/variations.
+made round trip test cases for sgf mode, mnode, and model.
+all tests pass using the emptyWithSemicolon and twoEmptyWithSemicolon.
+the save 
+maybe start a new set of test cases and trash the old duplicates.
+the new round trip test cases pass on about 150 sgf files/data.
+the new round trip test cases produce:
+do_: 7 properties: [FF[4], GM[1], AP[Topological GO and other variants], C[root], C[Topological GO and other variants board topology is normal], SZ[19], C[Topological GO and other variants board shape is normal]]
+discarding: ;(6)RT[Tgo root]
+so the stuff done ny do_ gets lost and my tgo root gets discarded.
+so the problem seems isolated to the model.
+moves do an add node and execute.
+seems like the haskell switches left and right.
+seems like the problem is that the stuff i put in the root node gets discarded.
+discarding: ;FF[4]GM[1]
+AP[Topological GO and other variants]
+C[root]
+C[Topological GO and other variants board topology is normal]
+SZ[17:21]
+C[Topological GO and other varians board shape is hole1]
+RG[ik]
+how do i fix this?  maybe put info into model's' root?
+
+opening a file does not clear the board!
+i need to do a down to get to a clear board.
+maybe push my root down and look for it on restore and remove it?
+then if it's there, toss the new root mad in restore?
+one way or the other.
+
+
+10/16/22 maybe mnode just have-am sgf node and ad mnode methods?
+or maybe subclass and mnode methods?
+discovered treeview does not select the root when starting a game.
+or when restoring from a file. obvious fix in update does not fix it!
+10/17/23
+suppose add a parent, then save and restore? lets try this.
+the "FF[4]GM[1]AP[Topological GO ... " and a size of 19x19 gets saved and restored.
+but the 21x17 board size does not get done. 
+making a move forces the correct size to be saved.
+smart go lets you navigate to the top and into the 2 games.
+mf goes into the first game and ignores the second.
+new game gets the correct board size
+10/21/22
+maybe revert back to not allowing multiple game?
+make MNode and BNode have an sgf node?
+the init stuff needs to much simpler.
+started the MNode and BNode stuff. looks like a lot of work. some complications arise.
+did a hard reset. maybe factor out the trees first.
+looked at my stuff in the tree package. maybe it's not a reasonable idea.
+i will at lease need to do: List<? extends arborescence or something?
+investigate.
+10/22/22 had to turn off addNewRoot in model save and restore.
+addNewRoot in mnode was causing some round trip stuff to fail.
+did some work on the new tree stuff in tree2 for refactoring mnode and sgfnode.
+added holder class to fix bad sibling and descendants.
+restricted sgf data in some test cases.
+some test cased were not allowing a file as a parameter because the key was stored as a string.
+had some problems with tee causing tests to hang when run from tst/.
+the tee test case works fine by itself and maybe when run from tst/io/.
+added calls to close in tee.
+but we still have output lines duplicated 7 times!
+added sleep2() to some of the go server test cases.
+find out why we need the sleep.
+10/23/22 tee test case still hanging
+ignore a bunch of tests that fail when addNewRoot is false.
+also broke a bunch of sgf tests
+reducing the sgf tests by not using the files.
+addNewRoot is causing problems. 
+we added this to try to get the parametres that affected the  model into sgf.
+since the were not being put in propery. seems like they used to be.
+maybe this add new root is a bad solution to the problem.
+the problem being that the parameters from the properties file
+or the properties changed by the user clicking are not
+always put into the sgf (like with an add node and execute).
+maybe back out the add new root stuff and look for a betters way.
+currently we have 3 failing tests with the switch off and 5 with it on.
+seems lime we were doing better than that.
+maybe requite an explicit start game.
+working on the new tree stuff. got the new sgf separated into the binary node part and the data part.
+made some sleep2's smaller.
+ignoring some more sgf files.
+seems like the tests in gui/ are responsible for the duplicated output lines.
+tree hookup seems to be the culprit as he alters system.out and system.err 
+10/25/22 started rework of tee.
+10/26/22 more of the tee tests work. added more tee tests.
+10/27/22 tee is working better.
+added saving and restoring sysout and syserr.
+10/28 more work on tee, init, and logging.
+we may need two tees?
+yes, this test case: testTwoTeees() seems to do the right thing.
+can not figure out how to make my setup logger work with tee.
+Even the flushing handler does not seem to work.
+10/29/22 let's try to just add a handler.
+found something that works:
+        Logger logger=Logger.getLogger("frog");
+        Logging.setupLogger(logger,new MyFormatter());
+        //Logging.setUpLogging();
+        //Logger logger=Logging.mainLogger;
+the first 2 lines work fine. the second 2 lines do not.
+the last 2 seem to work in Logging.main(), but not in  testTwoTeees()
+looks like that's because the logger is created before any tee!
+setup logger is called more than once in the latter case.
+why should this make any difference?
+they are not using the same system.err!
+10/30/22 testTwoTeees() runs fine by itself (using if(true)), but loses the log message when we  run all the tests in the test case.
+10/31/22 because the handler is either not there or does not work.
+adding a new console handler does not help (when we run all the tests in the test case.
+maybe subclass console handler? - looks hard
+even adding new StreamHandler(tee,new MyFormatter()); fails the same way
+11/1/22 let's clean up logging and tee test cases.
+same transient failure in logging test case.
+may be a difference in the log sequence number. yes it is.
+tee test case fails because the log message is absent.
+11/3/22 no one is using the copies of system in and system out that init saves.
+no one calls the restore system io in init except my test watcher.
+tee test case stores these in some static variables. 
+refactored tee test case, logging test case, and tee and logging test case (so some of the test namesmay change or go away.
+consider ignoring most or maybe all of the suites until we want to run them.
+or maybe do not have them in a source folder and run them from the command line.
+all of the test that use tee and a logger are now in the tee and logging test case.
+10/6/22
+giving up on the tee and logging problems for now.
+let's look at sgf. io added RT as a private root property.
+iirc, i added 2 other? what were they? zb and zw.
+anders recommended rb and rw. check this and change later.
+added some c++ code to a java file. broke eclipse, gradle  and junit. how to recover?
+having turned on the gradle nature in eclipse is probably a bad idea.
+plan:
+	1) start with new eclipse project (code5).
+	2) add specific junit jars.
+	3) do a git init. copy then add and commit .gitignore and .gitattrinutes
+	4) leave the eclipse .settings/ alone.
+	5) add and commit everything else
+	6) copy over code4 (cp -r ../code4/* .).
+	7) add almost everything in excpet the eclipse and gradle stuff. 
+	8) push to a new repo
+	9) add gradle and use old build file from code4.

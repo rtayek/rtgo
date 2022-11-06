@@ -1,0 +1,53 @@
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb](;C[c]B[cc])(;C[d]B[dd];C[e]W[ee]))(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+
+round trip long is failing because the sgf nodes are being lost when going to MNodes and back.
+smartgo flat
+this works, other smarto fails to produce second game.
+
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb](;C[c]B[cc])(;C[d]B[dd];C[e]W[ee]))(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+
+
+// looks like it's wrong from the get go:
+
+(;FF[4]C[root]
+  (;B[aa]C[a];C[b]W[bb];C[c]B[cc])
+  (;C[f]B[ff]
+    (;C[g]W[gg];C[h]B[hh];C[i]W[ii])
+    (;C[j]W[jj];)))
+(;FF[4]C[root]
+  (;B[aa]C[a];C[b]W[bb];C[c]B[cc])
+  (;C[f]B[ff]
+    (;C[g]W[gg];C[h]B[hh];C[i]W[ii])
+    (;C[j]W[jj];)))
+the above works in master
+
+
+
+older stuff:
+
+starting test: testLongRoundTrip[4]
+simplevariations
+  actual: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19]
+(;B[qd]BL[892]WL[900];W[oc]BL[892]WL[881])
+(;B[pq]BL[892]WL[890]))
+1
+expected: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900](;W[oc]BL[892]WL[881])(;W[od]BL[888]WL[881];B[oc]BL[883]WL[881]))(;B[pq]BL[892]WL[890]))
+  actual: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19]
+(;B[qd]BL[892]WL[900];W[oc]BL[892]WL[881])
+(;B[pq]BL[892]WL[890]))
+before: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19]
+(;B[qd]BL[892]WL[900];W[oc]BL[892]WL[881])
+(;B[pq]BL[892]WL[890]))
+ after: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900];W[oc]BL[892]WL[881])(;B[pq]BL[892]WL[890]))
+2
+expected: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900](;W[oc]BL[892]WL[881])(;W[od]BL[888]WL[881];B[oc]BL[883]WL[881]))(;B[pq]BL[892]WL[890]))
+  actual: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900];W[oc]BL[892]WL[881])(;B[pq]BL[892]WL[890]))
+(;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900](;W[oc]BL[892]WL[881])(;W[od]BL[888]WL[881];B[oc]BL[883]WL[881]))(;B[pq]BL[892]WL[890]))
+(;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900];W[oc]BL[892]WL[881])(;B[pq]BL[892]WL[890]))
+4.110089 ending test: testLongRoundTrip[4]
+starting test: testRoundTrip[4]
+simplevariations
+(;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900](;W[oc]BL[892]WL[881])(;W[od]BL[888]WL[881];B[oc]BL[883]WL[881]))(;B[pq]BL[892]WL[890]))
+expected: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900](;W[oc]BL[892]WL[881])(;W[od]BL[888]WL[881];B[oc]BL[883]WL[881]))(;B[pq]BL[892]WL[890]))
+  actual: (;GM[1]FF[4]CA[UTF-8]AP[Many Faces of Go:12.024]SZ[19](;B[qd]BL[892]WL[900](;W[oc]BL[892]WL[881])(;W[od]BL[888]WL[881];B[oc]BL[883]WL[881]))(;B[pq]BL[892]WL[890]))
+2.020578 ending test: testRoundTrip[4]

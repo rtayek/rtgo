@@ -1,0 +1,7 @@
+(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]RU[Japanese]SZ[19]KM[0.00]DT[2008-06-26]
+AW[of][qf][oh][pi][pj][pk][om]AB[nd][pd][ph][qh][qi][qj][ql][qm]LB[jj:A]
+C[Recreate this joseki. A to start]RE[?]
+;B[jj]
+;
+AE[nd][pd][of][qf][oh][ph][qh][pi][qi][jj][pj][qj][pk][ql][om][qm];B[pd];W[qf];B[qh]
+;W[of];B[nd];W[pi];B[ph];W[oh];B[qi];W[pj];B[qj];W[pk];B[ql];W[om];B[qm]C[RIGHT])

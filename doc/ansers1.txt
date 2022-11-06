@@ -1,0 +1,397 @@
+From: "Anders Kierulf" <anders@smartgo.com>
+To: "'Ray Tayek'" <rtayek@attbi.com>
+Subject: RE: smart go (and sgf)
+Date: Thu, 22 Aug 2002 13:58:50 -0600
+
+> is there any way to increase the number of recent files, it 
+> would be nice if i could make it about 10 or so.
+
+I agree. I ran into some problems last time I tried to increase
+that number, and then punted it. I've put it back onto the list
+of things to investigate.
+
+> gnugo uses a binary tree and has what looks like a hack to
+> take the first variation and put it in line. and another
+> hack in unparse_game() to print it out correctly (see below).
+> 
+> i am trying to use a binary tree also. but i am running into
+> lots of problems.
+
+The game tree is not a binary tree, so I'd expect difficulties
+when you try to map it to a binary tree data structure. It can
+certainly be done, but you'll have to jump through some hoops
+to get it all to work right.
+
+In SmartGo, I'm using the Node data structure shown below (with
+lots of other methods removed). Below that you'll find SmartGo's
+code for reading SGF files. ReadSubtree is recursive, I think that
+simplifies the logic a lot. Hope that will help; you're welcome
+to use those code fragments in any way you want.
+
+Enjoy,
+  Anders
+
+//======================================================================
+========
+class Node
+//======================================================================
+========
+{
+public:
+   Node();
+   ~Node();
+
+   //--- queries about tree structure / movement in the tree 
+   //--------------------------------------------------------
+   //   The procedures for moving around in the tree return null if the
+desti-
+   // nation doesn't exist.
+   //   References to "left" and "right" picture the tree with the root
+at the
+   // top and the main line of play going down the left side.
+   //   A few explanations to the non-obvious procedures:
+   // IsOnMain: True of the node is on the main branch of the tree, that
+is
+   //           none of its ancestors has a left brother.
+   // IsTerminal    <=> NOT HasSon(node).
+   // IsBranchPoint <=> (NumSons(node) >= 2).
+   // HasBrother    <=> HasLeftBrother(node) OR HasRightBrother(node).
+   // NextDepthFirst, PrevDepthFirst: Depth-first traversal of the tree,
+and its
+   //           inverse operation.
+   
+   bool HasFather        () const { return (m_pFather != 0); }
+   bool HasLeftBrother   () const;
+   bool HasRightBrother  () const { return (m_pBrother != 0); }
+   bool HasSon           () const { return (m_pSon != 0); }
+   bool HasBrother       () const { return HasLeftBrother() ||
+HasRightBrother(); }
+   bool IsOnMain         () const;
+   bool IsTerminal       () const { return (m_pSon == 0); }
+   bool IsBranchPoint    () const { return (m_pSon &&
+m_pSon->m_pBrother); }
+   
+   int NumSons           () const;
+   int NumLeftBrothers   () const;
+   
+   Node* Root            () const;
+   Node* Father          () const { return m_pFather; }
+   Node* LeftBrother     () const;
+   Node* RightBrother    () const { return m_pBrother; }
+   Node* LeftMostBrother () const;
+   Node* RightMostBrother() const;
+   Node* LeftMostSon     () const { return m_pSon; }
+   Node* RightMostSon    () const;
+   Node* NextDepthFirst  () const;
+   Node* PrevDepthFirst  () const;
+   Node* NextSiblingFirst() const;
+   Node* PrevSiblingFirst() const;
+
+   Node* NewFather();
+   Node* NewRightBrother();
+   Node* NewLeftMostSon();
+   Node* NewRightMostSon();
+
+private:
+   Node*          m_pSon;
+   Node*          m_pFather;
+   Node*          m_pBrother;
+   PropList       m_props;
+   bool           m_marked;
+};
+
+void GameFile::ReadGames(ListOf<Node>* pRootList, bool*
+pfConvertProperties)
+{
+   ASSERT(pRootList);
+   ASSERT(pfConvertProperties);
+
+   pRootList->Clear();
+   *pfConvertProperties = false;
+   while (ReadGame(pRootList, pfConvertProperties));
+} // ReadGames
+
+
+const int MIN_READ_BUFFER_LENGTH = 5000;
+
+bool GameFile::ReadGame(ListOf<Node>* pRootList, bool*
+pfConvertProperties)
+{
+   ASSERT(pRootList);
+   ASSERT(pfConvertProperties);
+
+   // Allocate string with large buffer here for performance to avoid
+resizing
+   // string while reading in.
+   CString string;
+   string.GetBuffer(MIN_READ_BUFFER_LENGTH);
+
+   Node* pRoot = 0;
+   int c;
+   while ((c = Get()) != EOF)
+   {
+      // Determine file format:
+      //  - SGF game starts with opening parenthesis.
+      //  - Life and death problem in Thomas Wolf's LVi.j file format
+starts
+      //    with "$ P".
+      //  - Ishi Press Format: Line starts with keyword, hopefully with
+a letter.
+      while (c != '(' && c != '$' && c != EOF && !IsAlpha(c))
+         c = Get();
+      if (c == EOF)
+         break;
+      if (c == '(')
+         pRoot = ReadSubtree(0, &string);
+      else if (c == '$')
+         pRoot = ReadLifeAndDeath();
+      else if (IsAlpha(c))
+      {  UnGet(c);
+         if (IsIshiPress())
+         {
+            // Read all events in Ishi Press format until end of file.
+            bool fDone = ReadIshiPress(pRootList);
+            if (fDone)
+            {  pRoot = 0;
+               break;
+         }  }
+         else
+         {  c = Get();
+      }  }
+
+      // Read only one game. Append it to the root list.
+      if (pRoot)
+      {  pRoot = pRoot->Root();
+         const int FILE_GAME_GO = 1;
+         if (  pRoot->HasProp(propGame)
+            && pRoot->GetIntProp(propGame) != FILE_GAME_GO)
+         {
+            // If read in a game other than Go, just delete and ignore
+it.
+            pRoot->DeleteTree();
+            pRoot = 0;
+         }
+         else
+         {
+            // Add size property if game record didn't contain one, to
+make sure
+            // board size gets switched properly when replaying game.
+            if (!pRoot->HasProp(propSize))
+               pRoot->Add(new IntProperty(propSize, mini(SG_MAXSIZE,
+DEFAULT_19)));
+
+            // Convert old file formats to the current version.
+            if (m_fileFormat != FILE_FORMAT)
+               ConvertFormat(*pRoot);
+
+            pRootList->Append(pRoot);
+            break;
+   }  }  }
+
+   if (m_fObsoleteProperty)
+      *pfConvertProperties = true;
+
+   return pRoot != 0;
+} // ReadGame
+
+
+Node* GameFile::ReadSubtree(Node* pNode, CString* pString)
+{
+   ASSERT(pString);
+
+   Property* pProp = 0; // current property where values are being added
+   int c;
+
+   while ((c = Get()) != EOF && c != ')')
+   {  if (IsUpper(c))
+      {  pProp = ReadPropertyLabel(c, pNode);
+      }
+      else
+      {  switch (c)
+         {  case ';'  : if (pNode)
+                           pNode = pNode->NewRightMostSon(); // New node
+                        else
+                           pNode = new Node(); // first node
+                        pProp = 0;
+                        break;
+            case '('  : ReadSubtree(pNode, pString); // New subtree
+                        break;
+            case '['  : pProp = ReadBracket(pNode, pProp, pString); //
+property value
+                        break;
+            default: ;
+         }
+      }
+   }
+   // TODO: if EOF, then premature end-of-file
+
+   return pNode;
+} // ReadSubtree
+
+
+Property* GameFile::ReadPropertyLabel(int c, Node* pNode)
+{
+   // Precondition: Character 'c' is in range 'A'..'Z', to be
+interpreted
+   // as the first letter of a property label. Second letter can be
+capital
+   // letter or digit, lower case letters are ignored.
+   // TODO: code below doesn't support digit as second letter yet
+
+   Property* pProp = 0;
+   PropLabel label;
+   label[0] = static_cast<char>(c);
+
+   // Get rest of property label.
+   int propIndex = 1;
+   while (  (c = Get()) != EOF
+         && (IsAlpha(c) || IsDigit(c)))
+   {  if (IsUpper(c) && propIndex <= 1)
+         label[propIndex++] = static_cast<char>(c);
+   }
+
+   // Skip blank space between property label and bracket.
+   while (IsWhiteSpace(c) || IsReturnChar(c))
+      c = Get();
+
+   // Create property if label followed by opening bracket.
+   if (c == '[')
+   {  PropID id = Property::GetIDOfLabel(label);
+      if (id != propNone)
+      {  
+         // When a list property already exists at that node, just add
+points
+         // to it rather than creating a new property. This is
+non-standard
+         // SGF; unfortunately, Hibiscus produces such files.
+         if (  (Property::Flags(id) & fMarkProp) != 0
+            && pNode->HasProp(id))
+         {
+            pProp = pNode->Get(id);
+         }
+         else
+         {
+            pProp = Property::CreateProperty(id);
+         }
+         m_fObsoleteProperty |= pProp->Flag(fIsFF1);
+      }
+      else
+         pProp = new UnknownProperty(propUnknown, label, "");
+   }
+
+   // Let main loop get opening bracket and interpret property value.
+   UnGet(c);
+
+   return pProp;
+} // ReadPropertyLabel
+
+
+Property* GameFile::ReadBracket(Node* pNode, Property* pProp, CString*
+pString)
+{
+   // Precondition: has just read an opening bracket. 'pProp' can be
+null,
+   // in which case the bracket is just skipped but not converted to a
+   // property value.
+   ASSERT(pString);
+
+   // Read into string until closing bracket.
+   CString& s = *pString;
+   s.GetBufferSetLength(0); // Don't call Empty() as that blows away the
+buffer!
+   int c;
+   int lineBreak = '\0';
+   bool fInEscape = false;
+   while ((c = Get()) != EOF && (c != ']' || fInEscape))
+   {  
+      // Convert all white space characters (tab, vertical tab, form
+feed)
+      // to normal space.
+      if (IsWhiteSpace(c))
+         c = ' ';
+
+      // Handle all combinations of linebreak characters.
+      if (IsReturnChar(c))
+      {  if (lineBreak != '\0' && c != lineBreak)
+            continue; // CRLF or LFCR
+         lineBreak = c;
+      }
+      else
+         lineBreak = '\0';
+
+      // Handle escape character (backslash) properly.
+      if (fInEscape)
+      {
+         // Escaped character inserted as is, except that soft
+linebreaks
+         // are ignored.
+         if (lineBreak == '\0')
+            s += static_cast<char>(c);
+         fInEscape = false;
+      }
+      else if (c == '\\')
+         fInEscape = true;
+      else if (lineBreak != '\0')
+         s += '\n';
+      else
+         s += static_cast<char>(c);
+   }
+
+   // Convert string to property value.
+   if (pProp)
+   {
+      if (  pProp->CStringToProp(s, m_fileFormat, m_boardSize)
+         && !  (  pProp->Flag(fRootProp)
+               && pNode->HasFather()
+               && pNode->Root()->HasProp(pProp->ID())))
+      {
+         // If a root property encountered at a non-root node, and the
+root
+         // doesn't contain that property yet, then add the property to
+the
+         // root instead.
+         if (pProp->Flag(fRootProp) && pNode->HasFather())
+         {  ASSERT(!pNode->Root()->HasProp(pProp->ID()));
+            pNode = pNode->Root();
+         }
+
+         // Note that adding the property here does nothing if it
+already exists.
+         pNode->Add(pProp);
+         ASSERT(pNode->Get(pProp->ID()));
+
+         // If file format property, remember that so old properties can
+be
+         // converted while being read in.
+         if (pProp->ID() == propFormat)
+            m_fileFormat = static_cast<IntProperty*>(pProp)->Value();
+
+         if (pProp->ID() == propSize)
+         {  IntProperty* pSizeProp = static_cast<IntProperty*>(pProp);
+            m_boardSize = pSizeProp->Value();
+            if (m_boardSize > SG_MAXSIZE)
+            {  UserInterface::GetUI()->Alert(_T("The board size for this
+file is larger than this version of SmartGo can handle."),
+MB_ICONWARNING | MB_OK);
+               m_boardSize = SG_MAXSIZE; // limit points to the maximal
+size
+               pSizeProp->SetValue(SG_MAXSIZE);
+      }  }  }
+      else
+      {  if (pProp->ID() == propSize)
+         {  if (s.Find(":") != -1)
+               UserInterface::GetUI()->Alert(_T("SmartGo doesn't support
+rectangular boards."), MB_ICONWARNING | MB_OK);
+            // TODO: throw exception here, do error handling further up?
+            // Currently just continue reading with current board size.
+         }
+
+         // Delete properties that couldn't be read in correctly.
+         pNode->Props().Remove(pProp);
+         delete pProp;
+         pProp = 0;
+   }  }
+
+   return pProp;
+} // ReadBracket
+

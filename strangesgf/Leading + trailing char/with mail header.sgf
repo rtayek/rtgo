@@ -1,0 +1,54 @@
+From - Wed Aug 10 09:42:29 2011
+X-Account-Key: account2
+X-UIDL: 01qQL3-1RCxep3Ogs-00kvkf
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Return-Path: <igs-adm@panda-igs.joyjoy.net>
+Delivered-To: GMX delivery to rued.kle@gmx.de
+Received: (qmail invoked by alias); 05 Aug 2011 01:41:41 -0000
+Received: from www.pandanet.co.jp (EHLO www.pandanet.co.jp) [210.155.158.196]
+  by mx0.gmx.net (mx033) with SMTP; 05 Aug 2011 03:41:41 +0200
+Received: from goserver3 ([210.155.158.211])
+	by www.pandanet.co.jp  with ESMTP id p751fbrs021882
+	for <rued.kle@gmx.de>; Fri, 5 Aug 2011 10:41:37 +0900
+Message-Id: <201108050141.p751fbrs021882@www.pandanet.co.jp>
+From: "IGS PANDANET SERVER" <igs-adm@panda-igs.joyjoy.net>
+Subject: minorus-generalkey-05-10-41
+To: rued.kle@gmx.de
+Date: Fri, 5 Aug 2011 10:41:37 +0900
+X-Priority: 3
+X-Library: Indy 8.0.25
+X-GMX-Antivirus: 0 (no virus found)
+X-GMX-Antispam: 0 (Sender is in whitelist: igs-adm@panda-igs.joyjoy.net);
+ Detail=5D7Q89H36p4L00VTXC6D4q0N+AH0PUCnk01olIdttO6oZ4c62ddJrrwGhTemZHxFg2StQ
+ 2xsxn80GJhB7c/adQQ0rR2qwUCLV1;
+
+(;
+GM[1]EV[Internet Go Server game: minorus vs generalkey]
+US[Brought to you by IGS PANDANET]
+CoPyright[
+  Copyright (c) PANDANET Inc. 2011
+  Permission to reproduce this game is given, provided proper credit is given.
+  No warrantee, implied or explicit, is understood.
+  Use of this game is an understanding and agreement of this notice.
+]
+GN[minorus-generalkey(B) IGS]RE[W+Resign]
+PW[minorus]WR[5k ]NW[24]
+PB[generalkey]BR[6k+]NB[23]
+PC[IGS:  igs.joyjoy.net 6969]DT[2011-08-05]
+SZ[19]TM[60]KM[0.500000]LT[]
+RR[Normal]
+C[
+ minorus 5k : Hi!
+ generalkey 6k+: Hi!
+ generalkey 6k+: Have a fine game!
+]
+;B[qd]BL[40]
+;W[dd]WL[60]
+;B[pq]BL[37]
+;W[dp]WL[56]
+;B[fq]BL[34]
+;W[cn]WL[47]
+
+)

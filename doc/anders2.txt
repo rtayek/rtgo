@@ -1,0 +1,48 @@
+From: "Anders Kierulf" <anders@smartgo.com>
+To: "'Ray Tayek'" <rtayek@attbi.com>
+Subject: RE: smart go (and sgf)
+Date: Thu, 22 Aug 2002 22:57:37 -0600
+
+> any chance of seeing the code that writes the sgf.
+> maybe seeing how you generate the sgf will unconfuse me.
+
+See the relevant code below; it's called with WriteSubtree(root). It
+actually looks very similar to the GNU Go code, except that they have a
+special case for the root of each subtree. I suspect your reading code
+is the problem rather than the writing code, as your binary tree looks
+strange. E.g. 'c' has to be a child node of 'b', not a sibling. But I
+may be misinterpreting your tree graphic.
+
+Good luck,
+  Anders
+
+void GameFile::WriteSubtree(Node* pNode)
+{
+   // Start new sequence on a new line.
+   StartNewLine();
+
+   // Opening parenthesis.
+   Put('(');
+   m_numCharsOnLine++;
+
+   // Write out main sequence first.
+   do
+   {  Put(';');
+      m_numCharsOnLine++;
+      WriteNode(pNode);
+      pNode = pNode->LeftMostSon();
+   } while (pNode && !pNode->HasRightBrother());
+
+   // Now either reached end of branch, or fork in linear sequence.
+Write out
+   // each subtree recursively.
+   while (pNode)
+   {  WriteSubtree(pNode);
+      pNode = pNode->RightBrother();
+   }
+
+   // Closing parenthesis.
+   Put(')');
+   m_numCharsOnLine++;
+} // WriteSubtree
+

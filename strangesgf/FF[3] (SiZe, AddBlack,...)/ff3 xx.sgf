@@ -1,0 +1,16 @@
+(
+;
+AddWhite[cc][dc][ec]
+AddBlack[cd][dd][ed]
+;
+Black[tt]
+Letter[cg][ch]
+Mark[dg][dh][dk][fm][im]
+PLayer[B]
+;
+Black[cf]
+;
+White[ch]
+;
+Black[cj]
+)

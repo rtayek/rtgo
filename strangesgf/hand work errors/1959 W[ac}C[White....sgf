@@ -1,0 +1,140 @@
+(;AW[bc][be][bf][cc][cf][dc][dd][de]
+  AB[bb][bg][bi][cb][cg][db][df][dg][ec][fb][fd][fe][fg]
+  C[Black to kill.]
+
+  (;B[af]
+     (;W[ae]
+        (;B[ac]
+          (;W[ad];B[cd]C[RIGHT Black wins!])
+          (;W[cd];B[ad]C[RIGHT Black wins!]))
+        (;B[ab];W[ac]
+          (;B[bd];W[cd]C[White lives.])
+          (;B[cd];W[bd]C[White lives.]))
+        (;B[ad];W[ac]
+          (;B[bd];W[cd]C[White lives.])
+          (;B[cd];W[bd]C[White lives.]))
+        (;B[bd];W[cd]
+          (;B[ad];W[ac]C[White lives.])
+          (;B[ac];W[ad]C[White lives.])
+          (;B[ab];W[ac]C[White lives.]))
+       (;B[cd]
+          (;W[ac]C[CHOICE]
+             (;B[bd]C[RIGHT Black wins!])
+             (;B[ab];W[bd]C[White lives.]))
+          (;W[bd]C[CHOICE]
+             (;B[ac]C[RIGHT Black wins!])
+             (;B[ab];W[ac]C[White lives.])))
+       (;W[ac]
+          (;B[cd]
+             (;W[bd]C[CHOICE]
+                (;B[ab];W[ae]C[White lives.])
+                (;B[ag];W[ac]C[White lives.])
+                (;B[ae]C[RIGHT Black wins!]))
+            (;W[ae]C[CHOICE]
+                (;B[ag];W[bd]C[White lives.])
+                (;B[ab];W[bd]C[White lives.])
+                (;B[bd]C[RIGHT Black wins!])))
+      (;B[bd];W[cd]
+         (;B[ab];W[ae]C[White lives.])
+         (;B[ad];W[ae]C[White lives.])
+         (;B[ae];W[ad]C[White lives.])
+         (;B[ag];W[ae]C[White lives.]))
+      (;B[ad]
+         (;W[ae]C[CHOICE]
+            (;B[bd];W[cd]C[White lives.])
+            (;B[cd];W[bd]C[White lives.]))
+         (;W[bd]C[CHOICE]
+            (;B[ag];W[ae]C[White lives.])))
+            (;B[ae];W[ag]
+               (;B[ah];W[af]C[White lives.])
+               (;B[af];W[ac]C[White lives.])
+               (;B[ae];W[af]C[White lives.])
+               (;B[ad];W[af]C[White lives.]))))
+      (;B[ae]
+         (;W[cd];B[ad];W[bd];B[ag]C[RIGHT Black wins!])
+         (;W[ad]
+            (;B[ag];W[cd]C[White lives.])
+            (;B[cd];W[ag]
+               (;B[ah];W[af]C[White lives.])
+               (;B[af]C[RIGHT Black wins!])))))
+      (;W[cd]
+         (;B[ae];W[ad]C[White lives.])
+         (;B[ac];W[ad]C[White lives.])
+         (;B[ab];W[ad]C[White lives.])
+         (;B[ad]
+            (;W[ae]C[CHOICE]
+               (;B[ag];W[ac]C[White lives.])
+               (;B[ab];W[ac]C[White lives.])
+               (;B[bd];W[ac]C[White lives.])
+               (;B[ac]C[RIGHT Black wins!]))
+             (;W[ac]C[CHOICE]
+               (;B[bd];W[ae]C[White lives.])
+               (;B[ab];W[ae]C[White lives.])
+               (;B[ae];W[bd];B[ag]C[RIGHT Black wins!])))))
+      (;B[bd]
+         (;W[ad]C[CHOICE]
+            (;B[af];W[cd]C[White lives.])
+            (;B[cd];W[af]C[White lives.]))
+         (;W[cd]C[CHOICE]
+            (;B[ac];W[ad]C[White lives.])
+            (;B[ad];W[ac]C[White lives.])
+            (;B[ae];W[af]C[White lives.])
+            (;B[af];W[ad]C[White lives.])))
+         (;B[ad];W[ac]
+           (;B[af]
+              (;W[bd]C[CHOICE]
+                 (;B[ae];W[ag]C[White lives.])
+                 (;B[ag];W[ae]C[White lives.]))
+              (;W[ae]C[CHOICE]
+                 (;B[bd];W[cd]C[White lives.])
+                 (;B[cd];W[bd]C[White lives.]))))
+
+       (;B[ae]
+          (;W[ad]C[CHOICE]
+             (;B[af];W[cd]C[White lives.])
+             (;B[cd];W[af]C[White lives.]))
+          (;W[af]C[CHOICE]
+             (;B[ac];W[ad]C[White lives.])
+             (;B[ad];W[ac]C[White lives.])
+             (;B[bd];W[ac}C[White lives.])))
+      (;B[cd]
+         (;W[ad];B[af]C[RIGHT Black wins!])
+         (;W[bd]
+            (;B[ab]
+               (;W[ac]C[CHOICE]
+                  (;B[af];W[ae]C[White lives.]))
+               (;W[af]C[CHOICE]
+                  (;B[ac];W[ad]C[White lives.])))
+          (;B[ac];W[ad]
+             (;B[af]C[RIGHT Black wins!])
+             (;B[ab];W[af]C[White lives.]))
+          (;B[af];W[ae]
+             (;B[ag];W[ac]C[White lives.])
+             (;B[ab];W[ac]C[White lives.])
+             (;B[ac]C[RIGHT Black wins!]))
+         (;B[ag]
+            (;W[af]C[CHOICE]
+               (;B[ac];W[ad]C[White lives.]))
+            (;W[ac]C[CHOICE]
+               (;B[af];W[ae]C[White lives.]))))
+          (;W[ac]
+             (;B[af]
+                (;W[ae]C[CHOICE]
+                   (;B[bd]C[RIGHT Black wins!]))
+                (;W[bd]C[CHOICE]
+                   (;B[ae]C[RIGHT Black wins!])))
+          (;B[bd]
+             (;W[ad]C[CHOICE]
+                (;B[af]C[RIGHT Black wins!]))
+             (;W[af]C[CHOICE]
+                (;B[ad]C[RIGHT Black wins!])))
+       (;B[ae];W[af]C[White lives.]))
+       (;W[af]
+          (;B[bd];W[ad]C[White lives.])
+          (;B[ac];W[ad]C[White lives.])
+          (;B[ad]
+             (;W[ac]C[CHOICE]
+                (;B[bd]C[RIGHT Black wins!]))
+             (;W[bd]C[CHOICE]
+                (;B[ac]C[RIGHT Black wins!]))
+)))

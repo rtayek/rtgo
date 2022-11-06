@@ -1,0 +1,39 @@
+results parser test case frog3
+
+$ cat simplewithvariations.sgf
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb](;C[c]B[cc])(;C[d]B[dd];C[e]W[ee]))(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb](;C[c]B[cc])(;C[d]B[dd];C[e]W[ee]))(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+
+original:
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb](;C[c]B[cc])(;C[d]B[dd];C[e]W[ee]))(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+
+
+master 4ddd988
+
+(;FF[4]C[root]
+  (;B[aa]C[a];C[b]W[bb];C[c]B[cc])
+  (;C[f]B[ff]
+    (;C[g]W[gg];C[h]B[hh];C[i]W[ii])
+    (;C[j]W[jj];)))
+(;FF[4]C[root]
+  (;B[aa]C[a];C[b]W[bb];C[c]B[cc])
+  (;C[f]B[ff]
+    (;C[g]W[gg];C[h]B[hh];C[i]W[ii])
+    (;C[j]W[jj];)))
+
+
+
+frog3: 
+starting test: testLongRoundTrip[15]
+simpleWithVariations
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb](;C[c]B[cc])(;C[d]B[dd];C[e]W[ee]))(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb];C[c]B[cc])(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+0.9416 ending test: testLongRoundTrip[15]
+starting test: testLongRoundTripL[15]
+simpleWithVariations
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb](;C[c]B[cc])(;C[d]B[dd];C[e]W[ee]))(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+(;FF[4]C[root](;B[aa]C[a];C[b]W[bb];C[c]B[cc])(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))
+0.7744 ending test: testLongRoundTripL[15]
+starting test: testRoundTrip[15]
+simpleWithVariations
+0.7172 ending test: testRoundTrip[15]

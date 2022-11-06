@@ -1,0 +1,93 @@
+
+(
+;
+GaMe[1]
+SiZe[19]
+VieW[]
+BlackSpec[1]
+WhiteSpec[1]
+Comment[
+Black to play.  Easy
+
+Solution follows.]
+FileFormat[1]
+AddEmpty[ck][cl][cm][cn][cp][dp][eq][fq][gq][hq][iq][jq][kq][lq][mq][nq][oq][pp]
+[qp][qn][qm][ql][qk][qj][pk][pl][pm][pn][po][pn][pm][pl][pk][pj][pi][ph][pg][pf]
+[pd][md][mc][ic][hc][gc][ec][ce][cf]
+AddBlack[cb][dc][eb][fc][kd][ld][md][nd][od][pe][qd][rc][re][lc][kb][dq][co][qo]
+
+AddWhite[cc][cd][de][fd][gd][cj][ep][jb][jc][kc][lb][mc][nc][oc][pc][qc][pd][pq]
+
+GameName[Position10]
+(
+;
+Black[op]
+Comment[Black one at 'p4' should be the obvious and intuitive play.  This is 
+the only reasonable move for Black.]
+;
+White[oq]
+Comment[White is forced to continue with White two at 'p3' or be locked in the 
+corner.  White must also consider his stone at 'e4'.]
+;
+Black[np]
+;
+White[mq]
+Comment[The White one space jump at 'n3' is to gain a move and stay on the 
+outside.]
+;
+Black[qj]
+Comment[RIGHT After Black five at 'r10' we can see that Black now has a very large 
+potential for a lot of territory.  The sequence Black one through Black five is 
+a standard joseki sequence, and this particular joseki is the most efficient 
+choice in this position.]
+)
+(
+;
+Black[qk]
+Comment[Black one at 'r9' is too timid.  This move gives White the time he 
+needs to develop and strengthen his own position.]
+;
+White[eq]
+;
+Black[dp]
+;
+White[er]
+;
+Black[eo]
+;
+White[fo]
+;
+Black[en]
+Comment[This exchange illustrates that Black's emphases was not entirely 
+intent on developing his potential on the right side of the board as he should 
+have been.  ]
+)
+(
+;
+Black[eq]
+Comment[Black one at 'e3' is a very bad play.  Black at this juncture should 
+not be too concerned about the weakness for both players at this corner.   This 
+move is for later.  This move will also give White the time he needs to destroy 
+Black's potential.  ]
+;
+White[qf]
+;
+Black[qe]
+;
+White[qk]
+Comment[A great loss for Black.]
+)
+(
+;
+Black[mq]
+Comment[Black one at 'n3' is also a joseki, and it is also a poor choice of 
+joseki.]
+;
+White[op]
+;
+Black[jq]
+;
+White[ql]
+Comment[Another loss for Black.]
+)
+)

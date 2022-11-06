@@ -1,0 +1,18 @@
+(;
+   AW[bq][br][bs][dr][er][fq][fr][hq][iq]
+   AB[ap][aq][bn][bp][cq][cr][do][dq][ep][eq];
+   C[How much is A worth?]
+   LB[cs A][aj 7][cj 8][ej 9][gj 10]
+   LB[al 11][cl 12][el 13][gl 14]
+
+   (;B[gj] C[RIGHT Correct! If White plays A, the possiblity of White C exists, gaining 2 points (triangles). Therefore, A is worth 10 points.]LB[cs A][ar C]TR[as][ds])
+
+   (;B[aj]C[Sorry, try practicing counting more often.]LB[cs A])
+   (;B[cj]C[Sorry, but A is worth more.]LB[cs A])
+   (;B[ej]C[Ooo! So close.]LB[cs A])
+   (;B[al]C[Oops! Close.]LB[cs A])
+   (;B[cl]C[Sorry, try again please.]LB[cs A])
+   (;B[el]C[Sorry, try practicing counting more often.]LB[cs A])
+   (;B[gl]C[Sorry, try practicing counting more often.]LB[cs A])
+
+)

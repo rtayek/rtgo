@@ -1,0 +1,274 @@
+(;
+GaMe[1]
+VieW[]
+SiZe[19]
+HAndicap[4]
+PlayerBlack[I-Chen Wu]
+BlackRank[4th Dan]
+PlayerWhite[Jiang Zhujiu]
+WhiteRank[9th Dan]
+GameName[Copy of Wu]
+DaTe[1st December, 1990]
+PlaCe[IGS]
+REsult[Black resigns after white 139.]
+
+
+Comment[Saturday, Dec. 1st, 1990
+
+White:  Jiang Zhujiu, Professional 9th Dan
+Location:  hale@scam.berkeley.edu
+
+Black:  I-Chen Wu, 4th Dan
+Location:  wjh+@andrew.cmu.edu
+
+Handicap:  4 stones
+Result:  Black resigns]
+;Comment[The comments were made by I-Chen Wu.  Jiang Zhujiu's comments 
+\(marked "Jiang Zhujiu said"\) are also added.  I still keep my comments
+which conflict with his.  The purpose is that you can
+find strength difference between pro and amateur comments.  And I would 
+like to thank MGT for a lot of help for making the comments.]
+AddBlack[dd][dp][pp][pd]
+
+;Comment[The move has the following effects: ladders are usually favorite for
+white, it is hard for black to build moyo, and black is hard fight when
+jumping into the middle area.  I \(black\) started feeling bad from this
+move, because I never won a handicap game starting with tengen \(this point\).  Jing Yang, a professinal level player, comments "the move is no big deal and you should think it is far from sides".]
+White[jj]
+;Black[jp]
+;White[cn]
+;Black[dn]
+;White[do]
+;Comment[C5 is another choice.]
+Black[eo]
+;White[co]
+;Black[ep]
+;White[cp]
+;Black[cq]
+;White[bq]
+;Comment[This is a bad move, although it does not hurt black too much.  MGT comments that the correct move is B2. If white tries to get the corner,
+C7 is a severe move against white.]
+Black[dr]
+;White[cr]
+;Black[dq]
+;White[dm]
+;Black[en]
+;White[cf]
+;Black[fc]
+;White[qn]
+;Comment[Q6 is another choice.]
+Black[ql]
+;Comment[A good point to intrude my moyo.]
+White[lq]
+;Black[nq]
+;White[lo]
+;Comment[If black ignores does not play this move, white can intrude black's
+territory at this point.  K6 is another choice.  But, this move is recommended when playing with a stronger player.
+
+Jiang Zhujiu commented that this was not a good move for black to make at this time.   He thought black should play at P6, separating the two white groups instead, and gain access to the center.]
+Black[jq]
+;Comment[This covering is not firm.]
+White[on]
+;Comment[So, Black tolerates now
+and seeks some opportunity.  This
+move also gets the corner and
+will be able to connect R8.]
+Black[qp]
+;Comment[Now, white has to
+attack R8 to get some money
+back.]
+White[qi]
+;Comment[Jiang Zhujiu said this was a good move.  He thought black would next 
+play at S6 instead, which he does not consider a good move for black.]
+Black[ol]
+;White[nm]
+;Comment[This move is a typical phenomenon of tengen-phobia. :-\)  Obviously, black should play at O8 or P11. Black should think that the group can go home at any time he wants.
+The ideal sequence should be
+B:O8, W:N8, and B:P11.
+
+Jiang Zhujiu thought black should play at P11 instead.]
+Black[rn]
+;White[qf]
+;Comment[Again, although this is not a big mistake, black should play R15 and then O16 instead. This is another tengen-phobic move.  \(Try to settle as soon as possible.\)]
+Black[nc]
+;Comment[This is the key point
+for both sides' moyo.]
+White[em]
+;Black[ch]
+;White[cd]
+;Black[cc]
+;White[bc]
+;Comment[C15 can also be at B18,
+but then C12 could be attacked.]
+Black[ce]
+;White[bd]
+;Comment[Black should play the following sequence: B:B15, W:D15, B:B14, W:D17, B:E16, W:C18, B:E14. Then black can get excellent thickness.
+
+Yes, Jiang Zhujiu said black at B15 is the correct play.]
+Black[de]
+;White[be]
+;Black[df]
+;White[dc]
+;Comment[Jiang Zhujiu said black should play at D18.]
+Black[cb]
+;White[db]
+;Comment[This is a strange move.
+E17 is good enough.]
+Black[eb]
+;White[bb]
+;Black[ec]
+;White[ca]
+
+;Comment[This point is big.
+But, there is a weakness at
+D13.  Black should play at D13
+or cut at B14.  E12 looks
+interesting, but F15 is still a
+little annoying to black.]
+Black[jd]
+;White[dg]
+;Black[cg]
+;White[bf]
+;Comment[This is one of the black's worst moves.  Black should play F15 to remove its weakness first.  \(It can also make the territory of upper
+side larger. \) Then, if white plays at E13, black can play C8 and then C10.  Although, black groups are separate, it still looks not as bad.  Since these moves, black has had less chance to win.  :-\)
+
+Yes, Jiang Zhujiu said this is not a good move.  Black should play at E13 to build a powerful moyo.  \(I-Chen: Well, this is another result of 
+tengen-phobia.  I do not think about it even when commenting.\)]
+Black[fh]
+;White[eg]
+;Black[ff]
+;White[di]
+;Black[dh]
+;White[eh]
+;Black[ei]
+;White[fi]
+;Black[ej]
+;White[fg]
+;Black[gg]
+;White[gh]
+
+
+;Black[ef]
+;White[fh]
+;Comment[Black should consider
+C8 first.  White can not
+tolerate the cut.]
+Black[cj]
+;Comment[This can attack black
+and make up its own weakness.]
+White[cl]
+;Comment[Give the middle white group a little pressure.  BTW, I'm not sure if B9 can get another eye without ko.]
+Black[fj]
+;White[gf]
+;Black[hg]
+;White[hh]
+;Black[ig]
+;White[ih]
+;Comment[This is a bad move.
+Black should take G15
+directly.]
+Black[jg]
+;Comment[Jiang Zhujiu is satisfied with white's game now.]
+White[gn]
+;Comment[White can't separate
+black's groups, although the
+territory will become smaller.
+Black should make its left
+group alive first.]
+Black[gp]
+;White[bi]
+;Black[ci]
+;White[dk]
+;Black[dj]
+
+
+;White[bj]
+;Black[fl]
+;White[fm]
+;Black[hj]
+;White[jh]
+;Comment[It is miserable that black is still not alive yet.
+
+Yes,  :-\)  Jiang Zhujiu said that a white move at G9 will cause black much grief. ]
+Black[hl]
+;White[hp]
+;Black[hq]
+;White[rm]
+;Black[qm]
+;White[ro]
+;Black[pn]
+;White[sn]
+
+
+;Comment[This is one of the worst moves.  Black should simply play Q5.]
+Black[qo]
+;White[jc]
+;Comment[Black should be patient and play at J16.]
+Black[ic]
+;White[id]
+;Black[hc]
+;White[nd]
+;Black[oc]
+;White[pm]
+;Black[rn]
+
+
+;Comment[This is the key move to
+attack black]
+White[ge]
+;Comment[Jiang Zhujiu said black is rightfully worried about a white play at 
+E16]
+Black[gd]
+;White[qn]
+
+
+;Black[po]
+;White[je]
+;Black[kd]
+;White[fe]
+;Black[ed]
+;White[kg]
+;Black[ie]
+;White[if]
+;Black[jf]
+;White[ke]
+;Comment[Black should take a
+piece at H14 to make a Ko.]
+Black[kf]
+;White[le]
+;Black[lf]
+;White[he]
+
+
+;Black[mf]
+;White[ld]
+;Black[kc]
+;White[kb]
+;Black[jb]
+
+
+;White[lc]
+;Comment[Black should give up
+three pieces and go home around
+P14.  The upper group should be
+still alive. ]
+Black[jc]
+;White[oe]
+;Black[of]
+;White[pe]
+;Comment[This move is not
+necessary.  Black should play
+at N11 to try to connect back
+or survive.]
+Black[qd]
+;White[oi]
+;Black[om]
+;Comment[White finished black's
+final chance.]
+White[mi]
+;Black[rl]
+;White[re]
+;Black[rd]
+;Comment[The game is over.]
+White[jl]
+)

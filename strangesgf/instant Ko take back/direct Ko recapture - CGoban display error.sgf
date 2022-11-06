@@ -1,0 +1,14 @@
+(;GM[1]FF[3]
+SZ[19]HA[0]KM[0]SY[goTools2Sgf]GN[Problem P2029091]
+AW[sd][rd][qe][qg][rh]
+AB[sb][rb][qc][qd][pe][oe][of][pg][ph][ri][qi][sj][rj]
+PL[2]C[White to move and get a ko.];
+LB[rf:A][qf:B][si:C][pf:D][rc:E][sc:F]
+C["A" is the proper move.]
+(;W[rf];B[qf];W[pf];B[sh];W[sg];B[qf];W[pf];B[qh];W[qf];B[rg];W[rh];B[se];W[si];B[sf];W[re];B[sh];W[si];B[sf];W[se];B[sh];W[si];B[sc];W[sh])
+(;W[qf];B[rf];W[sf];B[re];W[sh];B[rg];W[qh];B[sc];W[tt];B[rc];W[se];B[sg])
+(;W[si];B[sh];W[rf];B[sg])
+(;W[pf];B[qf];W[sh];B[rf])
+(;W[rc];B[rf];W[qh];B[qf])
+(;W[sc];B[rf];W[qh];B[qf])
+)

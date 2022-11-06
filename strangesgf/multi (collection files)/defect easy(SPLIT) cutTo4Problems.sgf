@@ -1,0 +1,23 @@
+A collection of 40 easy problems.
+(;GM[1]FF[3]
+;AW[oq][pq][qq][rq][sq][mr][or]
+AB[pr][qr][rr][sr][ps];B[rs]
+)
+(;GM[1]FF[3]
+;AW[qn][mp][qp][rp][kq][mq][oq][pq][nr][pr][rs]
+AB[nn][mo][np][op][pp][nq][qq][rq][qr][sr][qs]
+(;B[or];W[os];B[ps];W[or];B[mr])
+(;B[ps]WV[ps];W[or];B[mr];W[lr])
+)
+(GM[1]FF[3]
+;AW[qo][qp][kq][nq][oq][pq]
+AB[qh][ol][nm][qm][op][pp][qq][rq][qr][sr][qs][rs]
+;W[no];B[oo];W[on];B[pn];W[po]
+)
+(;GM[1]FF[3]
+;AW[ok][qk][rl][mm][ln][pn][op][pp][rp][qq][rq][pr][qr][sr]
+AB[qn][qo][ro][np][qp][mq][oq][pq];B[on]
+(;W[po];B[pm];W[no];B[oo])
+(;W[oo];B[no];W[pm];B[po]
+)
+Cut down to a 4 problems multi-problem file
