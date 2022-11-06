@@ -377,9 +377,14 @@ plan:
 	1) start with new eclipse project (code5).
 	2) add specific junit jars.
 	3) do a git init. copy then add and commit .gitignore and .gitattrinutes
-	4) leave the eclipse .settings/ alone.
+	4) add .project and .classpath. leave the eclipse .settings/ alone.
 	5) add and commit everything else
 	6) copy over code4 (cp -r ../code4/* .).
 	7) add almost everything in excpet the eclipse and gradle stuff. 
 	8) push to a new repo
 	9) add gradle and use old build file from code4.
+was at: https://sourceforge.net/projects/tgo-java/
+now at: https://github.com/rtayek/rtgo
+
+
+	

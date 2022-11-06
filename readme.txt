@@ -4,4 +4,7 @@ currently plays go locally allowing for self capture.
 the goal is to make a server so people can play online.
 see more in notes,txt
 
+was at: https://sourceforge.net/projects/tgo-java/
+now at: https://github.com/rtayek/rtgo
+
 
