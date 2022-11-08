@@ -21,7 +21,7 @@ public enum Init {
         if(verbose) System.out.println("blackOrWhite: "+Sequence.blackOrWhite);
         LogManager.getLogManager().reset();
         // maybe omit this stuff below?
-        if(false) {
+        if(true) {
             Logging.setUpLogging();
             Logging.setLevels(Logging.initialLoggingLevel); // do this last or level is null!
             Logging.parserLogger.setLevel(defaultParserLoggerLevel);

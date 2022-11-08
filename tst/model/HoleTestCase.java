@@ -18,10 +18,11 @@ public class HoleTestCase {
         // no, fails either way.
         // perhaps we should not be doing this (i.e. let the sgf do it)
         assertEquals(Stone.edge,board.at(board.center()));
-
     }
     private void saveAndRestore(Model model,Stone center) {
         System.out.println(model.board().at(model.board().center()));
+        System.out.println("topology: "+model.boardTopology());
+        System.out.println("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
         StringWriter stringWriter=new StringWriter();
         boolean ok=model.save(stringWriter);
@@ -38,6 +39,7 @@ public class HoleTestCase {
         m.save(stringWriter);
         final String actual=stringWriter.toString();
         assertEquals(actual,expected);
+        System.out.println("ex: "+expected);
     }
     @Test public void testsetRoot() {
         Model model=new Model();
@@ -49,11 +51,11 @@ public class HoleTestCase {
         // failing because we added a new root in save
         saveAndRestore(model,Stone.vacant);
     }
-    @Test public void testsetRootWithHole() {
+    @Test public void testsetRootWithHole1() {
         Model model=new Model();
         model.setRoot(n,n,Topology.normal,Shape.hole1);
         Board b=model.board();
-        //System.out.println("initial\n"+model.board());
+        if(b==null) System.out.println("b: "+b);
         assertEquals(Stone.edge,b.at(b.center()));
         model.move(Move.blackMoveAtA1);
         saveAndRestore(model,Stone.edge);

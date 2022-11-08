@@ -152,7 +152,7 @@ public class Logging {
     }
     static boolean useColor=true;
     static final int maxThreadNameLength=12;
-    public static final Level initialLoggingLevel=Level.OFF;
+    public static final Level initialLoggingLevel=Level.SEVERE;
     public static final Set<String> loggerNames=new TreeSet<>();
     //public static final Logger globalLogger=Logger.getGlobal();
     public static final Logger mainLogger=Logger.getLogger(Logging.class.getName());

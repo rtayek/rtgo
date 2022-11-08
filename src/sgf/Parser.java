@@ -284,7 +284,7 @@ public class Parser /*extends Init.Main*/ {
         boolean ok=sgfRoundTripTwice(reader);
         if(!ok) throw new Exception("test fails");
     }
-    static boolean checkBoardInRoot(String key) {
+    static boolean checkBoardInRoot(Object key) {
         String expectedSgf=getSgfData(key);
         Model original=new Model();
         original.restore(new StringReader(expectedSgf));
@@ -312,19 +312,21 @@ public class Parser /*extends Init.Main*/ {
         for(String key:Parser.sgfData.keySet()) parameterArrays.add(new Object[] {key});
         return parameterArrays;
     }
-    private static void getSgfFiles(File dir,Set<Object[]> objects) {
-        // use file filter? or maybe file visitor and walk file tree.
-        File[] files=dir.listFiles();
+    static void getSgfFiles(Set<Object[]> objects,File[] files) {
         for(File file:files) if(file.isFile()) {
             if(file.exists()) {
                 if(file.getName().endsWith(".sgf")) {
                     //System.out.println("ok "+file);
                     if(!badSgfFiles.contains(file)) objects.add(new Object[] {file});
-                } else ; //System.out.println(file+" is not an sgf file!");
+                } else; //System.out.println(file+" is not an sgf file!");
             } else System.out.println("bad "+file);
         } else if(file.isDirectory()) {
-            getSgfFiles(file,objects);
+            getSgfFiles(objects,file.listFiles());
         } else System.out.println("strange: "+file);
+    }
+    static void getSgfFiles(File dir,Set<Object[]> objects) {
+        File[] files=dir.listFiles();
+        getSgfFiles(objects,files);
     }
     public static String getSgfData(Object key) {
         String sgf=null;
@@ -337,10 +339,8 @@ public class Parser /*extends Init.Main*/ {
         Set<Object[]> objects=new LinkedHashSet<>();
         objects.addAll(sgfData());
         getSgfFiles(new File("sgf/"),objects);
-        //getSgfFiles(new File("strangesgf/"),objects);
         return objects;
     }
-
     static void doTGOSend(String key) {
         String expectedSgf=getSgfData(key);
         Model original=new Model();

@@ -229,6 +229,7 @@ class BoardFactory implements Board.Factory {
             boardImpl=new BoardImpl(width,depth,type,ids++);
             // what about shape?
             // yes. what about it!
+            // also, how is topology handled?
             // figure out what the legal combinations are.
         } catch(Exception e) {
             Logging.mainLogger.info("board factory fails!");

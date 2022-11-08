@@ -385,6 +385,10 @@ plan:
 	9) add gradle and use old build file from code4.
 was at: https://sourceforge.net/projects/tgo-java/
 now at: https://github.com/rtayek/rtgo
+made sgf edge test case. we have way too many confusing and overlapping tests.
+we should only need one or two round trips.
+let's look in model and see when the board is set.
+hole test case has not region in sgf! 
 
 
 	

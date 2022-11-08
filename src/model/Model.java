@@ -119,15 +119,18 @@ public class Model extends Observable { // model of a go game or problem forrest
         // return root so Model m=new Model().setRoot(root)?
         // looks like we keep the whole tree (forrest?)
         if(board()!=null) {
-            Logging.mainLogger.fine(name+" "+"1 board is not null in setRoot()!");
+            Logging.mainLogger.severe(name+" "+"1 board is not null in setRoot()!");
             // Logging.logger.fine(name+" "+"setting board to null in
             // setRoot()");
             // setBoard(null); // maybe this is a good idea?
             // how to deal with null cases?
-        } else Logging.mainLogger.fine(name+" "+"2 board is null in setRoot()!");
+        } else Logging.mainLogger.severe(name+" "+"2 board is null in setRoot()!");
         stack.clear();
         state=new State();
         state.root=root;
+        // this is where we probably need to insure that there us a board.
+        // or make sure some other stuff is setup if this is the root.
+        //
         if(root.children.size()>1) Logging.mainLogger.info("more than one game!");
         if(root!=null) checkForLittleGolem(root);
         Logging.mainLogger.config(name+" "+"doing root: "+root);
@@ -168,6 +171,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         //System.out.println("added points: "+points);
     }
     public void setRootFromParameters() {
+        System.out.println("set root from parameters");
         int width=(int)Parameters.width.currentValue();
         int depth=(int)Parameters.depth.currentValue();
         Board.Topology topology=(Board.Topology)Parameters.topology.currentValue();
@@ -184,14 +188,16 @@ public class Model extends Observable { // model of a go game or problem forrest
         addProperty(newRoot,P.GM,"1");
         addProperty(newRoot,P.AP,sgfApplicationName);
         addProperty(newRoot,P.C,"root");
-        addProperty(newRoot,P.C,sgfBoardTopology+topology);
+        if(!topology.equals(Topology.normal))
+            addProperty(newRoot,P.C,sgfBoardTopology+topology);
+        if(!shape.equals(Shape.normal))
+            addProperty(newRoot,P.C,sgfBoardShape+shape);
         String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
         if(width==depth) string=Integer.valueOf(width).toString();
         boolean alwaysSetBoardSize=true; // was true
         if(alwaysSetBoardSize) addProperty(newRoot,P.SZ,string);
         // work needed here!
         if(topology.equals(Topology.torus)) addProperty(newRoot,P.KM,"4.5");
-        addProperty(newRoot,P.C,sgfBoardShape+shape);
         addRegion(width,depth,topology,shape,newRoot);
         Logging.mainLogger.fine(name+" "+"new root is: "+newRoot);
         setRoot(newRoot);
@@ -204,7 +210,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(board==null) Logging.mainLogger.severe("board is null!");
         else Logging.mainLogger.fine("setting board");
     }
-    public Board.Topology boardType() { return state.topology; }
+    public Board.Topology boardTopology() { return state.topology; }
     public void setBoardType(Board.Topology type) { state.topology=type; }
     public Board.Shape boardShape() { return shape; }
     public void setBoardShape(Shape shape) {
@@ -523,9 +529,11 @@ public class Model extends Observable { // model of a go game or problem forrest
         state.node=node;
         try {
             if(node!=null) {//
-                if(node.properties.size()>1)
-                    ; //System.out.println("do_: "+node.properties.size()+" properties: "+node.properties);
-                for(int i=0;i<node.properties.size();i++) { processProperty(node.properties.get(i)); }
+                if(node.properties.size()>1); //System.out.println("do_: "+node.properties.size()+" properties: "+node.properties);
+                for(int i=0;i<node.properties.size();i++) {
+                    //System.out.println("properties: "+node.properties.get(i));
+                    processProperty(node.properties.get(i));
+                }
             } else Logging.mainLogger.warning(name+" "+"do with null!");
             setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
         } catch(Exception e) {
@@ -649,6 +657,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     if(board()==null) { // had to put this back in!
                         Board board=Board.factory.create(Board.standard,Board.standard,Topology.normal);
                         setBoard(board);
+                        // maybe we need to do this earlier?
                     }
                     if(board().width()<=Board.standard&&board().depth()<=Board.standard&&string.equals("tt"))
                         isPass=true; // hack for some sgf wierdness/
@@ -1035,6 +1044,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // does it make any sense to change these in game?
         private boolean isFromLittleGolem;
         private Board.Topology topology=(Board.Topology)Parameters.topology.currentValue();
+        // the above looks problematic also.
         private int band=(Integer)Parameters.band.currentValue();
         private Double komi=.5,handicap=0.;
         private Integer gameType=sgfGoGame;
@@ -1064,6 +1074,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     // 7/15/21 type, shape, and band are in parameters.
     // we need type and shape here to construct the board when we see an SZ,
     // or we can get the current values from the parameters. we are doing this now.
+    // 11/7/22 maybe getting topologu and shape from parametres is a bad idea.
     private int xOffset,yOffset; // maybe should be in state as it is only used
     // by the view?
     // it does belong to the view, but where else can it go
@@ -1072,13 +1083,13 @@ public class Model extends Observable { // model of a go game or problem forrest
     public final String name;
     private boolean isWaitingForMoveCompleteOnBoard;
     private transient boolean checkingForLegalMove;
-    public  boolean addNewRoot=false; // probably was a bas idea
-    public  boolean allowMultipleGames=true; // bad name fix later
+    public boolean addNewRoot=false; // probably was a bas idea
+    public boolean allowMultipleGames=true; // bad name fix later
     transient Role role=Role.anything;
     public static final String desiredExtension="sgf";
-    public static final String sgfApplicationName="Topological GO and other variants";
-    public static final String sgfBoardTopology=sgfApplicationName+" board topology is ";
-    public static final String sgfBoardShape=sgfApplicationName+" board shape is ";
+    public static final String sgfApplicationName="RTGO";
+    public static final String sgfBoardTopology=sgfApplicationName+" topology is ";
+    public static final String sgfBoardShape=sgfApplicationName+" shape is ";
     public static final String defaultSgfVersion="1";
     public static final String version="0.1"; // internal i guess
     public static final int sgfGoGame=1;
