@@ -9,7 +9,7 @@ import utilities.MyTestWatcher;
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // this test case may not need to be run for a bunch of strange boards?
     @Test public void testBoardABC() { assertNotNull(boardABC); }
-    @Test public void testTypeABC() { assertEquals(topology,boardABC.type); }
+    @Test public void testTypeABC() { assertEquals(topology,boardABC.typology); }
     @Test public void testWidthABC() { assertEquals(width,boardABC.width); }
     @Test public void testDepthABC() { assertEquals(depth,boardABC.depth); }
     @Test public void testNeighbors() {

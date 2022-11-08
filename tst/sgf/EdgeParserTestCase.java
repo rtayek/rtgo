@@ -9,19 +9,26 @@ import utilities.*;
 @RunWith(Parameterized.class) public class EdgeParserTestCase extends AbstractParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> data() {
-        String[] filenames=new String[] {"sgf/empty.sgf","sgf/reallyempty.sgf","sgf/saved.sgf"};
+        String[] filenames=new String[] { //
+                //"empty.sgf", //
+                // "reallyempty.sgf", //
+                //"saved.sgf", //
+                "mf0.sgf", //
+                "mf1.sgf", //
+                "smart0.sgf", //
+                "smart1.sgf", //
+                "rtgo0.sgf", //
+                "rtgo1.sgf", //
+        };
         String[] keys=new String[] {"justASemicolon","justSomeSemicolons","empty","twoEmpty","twoEmptyWithLinefeed",
-                "eallyEmpty","emptyWithSemicolon","twoEmptyWithSemicolon",};
+                "reallyEmpty","emptyWithSemicolon","twoEmptyWithSemicolon",};
         File[] files=new File[filenames.length];
         for(int i=0;i<filenames.length;i++) files[i]=new File("sgf",filenames[i]);
-        Collection<Object> objects=Arrays
-                .asList((Object[])(files));
-        //for(File file:files) objects.add(file);
-        Collection<Object[]> parameters= ParameterArray.parameterize(objects);
-        for(Object[] parameterized:parameters)
-            System.out.println(parameterized[0]+" "+parameterized[0].getClass()
-                    );
-        System.out.println(parameters);
+        List<Object> objects=Arrays.asList((Object[])(files));
+        System.out.println(objects.iterator().next().getClass().getName());
+        // objects.add("reallyEmpty"); // can not change the size!
+        Collection<Object[]> parameters=ParameterArray.parameterize(objects);
+        for(Object[] parameterized:parameters) System.out.println(parameterized[0]+" "+parameterized[0].getClass());
         return ParameterArray.parameterize(objects);
         // if(!badSgfFiles.contains(file)) objects.add(new Object[] {file});
         //private static void getSgfFiles(File dir,Set<Object[]> objects) {

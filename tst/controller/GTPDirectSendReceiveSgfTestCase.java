@@ -9,7 +9,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import model.Model;
 import sgf.*;
-import utilities.MyTestWatcher;
+import utilities.*;
 // this may belong in the sgf package.
 // this tests the custom gtp commands to send and receive sgf strings.
 @RunWith(Parameterized.class) public class GTPDirectSendReceiveSgfTestCase {
@@ -22,8 +22,7 @@ import utilities.MyTestWatcher;
     public GTPDirectSendReceiveSgfTestCase(String key) { this.key=key; }
     @After public void tearDown() throws Exception {}
     @Parameters public static Collection<Object[]> data() {
-        //return Parser.sgfTestData(); // breaks some tests because key is string.
-        return Parser.sgfData();
+        return ParameterArray.parameterize(Parser.sgfData());
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();

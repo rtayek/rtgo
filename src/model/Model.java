@@ -104,7 +104,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             }
         if(false&&isTorus) { // don't want this to be the default
             Logging.mainLogger.config(name+" "+"looks like a toroidal game!");
-            setBoardType(Topology.torus);
+            setBoardTypology(Topology.torus);
         }
         // not sure why i needed this.
         // maybe just a way to automagically use torus topology/
@@ -211,11 +211,11 @@ public class Model extends Observable { // model of a go game or problem forrest
         else Logging.mainLogger.fine("setting board");
     }
     public Board.Topology boardTopology() { return state.topology; }
-    public void setBoardType(Board.Topology type) { state.topology=type; }
-    public Board.Shape boardShape() { return shape; }
+    public void setBoardTypology(Board.Topology type) { state.topology=type; }
+    public Board.Shape boardShape() { return state.shape; }
     public void setBoardShape(Shape shape) {
         Logging.mainLogger.config("set shape to: "+shape);
-        this.shape=shape;
+        state.shape=shape;
         // maybe have to adjust with and depth if shape is unusual
         // i.e. diamond would need width=depth
     }
@@ -679,7 +679,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                             String typeString=comment.substring(sgfBoardTopology.length());
                             Board.Topology type=Board.Topology.valueOf(typeString);
                             Logging.mainLogger.fine(name+" "+"setting board type to "+type);
-                            setBoardType(type);
+                            setBoardTypology(type);
                         } else if(comment.startsWith(sgfBoardShape)) {
                             String shapeString=comment.substring(sgfBoardShape.length());
                             Shape shape=Shape.valueOf(shapeString);
@@ -689,7 +689,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     break;
                 case RG:
                     if(state.application.equals(sgfApplicationName))
-                        Logging.mainLogger.warning(state.board.topology()+", "+shape+", region: "+property.list());
+                        Logging.mainLogger.warning(state.board.topology()+", "+state.shape+", region: "+property.list());
                     // above we have diamond, hole1, region [jj]
                     // using state.board above does not seem quite right.
                     // yes, diamond needs another region or a bigger region.
@@ -726,7 +726,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     int d=depth;
                     // check shape and adjust w and d!
                     // 7/15/21 we may not know the shape. we may have regions.
-                    Board board=Board.factory.create(w,d,state.topology,shape);
+                    Board board=Board.factory.create(w,d,state.topology,state.shape);
                     // get state from controls?
                     Logging.mainLogger.fine(name+" "+"creating board");
                     setBoard(board);
@@ -1044,6 +1044,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // does it make any sense to change these in game?
         private boolean isFromLittleGolem;
         private Board.Topology topology=(Board.Topology)Parameters.topology.currentValue();
+        private Shape shape=(Shape)Parameters.shape.defaultValue; // move this
         // the above looks problematic also.
         private int band=(Integer)Parameters.band.currentValue();
         private Double komi=.5,handicap=0.;
@@ -1067,7 +1068,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         System.out.println(model);
     }
     public int verbosity;
-    private Shape shape=(Shape)Parameters.shape.defaultValue; // move this
     // move stuff like type, shape, and band to parameter
     // or at least put the current values in parameter
     // and set these final in state.

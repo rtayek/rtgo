@@ -241,11 +241,11 @@ class BoardFactory implements Board.Factory {
     static final BoardFactory instance=new BoardFactory();
 }
 abstract class BoardABC implements Board {
-    BoardABC(int width,int depth,Topology type,int id) {
+    BoardABC(int width,int depth,Topology typology,int id) {
         this.id=id;
         this.width=width;
         this.depth=depth;
-        this.type=type!=null?type:Topology.normal;
+        this.typology=typology!=null?typology:Topology.normal;
         center=new Point(width/2,depth/2);
         lL=new Point(0,0);
         lR=new Point(width()-1,0);
@@ -260,7 +260,7 @@ abstract class BoardABC implements Board {
         return board;
     }
     @Override public int id() { return id; }
-    @Override public Topology topology() { return type; }
+    @Override public Topology topology() { return typology; }
     @Override public int width() { return width; }
     @Override public int depth() { return depth; }
     @Override public Point uL() { return uL; }
@@ -310,7 +310,7 @@ abstract class BoardABC implements Board {
             for(int i=0;i<s.length()/2;i++) starPoints[i]=new Point(s.charAt(2*i)-'a'+1,s.charAt(2*i+1)-'a'+1);
         }
     }
-    final Topology type;
+    final Topology typology;
     // no shape!
     // probably need a shape here
     final int width,depth;

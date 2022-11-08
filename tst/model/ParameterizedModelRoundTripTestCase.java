@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import sgf.Parser;
-import utilities.MyTestWatcher;
+import utilities.*;
 @RunWith(Parameterized.class) public class ParameterizedModelRoundTripTestCase extends ModelRoundtripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @BeforeClass public static void setUpBeforeClass() throws Exception {}
@@ -19,10 +19,8 @@ import utilities.MyTestWatcher;
     @Override @After public void tearDown() throws Exception {}
     @Parameters public static Collection<Object[]> parameters() {
         //return Parser.sgfTestData();
-        return Parser.sgfData();
+        return ParameterArray.parameterize(Parser.sgfData());
     }
-    public ParameterizedModelRoundTripTestCase(Object key) {
-        this.key=key;
-    }
+    public ParameterizedModelRoundTripTestCase(Object key) { this.key=key; }
     final Object key;
 }

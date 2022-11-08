@@ -9,14 +9,14 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
-import utilities.MyTestWatcher;
+import utilities.*;
 @RunWith(Parameterized.class) public class CannonicalTestCase {
     public CannonicalTestCase(Object key) { this.key=key; }
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
         // 10/22/22 return Parser.sgfTestData(); // breaks this test case
         // may be related to tee test case problems.
-        return Parser.sgfData();
+        return ParameterArray.parameterize(Parser.sgfData());
     }
     @Before public void setUp() throws Exception {
         originalSgf=getSgfData(key);

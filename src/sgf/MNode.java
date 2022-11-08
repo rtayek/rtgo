@@ -151,8 +151,9 @@ public class MNode {
         String expectedSgf=stringBuffer.toString(); // so we can compare
         StringWriter stringWriter=new StringWriter();
         SgfNode games=new Parser().parse(expectedSgf);
+        if(games==null) return null; // return empty node!
+        // maybe return empty nod if sgf is ""?
         games.save(stringWriter,noIndent);
-        if(games==null) return null;
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();
         model.setRoot(mNodes0);
@@ -173,6 +174,7 @@ public class MNode {
     }
     public static MNode mNoderoundTrip2(String expectedSgf,Writer writer) {
         SgfNode games=new Parser().parse(expectedSgf);
+        if(games==null) return null;
         games.save(new StringWriter(),noIndent);
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();

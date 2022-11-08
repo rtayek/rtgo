@@ -6,13 +6,12 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import utilities.MyTestWatcher;
+import utilities.*;
 @RunWith(Parameterized.class) public class RTPrivatePropertyTestCase {
     public RTPrivatePropertyTestCase(Object key) { this.key=key; }
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
-        //return Parser.sgfTestData();
-        return Parser.sgfData();
+        return ParameterArray.parameterize(Parser.sgfData());
     }
     @Before public void setUp() throws Exception {
         originalSgf=getSgfData(key);

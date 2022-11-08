@@ -388,7 +388,13 @@ now at: https://github.com/rtayek/rtgo
 made sgf edge test case. we have way too many confusing and overlapping tests.
 we should only need one or two round trips.
 let's look in model and see when the board is set.
-hole test case has not region in sgf! 
+hole test case has no region in sgf!
+11/8/22 allow null for games as an experiment.
+return null. maybe return empty sgf node if sgf is ""? 
+put shape into mode.state. refactored sgf data. allow sgf and games to be null.
+should sgf: "" result in an empty node?
+
+
 
 
 	

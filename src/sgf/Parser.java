@@ -248,7 +248,8 @@ public class Parser /*extends Init.Main*/ {
     public static SgfNode sgfRoundTrip(Reader reader,Writer writer) {
         String expected=Utilities.fromReader(reader);
         SgfNode games=new Parser().parse(expected);
-        games.save(writer,noIndent);
+        if(games!=null) games.save(writer,noIndent);
+        // allow null for now (11/8/22).
         return games;
     }
     public static boolean sgfRoundTripTwice(Reader original) {
@@ -258,7 +259,8 @@ public class Parser /*extends Init.Main*/ {
         writer=new StringWriter();
         //roundTrip();
         SgfNode games=new Parser().parse(expected);
-        games.save(writer,noIndent);
+        if(games!=null) games.save(writer,noIndent);
+        // allow null for now (11/8/22).
         String actual=writer.toString();
         if(!actual.equals(expected)) {
             parserLogger.severe(actual+"!="+original);
@@ -307,26 +309,25 @@ public class Parser /*extends Init.Main*/ {
         System.out.println(list);
     }
     public static Set<String> sgfDataKeySet() { return sgfData.keySet(); }
-    public static Collection<Object[]> sgfData() {
-        List<Object[]> parameterArrays=new ArrayList<>();
-        for(String key:Parser.sgfData.keySet()) parameterArrays.add(new Object[] {key});
-        return parameterArrays;
-    }
-    static void getSgfFiles(Set<Object[]> objects,File[] files) {
+    public static Collection<Object> sgfData() { return new ArrayList<>(Parser.sgfData.keySet()); }
+    static void getSgfFiles(Set<Object> objects,File[] files) {
         for(File file:files) if(file.isFile()) {
             if(file.exists()) {
                 if(file.getName().endsWith(".sgf")) {
                     //System.out.println("ok "+file);
-                    if(!badSgfFiles.contains(file)) objects.add(new Object[] {file});
-                } else; //System.out.println(file+" is not an sgf file!");
+                    if(!badSgfFiles.contains(file)) objects.add(file);
+                } else System.out.println(file+" is not an sgf file!");
             } else System.out.println("bad "+file);
         } else if(file.isDirectory()) {
             getSgfFiles(objects,file.listFiles());
         } else System.out.println("strange: "+file);
     }
-    static void getSgfFiles(File dir,Set<Object[]> objects) {
-        File[] files=dir.listFiles();
+    public static Collection<Object> sgfTestData() {
+        Set<Object> objects=new LinkedHashSet<>();
+        objects.addAll(sgfData());
+        File[] files=new File("sgf/").listFiles();
         getSgfFiles(objects,files);
+        return objects;
     }
     public static String getSgfData(Object key) {
         String sgf=null;
@@ -334,12 +335,6 @@ public class Parser /*extends Init.Main*/ {
         else if(key instanceof File) sgf=utilities.Utilities.fromFile((File)key);
         else throw new RuntimeException(key+" is not a string or a file!");
         return sgf;
-    }
-    public static Collection<Object[]> sgfTestData() {
-        Set<Object[]> objects=new LinkedHashSet<>();
-        objects.addAll(sgfData());
-        getSgfFiles(new File("sgf/"),objects);
-        return objects;
     }
     static void doTGOSend(String key) {
         String expectedSgf=getSgfData(key);
@@ -383,14 +378,15 @@ public class Parser /*extends Init.Main*/ {
     public static final String twoEmpty=empty+empty;
     public static final String twoEmptyWithLinefeed=empty+'\n'+empty;
     public static final String reallyEmpty="";
-    public static Map<String,String> illegalSgf=new LinkedHashMap<>();
+    public static Set<String> illegalSgfKeys=new LinkedHashSet<>();
+    // maybe just a set?
     static { // not legal sgf
-        illegalSgf.put("justASemicolon",justASemicolon);
-        illegalSgf.put("justSomeSemicolons",justSomeSemicolons);
-        illegalSgf.put("empty",empty);
-        illegalSgf.put("twoEmpty",twoEmpty);
-        illegalSgf.put("twoEmptyWithLinefeed",twoEmptyWithLinefeed);
-        illegalSgf.put("reallyEmpty",reallyEmpty);
+        illegalSgfKeys.add("justASemicolon");
+        illegalSgfKeys.add("justSomeSemicolons");
+        illegalSgfKeys.add("empty");
+        illegalSgfKeys.add("twoEmpty");
+        illegalSgfKeys.add("twoEmptyWithLinefeed");
+        illegalSgfKeys.add("reallyEmpty");
     }
     public static final String sgfExamleFromRedBean="""
                     (;FF[4]C[root](;C[a];C[b](;C[c])

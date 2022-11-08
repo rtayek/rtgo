@@ -156,7 +156,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 send(okCharacter,message.id,protocolVersionString);
                 break;
             case tgo_torus:
-                model.setBoardType(Board.Topology.torus);
+                model.setBoardTypology(Board.Topology.torus);
                 send(okCharacter,message.id,"");
                 break;
                 // maybe these next 4 should be tgo_role with a role argument?

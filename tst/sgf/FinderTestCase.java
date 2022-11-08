@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import equipment.*;
 import model.Model;
-import utilities.MyTestWatcher;
+import utilities.*;
 class Verifier extends SgfAcceptorImpl {
     Verifier(SgfNode root) { this.root=root; }
     @Override public void accept(SgfNode target) {
@@ -22,7 +22,9 @@ class Verifier extends SgfAcceptorImpl {
 @RunWith(Parameterized.class) public class FinderTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public FinderTestCase(String key) { this.key=key; }
-    @Parameters public static Collection<Object[]> data() { return sgf.Parser.sgfData(); }
+    @Parameters public static Collection<Object[]> data() {
+        return ParameterArray.parameterize(Parser.sgfData());
+    }
     public static void verify(SgfNode games) {
         SgfNode target=games;
         SgfNodeFinder finder=SgfNodeFinder.finder(target,games);
