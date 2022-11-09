@@ -4,6 +4,7 @@ import static sgf.Parser.sgfRoundTrip;
 import org.junit.*;
 import utilities.MyTestWatcher;
 public abstract class SgfRoundTripTestCase {
+    // maybe integrate with abstract sg test case
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testSgfRoundTrip() throws Exception {
         expected=expected.replace("\n","");

@@ -398,6 +398,9 @@ mew game does a: model.setRootFromParameters(); - which is fine.
 ignoring sgf tests that use mode so we can separate out the exytr root node and associated problems.
 ignoring all of the tests in sgf that use Model.
 move those out to model test case.
+refactored abstract test case.
+move as much of the rest of the tests in sgf into the hierarchy.
+
  
 
 

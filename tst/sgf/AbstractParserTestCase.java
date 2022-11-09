@@ -1,9 +1,8 @@
 package sgf;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
-import java.io.*;
+import java.io.StringReader;
 import org.junit.*;
-import model.Model;
 import utilities.MyTestWatcher;
 public abstract class AbstractParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -33,55 +32,15 @@ public abstract class AbstractParserTestCase {
         }
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
-    @Test public void testLongRoundTrip() throws Exception {
-        StringWriter stringWriter=new StringWriter();
-        MNode games=MNode.mNodeRoundTrip(expectedSgf!=null?new StringReader(expectedSgf):null,stringWriter);
-        String actualSgf=expectedSgf!=null?stringWriter.toString():null;
-        assertEquals(key.toString(),expectedSgf,actualSgf);
-    }
-    @Test public void testLongRoundTrip2() throws Exception {
-        StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=MNode.mNoderoundTrip2(expectedSgf,stringWriter);
-        String actualSgf=stringWriter.toString();
-        if(expectedSgf==null) actualSgf=null; // hack for now
-        assertEquals(key.toString(),expectedSgf,actualSgf);
-    }
     @Test public void testRoundTripeTwice() throws Exception {
         StringReader reader=expectedSgf!=null?new StringReader(expectedSgf):null;
         boolean isOk=sgfRoundTripTwice(reader);
         assertTrue(isOk);
     }
-    @Ignore @Test public void testModelRT0() throws Exception {
-        Model model=new Model();
-        model.restore(new StringReader(expectedSgf));
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(ok);
-        String actualSgf=stringWriter.toString();
-        System.out.println(actualSgf);
-    }
     @Test public void testSaveAndRestore() throws Exception {
         // try to compare two trees for equality.
         // write a deep equals.
         //fail("nyi");
-    }
-    @Ignore @Test public void testModelRestoreAndSave() throws Exception {
-        String actual=sgfRoundTrip(expectedSgf);
-        assertEquals(key.toString(),expectedSgf,actual);
-        // failing probably due to add new root problem
-        Model model=new Model();
-        System.out.println("ex: "+expectedSgf);
-        model.restore(new StringReader(expectedSgf));
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(ok);
-        String actualSgf=stringWriter.toString();
-        actualSgf=options.removeUnwanted(actualSgf);
-        //Utilities.printDifferences(System.out,expectedSgf,actualSgf);
-        System.out.println("ex: "+expectedSgf);
-        System.out.println("ac0: "+actual);
-        System.out.println("ac: "+actualSgf);
-        //assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testHexAscii() {
         String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
@@ -93,16 +52,7 @@ public abstract class AbstractParserTestCase {
         String actual2=sgfRoundTrip(actualSgf);
         assertEquals(key.toString(),actualSgf,actual2);
     }
-    @Ignore @Test public void testCheckBoardInRoot() {
-        boolean ok=checkBoardInRoot(key);
-        // always fails because none of these have a board in root.
-        // that seems to be the usual case.
-        // that is always the usual case,
-        // since i always add a dummy multi-way node!
-        // a better check would be if there was a board in the first real node.
-        //assertTrue(ok);
-    }
-    Object key;
-    String expectedSgf;
-    SgfNode games;
+    public Object key;
+    public String expectedSgf;
+    public SgfNode games;
 }

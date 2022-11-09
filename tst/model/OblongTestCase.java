@@ -1,11 +1,11 @@
-package sgf;
+package model;
 import static sgf.Parser.getSgfData;
 import java.io.*;
 import java.util.logging.Level;
 import org.junit.*;
 import equipment.Board;
 import io.Logging;
-import model.Model;
+import sgf.*;
 public class OblongTestCase {
     @Before public void setUp() throws Exception {
         File file=new File("sgf/lecoblong.sgf");

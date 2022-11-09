@@ -13,6 +13,7 @@ public abstract class MNodeRoundTripTestCase extends SgfRoundTripTestCase {
     @Test public void testMNodeRoundTripTwoEmptyWithSemicolon() throws Exception {
         expected=expected.replace("\n","");
         MNode root=MNode.restore(new StringReader(expected));
+        // break out/get rid of the model.
         Model model=new Model();
         model.setRoot(root);
         StringWriter stringWriter=new StringWriter();

@@ -288,7 +288,8 @@ public class Parser /*extends Init.Main*/ {
         boolean ok=sgfRoundTripTwice(reader);
         if(!ok) throw new Exception("test fails");
     }
-    static boolean checkBoardInRoot(Object key) {
+    public static boolean checkBoardInRoot(Object key) {
+        // move this?
         String expectedSgf=getSgfData(key);
         Model original=new Model();
         original.restore(new StringReader(expectedSgf));
