@@ -9,7 +9,6 @@ import controller.GTPBackEnd;
 import io.*;
 import model.*; // we should not need this
 import sgf.combine.Combine;
-import utilities.Utilities;
 // https://github.com/toomasr/sgf4j/blob/master/src/main/java/com/toomasr/sgf4j/Parser.java
 public class Parser /*extends Init.Main*/ {
     // extending Init.Main
@@ -232,6 +231,9 @@ public class Parser /*extends Init.Main*/ {
         public final Indent indent=new Indent("");
     }
     public static String sgfRoundTrip(String expectedSgf) {
+        //restore and save
+        if(expectedSgf==null) // hack for now
+            return null;
         StringWriter stringWriter=new StringWriter();
         SgfNode games=null;
         String actualSgf="";
@@ -246,8 +248,8 @@ public class Parser /*extends Init.Main*/ {
         return actualSgf;
     }
     public static SgfNode sgfRoundTrip(Reader reader,Writer writer) {
-        String expected=Utilities.fromReader(reader);
-        SgfNode games=new Parser().parse(expected);
+        if(reader==null) return null;
+        SgfNode games=new Parser().parse(reader);
         if(games!=null) games.save(writer,noIndent);
         // allow null for now (11/8/22).
         return games;
@@ -358,6 +360,7 @@ public class Parser /*extends Init.Main*/ {
         //System.out.println("main "+god.et);
         //combineAndCheckKogosJosekiDictionary();
         doTGOSend("manyFacesTwoMovesAtA1AndR16");
+        System.out.println(sgfData);
     }
     Indent indent=new Indent("  ");
     PushbackReader reader;

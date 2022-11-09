@@ -5,7 +5,7 @@ import org.junit.*;
 import equipment.*;
 import equipment.Board.*;
 import utilities.MyTestWatcher;
-public class HoleTestCase {
+public class TopologyAndShapeTTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @BeforeClass public static void setUpBeforeClass() throws Exception {}
     @AfterClass public static void tearDownAfterClass() throws Exception {}
@@ -38,12 +38,17 @@ public class HoleTestCase {
         stringWriter=new StringWriter();
         m.save(stringWriter);
         final String actual=stringWriter.toString();
-        assertEquals(actual,expected);
         System.out.println("ex: "+expected);
+        System.out.println("ac: "+actual);
+        assertEquals(expected,actual);
     }
     @Test public void testsetRoot() {
         Model model=new Model();
-        model.setRoot(n,n,Topology.normal,Shape.normal);
+        Topology expectedTopology=Topology.normal;
+        Shape expectedShape=Shape.normal;
+        model.setRoot(n,n,expectedTopology,expectedShape);
+        assertEquals(expectedTopology,model.boardTopology());
+        assertEquals(expectedShape,model.boardShape());
         Board b=model.board();
         //System.out.println("initial\n"+model.board());
         assertEquals(Stone.vacant,b.at(b.center()));
@@ -53,7 +58,39 @@ public class HoleTestCase {
     }
     @Test public void testsetRootWithHole1() {
         Model model=new Model();
-        model.setRoot(n,n,Topology.normal,Shape.hole1);
+        Topology expectedTopology=Topology.normal;
+        Shape expectedShape=Shape.hole1;
+        model.setRoot(n,n,expectedTopology,expectedShape);
+        assertEquals(expectedTopology,model.boardTopology());
+        assertEquals(expectedShape,model.boardShape());
+        Board b=model.board();
+        if(b==null) System.out.println("b: "+b);
+        assertEquals(Stone.edge,b.at(b.center()));
+        model.move(Move.blackMoveAtA1);
+        saveAndRestore(model,Stone.edge);
+    }
+    @Test public void testsetRootWithTorus() {
+        Model model=new Model();
+        Topology expectedTopology=Topology.torus;
+        Shape expectedShape=Shape.normal;
+        model.setRoot(n,n,expectedTopology,expectedShape);
+        assertEquals(expectedTopology,model.boardTopology());
+        assertEquals(expectedShape,model.boardShape());
+        Board b=model.board();
+        if(b==null) System.out.println("b: "+b);
+        System.out.println(b);
+        System.out.println(b.center()); // bad for torus!
+        assertEquals(Stone.vacant,b.at(b.center()));
+        model.move(Move.blackMoveAtA1);
+        saveAndRestore(model,Stone.edge);
+    }
+    @Test public void testsetRootWithHoleAndTorus() {
+        Model model=new Model();
+        Topology expectedTopology=Topology.torus;
+        Shape expectedShape=Shape.hole1;
+        model.setRoot(n,n,expectedTopology,expectedShape);
+        assertEquals(expectedTopology,model.boardTopology());
+        assertEquals(expectedShape,model.boardShape());
         Board b=model.board();
         if(b==null) System.out.println("b: "+b);
         assertEquals(Stone.edge,b.at(b.center()));

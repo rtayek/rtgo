@@ -13,6 +13,8 @@ import utilities.*;
                 //"empty.sgf", //
                 // "reallyempty.sgf", //
                 //"saved.sgf", //
+                "mf0false.sgf", //
+                "mf1false.sgf", //
                 "mf0.sgf", //
                 "mf1.sgf", //
                 "smart0.sgf", //
@@ -24,9 +26,10 @@ import utilities.*;
                 "reallyEmpty","emptyWithSemicolon","twoEmptyWithSemicolon",};
         File[] files=new File[filenames.length];
         for(int i=0;i<filenames.length;i++) files[i]=new File("sgf",filenames[i]);
-        List<Object> objects=Arrays.asList((Object[])(files));
+        List<Object> objects=new ArrayList<>(Arrays.asList((Object[])(files)));
+        //List<Object> objects=Arrays.asList((Object[])(files));
         System.out.println(objects.iterator().next().getClass().getName());
-        // objects.add("reallyEmpty"); // can not change the size!
+        objects.add("reallyEmpty");
         Collection<Object[]> parameters=ParameterArray.parameterize(objects);
         for(Object[] parameterized:parameters) System.out.println(parameterized[0]+" "+parameterized[0].getClass());
         return ParameterArray.parameterize(objects);

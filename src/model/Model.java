@@ -52,12 +52,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         legal,occupied,notYourTurn,duplicateHash,badRole,threw,unknown;
         boolean wasLegal() { return this.equals(legal); }
     }
-    static class Result { // maybe have isLegal or make move return these
-        // this is unused at present.
-        boolean ok;
-        Where where; // may be null or why not ok;
-        Reason reason; // may be null or why not ok;
-    }
     public enum Reason { ok, notYourTurn, notYourColor; }
     public Model() { this(""); }
     public Model(String name) {
@@ -78,9 +72,10 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public void restore(Reader reader) {
         MNode games=MNode.restore(reader);
-        if(addNewRoot) games=games.children.get(0);
+        if(false&&addNewRoot) games=games.children.get(0);
         // need to check if game was stored with the flag on.
         // maybe we can put in a comment and look for it.
+        // something like that.
         setRoot(games); // does this really trash everything correctly?
     }
     public Model(Model model,String name) { // copy constructor
@@ -104,7 +99,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             }
         if(false&&isTorus) { // don't want this to be the default
             Logging.mainLogger.config(name+" "+"looks like a toroidal game!");
-            setBoardTypology(Topology.torus);
+            setBoardTopology(Topology.torus);
         }
         // not sure why i needed this.
         // maybe just a way to automagically use torus topology/
@@ -210,9 +205,11 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(board==null) Logging.mainLogger.severe("board is null!");
         else Logging.mainLogger.fine("setting board");
     }
-    public Board.Topology boardTopology() { return state.topology; }
-    public void setBoardTypology(Board.Topology type) { state.topology=type; }
-    public Board.Shape boardShape() { return state.shape; }
+    public Topology boardTopology() {
+        return state.topology;
+    }
+    public void setBoardTopology(Topology type) { state.topology=type; }
+    public Shape boardShape() { return state.shape; }
     public void setBoardShape(Shape shape) {
         Logging.mainLogger.config("set shape to: "+shape);
         state.shape=shape;
@@ -679,7 +676,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                             String typeString=comment.substring(sgfBoardTopology.length());
                             Board.Topology type=Board.Topology.valueOf(typeString);
                             Logging.mainLogger.fine(name+" "+"setting board type to "+type);
-                            setBoardTypology(type);
+                            setBoardTopology(type);
                         } else if(comment.startsWith(sgfBoardShape)) {
                             String shapeString=comment.substring(sgfBoardShape.length());
                             Shape shape=Shape.valueOf(shapeString);
@@ -1043,8 +1040,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         // should the stuff below be pushed up?
         // does it make any sense to change these in game?
         private boolean isFromLittleGolem;
-        private Board.Topology topology=(Board.Topology)Parameters.topology.currentValue();
-        private Shape shape=(Shape)Parameters.shape.defaultValue; // move this
+        private Topology topology=Topology.normal;
+        private Shape shape=Shape.normal;
         // the above looks problematic also.
         private int band=(Integer)Parameters.band.currentValue();
         private Double komi=.5,handicap=0.;
@@ -1083,7 +1080,8 @@ public class Model extends Observable { // model of a go game or problem forrest
     public final String name;
     private boolean isWaitingForMoveCompleteOnBoard;
     private transient boolean checkingForLegalMove;
-    public boolean addNewRoot=false; // probably was a bas idea
+    public boolean addNewRoot=true; // probably was a bas idea
+    // sometimes, but maybe not always
     public boolean allowMultipleGames=true; // bad name fix later
     transient Role role=Role.anything;
     public static final String desiredExtension="sgf";

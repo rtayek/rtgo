@@ -32,7 +32,7 @@ import utilities.*;
         SgfProperty property=root.properties.get(0);
         assertEquals(P.RT,property.p());
     }
-    @Test public void testSaveMultupleGames() {
+    @Ignore @Test public void testSaveMultupleGames() {
         Model model=new Model();
         model.restore(new StringReader(originalSgf));
         boolean hasMultipleGames=model.root().children.size()>1;
@@ -68,7 +68,7 @@ import utilities.*;
         String actualSgf=sgfRoundTrip(expectedSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
-    @Test public void testCannonicalRoundTripTwice() {
+    @Ignore @Test public void testCannonicalRoundTripTwice() {
         try {
             Model model=new Model();
             //System.out.println("or:\n"+originalSgf);
