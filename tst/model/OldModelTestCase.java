@@ -174,7 +174,29 @@ public class OldModelTestCase {
                 new MoveImpl(Stone.white,new Point(1,1)),new MoveImpl(Stone.black,new Point(2,2))); //"[move (0,0), move (1,1), move (2,2)]";
         assertEquals(expected,moves);
     }
-    @Test public void testCopyConstructor() {
+    @Test public void testCopyConstructorWithEmpty() {
+        // this is failing.
+        // ex: (;FF[4]GM[1]AP[RTGO]C[root]SZ[19])
+        // ac: (;RT[Tgo root];FF[4]GM[1]AP[RTGO]C[root]SZ[19])
+        // similar to variations below.
+        Model model=new Model();
+        model.restore(new StringReader(Parser.empty));
+        StringWriter stringWriter=new StringWriter();
+        boolean ok=model.save(stringWriter);
+        assertTrue("first save fails",ok);
+        String expected=stringWriter.toString();
+        Model copy=new Model(model,model.name);
+        stringWriter=new StringWriter();
+        ok=copy.save(stringWriter);
+        assertTrue("second save fails",ok);
+        String actual=stringWriter.toString();
+        System.out.println("ex: "+expected);
+        System.out.println("ac: "+actual);
+        assertEquals(expected,actual);
+    }
+    @Test public void testCopyConstructorWithVariationOfAVariation() {
+        // this is failing.
+        // actual has 2 copyies of ;RT[Tgo root] in the first node?
         Model model=new Model();
         model.restore(new StringReader(Parser.variationOfAVariation));
         StringWriter stringWriter=new StringWriter();
@@ -186,6 +208,8 @@ public class OldModelTestCase {
         ok=copy.save(stringWriter);
         assertTrue("second save fails",ok);
         String actual=stringWriter.toString();
+        System.out.println("ex: "+expected);
+        System.out.println("ac: "+actual);
         assertEquals(expected,actual);
     }
     @Test public void testSquares() {

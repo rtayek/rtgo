@@ -22,7 +22,7 @@ public class SimpleParserTestCase {
     }
     void print(SgfNode node) {
         StringWriter stringWriter=new StringWriter();
-        node.save(stringWriter,noIndent);
+        node.saveSgf(stringWriter,noIndent);
         System.out.println("saved sgf node "+stringWriter.toString());
         System.out.println("----------------");
     }
@@ -47,10 +47,10 @@ public class SimpleParserTestCase {
     }
     @Ignore @Test public void testSample() {
         SgfNode root=sample();
-        root.save(new OutputStreamWriter(System.out),noIndent);
+        root.saveSgf(new OutputStreamWriter(System.out),noIndent);
         System.out.println("node at end");
         StringWriter stringWriter=new StringWriter();
-        root.save(stringWriter,noIndent);
+        root.saveSgf(stringWriter,noIndent);
         String expected=stringWriter.toString();
         //expected=expected.replaceAll("\n","");
         System.out.println("expected: "+expected);
@@ -61,10 +61,10 @@ public class SimpleParserTestCase {
     }
     @Test public void testEmpty() {
         SgfNode root=sample();
-        root.save(new OutputStreamWriter(System.out),noIndent);
+        root.saveSgf(new OutputStreamWriter(System.out),noIndent);
         System.out.println("node at end");
         StringWriter stringWriter=new StringWriter();
-        root.save(stringWriter,noIndent);
+        root.saveSgf(stringWriter,noIndent);
         String expected=stringWriter.toString();
         //expected=expected.replaceAll("\n","");
         System.out.println("expected: "+expected);

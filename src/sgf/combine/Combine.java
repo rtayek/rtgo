@@ -58,11 +58,11 @@ public class Combine { // the purpose of this class is to combine two sgf files
         System.err.println("annotated: "+name);
         PrintStream out=new PrintStream(System.err,true);
         Writer writer=new PrintWriter(out);
-        annotated.save(writer,standardIndent);
+        annotated.saveSgf(writer,standardIndent);
         System.err.println();
         SgfNode current=restoreSgf(IO.toReader(new File(pathToOldGames,name)));
         System.err.println("current: "+name);
-        current.save(writer,standardIndent);
+        current.saveSgf(writer,standardIndent);
         System.err.println();
         System.err.println("end of current: "+name);
         if(annotated==null&&current==null) return null;
@@ -90,7 +90,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
                 System.err.println("game ************");
                 if(games!=null) {
                     OutputStreamWriter outputStreamWriter=new OutputStreamWriter(System.err);
-                    games.save(outputStreamWriter,standardIndent);
+                    games.saveSgf(outputStreamWriter,standardIndent);
                 }
                 System.err.println();
             }

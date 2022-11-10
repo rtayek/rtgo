@@ -11,7 +11,7 @@ public class CombineTest {
             if(combined!=null) {
                 System.err.println("combined");
                 Writer writer=new StringWriter();
-                combined.save(writer,standardIndent);
+                combined.saveSgf(writer,standardIndent);
                 System.err.println(writer.toString());
                 System.err.println();
             }

@@ -963,7 +963,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         SgfNode games=restoreSgf(expectedSgf);
         if(games==null) return null; // return empty node!
         // maybe return empty nod if sgf is ""?
-        games.save(stringWriter,noIndent);
+        games.saveSgf(stringWriter,noIndent);
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();
         model.setRoot(mNodes0);
@@ -973,7 +973,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             SgfNode sgfRoot=mNodes.toBinaryTree();
             SgfNode actual=sgfRoot.left;
             StringWriter hack=new StringWriter();
-            actual.save(hack,noIndent);
+            actual.saveSgf(hack,noIndent);
             try {
                 writer.write(hack.toString());
             } catch(IOException e) {
@@ -987,7 +987,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // only used in one test method.
         SgfNode games=restoreSgf(expectedSgf);
         if(games==null) return null;
-        games.save(new StringWriter(),noIndent);
+        games.saveSgf(new StringWriter(),noIndent);
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();
         model.setRoot(mNodes0);
@@ -997,7 +997,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             SgfNode sgfRoot=mNodes.toBinaryTree();
             SgfNode actual=sgfRoot.left;
             StringWriter stringWriter=new StringWriter();
-            actual.save(stringWriter,noIndent);
+            actual.saveSgf(stringWriter,noIndent);
             actualSgf=stringWriter.toString();
         }
         if(actualSgf!=null) try {

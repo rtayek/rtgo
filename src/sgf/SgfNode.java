@@ -21,8 +21,8 @@ public class SgfNode {
         // lets collect the stuff that formats sgf in one place.
         public String prepareSgf(String expectedSgf) {
             if(expectedSgf!=null) {
+                expectedSgf=SgfNode.options.removeUnwanted(expectedSgf);
                 if(roundTripFirst) {
-                    expectedSgf=SgfNode.options.removeUnwanted(expectedSgf);
                     //printDifferences(expectedSgf,expectedSgf);
                     expectedSgf=sgfRoundTrip(expectedSgf);
                     //printDifferences(expectedSgf,expectedSgf);
@@ -43,7 +43,7 @@ public class SgfNode {
         }
         //public final String eoln=System.getProperty("line.separator");
         public final boolean removeTrailingLineFeed=true;
-        public final boolean roundTripFirst=true;
+        public final boolean roundTripFirst=false; // was true
         public final boolean removeCarriageControl=true;
         public final boolean removeLineFeed=false;
         public final boolean useLineFeed=true;
@@ -138,32 +138,27 @@ public class SgfNode {
         for(Iterator<SgfProperty> i=properties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
         return stringBuffer.toString();
     }
-    private void save_(Writer writer,Indent indent) throws IOException {
-        // seems to be correct now.
-        // this looks like it is the real save
-        boolean useLineFeed=true; // was true. just testing for hex ascii styff.
-        // and round trip ...
-        // this gets me back to just the 3 failing keys in parser test case.
+    private void saveSgf_(Writer writer,Indent indent) throws IOException {
         indent.in();
         writer.write(this.toString());
         if(left!=null) {
             if(left.right!=null) writer.write(indent.indent()+'(');
-            left.save_(writer,indent);
+            left.saveSgf_(writer,indent);
             if(left.right!=null) writer.write(indent.indent()+')');
         } else writer.write(')');
-        if(right!=null) { writer.write(options.eoln); writer.write(indent.indent()+'('); right.save_(writer,indent); }
+        if(right!=null) { writer.write(options.eoln); writer.write(indent.indent()+'('); right.saveSgf_(writer,indent); }
         indent.out();
         writer.flush();
     }
-    public String save(Indent indent) {
+    public String saveSgf(Indent indent) {
         StringWriter stringWriter=new StringWriter();
-        save(stringWriter,indent);
+        saveSgf(stringWriter,indent);
         return stringWriter.toString();
     }
-    public void save(Writer writer,Indent indent) {
+    public void saveSgf(Writer writer,Indent indent) {
         try {
             writer.write(indent.indent()+'(');
-            save_(writer,indent);
+            saveSgf_(writer,indent);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -251,7 +246,7 @@ public class SgfNode {
         String actualSgf=null;
         try {
             if((games=restoreSgf(expectedSgf))!=null) {
-                games.save(stringWriter,noIndent);
+                games.saveSgf(stringWriter,noIndent);
                 actualSgf=stringWriter.toString();
             }
         } catch(Exception e) {
@@ -265,7 +260,7 @@ public class SgfNode {
     public static SgfNode sgfRoundTrip(Reader reader,Writer writer) {
         if(reader==null) return null;
         SgfNode games=restoreSgf(reader);
-        if(games!=null) games.save(writer,noIndent);
+        if(games!=null) games.saveSgf(writer,noIndent);
         // allow null for now (11/8/22).
         return games;
     }
@@ -276,7 +271,7 @@ public class SgfNode {
         writer=new StringWriter();
         //roundTrip();
         SgfNode games=restoreSgf(expected);
-        if(games!=null) games.save(writer,noIndent);
+        if(games!=null) games.saveSgf(writer,noIndent);
         // allow null for now (11/8/22).
         String actual=writer.toString();
         if(!actual.equals(expected)) {
@@ -295,7 +290,7 @@ public class SgfNode {
             System.out.println(expected);
             SgfNode games=restoreSgf(expected);
             StringWriter stringWriter=new StringWriter();
-            games.save(stringWriter,standardIndent);
+            games.saveSgf(stringWriter,standardIndent);
             String actual4=stringWriter.toString();
             System.out.println(actual4);
             System.out.println("------------");

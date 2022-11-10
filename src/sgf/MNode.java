@@ -98,7 +98,7 @@ public class MNode {
             games=root.toBinaryTree(); // ths is where root gets tossed.
             // that's why none of the sgf in the root is not coming out.
             //System.out.println("discarding: "+root);
-            if(games.left!=null) games.left.save(writer,indent);
+            if(games.left!=null) games.left.saveSgf(writer,indent);
             Logging.mainLogger.info("games.right: "+games.right);
             // this should use save()
             //SgfNode.toSgfStringxxx(games,writer,indent);

@@ -268,7 +268,7 @@ public class Parser /*extends Init.Main*/ {
                     (;C[d];C[e]))
                     (;C[f](;C[g];C[h];C[i])
                     (;C[j])))
-                    """; // removed traing linefeed
+                    """; // removed traling linefeed
     public static final String startOfGame="(;GM[1]FF[4]VW[]CA[UTF-8])";
     public static final String oneMoveAtA1NoHeader="(;B[as])";
     public static final String oneMoveAtA1="(;FF[4];B[as])";
