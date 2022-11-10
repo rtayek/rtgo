@@ -1,6 +1,6 @@
 package sgf;
 import static org.junit.Assert.assertEquals;
-import static sgf.Parser.getSgfData;
+import static sgf.Parser.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
 public class SgfMoveCoordinateSystemTestCase {
@@ -9,7 +9,7 @@ public class SgfMoveCoordinateSystemTestCase {
     @After public void tearDown() throws Exception {}
     @Test public void testTwoMoves() {
         String sgfString=getSgfData("manyFacesTwoMovesAtA1AndR16OnA9by9Board");
-        SgfNode games=new Parser().parse(sgfString);
+        SgfNode games=restoreSgf(sgfString);
         SgfAcceptor acceptor=new SgfNoOpAcceptor();
         Traverser traverser=new Traverser(acceptor);
         traverser.visit(games);
@@ -28,7 +28,7 @@ public class SgfMoveCoordinateSystemTestCase {
     }
     @Test public void testTwoMovesPath() {
         String sgfString=getSgfData("manyFacesTwoMovesAtA1AndR16OnA9by9Board");
-        SgfNode games=new Parser().parse(sgfString);
+        SgfNode games=restoreSgf(sgfString);
         SgfMovesPath acceptor=new SgfMovesPath();
         Traverser traverser=new Traverser(acceptor);
         traverser.visit(games);

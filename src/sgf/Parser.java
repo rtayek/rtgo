@@ -1,17 +1,15 @@
 package sgf;
-import static io.IO.noIndent;
 import static io.Logging.parserLogger;
+import static sgf.SgfNode.sgfRoundTripTwice;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import controller.Command;
-import controller.GTPBackEnd;
 import io.*;
-import model.*; // we should not need this
 import sgf.combine.Combine;
 // https://github.com/toomasr/sgf4j/blob/master/src/main/java/com/toomasr/sgf4j/Parser.java
 public class Parser /*extends Init.Main*/ {
     // extending Init.Main
+    private Parser() {}
     private char read() throws IOException {
         int c=reader.read();
         if(c==-1) {
@@ -163,8 +161,11 @@ public class Parser /*extends Init.Main*/ {
         }
         return sequence;
     }
-    public SgfNode parse(String string) { return string!=null?parse(new StringReader(string)):null; }
-    public SgfNode parse(Reader reader) {
+    public static SgfNode restoreSgf(String string) { return new Parser().parse(string); }
+    public static SgfNode restoreSgf(Reader reader) { return new Parser().parse(reader); }
+    private SgfNode parse(String string) { return string!=null?parse(new StringReader(string)):null; }
+    private SgfNode parse(Reader reader) {
+        if(reader==null) return null;
         try {
             this.reader=new PushbackReader(reader);
             endOfFile=false;
@@ -197,122 +198,12 @@ public class Parser /*extends Init.Main*/ {
         parserLogger.severe("parser return null!");
         return null;
     }
-    public static class Options {
-        // lets collect the stuff that formats sgf in one place.
-        public String prepareSgf(String expectedSgf) {
-            if(expectedSgf!=null) {
-                if(roundTripFirst) {
-                    expectedSgf=Parser.options.removeUnwanted(expectedSgf);
-                    //printDifferences(expectedSgf,expectedSgf);
-                    expectedSgf=sgfRoundTrip(expectedSgf);
-                    //printDifferences(expectedSgf,expectedSgf);
-                    //if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
-                } else {
-                    //expectedSgf=expectedSgf.replaceAll("\r","");
-                    if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
-                    // 88 if above is commented out. 104 if not.
-                }
-            }
-            return expectedSgf;
-        }
-        public String removeUnwanted(String string) {
-            if(removeCarriageControl) string=string.replaceAll("\r","");
-            if(removeLineFeed) string=string.replaceAll("\n","");
-            if(removeTrailingLineFeed) if(string.endsWith("\n")) string=string.substring(0,string.length()-1);
-            return string;
-        }
-        //public final String eoln=System.getProperty("line.separator");
-        public final boolean removeTrailingLineFeed=true;
-        public final boolean roundTripFirst=true;
-        public final boolean removeCarriageControl=true;
-        public final boolean removeLineFeed=false;
-        public final boolean useLineFeed=true;
-        public final String eoln="\n";
-        public final Indent indent=new Indent("");
-    }
-    public static String sgfRoundTrip(String expectedSgf) {
-        //restore and save
-        if(expectedSgf==null) // hack for now
-            return null;
-        StringWriter stringWriter=new StringWriter();
-        SgfNode games=null;
-        String actualSgf="";
-        try {
-            if((games=new Parser().parse(expectedSgf))!=null) {
-                games.save(stringWriter,noIndent);
-                actualSgf=stringWriter.toString();
-            }
-        } catch(Exception e) {
-            System.out.println("rt caught: "+e);
-        }
-        return actualSgf;
-    }
-    public static SgfNode sgfRoundTrip(Reader reader,Writer writer) {
-        if(reader==null) return null;
-        SgfNode games=new Parser().parse(reader);
-        if(games!=null) games.save(writer,noIndent);
-        // allow null for now (11/8/22).
-        return games;
-    }
-    public static boolean sgfRoundTripTwice(Reader original) {
-        Writer writer=new StringWriter();
-        sgfRoundTrip(original,writer);
-        String expected=writer.toString(); // cannonical form?
-        writer=new StringWriter();
-        //roundTrip();
-        SgfNode games=new Parser().parse(expected);
-        if(games!=null) games.save(writer,noIndent);
-        // allow null for now (11/8/22).
-        String actual=writer.toString();
-        if(!actual.equals(expected)) {
-            parserLogger.severe(actual+"!="+original);
-            //System.out.println("ex: "+expected);
-            //System.out.println("ac: "+actual);
-            return false;
-        } else return true;
-    }
-    public static boolean areEqual(String string1,String string2) {
-        if(string1.length()!=string2.length()) System.out.println("strings have different length!");
-        int n=Math.min(string1.length(),string2.length());
-        for(int i=0;i<n;++i) if(string1.charAt(i)!=string2.charAt(i)) {
-            System.err.println("strings differ at character "+i);
-            int start=Math.max(0,i-20),end=Math.min(i+20,n-1);
-            System.err.print(string1.substring(start,end));
-            System.err.print(string2.substring(start,end));
-            return false;
-        }
-        return true;
-    }
     private static void combineAndCheckKogosJosekiDictionary() throws IOException,Exception { // this has been sorta replaced by code in the test case.
         Reader reader=IO.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
         boolean ok=sgfRoundTripTwice(reader);
         if(!ok) throw new Exception("test fails");
     }
-    public static boolean checkBoardInRoot(Object key) {
-        // move this?
-        String expectedSgf=getSgfData(key);
-        Model original=new Model();
-        original.restore(new StringReader(expectedSgf));
-        boolean hasABoard=original.board()!=null;
-        int n=Math.min(expectedSgf.length(),20);
-        Model model=new Model();
-        model.restore(new StringReader(expectedSgf));
-        if(model.board()==null); // System.out.println("model has no board!");
-        else System.out.println("model has a board!");
-        Navigate.down.do_(model);
-        //hasABoard|=
-        //System.out.println(model.board().width()+" "+model.board().depth());
-        Collection<SgfNode> sgfNodes=SgfNode.mainLineFromCurrentPosition(model);
-        return hasABoard;
-    }
-    static void printBytes(String actual) {
-        byte[] bytes=actual.getBytes();
-        List<Byte> list=new ArrayList<>();
-        for(Byte bite:bytes) list.add(bite);
-        System.out.println(list);
-    }
-    public static Set<String> sgfDataKeySet() { return sgfData.keySet(); }
-    public static Collection<Object> sgfData() { return new ArrayList<>(Parser.sgfData.keySet()); }
+    public static Collection<Object> sgfDataKeySet() { return new ArrayList<>(Parser.sgfData.keySet()); }
     static void getSgfFiles(Set<Object> objects,File[] files) {
         for(File file:files) if(file.isFile()) {
             if(file.exists()) {
@@ -327,7 +218,7 @@ public class Parser /*extends Init.Main*/ {
     }
     public static Collection<Object> sgfTestData() {
         Set<Object> objects=new LinkedHashSet<>();
-        objects.addAll(sgfData());
+        objects.addAll(sgfDataKeySet());
         File[] files=new File("sgf/").listFiles();
         getSgfFiles(objects,files);
         return objects;
@@ -339,28 +230,9 @@ public class Parser /*extends Init.Main*/ {
         else throw new RuntimeException(key+" is not a string or a file!");
         return sgf;
     }
-    static void doTGOSend(String key) {
-        String expectedSgf=getSgfData(key);
-        Model original=new Model();
-        original.restore(new StringReader(expectedSgf));
-        original.bottom();
-        String command=Command.tgo_send_sgf.name();
-        String response=null;
-        GTPBackEnd backend=new GTPBackEnd(command,original);
-        backend.runBackend(true);
-        response=backend.out.toString();
-        System.out.println("1 "+response);
-        // why am i doing this twice?
-        backend=new GTPBackEnd(command,original);
-        String response2=backend.runCommands(true);
-        System.out.println("2 "+response);
-        if(!response.equals(response2)) System.out.println("fail!");
-    }
     public static void main(String[] argument) throws Exception {
-        System.out.println(isInitialized);
         //System.out.println("main "+god.et);
         //combineAndCheckKogosJosekiDictionary();
-        doTGOSend("manyFacesTwoMovesAtA1AndR16");
         System.out.println(sgfData);
     }
     Indent indent=new Indent("  ");
@@ -369,7 +241,6 @@ public class Parser /*extends Init.Main*/ {
     char lastDelimiter;
     boolean endOfFile;
     int line;
-    public static Options options=new Options();
     public static final char startGameCharacter='(',endGameCharacter=')',startNodeCharacter=';',
             startCValueCharacter='[',endCValueCharacter=']';
     public static final String startGameString=startGameCharacter+"";

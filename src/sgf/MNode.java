@@ -1,17 +1,13 @@
 package sgf;
-import static io.IO.*;
+import static io.IO.standardIndent;
 import static io.Logging.parserLogger;
-import static sgf.Parser.getSgfData;
+import static sgf.Parser.*;
 import java.io.*;
 //http://en.wikipedia.org/wiki/Binary_tree#Encoding_general_trees_as_binary_trees
 //http://blogs.msdn.com/b/ericlippert/archive/2010/04/19/every-binary-tree-there-is.aspx
 import java.util.*;
-import equipment.*;
 import io.*;
 import model.MNodeAcceptor.MNodeFinder;
-import model.Model;
-import model.Move.MoveImpl;
-import utilities.Utilities;
 //  s      b       m       o
 // txt -> sgf -> mnode -> model
 // txt <- sgf <- mnode <- model
@@ -86,7 +82,7 @@ public class MNode {
         } else return null;
     }
     public static MNode restore(Reader reader) {
-        SgfNode games=new Parser().parse(reader);
+        SgfNode games=restoreSgf(reader);
         if(games!=null&&games.right()!=null) System.out.println("root has variations!");
         MNode node=toGeneralTree(games);
         return node;
@@ -129,72 +125,12 @@ public class MNode {
         for(Iterator<SgfProperty> i=properties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
         return stringBuffer.toString();
     }
-    private static void lookAtRoot() {
-        String s="";
-        Model model=new Model();
-        model.move(new MoveImpl(Stone.black,new Point()));
-        System.out.println("root: "+model.root());
-        System.out.println("current node: "+model.currentNode());
-        System.out.println("children: "+model.currentNode().children);
-        model.save(new OutputStreamWriter(System.out));
-        System.out.println();
-        //if(true) return;
-        System.out.println("|||");
-        model.save(new OutputStreamWriter(System.out));
-        System.out.println("after save.");
-        System.out.flush();
-        System.out.println(model);
+    public static Collection<SgfNode> findPathToNode(MNode target,SgfNode root) {
+        SgfNodeFinder finder=SgfNodeFinder.finder(target.toBinaryTree(),root);
+        Collection<SgfNode> path=finder.pathToTarget;
+        return path;
     }
-    public static MNode mNodeRoundTrip(Reader reader,Writer writer) {
-        StringBuffer stringBuffer=new StringBuffer();
-        Utilities.fromReader(stringBuffer,reader);
-        String expectedSgf=stringBuffer.toString(); // so we can compare
-        StringWriter stringWriter=new StringWriter();
-        SgfNode games=new Parser().parse(expectedSgf);
-        if(games==null) return null; // return empty node!
-        // maybe return empty nod if sgf is ""?
-        games.save(stringWriter,noIndent);
-        MNode mNodes0=MNode.toGeneralTree(games);
-        Model model=new Model();
-        model.setRoot(mNodes0);
-        MNode mNodes=model.root();
-        if(mNodes!=null) {
-            if(mNodes.children.size()>1); //System.out.println("more than one child: "+mNodes.children);
-            SgfNode sgfRoot=mNodes.toBinaryTree();
-            SgfNode actual=sgfRoot.left;
-            StringWriter hack=new StringWriter();
-            actual.save(hack,noIndent);
-            try {
-                writer.write(hack.toString());
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return mNodes;
-    }
-    public static MNode mNoderoundTrip2(String expectedSgf,Writer writer) {
-        SgfNode games=new Parser().parse(expectedSgf);
-        if(games==null) return null;
-        games.save(new StringWriter(),noIndent);
-        MNode mNodes0=MNode.toGeneralTree(games);
-        Model model=new Model();
-        model.setRoot(mNodes0);
-        MNode mNodes=model.root();
-        String actualSgf=null;
-        if(games!=null) {
-            SgfNode sgfRoot=mNodes.toBinaryTree();
-            SgfNode actual=sgfRoot.left;
-            StringWriter stringWriter=new StringWriter();
-            actual.save(stringWriter,noIndent);
-            actualSgf=stringWriter.toString();
-        }
-        if(actualSgf!=null) try {
-            writer.write(actualSgf);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return mNodes;
-    }
+
     public static void main(String[] args) {
         System.out.println(Init.first);
         //lookAtRoot();

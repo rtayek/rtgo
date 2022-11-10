@@ -17,12 +17,12 @@ import utilities.*;
     @Before public void setUp() throws Exception {
         expectedSgf=getSgfData(key);
         //expectedSgf=Parser.options.removeUnwanted(expectedSgf);
-        expectedSgf=Parser.options.prepareSgf(expectedSgf);
+        expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
     }
     public GTPDirectSendReceiveSgfTestCase(String key) { this.key=key; }
     @After public void tearDown() throws Exception {}
     @Parameters public static Collection<Object[]> data() {
-        return ParameterArray.parameterize(Parser.sgfData());
+        return ParameterArray.parameterize(Parser.sgfDataKeySet());
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();

@@ -9,7 +9,7 @@ import utilities.*;
 @RunWith(Parameterized.class) public class ModelTestCase extends AbstractModelTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
-        return ParameterArray.parameterize(Parser.sgfData());
+        return ParameterArray.parameterize(Parser.sgfDataKeySet());
     }
     public ModelTestCase(String key) { this.key=key; }
 }

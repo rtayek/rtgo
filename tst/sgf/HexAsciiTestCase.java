@@ -8,7 +8,7 @@ import utilities.*;
 /*@RunWith(Parameterized.class)*/ public class HexAsciiTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> data() {
-        return ParameterArray.parameterize(Parser.sgfData());
+        return ParameterArray.parameterize(Parser.sgfDataKeySet());
     }
     public HexAsciiTestCase() {}
     //public HexAsciiTestCase(String key) { this.key=key; }

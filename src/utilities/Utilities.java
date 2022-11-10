@@ -330,4 +330,17 @@ public class Utilities {
             ps.println(">>>>>>>>>>>>>>>");
         }
     }
+    public static boolean areEqual(String string1,String string2) {
+        if(string1.length()!=string2.length()) System.out.println("strings have different length!");
+        int n=Math.min(string1.length(),string2.length());
+        for(int i=0;i<n;++i) if(string1.charAt(i)!=string2.charAt(i)) {
+            System.err.println("strings differ at character "+i);
+            int start=Math.max(0,i-20),end=Math.min(i+20,n-1);
+            System.err.print(string1.substring(start,end));
+            System.err.print(string2.substring(start,end));
+            return false;
+        }
+        return true;
+    }
+    
 }

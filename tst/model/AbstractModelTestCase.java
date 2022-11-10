@@ -1,9 +1,10 @@
 package model;
 import static org.junit.Assert.*;
-import static sgf.Parser.*;
+import static sgf.SgfNode.sgfRoundTrip;
 import java.io.*;
+import java.util.Collection;
 import org.junit.*;
-import sgf.AbstractMNodeTestCase;
+import sgf.*;
 import utilities.MyTestWatcher;
 public class AbstractModelTestCase extends AbstractMNodeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -27,12 +28,35 @@ public class AbstractModelTestCase extends AbstractMNodeTestCase {
         boolean ok=model.save(stringWriter);
         assertTrue(ok);
         String actualSgf=stringWriter.toString();
-        actualSgf=options.removeUnwanted(actualSgf);
+        actualSgf=SgfNode.options.removeUnwanted(actualSgf);
         //Utilities.printDifferences(System.out,expectedSgf,actualSgf);
         System.out.println("ex: "+expectedSgf);
         System.out.println("ac0: "+actual);
         System.out.println("ac: "+actualSgf);
         //assertEquals(key.toString(),expectedSgf,actualSgf);
+    }
+    @Test public void testLongRoundTrip() throws Exception {
+        StringWriter stringWriter=new StringWriter();
+        MNode games=Model.mNodeRoundTrip(expectedSgf!=null?new StringReader(expectedSgf):null,stringWriter);
+        String actualSgf=expectedSgf!=null?stringWriter.toString():null;
+        assertEquals(key.toString(),expectedSgf,actualSgf);
+    }
+    public static boolean checkBoardInRoot(Object key) {
+        // move this?
+        String expectedSgf=Parser.getSgfData(key);
+        Model original=new Model();
+        original.restore(new StringReader(expectedSgf));
+        boolean hasABoard=original.board()!=null;
+        int n=Math.min(expectedSgf.length(),20);
+        Model model=new Model();
+        model.restore(new StringReader(expectedSgf));
+        if(model.board()==null); // System.out.println("model has no board!");
+        else System.out.println("model has a board!");
+        Navigate.down.do_(model);
+        //hasABoard|=
+        //System.out.println(model.board().width()+" "+model.board().depth());
+        Collection<SgfNode> sgfNodes=Model.mainLineFromCurrentPosition(model);
+        return hasABoard;
     }
     @Test public void testCheckBoardInRoot() {
         boolean ok=checkBoardInRoot(key);
@@ -43,5 +67,4 @@ public class AbstractModelTestCase extends AbstractMNodeTestCase {
         // a better check would be if there was a board in the first real node.
         //assertTrue(ok);
     }
-    
 }

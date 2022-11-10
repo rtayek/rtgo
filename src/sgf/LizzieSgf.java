@@ -1,7 +1,7 @@
 package sgf;
+import static sgf.Parser.restoreSgf;
 import java.io.File;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import io.IO;
 /*
        case VK_E:
@@ -432,9 +432,9 @@ public class LizzieSgf {
         String[] words=lizzie.split(" ");
         List<String> list=Arrays.asList(words);
         System.out.println("as a list:"+list);
-        
+
     }
-*/
+ */
 // B[qd]LZ[0.7.2 42.4 14
 class MyAcceptor extends SgfAcceptorImpl {
     @Override public void accept(SgfNode node) {
@@ -454,7 +454,7 @@ class LizzieSgf {
         MyAcceptor myAcceptor=new MyAcceptor();
         Traverser traverser=new Traverser(myAcceptor);
         File file=new File("lizzie1.sgf");
-        SgfNode games=new Parser().parse(IO.toReader(file));
+        SgfNode games=restoreSgf(IO.toReader(file));
         traverser.visit(games);
         //System.out.println("lizzies nodes: "+myAcceptor.idToNode);
         for(Integer key:myAcceptor.idToNode.keySet()) {

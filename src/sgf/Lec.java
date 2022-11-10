@@ -1,4 +1,5 @@
 package sgf;
+import static sgf.Parser.restoreSgf;
 import java.io.*;
 import java.util.*;
 import io.IO;
@@ -14,7 +15,7 @@ public class Lec {
     }
     static void moveSequences(StringBuffer stringBuffer,List<Pair<String,String>> pairs,File dir,String filename) {
         Pair<String,String> previous;
-        SgfNode games=new Parser().parse(IO.toReader(new File(dir,filename)));
+        SgfNode games=restoreSgf(IO.toReader(new File(dir,filename)));
         stringBuffer.setLength(0);
         Traverser traverser=new Traverser(new SgfAcceptorImpl() {
             @Override public void accept(SgfNode node) {
@@ -73,9 +74,9 @@ public class Lec {
         for(String key:similar.keySet()) System.out.print(similar.get(key).size()+" ");
         System.out.println();
     }
-    static void moveSets(int max,StringBuffer stringBuffer,Parser parser,File dir,final Set<String> moves,
+    static void moveSets(int max,StringBuffer stringBuffer,File dir,final Set<String> moves,
             Set<Pair<String,Set<String>>> pairs2,String filename) {
-        SgfNode games=parser.parse(IO.toReader(new File(dir,filename)));
+        SgfNode games=restoreSgf(IO.toReader(new File(dir,filename)));
         stringBuffer.setLength(0);
         moves.clear();
         Traverser traverser=new Traverser(new SgfAcceptorImpl() {
@@ -95,7 +96,6 @@ public class Lec {
     public static void main(String args[]) {
         StringBuffer stringBuffer=new StringBuffer();
         List<Pair<String,String>> pairs=new ArrayList<>();
-        Parser parser=new Parser();
         File dir=new File("D:/ray/sgf/lec/black");
         // some of the files have eric playing black
         Pair<String,String> previous=null;
@@ -112,7 +112,7 @@ public class Lec {
             }
         })) {
             // moveSequences(stringBuffer,pairs,parser,dir,filename);
-            moveSets(requiredMoves,stringBuffer,parser,dir,moves,pairs2,filename);
+            moveSets(requiredMoves,stringBuffer,dir,moves,pairs2,filename);
         }
         // processMoveSequences(pairs,similar);
         System.out.println(pairs2);

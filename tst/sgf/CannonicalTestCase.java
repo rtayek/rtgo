@@ -1,6 +1,7 @@
 package sgf;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
+import static sgf.SgfNode.sgfRoundTrip;
 import java.io.StringReader;
 import java.util.*;
 import org.junit.*;
@@ -10,13 +11,14 @@ import org.junit.runners.Parameterized.Parameters;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
 import utilities.*;
+
 @RunWith(Parameterized.class) public class CannonicalTestCase {
     public CannonicalTestCase(Object key) { this.key=key; }
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
         // 10/22/22 return Parser.sgfTestData(); // breaks this test case
         // may be related to tee test case problems.
-        return ParameterArray.parameterize(Parser.sgfData());
+        return ParameterArray.parameterize(Parser.sgfDataKeySet());
     }
     @Before public void setUp() throws Exception {
         originalSgf=getSgfData(key);
@@ -25,7 +27,7 @@ import utilities.*;
     @After public void tearDown() throws Exception {}
     @Ignore @Test public void testThatGeneralTreeAlwaysHasRTProperty() {
         // this will depend on whether the add new rot switch is on.
-        SgfNode games=new Parser().parse(new StringReader(originalSgf));
+        SgfNode games=restoreSgf(new StringReader(originalSgf));
         MNode root=MNode.toGeneralTree(games);
         // this mnay not be present
         // check the add new root flag in mnode.

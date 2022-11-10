@@ -1,6 +1,8 @@
 package sgf;
 import static io.Logging.parserLogger;
 import static org.junit.Assert.fail;
+import static sgf.Parser.restoreSgf;
+import static sgf.SgfNode.sgfRoundTripTwice;
 import static utilities.Utilities.addFiles;
 import java.io.*;
 import java.util.*;
@@ -20,9 +22,8 @@ import utilities.MyTestWatcher;
         if(files.size()==0) fail("no files!");
         fail=false;
         for(File file:files) try {
-            boolean ok=Parser.sgfRoundTripTwice(IO.toReader(file));
-            if(!ok)
-                System.out.println(file+" fails!");
+            boolean ok=sgfRoundTripTwice(IO.toReader(file));
+            if(!ok) System.out.println(file+" fails!");
         } catch(Exception e) {
             parserLogger.warning(this+" caught: "+e);
         }
@@ -38,8 +39,7 @@ import utilities.MyTestWatcher;
         // change some of the logger stuff back to print on err.
         List<SgfNode> all=new ArrayList<>();
         for(File file:files) try {
-            Parser parser=new Parser();
-            SgfNode games=parser.parse(IO.toReader(file));
+            SgfNode games=restoreSgf(IO.toReader(file));
             all.add(games);
         } catch(Exception e) {
             System.out.println(this+" caught: "+e); //

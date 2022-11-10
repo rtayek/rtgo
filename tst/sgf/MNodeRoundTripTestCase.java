@@ -10,7 +10,8 @@ public abstract class MNodeRoundTripTestCase extends SgfRoundTripTestCase {
     @AfterClass public static void tearDownAfterClass() throws Exception {}
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
-    @Test public void testMNodeRoundTripTwoEmptyWithSemicolon() throws Exception {
+    @Ignore @Test public void testMNodeRoundTripTwoEmptyWithSemicolon() throws Exception {
+        // these belong by themselves
         expected=expected.replace("\n","");
         MNode root=MNode.restore(new StringReader(expected));
         // break out/get rid of the model.

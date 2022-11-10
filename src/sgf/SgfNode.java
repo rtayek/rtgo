@@ -1,11 +1,11 @@
 package sgf;
-import static io.IO.standardIndent;
+
+import static io.IO.*;
 import static io.Logging.parserLogger;
-import static sgf.Parser.getSgfData;
+import static sgf.Parser.*;
 import java.io.*;
 import java.util.*;
 import io.*;
-import model.*;
 import model.Move;
 import utilities.Holder;
 public class SgfNode {
@@ -17,6 +17,40 @@ public class SgfNode {
     // later: maybe not. see tree package.
     // 10/16/22 maybe mnode just have-am sgf node and ad mnode methods?
     // or maybe subclass and mnode methods?
+    public static class SgfOptions {
+        // lets collect the stuff that formats sgf in one place.
+        public String prepareSgf(String expectedSgf) {
+            if(expectedSgf!=null) {
+                if(roundTripFirst) {
+                    expectedSgf=SgfNode.options.removeUnwanted(expectedSgf);
+                    //printDifferences(expectedSgf,expectedSgf);
+                    expectedSgf=sgfRoundTrip(expectedSgf);
+                    //printDifferences(expectedSgf,expectedSgf);
+                    //if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
+                } else {
+                    //expectedSgf=expectedSgf.replaceAll("\r","");
+                    if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
+                    // 88 if above is commented out. 104 if not.
+                }
+            }
+            return expectedSgf;
+        }
+        public String removeUnwanted(String string) {
+            if(removeCarriageControl) string=string.replaceAll("\r","");
+            if(removeLineFeed) string=string.replaceAll("\n","");
+            if(removeTrailingLineFeed) if(string.endsWith("\n")) string=string.substring(0,string.length()-1);
+            return string;
+        }
+        //public final String eoln=System.getProperty("line.separator");
+        public final boolean removeTrailingLineFeed=true;
+        public final boolean roundTripFirst=true;
+        public final boolean removeCarriageControl=true;
+        public final boolean removeLineFeed=false;
+        public final boolean useLineFeed=true;
+        public final String eoln="\n";
+        public final Indent indent=new Indent("");
+    }
+    public static SgfOptions options=new SgfOptions();
     public SgfNode() {}
     // make a constructor that takes an sgf tree or a reader?
     public SgfNode(List<SgfProperty> properties,SgfNode right,SgfNode left) {
@@ -37,10 +71,7 @@ public class SgfNode {
         if(node.hasAMoveType&&node.hasASetupType) {
             parserLogger.severe("node has move and setup type properties!");
             System.out.println("node has move and setup type properties!");
-            if(!ignoreMoveAndSetupFlags) {
-                IO.stackTrace(10);
-                System.exit(1);
-            }
+            if(!ignoreMoveAndSetupFlags) { IO.stackTrace(10); System.exit(1); }
         }
     }
     void add(SgfProperty property) {
@@ -109,7 +140,7 @@ public class SgfNode {
     }
     private void save_(Writer writer,Indent indent) throws IOException {
         // seems to be correct now.
-        // this looks like is the real save
+        // this looks like it is the real save
         boolean useLineFeed=true; // was true. just testing for hex ascii styff.
         // and round trip ...
         // this gets me back to just the 3 failing keys in parser test case.
@@ -120,11 +151,7 @@ public class SgfNode {
             left.save_(writer,indent);
             if(left.right!=null) writer.write(indent.indent()+')');
         } else writer.write(')');
-        if(right!=null) {
-            writer.write(Parser.options.eoln);
-            writer.write(indent.indent()+'(');
-            right.save_(writer,indent);
-        }
+        if(right!=null) { writer.write(options.eoln); writer.write(indent.indent()+'('); right.save_(writer,indent); }
         indent.out();
         writer.flush();
     }
@@ -164,21 +191,6 @@ public class SgfNode {
             n.lastMove(holder);
             break; // this is strange?
         }
-    }
-    void someOldCode(MNode node) {
-        //    for(Node n=node;n!=null;n=n.left) {
-        //        System.err.println("looking at: "+n);
-        //        for(Iterator i=n.properties.iterator();i.hasNext();) {
-        //            Property property=(Property)i.next();
-        //            P p=property.p;
-        //            if(p instanceof Move&&p.equals(move)) {
-        //                System.err.println("looking at: "+property+" "+n);
-        //                found=n;
-        //                System.err.println("found="+n);
-        //                break;
-        //            }
-        //        }
-        //}
     }
     boolean findMove_(SgfNode holder,SgfProperty move) {
         Logging.mainLogger.info("examing: "+this);
@@ -231,43 +243,57 @@ public class SgfNode {
         } else if(!properties.equals(other.properties)) return false;
         return true;
     }
-    public static Collection<SgfNode> findPathToNode(Model model,SgfNode root) {
-        MNode target=model.currentNode();
-        SgfNodeFinder finder=SgfNodeFinder.finder(target.toBinaryTree(),root);
-        Collection<SgfNode> path=finder.pathToTarget;
-        return path;
-    }
-    public static Collection<SgfNode> mainLineFromCurrentPosition(Model model) {
-        // maybe make this for an mnode?
-        if(model.root()==null) {
-            Logging.mainLogger.warning("nodel.root() returns null!");
-            return Collections.emptySet();
-        }
-        MNode r=model.root();
-        SgfNode root=r.toBinaryTree();
-        Collection<SgfNode> path=new ArrayList<>();
-        if(root==null) { Logging.mainLogger.warning("nodel.root() returns null!"); return Collections.emptySet(); }
+    public static String sgfRoundTrip(String expectedSgf) {  //restore and save
+        if(expectedSgf==null) // hack for now
+            return null;
+        StringWriter stringWriter=new StringWriter();
+        SgfNode games=null;
+        String actualSgf=null;
         try {
-            while(Navigate.down.canDo(model)) { Navigate.down.do_(model); }
-            path=findPathToNode(model,root);
-        } catch(ArrayIndexOutOfBoundsException e) {
-            System.out.println("main line from ... caught: "+e);
-            parserLogger.severe("caught: "+e);
+            if((games=restoreSgf(expectedSgf))!=null) {
+                games.save(stringWriter,noIndent);
+                actualSgf=stringWriter.toString();
+            }
         } catch(Exception e) {
-            System.out.println("main line from ... caught: "+e);
-            parserLogger.severe("caught: "+e);
+            System.out.println("rt caught: "+e);
         }
-        // we should be able to get path from state stack in model!
-        return path;
+        //returns "" if expected==null
+        // other code returns null.
+        // maybe we should be consistent?
+        return actualSgf;
+    }
+    public static SgfNode sgfRoundTrip(Reader reader,Writer writer) {
+        if(reader==null) return null;
+        SgfNode games=restoreSgf(reader);
+        if(games!=null) games.save(writer,noIndent);
+        // allow null for now (11/8/22).
+        return games;
+    }
+    public static boolean sgfRoundTripTwice(Reader original) {
+        Writer writer=new StringWriter();
+        sgfRoundTrip(original,writer);
+        String expected=writer.toString(); // cannonical form?
+        writer=new StringWriter();
+        //roundTrip();
+        SgfNode games=restoreSgf(expected);
+        if(games!=null) games.save(writer,noIndent);
+        // allow null for now (11/8/22).
+        String actual=writer.toString();
+        if(!actual.equals(expected)) {
+            parserLogger.severe(actual+"!="+original);
+            //System.out.println("ex: "+expected);
+            //System.out.println("ac: "+actual);
+            return false;
+        } else return true;
     }
     public static void main(String[] args) throws IOException {
         Set<String> keys=new LinkedHashSet(
                 List.of("comments1","twoEmptyWithSemicolon","smartgo4","twosmallgamesflat","smartgo42"));
-        for(String key:Parser.sgfDataKeySet()) {
+        for(Object key:Parser.sgfDataKeySet()) {
             System.out.println(key);
             String expected=getSgfData(key);
             System.out.println(expected);
-            SgfNode games=new Parser().parse(expected);
+            SgfNode games=restoreSgf(expected);
             StringWriter stringWriter=new StringWriter();
             games.save(stringWriter,standardIndent);
             String actual4=stringWriter.toString();

@@ -1,6 +1,7 @@
 package sgf;
 import static io.IO.noIndent;
 import static org.junit.Assert.assertEquals;
+import static sgf.SgfNode.sgfRoundTrip;
 import java.io.*;
 import java.util.*;
 import org.junit.*;
@@ -53,7 +54,7 @@ public class SimpleParserTestCase {
         String expected=stringWriter.toString();
         //expected=expected.replaceAll("\n","");
         System.out.println("expected: "+expected);
-        String actual=Parser.sgfRoundTrip(expected);
+        String actual=sgfRoundTrip(expected);
         //actual=actual.replaceAll("\n","");
         System.out.println("actual: "+actual);
         assertEquals(expected,actual);
@@ -67,7 +68,7 @@ public class SimpleParserTestCase {
         String expected=stringWriter.toString();
         //expected=expected.replaceAll("\n","");
         System.out.println("expected: "+expected);
-        String actual=Parser.sgfRoundTrip(expected);
+        String actual=sgfRoundTrip(expected);
         //actual=actual.replaceAll("\n","");
         System.out.println("actual: "+actual);
         assertEquals(expected,actual);

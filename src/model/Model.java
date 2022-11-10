@@ -1,8 +1,13 @@
 package model;
+import static io.IO.noIndent;
+import static io.Logging.parserLogger;
+import static sgf.Parser.restoreSgf;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.*;
 import audio.Audio;
+import controller.Command;
+import controller.GTPBackEnd;
 import equipment.*;
 import equipment.Board.*;
 import io.*;
@@ -62,7 +67,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public boolean save(Writer writer) {
         MNode root=root();
         if(addNewRoot) { root=new MNode(null); root.children.add(root()); }
-        boolean ok=MNode.save(writer,root,new Indent(Parser.options.indent));
+        boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
         return ok;
     }
     public String save() {
@@ -183,10 +188,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         addProperty(newRoot,P.GM,"1");
         addProperty(newRoot,P.AP,sgfApplicationName);
         addProperty(newRoot,P.C,"root");
-        if(!topology.equals(Topology.normal))
-            addProperty(newRoot,P.C,sgfBoardTopology+topology);
-        if(!shape.equals(Shape.normal))
-            addProperty(newRoot,P.C,sgfBoardShape+shape);
+        if(!topology.equals(Topology.normal)) addProperty(newRoot,P.C,sgfBoardTopology+topology);
+        if(!shape.equals(Shape.normal)) addProperty(newRoot,P.C,sgfBoardShape+shape);
         String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
         if(width==depth) string=Integer.valueOf(width).toString();
         boolean alwaysSetBoardSize=true; // was true
@@ -205,9 +208,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(board==null) Logging.mainLogger.severe("board is null!");
         else Logging.mainLogger.fine("setting board");
     }
-    public Topology boardTopology() {
-        return state.topology;
-    }
+    public Topology boardTopology() { return state.topology; }
     public void setBoardTopology(Topology type) { state.topology=type; }
     public Shape boardShape() { return state.shape; }
     public void setBoardShape(Shape shape) {
@@ -685,8 +686,8 @@ public class Model extends Observable { // model of a go game or problem forrest
                     }
                     break;
                 case RG:
-                    if(state.application.equals(sgfApplicationName))
-                        Logging.mainLogger.warning(state.board.topology()+", "+state.shape+", region: "+property.list());
+                    if(state.application.equals(sgfApplicationName)) Logging.mainLogger
+                    .warning(state.board.topology()+", "+state.shape+", region: "+property.list());
                     // above we have diamond, hole1, region [jj]
                     // using state.board above does not seem quite right.
                     // yes, diamond needs another region or a bigger region.
@@ -898,6 +899,114 @@ public class Model extends Observable { // model of a go game or problem forrest
         Logging.mainLogger.config(model.name+" "+model.toString());
         Model.generateRandomMoves(model,n);
     }
+    public static Collection<SgfNode> mainLineFromCurrentPosition(Model model) {
+        // maybe make this for an mnode?
+        if(model.root()==null) {
+            Logging.mainLogger.warning("nodel.root() returns null!");
+            return Collections.emptySet();
+        }
+        MNode r=model.root();
+        SgfNode root=r.toBinaryTree();
+        Collection<SgfNode> path=new ArrayList<>();
+        if(root==null) { Logging.mainLogger.warning("nodel.root() returns null!"); return Collections.emptySet(); }
+        try {
+            while(Navigate.down.canDo(model)) { Navigate.down.do_(model); }
+            path=MNode.findPathToNode(model.currentNode(),root);
+        } catch(ArrayIndexOutOfBoundsException e) {
+            System.out.println("main line from ... caught: "+e);
+            parserLogger.severe("caught: "+e);
+        } catch(Exception e) {
+            System.out.println("main line from ... caught: "+e);
+            parserLogger.severe("caught: "+e);
+        }
+        // we should be able to get path from state stack in model!
+        return path;
+    }
+    public static void doTGOSend(String key) {
+        String expectedSgf=Parser.getSgfData(key);
+        Model original=new Model();
+        original.restore(new StringReader(expectedSgf));
+        original.bottom();
+        String command=Command.tgo_send_sgf.name();
+        String response=null;
+        GTPBackEnd backend=new GTPBackEnd(command,original);
+        backend.runBackend(true);
+        response=backend.out.toString();
+        System.out.println("1 "+response);
+        // why am i doing this twice?
+        backend=new GTPBackEnd(command,original);
+        String response2=backend.runCommands(true);
+        System.out.println("2 "+response);
+        if(!response.equals(response2)) System.out.println("fail!");
+    }
+    private static void lookAtRoot() {
+        String s="";
+        Model model=new Model();
+        model.move(new MoveImpl(Stone.black,new Point()));
+        System.out.println("root: "+model.root());
+        System.out.println("current node: "+model.currentNode());
+        System.out.println("children: "+model.currentNode().children);
+        model.save(new OutputStreamWriter(System.out));
+        System.out.println();
+        //if(true) return;
+        System.out.println("|||");
+        model.save(new OutputStreamWriter(System.out));
+        System.out.println("after save.");
+        System.out.flush();
+        System.out.println(model);
+    }
+    public static MNode mNodeRoundTrip(Reader reader,Writer writer) {
+        StringBuffer stringBuffer=new StringBuffer();
+        Utilities.fromReader(stringBuffer,reader);
+        String expectedSgf=stringBuffer.toString(); // so we can compare
+        StringWriter stringWriter=new StringWriter();
+        SgfNode games=restoreSgf(expectedSgf);
+        if(games==null) return null; // return empty node!
+        // maybe return empty nod if sgf is ""?
+        games.save(stringWriter,noIndent);
+        MNode mNodes0=MNode.toGeneralTree(games);
+        Model model=new Model();
+        model.setRoot(mNodes0);
+        MNode mNodes=model.root();
+        if(mNodes!=null) {
+            if(mNodes.children.size()>1); //System.out.println("more than one child: "+mNodes.children);
+            SgfNode sgfRoot=mNodes.toBinaryTree();
+            SgfNode actual=sgfRoot.left;
+            StringWriter hack=new StringWriter();
+            actual.save(hack,noIndent);
+            try {
+                writer.write(hack.toString());
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mNodes;
+    }
+    public static MNode mNoderoundTrip2(String expectedSgf,Writer writer) {
+        // move to model package?
+        // only used in one test method.
+        SgfNode games=restoreSgf(expectedSgf);
+        if(games==null) return null;
+        games.save(new StringWriter(),noIndent);
+        MNode mNodes0=MNode.toGeneralTree(games);
+        Model model=new Model();
+        model.setRoot(mNodes0);
+        MNode mNodes=model.root();
+        String actualSgf=null;
+        if(games!=null) {
+            SgfNode sgfRoot=mNodes.toBinaryTree();
+            SgfNode actual=sgfRoot.left;
+            StringWriter stringWriter=new StringWriter();
+            actual.save(stringWriter,noIndent);
+            actualSgf=stringWriter.toString();
+        }
+        if(actualSgf!=null) try {
+            writer.write(actualSgf);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return mNodes;
+    }
     static class State implements Cloneable { // needs an equals or isEqual method.
         private State() {}
         @Override public State clone() throws CloneNotSupportedException { return (State)super.clone(); }
@@ -1063,6 +1172,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         Model.generateRandomMoves(model,n);
         //randomeMovesUsingParameters(model);
         System.out.println(model);
+        Model.doTGOSend("manyFacesTwoMovesAtA1AndR16");
     }
     public int verbosity;
     // move stuff like type, shape, and band to parameter

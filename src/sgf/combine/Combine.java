@@ -1,6 +1,6 @@
 package sgf.combine;
 import static io.IO.standardIndent;
-import static sgf.Parser.getSgfData;
+import static sgf.Parser.*;
 import java.io.*;
 import java.util.ArrayList;
 import io.IO;
@@ -50,17 +50,17 @@ public class Combine { // the purpose of this class is to combine two sgf files
     }
     static SgfNode combine(final String name) {
         System.err.println("process: "+name);
-        Parser parser=new Parser();
+        //Parser parser=new Parser();
         File file=new File(new File(pathToOldGames,"annotated"),name);
         Reader reader=IO.toReader(file);
         if(reader==null) throw new RuntimeException(file+" has null reader!");
-        SgfNode annotated=parser.parse(reader);
+        SgfNode annotated=restoreSgf(reader);
         System.err.println("annotated: "+name);
         PrintStream out=new PrintStream(System.err,true);
         Writer writer=new PrintWriter(out);
         annotated.save(writer,standardIndent);
         System.err.println();
-        SgfNode current=parser.parse(IO.toReader(new File(pathToOldGames,name)));
+        SgfNode current=restoreSgf(IO.toReader(new File(pathToOldGames,name)));
         System.err.println("current: "+name);
         current.save(writer,standardIndent);
         System.err.println();
@@ -82,11 +82,11 @@ public class Combine { // the purpose of this class is to combine two sgf files
     static final String pathToSgf="sgf";
     public static void main(String args[]) {
         try {
-            for(String key:Parser.sgfDataKeySet()) {
+            for(Object key:Parser.sgfDataKeySet()) {
                 // not clear what this is doing other than parsing and printing.
                 // whatever it is may not belong here.
                 System.err.println("key: "+key);
-                SgfNode games=new Parser().parse(getSgfData(key));
+                SgfNode games=restoreSgf(getSgfData(key));
                 System.err.println("game ************");
                 if(games!=null) {
                     OutputStreamWriter outputStreamWriter=new OutputStreamWriter(System.err);

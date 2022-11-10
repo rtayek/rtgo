@@ -1,6 +1,7 @@
 package sgf;
 import static io.Logging.parserLogger;
 import static org.junit.Assert.assertTrue;
+import static sgf.SgfNode.sgfRoundTripTwice;
 import java.io.File;
 import org.junit.*;
 import io.IO;
@@ -15,7 +16,7 @@ import sgf.combine.Combine;
         boolean fail=false;
         for(String filename:filenames) try {
             File file=new File(Combine.pathToHere,filename);
-            boolean ok=Parser.sgfRoundTripTwice(IO.toReader(file));
+            boolean ok=sgfRoundTripTwice(IO.toReader(file));
             System.out.println(file+" fails!");
             fail|=!ok;
         } catch(Exception e) {

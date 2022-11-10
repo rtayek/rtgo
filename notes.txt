@@ -400,6 +400,9 @@ ignoring all of the tests in sgf that use Model.
 move those out to model test case.
 refactored abstract test case.
 move as much of the rest of the tests in sgf into the hierarchy.
+looks like we already have a hierarchy with model round trip test case.
+11/9/22 refactoring parse so the only public access is save and restore.
+
 
  
 

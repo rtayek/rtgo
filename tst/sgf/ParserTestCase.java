@@ -8,7 +8,7 @@ import utilities.*;
 @RunWith(Parameterized.class) public class ParserTestCase extends AbstractParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
-        return ParameterArray.parameterize(Parser.sgfData());
+        return ParameterArray.parameterize(Parser.sgfTestData());
     }
-    public ParserTestCase(String key) { this.key=key; }
+    public ParserTestCase(Object key) { this.key=key; }
 }

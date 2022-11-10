@@ -1,6 +1,7 @@
 package sgf;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
+import static sgf.SgfNode.*;
 import java.io.StringReader;
 import org.junit.*;
 import utilities.MyTestWatcher;
@@ -11,15 +12,11 @@ public abstract class AbstractParserTestCase {
         expectedSgf=getSgfData(key);
         if(expectedSgf==null) System.out.println("null: "+key);
         //assertNotNull(key.toString(),expectedSgf); 11/8/22 allow for now
-        expectedSgf=Parser.options.prepareSgf(expectedSgf);
+        expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
     }
     @After public void tearDown() throws Exception {}
     @Test public void testParse() throws Exception {
-        //if(expectedSgf=="") {
-        //    if(!key.equals("reallyEmpty")) throw new RuntimeException("expected sgf string is empty for: "+key);
-        //} else if(expectedSgf.charAt(0)!='(')
-        //    parserLogger.severe("sgf start with a: '"+expectedSgf.charAt(0)+"' (not a: '(').");
-        games=new Parser().parse(expectedSgf);
+        games=restoreSgf(expectedSgf);
         //assertNotNull(key.toString(),games);
         // allow null for now (11/8/22).
     }
@@ -38,6 +35,7 @@ public abstract class AbstractParserTestCase {
         assertTrue(isOk);
     }
     @Test public void testSaveAndRestore() throws Exception {
+        // do a restore, the a round trip?
         // try to compare two trees for equality.
         // write a deep equals.
         //fail("nyi");

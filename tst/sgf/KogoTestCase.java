@@ -1,5 +1,6 @@
 package sgf;
 import static org.junit.Assert.assertTrue;
+import static sgf.SgfNode.sgfRoundTripTwice;
 import java.io.*;
 import org.junit.*;
 import io.IO;
@@ -13,7 +14,7 @@ public class KogoTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testKogo() throws IOException {
         Reader reader=IO.toReader(new File("sgf/KogosJosekiDictionary.sgf"));
-        boolean ok=Parser.sgfRoundTripTwice(reader);
+        boolean ok=sgfRoundTripTwice(reader);
         assertTrue(ok);
     }
     boolean old;

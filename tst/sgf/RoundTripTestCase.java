@@ -5,6 +5,7 @@ import static utilities.Utilities.fromFile;
 import java.io.*;
 import org.junit.*;
 import io.*;
+import model.Model;
 import utilities.MyTestWatcher;
 // sgf file->sgf node tree->sgf tree->sgf string
 public class RoundTripTestCase {
@@ -14,13 +15,15 @@ public class RoundTripTestCase {
     // maybe add all of the longer files
     // add the short ones to the map in parser.
     // these are probably duplicates
-    public void checkReader(Reader r) throws IOException {
+    public static void checkReader(Reader r) throws IOException {
+        // looks like a double round trup?
+        // do we need this?
         StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=MNode.mNodeRoundTrip(r,stringWriter);
+        @SuppressWarnings("unused") MNode games=Model.mNodeRoundTrip(r,stringWriter);
         String expected=stringWriter.toString();
         Reader reader=new StringReader(expected);
         stringWriter=new StringWriter();
-        games=MNode.mNodeRoundTrip(reader,stringWriter);
+        games=Model.mNodeRoundTrip(reader,stringWriter);
         String actual=stringWriter.toString();
         try {
             r.close();
