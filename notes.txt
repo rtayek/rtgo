@@ -403,6 +403,9 @@ move as much of the rest of the tests in sgf into the hierarchy.
 looks like we already have a hierarchy with model round trip test case.
 11/9/22 refactoring parse so the only public access is save and restore.
 11/10/22 now a bunch of gradle and eclipse problems. moving to code6/.
+cloned the repo into another flder (code6/). 
+deleted all the gradle stuff (wrapper etc.) except for the build file.
+gradle works and eclipse doe not have the gradle nature.
 
 
 
