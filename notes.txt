@@ -413,3 +413,5 @@ sgf round trip test case.
 11/12/22 somehow code6 has bin/default/ and bin/test/.
 i have no idea where these came from.
 so committing with a lot of broken tests as we are in the middle of refactoring the sgf node test cases.
+made code 7. added bin/defailt and bin/test to classpath for scripts.
+
