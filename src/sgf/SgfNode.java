@@ -1,5 +1,4 @@
 package sgf;
-
 import static io.IO.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;
@@ -17,6 +16,7 @@ public class SgfNode {
     // later: maybe not. see tree package.
     // 10/16/22 maybe mnode just have-am sgf node and ad mnode methods?
     // or maybe subclass and mnode methods?
+    // 11/1/22 did some work on this in sgf/Tree.java
     public static class SgfOptions {
         // lets collect the stuff that formats sgf in one place.
         public String prepareSgf(String expectedSgf) {
@@ -29,7 +29,7 @@ public class SgfNode {
                     //if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
                 } else {
                     //expectedSgf=expectedSgf.replaceAll("\r","");
-                    if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
+                    //if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
                     // 88 if above is commented out. 104 if not.
                 }
             }
@@ -37,7 +37,10 @@ public class SgfNode {
         }
         public String removeUnwanted(String string) {
             if(removeCarriageControl) string=string.replaceAll("\r","");
-            if(removeLineFeed) string=string.replaceAll("\n","");
+            if(removeLineFeed) {
+                string=string.replaceAll("\n","");
+                if(string.contains("\n")) { System.out.println(string); System.exit(1); ; }
+            }
             if(removeTrailingLineFeed) if(string.endsWith("\n")) string=string.substring(0,string.length()-1);
             return string;
         }
@@ -45,8 +48,7 @@ public class SgfNode {
         public final boolean removeTrailingLineFeed=true;
         public final boolean roundTripFirst=false; // was true
         public final boolean removeCarriageControl=true;
-        public final boolean removeLineFeed=false;
-        public final boolean useLineFeed=true;
+        public final boolean removeLineFeed=true;
         public final String eoln="\n";
         public final Indent indent=new Indent("");
     }
@@ -146,7 +148,11 @@ public class SgfNode {
             left.saveSgf_(writer,indent);
             if(left.right!=null) writer.write(indent.indent()+')');
         } else writer.write(')');
-        if(right!=null) { writer.write(options.eoln); writer.write(indent.indent()+'('); right.saveSgf_(writer,indent); }
+        if(right!=null) {
+            writer.write(options.eoln);
+            writer.write(indent.indent()+'(');
+            right.saveSgf_(writer,indent);
+        }
         indent.out();
         writer.flush();
     }
@@ -238,7 +244,7 @@ public class SgfNode {
         } else if(!properties.equals(other.properties)) return false;
         return true;
     }
-    public static String sgfRoundTrip(String expectedSgf) {  //restore and save
+    public static String sgfRoundTrip(String expectedSgf) { //restore and save
         if(expectedSgf==null) // hack for now
             return null;
         StringWriter stringWriter=new StringWriter();

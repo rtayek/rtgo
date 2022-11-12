@@ -17,5 +17,4 @@ public class RoundTripForOneFileTestCase extends AbstractParserTestCase {
         key="emptyWithSemicolon";
         super.setUp();
     }
-    @Override @After public void tearDown() throws Exception { super.tearDown(); }
 }

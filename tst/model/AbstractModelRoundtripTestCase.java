@@ -5,18 +5,18 @@ import java.io.*;
 import org.junit.*;
 import sgf.*;
 import utilities.MyTestWatcher;
-public abstract class ModelRoundtripTestCase extends MNodeRoundTripTestCase {
+public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testModelRoundTrip() throws Exception {
-        expected=expected.replace("\n","");
-        MNode root=MNode.restore(new StringReader(expected));
-
+        expectedSgf=expectedSgf.replace("\n","");
+        MNode root=MNode.restore(new StringReader(expectedSgf));
+        // no model yet!
         StringWriter stringWriter=new StringWriter();
         boolean ok=MNode.save(stringWriter,root,noIndent);
         assertTrue(ok);
         String actual=stringWriter.toString();
         actual=actual.replace("\n",""); // who is putting the linefeed in?
-        if(!expected.equals(actual)) ; //printDifferences(expected,actual);
-        assertEquals(expected,actual);
+        if(!expectedSgf.equals(actual)) ; //printDifferences(expected,actual);
+        assertEquals(expectedSgf,actual);
     }
 }

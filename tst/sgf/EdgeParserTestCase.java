@@ -13,8 +13,8 @@ import utilities.*;
                 //"empty.sgf", //
                 // "reallyempty.sgf", //
                 //"saved.sgf", //
-                "mf0false.sgf", //
-                "mf1false.sgf", //
+                //"mf0false.sgf", //
+                //"mf1false.sgf", //
                 "mf0.sgf", //
                 "mf1.sgf", //
                 "smart0.sgf", //
@@ -24,6 +24,7 @@ import utilities.*;
         };
         String[] keys=new String[] {"justASemicolon","justSomeSemicolons","empty","twoEmpty","twoEmptyWithLinefeed",
                 "reallyEmpty","emptyWithSemicolon","twoEmptyWithSemicolon",};
+        // use variable names above
         File[] files=new File[filenames.length];
         for(int i=0;i<filenames.length;i++) files[i]=new File("sgf",filenames[i]);
         List<Object> objects=new ArrayList<>(Arrays.asList((Object[])(files)));

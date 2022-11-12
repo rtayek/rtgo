@@ -4,6 +4,7 @@ import static sgf.SgfNode.sgfRoundTripTwice;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import io.*;
 import sgf.combine.Combine;
 // https://github.com/toomasr/sgf4j/blob/master/src/main/java/com/toomasr/sgf4j/Parser.java
@@ -231,9 +232,22 @@ public class Parser /*extends Init.Main*/ {
         return sgf;
     }
     public static void main(String[] argument) throws Exception {
+        System.out.println(Init.first);
+        Logging.setLevels(Level.OFF);
         //System.out.println("main "+god.et);
         //combineAndCheckKogosJosekiDictionary();
-        System.out.println(sgfData);
+        //System.out.println(sgfData);
+        String key0=Parser.variationOfAVariation;
+        for(String key:sgfData.keySet()) {
+            //System.out.println("key: "+key);
+            String expectedSgf=getSgfData(key);
+            expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
+            SgfNode games=restoreSgf(expectedSgf);
+            if(games!=null)
+                if(games.right!=null)
+                    System.out.println(key+" right: "+games.right);
+            //System.out.println(games);
+        }
     }
     Indent indent=new Indent("  ");
     PushbackReader reader;
@@ -256,12 +270,12 @@ public class Parser /*extends Init.Main*/ {
     public static Set<String> illegalSgfKeys=new LinkedHashSet<>();
     // maybe just a set?
     static { // not legal sgf
-        illegalSgfKeys.add("justASemicolon");
-        illegalSgfKeys.add("justSomeSemicolons");
-        illegalSgfKeys.add("empty");
-        illegalSgfKeys.add("twoEmpty");
-        illegalSgfKeys.add("twoEmptyWithLinefeed");
-        illegalSgfKeys.add("reallyEmpty");
+        illegalSgfKeys.add(justASemicolon);
+        illegalSgfKeys.add(justSomeSemicolons);
+        illegalSgfKeys.add(empty);
+        illegalSgfKeys.add(twoEmpty);
+        illegalSgfKeys.add(twoEmptyWithLinefeed);
+        illegalSgfKeys.add(reallyEmpty);
     }
     public static final String sgfExamleFromRedBean="""
                     (;FF[4]C[root](;C[a];C[b](;C[c])

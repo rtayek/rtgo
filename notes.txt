@@ -403,16 +403,13 @@ move as much of the rest of the tests in sgf into the hierarchy.
 looks like we already have a hierarchy with model round trip test case.
 11/9/22 refactoring parse so the only public access is save and restore.
 11/10/22 now a bunch of gradle and eclipse problems. moving to code6/.
-cloned the repo into another flder (code6/). 
+cloned the repo into another folder (code6/). 
 deleted all the gradle stuff (wrapper etc.) except for the build file.
-gradle works and eclipse doe not have the gradle nature.
-
-
-
-
- 
-
-
-
-
-	
+gradle works and eclipse does not have the gradle nature.
+had to change the java version back to 16.
+trying to combine:
+abstract parset test case.
+sgf round trip test case.
+11/12/22 somehow code6 has bin/default/ and bin/test/.
+i have no idea where these came from.
+so committing with a lot of broken tests as we are in the middle of refactoring the sgf node test cases.

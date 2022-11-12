@@ -1,7 +1,7 @@
 package sgf;
 import static utilities.Utilities.fromFile;
 import java.io.*;
-public class SGFFiles {
+public class SgfFiles {
     public static void main(String[] argument) throws Exception {
         File fileList=new File("sgffiles.txt");
         BufferedReader bufferedReader=new BufferedReader(new FileReader(fileList));
