@@ -9,12 +9,12 @@ public class RoundTripForOneFileTestCase extends AbstractParserTestCase {
         key="oneMoveAtA1";
         key="smartgovariationsflat";
         key="newvariationssmall";
-        key="reallyEmpty";
         key="twoGamesInOneFileFromSmartGo";
         key="twoVariationsAtDifferentMoves";
         key="twoverysmallgamesflat";
         key="twoEmptyWithSemicolon";
         key="emptyWithSemicolon";
+        key="reallyEmpty";
         super.setUp();
     }
 }

@@ -7,9 +7,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import io.*;
 import sgf.combine.Combine;
-// https://github.com/toomasr/sgf4j/blob/master/src/main/java/com/toomasr/sgf4j/Parser.java
-public class Parser /*extends Init.Main*/ {
-    // extending Init.Main
+// https://github.com/search?q=sgf4j
+public class Parser {
     private Parser() {}
     private char read() throws IOException {
         int c=reader.read();
@@ -212,8 +211,9 @@ public class Parser /*extends Init.Main*/ {
         for(File file:files) if(file.isFile()) {
             if(file.exists()) {
                 if(file.getName().endsWith(".sgf")) {
-                    //System.out.println("ok "+file);
-                    if(!badSgfFiles.contains(file)) objects.add(file);
+                    if(!file.getName().startsWith("KogosJosekiDictionary"))
+                        //System.out.println("ok "+file);
+                        if(!badSgfFiles.contains(file)) objects.add(file);
                 } else System.out.println(file+" is not an sgf file!");
             } else System.out.println("bad "+file);
         } else if(file.isDirectory()) {

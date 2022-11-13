@@ -9,15 +9,13 @@ import utilities.MyTestWatcher;
 public abstract class AbstractSgfRoundTripTestCase extends AbstractParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testRoundTrip() throws Exception {
-        System.out.println("ex after fix: "+expectedSgf);
+        //System.out.println("ex after fix: "+expectedSgf);
         String actualSgf=sgfRoundTrip(expectedSgf);
-        System.out.println("---------------------");
+        //System.out.println("---------------------");
+        if(expectedSgf.equals("")) expectedSgf=null;
+        else if(expectedSgf.equals("()")) expectedSgf=null;
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
-        if(expectedSgf==null) {
-            if(actualSgf!=null) fail("expected is null. actual is not null");
-        } else if(expectedSgf.equals("")) {
-            if(actualSgf!=null) fail("expected is \"\". actual is not null");
-        } else if(!expectedSgf.equals(actualSgf)); //printDifferences(expected,actual);
+        if(expectedSgf==null) { if(actualSgf!=null) fail("expected is null. actual is not null"); return; }
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testRoundTripeTwice() throws Exception {
@@ -26,7 +24,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractParserTestCas
         assertTrue(isOk);
     }
     @Test public void testSaveAndRestore() throws Exception {
-        SgfNode expected=restoreSgf(new StringReader(expectedSgf)),actual;
+        SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null,actual;
         StringWriter stringWriter=new StringWriter();
         String sgf=null;
         if(expected!=null) {
@@ -34,14 +32,14 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractParserTestCas
             sgf=stringWriter.toString();
             actual=restoreSgf(new StringReader(sgf));
         } else return;
-        System.out.println("ex: "+expected);
-        System.out.println("sgf: "+sgf);
-        System.out.println("ac: "+actual);
         assertTrue(expected.deepEquals(actual));
     }
+    public static boolean implies(Boolean a,boolean b) { return !a|b; }
     @Test public void testHexAscii() {
         String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
         String actualSgf=encoded!=null?HexAscii.decodeToString(encoded):null;
+        assertTrue(implies(expectedSgf==null,encoded==null));
+        assertTrue(implies(encoded==null,actualSgf==null));
         assertEquals(expectedSgf,actualSgf);
     }
     @Test public void testCannonical() {
