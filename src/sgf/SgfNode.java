@@ -36,18 +36,44 @@ public class SgfNode {
             return expectedSgf;
         }
         public String removeUnwanted(String string) {
-            if(removeCarriageControl) string=string.replaceAll("\r","");
+            if(removeCarriageReturn) {
+                //how to do leading and trailing spaces
+                System.out.println("0 "+string);
+                while(string.contains(" \r")) string=string.replaceAll(" \r","\r");
+                while(string.contains("\r ")) string=string.replaceAll("\r ","\r");
+                System.out.println("1 "+string);
+                string=string.replaceAll("\r","");
+                if(string.contains("\r")) { System.out.println(string); System.exit(1); ; }
+                System.out.println("2 "+string);
+            }
             if(removeLineFeed) {
+                while(string.contains(" \n")) string=string.replaceAll(" \n","\n");
+                while(string.contains("\n ")) string=string.replaceAll("\n ","\n");
+                System.out.println("3 "+string);
                 string=string.replaceAll("\n","");
                 if(string.contains("\n")) { System.out.println(string); System.exit(1); ; }
+                System.out.println("4 "+string);
             }
             if(removeTrailingLineFeed) if(string.endsWith("\n")) string=string.substring(0,string.length()-1);
+            System.out.println("5 "+string);
             return string;
+        }
+        public static boolean containsQuotedControlCharacters(Object key,String string) {
+            for(int i=0;i<string.length();++i) if(string.charAt(i)=='\\')
+                if(i<string.length()-1) if(string.charAt(i+1)=='n'||string.charAt(i+1)=='r') {
+                    return true;
+                }
+            return false;
+        }
+        public static String removeQuotedControlCharacters(String string) {
+            String actual=string.replaceAll("\\\\n","");
+            actual=actual.replaceAll("\\\\r","");
+            return actual;
         }
         //public final String eoln=System.getProperty("line.separator");
         public final boolean removeTrailingLineFeed=true;
         public final boolean roundTripFirst=false; // was true
-        public final boolean removeCarriageControl=true;
+        public final boolean removeCarriageReturn=true;
         public final boolean removeLineFeed=true;
         public final String eoln="\n";
         public final Indent indent=new Indent("");
@@ -72,7 +98,7 @@ public class SgfNode {
         }
         if(node.hasAMoveType&&node.hasASetupType) {
             parserLogger.severe("node has move and setup type properties!");
-            System.out.println("node has move and setup type properties!");
+            //System.out.println("node has move and setup type properties!");
             if(!ignoreMoveAndSetupFlags) { IO.stackTrace(10); System.exit(1); }
         }
     }
@@ -234,10 +260,24 @@ public class SgfNode {
         result=prime*result+((properties==null)?0:properties.hashCode());
         return result;
     }
+    public boolean deepEquals(SgfNode other) {
+        if(this==other) return true;
+        else if(other==null) return false;
+        else if(!equals(other)) return false;
+        if(left!=null) {
+            boolean isEqual=left.deepEquals(other.left);
+            if(!isEqual) return false;
+        } else if(other.left!=null) return false;
+        if(right!=null) {
+            boolean isEqual=right.deepEquals(other.right);
+            if(!isEqual) return false;
+        } else if(other.right!=null) return false;
+        return true;
+    }
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;
-        if(obj==null) return false;
-        if(getClass()!=obj.getClass()) return false;
+        else if(obj==null) return false;
+        else if(getClass()!=obj.getClass()) return false;
         SgfNode other=(SgfNode)obj;
         if(properties==null) {
             if(other.properties!=null) return false;
@@ -251,7 +291,7 @@ public class SgfNode {
         SgfNode games=null;
         String actualSgf=null;
         try {
-            if((games=restoreSgf(expectedSgf))!=null) {
+            if((games=restoreSgf(new StringReader(expectedSgf)))!=null) {
                 games.saveSgf(stringWriter,noIndent);
                 actualSgf=stringWriter.toString();
             }
@@ -276,7 +316,7 @@ public class SgfNode {
         String expected=writer.toString(); // cannonical form?
         writer=new StringWriter();
         //roundTrip();
-        SgfNode games=restoreSgf(expected);
+        SgfNode games=restoreSgf(new StringReader(expected));
         if(games!=null) games.saveSgf(writer,noIndent);
         // allow null for now (11/8/22).
         String actual=writer.toString();
@@ -294,7 +334,7 @@ public class SgfNode {
             System.out.println(key);
             String expected=getSgfData(key);
             System.out.println(expected);
-            SgfNode games=restoreSgf(expected);
+            SgfNode games=restoreSgf(new StringReader(expected));
             StringWriter stringWriter=new StringWriter();
             games.saveSgf(stringWriter,standardIndent);
             String actual4=stringWriter.toString();

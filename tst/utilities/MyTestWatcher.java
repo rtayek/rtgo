@@ -36,6 +36,7 @@ public class MyTestWatcher extends TestWatcher {
     @Override protected void failed(Throwable e,Description description) {
         if(IO.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread!");
         if(verbosity); //System.out.println(reset+description.getMethodName()+" failed!");
+        System.out.println("failed");
     }
     @Override protected void succeeded(Description description) {
         if(IO.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread!");

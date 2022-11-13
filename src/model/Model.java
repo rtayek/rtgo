@@ -960,7 +960,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         Utilities.fromReader(stringBuffer,reader);
         String expectedSgf=stringBuffer.toString(); // so we can compare
         StringWriter stringWriter=new StringWriter();
-        SgfNode games=restoreSgf(expectedSgf);
+        SgfNode games=restoreSgf(new StringReader(expectedSgf));
         if(games==null) return null; // return empty node!
         // maybe return empty nod if sgf is ""?
         games.saveSgf(stringWriter,noIndent);
@@ -985,7 +985,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public static MNode mNoderoundTrip2(String expectedSgf,Writer writer) {
         // move to model package?
         // only used in one test method.
-        SgfNode games=restoreSgf(expectedSgf);
+        SgfNode games=restoreSgf(new StringReader(expectedSgf));
         if(games==null) return null;
         games.saveSgf(new StringWriter(),noIndent);
         MNode mNodes0=MNode.toGeneralTree(games);

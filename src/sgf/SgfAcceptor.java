@@ -1,6 +1,6 @@
 package sgf;
 import static sgf.Parser.*;
-import java.io.File;
+import java.io.*;
 import java.util.*;
 import io.*;
 public interface SgfAcceptor {
@@ -119,7 +119,7 @@ class Traverser {
         traverser.visit(games);
         System.out.println("||||");
         String sgfString=getSgfData("oneMoveAtA1");
-        games=restoreSgf(sgfString);
+        games=restoreSgf(new StringReader(sgfString));
         traverser.visit(games);
     }
     SgfAcceptor acceptor;

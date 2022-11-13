@@ -410,8 +410,13 @@ had to change the java version back to 16.
 trying to combine:
 abstract parset test case.
 sgf round trip test case.
-11/12/22 somehow code6 has bin/default/ and bin/test/.
+11/11/22 somehow code6 has bin/default/ and bin/test/.
 i have no idea where these came from.
 so committing with a lot of broken tests as we are in the middle of refactoring the sgf node test cases.
-made code 7. added bin/defailt and bin/test to classpath for scripts.
-
+made code 7. added bin/default and bin/test to classpath for scripts.
+11/12/22 may be missing some ('s
+also some spaces in the original sgf before a ; are missing.
+looks like we have leading spaces missing. we need to trim the lines!
+empty () is causing problems restore returns null instead of "()".
+looks like we are losing some ('s in front of variations
+put most of the failing round trip tests into smaller parameterized round trip test case.

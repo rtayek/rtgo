@@ -23,7 +23,7 @@ class Traverser { // half of a visitor
         MNodeAcceptor acceptor=new MNodeAcceptor.PrintAcceptor();
         Traverser traverser=new Traverser(acceptor);
         String expectedSgf=getSgfData("simpleWithVariations");
-        SgfNode games_=restoreSgf(expectedSgf);
+        SgfNode games_=restoreSgf(new StringReader(expectedSgf));
         MNode games=MNode.toGeneralTree(games_);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");

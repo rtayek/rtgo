@@ -162,9 +162,12 @@ public class Parser /*extends Init.Main*/ {
         }
         return sequence;
     }
-    public static SgfNode restoreSgf(String string) { return new Parser().parse(string); }
-    public static SgfNode restoreSgf(Reader reader) { return new Parser().parse(reader); }
-    private SgfNode parse(String string) { return string!=null?parse(new StringReader(string)):null; }
+    private static SgfNode restoreSgf(String string) { return string!=null?restoreSgf(new StringReader(string)):null; }
+    public static SgfNode restoreSgf(Reader reader) {
+        SgfNode games=new Parser().parse(reader);
+        if(games!=null) if(games.right!=null); //System.out.println("2 more than one game!");
+        return games;
+    }
     private SgfNode parse(Reader reader) {
         if(reader==null) return null;
         try {
@@ -193,7 +196,7 @@ public class Parser /*extends Init.Main*/ {
                 }
             }
             if(first==null) parserLogger.warning("first is null! (no games)");
-            else if(first.siblings()>0) { parserLogger.info("returning more than one game!"); }
+            else if(first.siblings()>0) parserLogger.info("returning more than one game!");
             return first;
         } catch(IOException e) {}
         parserLogger.severe("parser return null!");
@@ -243,9 +246,7 @@ public class Parser /*extends Init.Main*/ {
             String expectedSgf=getSgfData(key);
             expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
             SgfNode games=restoreSgf(expectedSgf);
-            if(games!=null)
-                if(games.right!=null)
-                    System.out.println(key+" right: "+games.right);
+            if(games!=null) if(games.right!=null) System.out.println(key+" right: "+games.right);
             //System.out.println(games);
         }
     }
