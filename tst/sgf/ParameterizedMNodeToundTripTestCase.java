@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import utilities.*;
-@RunWith(Parameterized.class) public class ParameterizedMNodeTestCase extends AbstractMNodeRoundTripTestCase {
+@RunWith(Parameterized.class) public class ParameterizedMNodeToundTripTestCase extends AbstractMNodeRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
         Set<Object> objects=new LinkedHashSet<>();
@@ -14,5 +14,5 @@ import utilities.*;
         objects.addAll(sgfFiles());
         return ParameterArray.parameterize(objects);
     }
-    public ParameterizedMNodeTestCase(Object key) { this.key=key; }
+    public ParameterizedMNodeToundTripTestCase(Object key) { this.key=key; }
 }
