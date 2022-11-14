@@ -19,11 +19,11 @@ public class RoundTripTestCase {
         // looks like a double round trup?
         // do we need this?
         StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=Model.mNodeRoundTrip(r,stringWriter);
+        @SuppressWarnings("unused") MNode games=Model.modelRoundTrip(r,stringWriter);
         String expected=stringWriter.toString();
         Reader reader=new StringReader(expected);
         stringWriter=new StringWriter();
-        games=Model.mNodeRoundTrip(reader,stringWriter);
+        games=Model.modelRoundTrip(reader,stringWriter);
         String actual=stringWriter.toString();
         try {
             r.close();

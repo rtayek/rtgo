@@ -1,7 +1,7 @@
 package sgf;
 import org.junit.*;
 import utilities.MyTestWatcher;
-public class RoundTripForOneFileTestCase extends AbstractParserTestCase {
+public class RoundTripForOneFileTestCase extends AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Override @Before public void setUp() throws Exception {
         key="smartgo4";

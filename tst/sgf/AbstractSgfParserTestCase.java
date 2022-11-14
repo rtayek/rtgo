@@ -6,7 +6,7 @@ import static sgf.SgfNode.SgfOptions.*;
 import java.io.StringReader;
 import org.junit.*;
 import utilities.MyTestWatcher;
-public abstract class AbstractParserTestCase {
+public abstract class AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         System.out.println("key: "+key);

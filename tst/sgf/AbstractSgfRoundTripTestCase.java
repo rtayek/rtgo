@@ -6,43 +6,41 @@ import static sgf.SgfNode.*;
 import java.io.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
-public abstract class AbstractSgfRoundTripTestCase extends AbstractParserTestCase {
+public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Test public void testRoundTrip() throws Exception {
-        //System.out.println("ex after fix: "+expectedSgf);
-        //String actualSgf=sgfRoundTrip(expectedSgf);
-        StringWriter stringWriter=new StringWriter();
-        SgfNode games=sgfRoundTrip(new StringReader(expectedSgf),stringWriter);
-        String actualSgf=stringWriter.toString();
-        // treat null and "" as null
+    public Boolean specialCases(String actualSgf) {
+        Boolean ok=false; // no more assertions are needed
         if(expectedSgf.equals("")) expectedSgf=null;
         else if(expectedSgf.equals("()")) expectedSgf=null;
-        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         if(expectedSgf==null) {
-            if(actualSgf==null) return;
-            if(actualSgf.equals("")) return;
-            fail("expected is null. actual is not null");
+            if(actualSgf==null) ok=true;
+            else if(actualSgf.equals("")) { actualSgf=null; ok=true; }
         } else {
             if(!expectedSgf.equals(actualSgf)) {
-                // System.out.println(games);
-                // System.out.println(games.left+" "+games.right);
-                //System.out.println(games.left.left+" "+games.left.right);
-                SgfNode x=restoreSgf(new StringReader(actualSgf));
-                setIsAMoveFlags(x);
                 if(expectedSgf.contains("PC[OGS: https://online-go.com/")) {
                     System.out.println("passing ogs file");
-                    return;
+                    ok=true;
                 }
             }
         }
+        return ok;
+    }
+    @Test public void testSgfRoundTrip() throws Exception {
+        StringReader stringReader=new StringReader(expectedSgf);
+        StringWriter stringWriter=new StringWriter();
+        SgfNode games=sgfRoundTrip(stringReader,stringWriter);
+        String actualSgf=stringWriter.toString();
+        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        Boolean ok=specialCases(actualSgf);
+        if(ok) return;
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
-    @Test public void testRoundTripeTwice() throws Exception {
+    @Test public void testRSgfoundTripeTwice() throws Exception {
         StringReader reader=expectedSgf!=null?new StringReader(expectedSgf):null;
         boolean isOk=sgfRoundTripTwice(reader);
         assertTrue(isOk);
     }
-    @Test public void testSaveAndRestore() throws Exception {
+    @Test public void testSgfSaveAndRestore() throws Exception {
         SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null,actual;
         StringWriter stringWriter=new StringWriter();
         String sgf=null;
@@ -61,7 +59,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractParserTestCas
         assertTrue(implies(encoded==null,actualSgf==null));
         assertEquals(expectedSgf,actualSgf);
     }
-    @Test public void testCannonical() {
+    @Test public void testSgfCannonical() {
         String actualSgf=sgfRoundTrip(expectedSgf);
         String actual2=sgfRoundTrip(actualSgf);
         assertEquals(key.toString(),actualSgf,actual2);

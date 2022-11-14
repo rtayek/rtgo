@@ -955,7 +955,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         System.out.flush();
         System.out.println(model);
     }
-    public static MNode mNodeRoundTrip(Reader reader,Writer writer) {
+    public static MNode modelRoundTrip(Reader reader,Writer writer) {
         StringBuffer stringBuffer=new StringBuffer();
         Utilities.fromReader(stringBuffer,reader);
         String expectedSgf=stringBuffer.toString(); // so we can compare

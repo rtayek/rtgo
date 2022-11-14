@@ -37,7 +37,7 @@ public class AbstractModelTestCase extends AbstractMNodeTestCase {
     }
     @Test public void testLongRoundTrip() throws Exception {
         StringWriter stringWriter=new StringWriter();
-        MNode games=Model.mNodeRoundTrip(expectedSgf!=null?new StringReader(expectedSgf):null,stringWriter);
+        MNode games=Model.modelRoundTrip(expectedSgf!=null?new StringReader(expectedSgf):null,stringWriter);
         String actualSgf=expectedSgf!=null?stringWriter.toString():null;
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }

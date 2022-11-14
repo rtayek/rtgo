@@ -9,7 +9,6 @@ import utilities.*;
 @RunWith(Parameterized.class) public class ParameterizedSgfRoundTripTestCase extends AbstractSgfRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
-        //return ParameterArray.parameterize(Parser.sgfDataKeySet());
         Set<Object> objects=new LinkedHashSet<>();
         objects.addAll(sgfDataKeySet());
         objects.addAll(sgfFiles());

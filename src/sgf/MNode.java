@@ -1,5 +1,5 @@
 package sgf;
-import static io.IO.standardIndent;
+import static io.IO.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;
 import java.io.*;
@@ -100,11 +100,16 @@ public class MNode {
             //System.out.println("discarding: "+root);
             if(games.left!=null) games.left.saveSgf(writer,indent);
             Logging.mainLogger.info("games.right: "+games.right);
-            // this should use save()
-            //SgfNode.toSgfStringxxx(games,writer,indent);
         }
         return true; // for now
     }
+    public static MNode mNodeRoundTrip(StringReader stringReader,StringWriter stringWriter) {
+        MNode root=MNode.restore(stringReader);
+        boolean ok=MNode.save(stringWriter,root,noIndent);
+        if(!ok) System.out.println("not ok!");
+        return root;
+    }
+
     public static MNode quietLoad(Reader reader) {
         PrintStream old=System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
@@ -130,7 +135,7 @@ public class MNode {
         Collection<SgfNode> path=finder.pathToTarget;
         return path;
     }
-
+    
     public static void main(String[] args) {
         System.out.println(Init.first);
         //lookAtRoot();

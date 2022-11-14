@@ -1,6 +1,6 @@
 package sgf;
 import static org.junit.Assert.*;
-import static sgf.Parser.getSgfData;
+import static sgf.Parser.*;
 import static sgf.SgfNode.sgfRoundTrip;
 import java.util.*;
 import org.junit.*;
@@ -12,7 +12,10 @@ import utilities.*;
     public RTPrivatePropertyTestCase(Object key) { this.key=key; }
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
-        return ParameterArray.parameterize(Parser.sgfDataKeySet());
+        Set<Object> objects=new LinkedHashSet<>();
+        objects.addAll(sgfDataKeySet());
+        objects.addAll(sgfFiles());
+        return ParameterArray.parameterize(objects);
     }
     @Before public void setUp() throws Exception {
         originalSgf=getSgfData(key);

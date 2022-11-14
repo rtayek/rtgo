@@ -1,6 +1,7 @@
 package sgf;
 import static org.junit.Assert.*;
 import static sgf.HexAscii.*;
+import static sgf.Parser.*;
 import java.util.*;
 import org.junit.*;
 import org.junit.runners.Parameterized.Parameters;
@@ -8,7 +9,10 @@ import utilities.*;
 /*@RunWith(Parameterized.class)*/ public class HexAsciiTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> data() {
-        return ParameterArray.parameterize(Parser.sgfDataKeySet());
+        Set<Object> objects=new LinkedHashSet<>();
+        objects.addAll(sgfDataKeySet());
+        objects.addAll(sgfFiles());
+        return ParameterArray.parameterize(objects);
     }
     public HexAsciiTestCase() {}
     //public HexAsciiTestCase(String key) { this.key=key; }
