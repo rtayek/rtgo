@@ -215,7 +215,7 @@ public class Parser {
                         //System.out.println("ok "+file);
                         if(!badSgfFiles.contains(file)) objects.add(file);
                 } else System.out.println(file+" is not an sgf file!");
-            } else System.out.println("bad "+file);
+            } else System.out.println(file+" soes not exist!");
         } else if(file.isDirectory()) {
             collectSgfFiles(objects,file.listFiles());
         } else System.out.println("strange: "+file);
@@ -223,8 +223,7 @@ public class Parser {
     private static void collectSgfFiles(String dir,Set<Object> objects) {
         System.out.println(new File(dir));
         File[] files=new File(dir).listFiles();
-        if(files!=null)
-            System.out.println("has "+files.length+" files.");
+        if(files!=null) System.out.println("has "+files.length+" files.");
         else System.out.println("files is null!");
         collectSgfFiles(objects,files);
     }
@@ -237,10 +236,7 @@ public class Parser {
     public static String getSgfData(Object key) {
         String sgf=null;
         if(key instanceof String) sgf=sgfData.get(key);
-        else if(key instanceof File) {
-            System.out.println(((File)key).exists());
-            sgf=utilities.Utilities.fromFile((File)key);
-        }
+        else if(key instanceof File) sgf=utilities.Utilities.fromFile((File)key);
         else throw new RuntimeException(key+" is not a string or a file!");
         return sgf;
     }

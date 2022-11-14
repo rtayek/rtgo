@@ -1,7 +1,8 @@
 package sgf;
+import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.*;
-import org.junit.Rule;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -16,8 +17,8 @@ import utilities.*;
                 //"rtgo0false.sgf",
                 //"ff4.sgf",
                 "smallestogs.sgf",
-                "smallestrt.sgf",
-                "smallestrt2.sgf",
+                //"smallestrt.sgf",
+                //"smallestrt2.sgf",
                 //"ray-SmartGo-2022-01-07.2.sgf",
                 //"recentogsgames/39312326-031-DonJuan-rtayek.sgf",
                 //"recentogsgames/39312326-026-DonJuan-rtayek.sgf",
@@ -33,17 +34,17 @@ import utilities.*;
         Set<Object> objects=new LinkedHashSet<>();
         //objects.addAll(sgfDataKeySet());
         String dir="sgf";
-        //dir="sgf/recentogsgames";
+        dir="sgf/recentogsgames";
         // some problems here. can not find the files in recent!
-        if(false) { // all files in dir and subdirectoroes.
+        if(true) { // all files in dir and subdirectoroes.
             objects.addAll(Parser.sgfFiles(dir));
         }
         if(true) {
             File[] files=someFiles(dir); // some files in dir. not recursive.
             System.out.println("adding: "+Arrays.asList((Object[])(files))+" files.");
-            for(File file:files)
-                System.out.println(file+" exists: "+file.exists());
-            objects.addAll(new ArrayList<>(Arrays.asList((Object[])(files))));
+            List<Object> fileList=new ArrayList<>(Arrays.asList((Object[])(files)));
+            for(File file:files) if(!file.exists()) { System.out.println(file+" does not exist!"); fileList.remove(file); }
+            objects.addAll(fileList);
         }
         if(false) {
             String[] keys=new String[] {
@@ -54,5 +55,6 @@ import utilities.*;
         System.out.println(objects.size()+" keys");
         return ParameterArray.parameterize(objects);
     }
+    @Ignore @Test public void testActual() throws Exception { assertEquals("Expected","Actual"); }
     public SmallerParameterizedRoundTripTestCase(Object key) { this.key=key; }
 }

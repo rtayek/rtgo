@@ -425,5 +425,11 @@ and we seem to be omitting the "(" on branches!
 11/13/22 we have a bunch of games with eric from ogs.
 try parsing one of these guys with the missing "(".
 implement drag and drop.
+strange, none of the recent files seem to have the "missing (".
+ogs does not include variations. but every move except the first is preceded by a "(".
+so we allow round trip to pass if it's an oge file.
+only 2 failures out of about 900 sgf round trip test cases.
+
+
 
 
