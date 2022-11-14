@@ -1,5 +1,6 @@
 package sgf;
-import java.util.Collection;
+import static sgf.Parser.*;
+import java.util.*;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -9,7 +10,10 @@ import utilities.*;
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
         //return ParameterArray.parameterize(Parser.sgfDataKeySet());
-        return ParameterArray.parameterize(Parser.sgfTestData());
+        Set<Object> objects=new LinkedHashSet<>();
+        objects.addAll(sgfDataKeySet());
+        objects.addAll(sgfFiles());
+        return ParameterArray.parameterize(objects);
     }
     public ParameterizedSgfRoundTripTestCase(Object key) { this.key=key; }
 }

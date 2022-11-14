@@ -207,30 +207,40 @@ public class Parser {
         if(!ok) throw new Exception("test fails");
     }
     public static Collection<Object> sgfDataKeySet() { return new ArrayList<>(Parser.sgfData.keySet()); }
-    static void getSgfFiles(Set<Object> objects,File[] files) {
+    private static void collectSgfFiles(Set<Object> objects,File[] files) {
         for(File file:files) if(file.isFile()) {
             if(file.exists()) {
                 if(file.getName().endsWith(".sgf")) {
-                    if(!file.getName().startsWith("KogosJosekiDictionary"))
+                    if(!file.getName().startsWith("KogosJosekiDictionary")) // exclude for now
                         //System.out.println("ok "+file);
                         if(!badSgfFiles.contains(file)) objects.add(file);
                 } else System.out.println(file+" is not an sgf file!");
             } else System.out.println("bad "+file);
         } else if(file.isDirectory()) {
-            getSgfFiles(objects,file.listFiles());
+            collectSgfFiles(objects,file.listFiles());
         } else System.out.println("strange: "+file);
     }
-    public static Collection<Object> sgfTestData() {
+    private static void collectSgfFiles(String dir,Set<Object> objects) {
+        System.out.println(new File(dir));
+        File[] files=new File(dir).listFiles();
+        if(files!=null)
+            System.out.println("has "+files.length+" files.");
+        else System.out.println("files is null!");
+        collectSgfFiles(objects,files);
+    }
+    public static Collection<Object> sgfFiles() { return sgfFiles("sgf"); }
+    public static Collection<Object> sgfFiles(String dir) {
         Set<Object> objects=new LinkedHashSet<>();
-        objects.addAll(sgfDataKeySet());
-        File[] files=new File("sgf/").listFiles();
-        getSgfFiles(objects,files);
+        collectSgfFiles(dir,objects);
         return objects;
     }
     public static String getSgfData(Object key) {
         String sgf=null;
         if(key instanceof String) sgf=sgfData.get(key);
-        else if(key instanceof File) sgf=utilities.Utilities.fromFile((File)key);
+        else if(key instanceof File) {
+            System.out.println(((File)key).exists());
+            sgf=utilities.Utilities.fromFile((File)key);
+        }
         else throw new RuntimeException(key+" is not a string or a file!");
         return sgf;
     }
@@ -240,8 +250,7 @@ public class Parser {
         //System.out.println("main "+god.et);
         //combineAndCheckKogosJosekiDictionary();
         //System.out.println(sgfData);
-        String key0=Parser.variationOfAVariation;
-        for(String key:sgfData.keySet()) {
+        for(Object key:sgfDataKeySet()) {
             //System.out.println("key: "+key);
             String expectedSgf=getSgfData(key);
             expectedSgf=SgfNode.options.prepareSgf(expectedSgf);

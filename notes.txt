@@ -422,4 +422,8 @@ looks like we are losing some ('s in front of variations
 put most of the failing round trip tests into smaller parameterized round trip test case.
 3 remaining failures. we are not adding a ")" at the end.
 and we seem to be omitting the "(" on branches!
-seems like we 
+11/13/22 we have a bunch of games with eric from ogs.
+try parsing one of these guys with the missing "(".
+implement drag and drop.
+
+

@@ -1,6 +1,7 @@
 package sgf;
 import static sgf.Parser.*;
 import java.io.StringReader;
+import java.util.*;
 import java.util.logging.Level;
 import io.*;
 public class SgfFiles {
@@ -8,7 +9,10 @@ public class SgfFiles {
         System.out.println(Init.first);
         Logging.setLevels(Level.OFF);
         int n=0;
-        for(Object key:sgfTestData()) {
+        Set<Object> objects=new LinkedHashSet<>();
+        objects.addAll(sgfDataKeySet());
+        objects.addAll(sgfFiles());
+        for(Object key:objects) {
             if(arguments.length>0) {
                 String sgf=getSgfData(key);
                 SgfNode games=restoreSgf(new StringReader(sgf));

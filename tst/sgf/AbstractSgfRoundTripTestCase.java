@@ -10,12 +10,26 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractParserTestCas
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testRoundTrip() throws Exception {
         //System.out.println("ex after fix: "+expectedSgf);
-        String actualSgf=sgfRoundTrip(expectedSgf);
-        //System.out.println("---------------------");
+        //String actualSgf=sgfRoundTrip(expectedSgf);
+        StringWriter stringWriter=new StringWriter();
+        SgfNode games=sgfRoundTrip(new StringReader(expectedSgf),stringWriter);
+        String actualSgf=stringWriter.toString();
         if(expectedSgf.equals("")) expectedSgf=null;
         else if(expectedSgf.equals("()")) expectedSgf=null;
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
-        if(expectedSgf==null) { if(actualSgf!=null) fail("expected is null. actual is not null"); return; }
+        if(expectedSgf==null) {
+            if(actualSgf!=null) fail("expected is null. actual is not null");
+            return;
+        } else {
+            if(!expectedSgf.equals(actualSgf)) {
+                System.out.println("ac: "+actualSgf);
+                System.out.println(games);
+                System.out.println(games.left+" "+games.right);
+                System.out.println(games.left.left+" "+games.left.right);
+                SgfNode x=restoreSgf(new StringReader(actualSgf));
+                setIsAMoveFlags(x);
+            }
+        }
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testRoundTripeTwice() throws Exception {

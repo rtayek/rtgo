@@ -256,6 +256,7 @@ public class Utilities {
         try {
             for(line=r.readLine();(line=r.readLine())!=null;) l.add(line);
         } catch(IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         return l;
@@ -342,5 +343,5 @@ public class Utilities {
         }
         return true;
     }
-    
+
 }

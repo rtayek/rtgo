@@ -290,17 +290,17 @@ public class SgfNode {
         StringWriter stringWriter=new StringWriter();
         SgfNode games=null;
         String actualSgf=null;
-        try {
-            if((games=restoreSgf(new StringReader(expectedSgf)))!=null) {
+        StringReader stringReader=new StringReader(expectedSgf);
+        if(true) {
+            games=sgfRoundTrip(stringReader,stringWriter);
+        } else try {
+            if((games=restoreSgf(stringReader))!=null) {
                 games.saveSgf(stringWriter,noIndent);
                 actualSgf=stringWriter.toString();
             }
         } catch(Exception e) {
             System.out.println("rt caught: "+e);
         }
-        //returns "" if expected==null
-        // other code returns null.
-        // maybe we should be consistent?
         return actualSgf;
     }
     public static SgfNode sgfRoundTrip(Reader reader,Writer writer) {
