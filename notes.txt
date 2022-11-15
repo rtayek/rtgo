@@ -429,6 +429,16 @@ strange, none of the recent files seem to have the "missing (".
 ogs does not include variations. but every move except the first is preceded by a "(".
 so we allow round trip to pass if it's an oge file.
 only 2 failures out of about 900 sgf round trip test cases.
+add a file handler for some logs.
+write  failing keys to a file in my test watcher when the test fails.
+11/14/222 idea lets make the parameterized model test case just test simple trees (catalan)
+generate sgf tree from catalan tree stuff.
+worked on tree stuff. decided to postpone this for now.
+since the catalan has it's own binary node.
+
+
+
+
 
 
 

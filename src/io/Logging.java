@@ -40,9 +40,13 @@ public class Logging {
                 Handler handler2;
                 boolean what=false;
                 if(what) try {
-                    handler2=new FileHandler("logs/log",50_000_000,10,false);
-                    handler2.setLevel(Level.ALL);
-                    logger.addHandler(handler2);
+                    File dir=new File("logs");
+                    if(!dir.exists()) dir.mkdirs();
+                    if(dir.exists()) {
+                        handler2=new FileHandler("logs/log",50_000,10,false);
+                        handler2.setLevel(Level.ALL);
+                        logger.addHandler(handler2);
+                    } else throw new RuntimeException(dir+" not found!");
                 } catch(SecurityException|IOException e) {
                     e.printStackTrace();
                 }

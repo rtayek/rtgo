@@ -1,10 +1,19 @@
 package tree;
 import java.util.List;
 interface Arborescence { // long name so as not to be confused with sgf.Node.
+    Object data();
+    public abstract static class ABC implements Arborescence {
+        @Override public Object data() { return data; }
+        ///@Override public String toString() { return "ABC [data="+data+"]"; }
+        @Override public String toString() { return data.toString(); }
+        public Object data=++ids;
+        static long ids=0;
+    }
     Arborescence left();
     Arborescence right();
     Arborescence parent() throws UnsupportedOperationException;
-    List<Arborescence> siblings();
+    List<Arborescence> siblings(); // include this or not?
+    // maybe use parent and children to get siblings?
     List<Arborescence> children(); // we should be able to always do this
     List<Arborescence> descendents();
     void addSibling(Arborescence node);
@@ -47,7 +56,7 @@ interface Arborescence { // long name so as not to be confused with sgf.Node.
         for(int i=node.children().size()-1;i>=1;--i)
             // why is this going backwards?
             right=toBinaryNode(node.children().get(i));
-        BinaryNodeImpl binaryNode=new BinaryNodeImpl(left,right);
+        BinaryNodeImpl binaryNode=new BinaryNodeImpl(left,right,null);
         return binaryNode;
     }
     default MultiNodeImpl toMultiwayNode() { return Arborescence.toMultiwayNode(this); }

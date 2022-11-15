@@ -1,4 +1,4 @@
-package tree;
+package tree.catalan;
 import static org.junit.Assert.*;
 import static utilities.ParameterArray.modulo;
 import java.util.*;
@@ -53,5 +53,5 @@ import utilities.MyTestWatcher;
         }
     }
     int nodes;
-    static final int maxNodesToTest=5; // was 11
+    static final int maxNodesToTest=9; // was 11
 }

@@ -10,6 +10,7 @@ public abstract class AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         System.out.println("key: "+key);
+        watcher.key=key;
         expectedSgf=getSgfData(key);
         if(expectedSgf==null) return;
         else; //System.out.println("ex before fix: "+expectedSgf);

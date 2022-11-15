@@ -1,6 +1,7 @@
-package tree;
+package tree.catalan;
 import java.util.List;
 public class Catalan {
+    tree.catalan.Node x;
     public static final long c(final int n,final int r) { // binomial coefficient
         long i,p;
         if(r<0||n<0||r>n) p=0;
@@ -36,7 +37,9 @@ public class Catalan {
         }
     }
     public static void main(String[] args) {
-        for(int nodes=0;nodes<3;++nodes) {
+        // uses the Node class here in this package
+        for(int nodes=0;nodes<5;++nodes) { // 15 takes a few minutes.
+            Node.ids=0;
             List<Node> list=Node.allBinaryTrees(nodes);
             System.out.println(nodes+" nodes. has "+list.size()+" trees\n");
             for(Node node:list) {

@@ -1,11 +1,9 @@
 package tree;
-import java.util.ArrayList;
-import java.util.Collections;
 //http://en.wikipedia.org/wiki/Binary_tree#Encoding_general_trees_as_binary_trees
 //http://blogs.msdn.com/b/ericlippert/archive/2010/04/19/every-binary-tree-there-is.aspx
-import java.util.List;
+import java.util.*;
 import sgf.SgfProperty;
-public class MultiNodeImpl implements Arborescence {
+public class MultiNodeImpl extends Arborescence.ABC {
     public MultiNodeImpl(MultiNodeImpl parent) { this.parent=parent; }
     @Override public Arborescence left() { return children.size()>0?children().iterator().next():null; }
     @Override public Arborescence right() {

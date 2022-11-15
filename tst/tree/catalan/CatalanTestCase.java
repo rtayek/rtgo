@@ -1,6 +1,6 @@
-package tree;
+package tree.catalan;
 import static org.junit.Assert.assertEquals;
-import static tree.Catalan.*;
+import static tree.catalan.Catalan.*;
 import static utilities.ParameterArray.modulo;
 import java.util.*;
 import org.junit.*;

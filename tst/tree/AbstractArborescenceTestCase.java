@@ -1,18 +1,18 @@
 package tree;
 import static org.junit.Assert.*;
 import org.junit.*;
-import org.junit.rules.TestRule;
 import io.Logging;
 import utilities.MyTestWatcher;
 public abstract class AbstractArborescenceTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
-    @Test public void testToString() {}
-    @Test public void testLeft() { assertNull(arborescence.left()); }
-    @Test public void testRight() {
-        assertNull(arborescence.right());
+    @Test public void testToString() {
+        String string=child.toString();
+        assertEquals(string,"42");
     }
+    @Test public void testLeft() { assertNull(arborescence.left()); }
+    @Test public void testRight() { assertNull(arborescence.right()); }
     @Test public void testSiblings() {
         Logging.mainLogger.warning("arb: "+arborescence.siblings());
         assertTrue(arborescence.siblings().size()==0);
@@ -25,8 +25,14 @@ public abstract class AbstractArborescenceTestCase {
         assertTrue(parent.descendents().size()==1);
         assertTrue(parent.descendents().contains(child));
     }
-    @Test public void testAddSibling() {
+    @Test public void testAddedSibling() {
         assertTrue(child.siblings().size()==1);
+        System.out.println(child.data());
+        System.out.println("parent: "+parent);
+        System.out.println("child: "+child);
+        System.out.println("child.siblings: "+child.siblings());
+        System.out.println("sibling: "+sibling);
+        System.out.println("sibling's siblings: "+sibling.siblings());
         assertTrue(child.siblings().contains(sibling));
         assertTrue(child.siblings().contains(child));
     }

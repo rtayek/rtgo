@@ -1,4 +1,4 @@
-package tree;
+package tree.catalan;
 import java.util.*;
 import java.util.function.Consumer;
 import sgf.MNode;
@@ -6,6 +6,8 @@ import sgf.MNode;
 class Node {
     // seems to be a clone of sgf node.
     // not any more, added a lot of stuff
+    // only used by the catalan class.
+    // this uses the mnode class!
     public Node() {}
     public Node(int data) { this.data=data; }
     public Node(Node left,Node right) { this.left=left; this.right=right; }
@@ -167,6 +169,16 @@ class Node {
             // append data
         }
     }
+    static void toDataString(StringBuffer sb,Node node) { // encode
+        if(node==null) ; //sb.append('x');
+        else {
+            sb.append(node.data);
+            sb.append('(');
+            toDataString(sb,node.left);
+            toDataString(sb,node.right);
+            sb.append(')');
+        }
+    }
     static String toXString(Node binaryNode) {
         StringBuffer sb=new StringBuffer();
         toXString(sb,binaryNode);
@@ -175,6 +187,11 @@ class Node {
     static String toBinaryString(Node binaryNode) { // https://oeis.org/search?q=4%2C20%2C24%2C84%2C88%2C100%2C104%2C112&language=english&go=Search
         StringBuffer sb=new StringBuffer();
         toBinaryString(sb,binaryNode);
+        return sb.toString();
+    }
+    static String toDataString(Node binaryNode) {
+        StringBuffer sb=new StringBuffer();
+        toDataString(sb,binaryNode);
         return sb.toString();
     }
     public static String toLongString(Node tree) {
@@ -225,6 +242,7 @@ class Node {
         int data=0;
         if(n==0) list.add(null);
         else for(int i=0;i<n;i++) {
+            //Node.ids=0;
             for(Node left:allBinaryTrees(i)) {
                 for(Node right:allBinaryTrees(n-1-i)) {
                     Node node=new Node(data,left,right);
@@ -364,11 +382,13 @@ class Node {
     public static void main(String[] args) {
         //handmade();
         //doRuns();
-        List<Node> list=allBinaryTrees(4);
+        List<Node> list=allBinaryTrees(9);
         for(Node tree:list) {
+            //Node.ids=0;
             String string=toBinaryString(tree);
             int n=Integer.parseInt(string,2);
             System.out.println("\t"+n+" "+bothToString(tree));
+            System.out.println("\t"+n+" "+toDataString(tree));
             preOrder(tree);
             // why don't the data values do something reasonable?
             //break;
