@@ -435,6 +435,8 @@ write  failing keys to a file in my test watcher when the test fails.
 generate sgf tree from catalan tree stuff.
 worked on tree stuff. decided to postpone this for now.
 since the catalan has it's own binary node.
+fixed duplicate reports in node.
+
 
 
 

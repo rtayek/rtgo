@@ -53,13 +53,14 @@ import utilities.*;
         boolean anyDeepailures=false;
         for(Node node:trees) {
             if(node==null) continue;
+            
             String expected=node.encode();
-            // add string writer and return the tree
             int n=Integer.parseInt(expected,2);
             List<Boolean> list=encode(n,expected.length());
             List<Integer> datas=new ArrayList<>(Node.sequentialData);
             Node node2=decode(list,datas);
             String actual=node2.encode();
+            System.out.println(nodes+" nodes.");
             if(!node.deepEquals(node2)) {
                 System.out.println("ex: "+expected);
                 System.out.println("ac: "+actual);
