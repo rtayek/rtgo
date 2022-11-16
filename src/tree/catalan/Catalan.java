@@ -1,5 +1,6 @@
 package tree.catalan;
 import java.util.List;
+import utilities.Holder;
 public class Catalan {
     tree.catalan.Node x;
     public static final long c(final int n,final int r) { // binomial coefficient
@@ -24,7 +25,7 @@ public class Catalan {
     public static long catalan(int n) { return f(2*n)/(f(n+1)*f(n)); }
     private static void print(Node node) {
         if(node!=null) {
-            String string=node.toBinaryString();
+            String string=node.encode();
             int foo=Integer.parseInt(string,2);
             System.out.print(foo);
             System.out.print(" "+string);
@@ -40,9 +41,10 @@ public class Catalan {
         // uses the Node class here in this package
         for(int nodes=0;nodes<5;++nodes) { // 15 takes a few minutes.
             Node.ids=0;
-            List<Node> list=Node.allBinaryTrees(nodes);
-            System.out.println(nodes+" nodes. has "+list.size()+" trees\n");
-            for(Node node:list) {
+            Holder<Integer> data=new Holder<>(0);
+            List<Node> ltrees=Node.allBinaryTrees(nodes,data);
+            System.out.println(nodes+" nodes. has "+ltrees.size()+" trees\n");
+            for(Node node:ltrees) {
                 System.out.println("|||");
                 print(node);
             }

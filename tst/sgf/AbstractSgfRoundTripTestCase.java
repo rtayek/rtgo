@@ -3,6 +3,7 @@ import static io.IO.noIndent;
 import static org.junit.Assert.*;
 import static sgf.Parser.restoreSgf;
 import static sgf.SgfNode.*;
+import static utilities.Utilities.implies;
 import java.io.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
@@ -51,7 +52,6 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         } else return;
         assertTrue(expected.deepEquals(actual));
     }
-    public static boolean implies(Boolean a,boolean b) { return !a|b; }
     @Test public void testHexAscii() {
         String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
         String actualSgf=encoded!=null?HexAscii.decodeToString(encoded):null;

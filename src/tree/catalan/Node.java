@@ -1,8 +1,12 @@
 package tree.catalan;
+import static utilities.Utilities.implies;
 import java.util.*;
 import java.util.function.Consumer;
 import sgf.MNode;
+import utilities.Holder;
+//https://en.wikipedia.org/wiki/Binary_tree#Encodings
 // http://www.durangobill.com/BinTrees.html
+// https://en.wikipedia.org/wiki/Binary_tree#Combinatorics
 class Node {
     // seems to be a clone of sgf node.
     // not any more, added a lot of stuff
@@ -67,7 +71,7 @@ class Node {
         preOrder(root.left);
         preOrder(root.right);
     }
-    public static void PreOrderTraverse(StringBuilder sb,String padding,String pointer,Node node) {
+    public static void preOrderTraverse(StringBuilder sb,String padding,String pointer,Node node) {
         if(node!=null) {
             sb.append(padding);
             sb.append(pointer);
@@ -78,8 +82,8 @@ class Node {
             String paddingForBoth=paddingBuilder.toString();
             String pointerForRight="└──";
             String pointerForLeft=(node.right!=null)?"├──":"└──";
-            PreOrderTraverse(sb,paddingForBoth,pointerForLeft,node.left);
-            PreOrderTraverse(sb,paddingForBoth,pointerForRight,node.right);
+            preOrderTraverse(sb,paddingForBoth,pointerForLeft,node.left);
+            preOrderTraverse(sb,paddingForBoth,pointerForRight,node.right);
         }
     }
     public static void inOrder(Node root) {
@@ -101,6 +105,28 @@ class Node {
         Node temp=root.left;
         root.left=root.right;
         root.right=temp;
+    }
+    public boolean deepEquals(Node other) {
+        if(this==other) return true;
+        else if(other==null) return false;
+        else if(!equals(other)) return false;
+        if(left!=null) {
+            boolean isEqual=left.deepEquals(other.left);
+            if(!isEqual) return false;
+        } else if(other.left!=null) return false;
+        if(right!=null) {
+            boolean isEqual=right.deepEquals(other.right);
+            if(!isEqual) return false;
+        } else if(other.right!=null) return false;
+        return true;
+    }
+    @Override public int hashCode() { return Objects.hash(data); }
+    @Override public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(obj==null) return false;
+        if(getClass()!=obj.getClass()) return false;
+        Node other=(Node)obj;
+        return data==other.data||data.equals(obj);
     }
     public boolean isStrange() { return isStrange(this); }
     public static boolean isStrange(Node binaryNode) {
@@ -160,17 +186,17 @@ class Node {
             sb.append(')');
         }
     }
-    static void toBinaryString(StringBuffer sb,Node node) { // encode
+    static void encode(StringBuffer sb,Node node) { // encode
         if(node==null) sb.append('0');
         else {
             sb.append('1');
-            toBinaryString(sb,node.left);
-            toBinaryString(sb,node.right);
+            encode(sb,node.left);
+            encode(sb,node.right);
             // append data
         }
     }
     static void toDataString(StringBuffer sb,Node node) { // encode
-        if(node==null) ; //sb.append('x');
+        if(node==null); //sb.append('x');
         else {
             sb.append(node.data);
             sb.append('(');
@@ -184,9 +210,10 @@ class Node {
         toXString(sb,binaryNode);
         return sb.toString();
     }
-    static String toBinaryString(Node binaryNode) { // https://oeis.org/search?q=4%2C20%2C24%2C84%2C88%2C100%2C104%2C112&language=english&go=Search
+    static String encode(Node binaryNode) { // to binary string
+        // https://oeis.org/search?q=4%2C20%2C24%2C84%2C88%2C100%2C104%2C112&language=english&go=Search
         StringBuffer sb=new StringBuffer();
-        toBinaryString(sb,binaryNode);
+        encode(sb,binaryNode);
         return sb.toString();
     }
     static String toDataString(Node binaryNode) {
@@ -196,17 +223,18 @@ class Node {
     }
     public static String toLongString(Node tree) {
         StringBuilder sb=new StringBuilder();
-        PreOrderTraverse(sb,"","",tree);
+        preOrderTraverse(sb,"","",tree);
         return sb.toString();
     }
     @Override public String toString() { return "Node [data="+data+", id="+id+"]"; }
     String toXString() { return toXString(this); }
-    String toBinaryString() { return toBinaryString(this); }
-    public static List<Boolean> convertToBinary(int b,int length) {
+    String encode() { return encode(this); }
+    public static List<Boolean> encode(int b,int length) {
         List<Boolean> bits=new ArrayList<>();
         for(int i=length;i>=1;b/=2,--i) bits.add(b%2==1?true:false);
         Collections.reverse(bits);
-        while(bits.size()>0&&!bits.get(0)) bits.remove(0);
+        //while(bits.size()>0&&!bits.get(0)) bits.remove(0); // what is this?
+        while(!implies(bits.size()>0,bits.get(0))) bits.remove(0); // what is this?
         if(bits.size()==0) System.out.println("no bits!");
         return bits;
     }
@@ -225,11 +253,12 @@ class Node {
         return null;
     }
     public static String roundTrip(String expected) {
+        // add string writer and return the tree
         int n=Integer.parseInt(expected,2);
-        List<Boolean> list=Node.convertToBinary(n,expected.length());
+        List<Boolean> list=Node.encode(n,expected.length());
         List<Integer> data=new ArrayList<>(sequentialData);
         Node node2=Node.decode(list,data);
-        String actual=node2.toBinaryString();
+        String actual=node2.encode();
         return actual;
     }
     static Node roundTrip(Node tree) {
@@ -237,33 +266,37 @@ class Node {
         Node newTree=toBinaryTree(mNodes);
         return newTree.left;
     }
-    static List<Node> allBinaryTrees(int n) {
+    static List<Node> allBinaryTrees(int nodes,Holder<Integer> data) {
+        // memoize this!
+        // might have to get this and renumber?
         List<Node> list=new ArrayList<>();
-        int data=0;
-        if(n==0) list.add(null);
-        else for(int i=0;i<n;i++) {
-            //Node.ids=0;
-            for(Node left:allBinaryTrees(i)) {
-                for(Node right:allBinaryTrees(n-1-i)) {
-                    Node node=new Node(data,left,right);
-                    data++;
+        if(nodes==0) list.add(null);
+        else for(int i=0;i<nodes;i++) {
+            Node.ids=0;
+            for(Node left:allBinaryTrees(i,data)) {
+                for(Node right:allBinaryTrees(nodes-1-i,data)) {
+                    Node node=new Node(data.t,left,right);
+                    ++data.t;
                     list.add(node);
                 }
             }
         }
         return list;
     }
-    static void makeTrees() {
+    static void makeTrees() { // fix these names so they are consistent.
+        Node tree0=null;
+        Node tree1=new Node(1);
+        binaryTrees1[0]=tree1;
         Node tree21=new Node(1);
         tree21.left=new Node(2);
         binaryTrees2[0]=tree21;
         Node tree22=new Node(1);
         tree22.right=new Node(2);
         binaryTrees2[1]=tree22;
-        Node tree1=new Node(1);
-        tree1.left=new Node(2);
-        tree1.left.left=new Node(3);
-        binaryTrees3[0]=tree1;
+        Node tree31=new Node(1);
+        tree31.left=new Node(2);
+        tree31.left.left=new Node(3);
+        binaryTrees3[0]=tree31;
         Node tree2=new Node(1);
         tree2.right=new Node(2);
         tree2.right.right=new Node(3);
@@ -272,10 +305,10 @@ class Node {
         tree3.left=new Node(2);
         tree3.right=new Node(3);
         binaryTrees3[2]=tree3;
-        Node tree4=new Node(1);
-        tree4.left=new Node(2);
-        tree4.left.right=new Node(3);
-        binaryTrees3[3]=tree4;
+        Node tree41=new Node(1);
+        tree41.left=new Node(2);
+        tree41.left.right=new Node(3);
+        binaryTrees3[3]=tree41;
         Node tree5=new Node(1);
         tree5.right=new Node(2);
         tree5.right.left=new Node(3);
@@ -302,7 +335,7 @@ class Node {
         if(mNode.children!=null&&mNode.children.size()>0)
             System.out.println("grand kids: "+mNode.children.get(0).children);
     }
-    static String bothToString(Node node) { return toXString(node)+" "+toBinaryString(node); }
+    static String bothToString(Node node) { return toXString(node)+" "+encode(node); }
     static void run(Node tree) {
         System.out.println(bothToString(tree));
         System.out.println(Node.toLongString(tree));
@@ -322,6 +355,7 @@ class Node {
         Node newTree=roundTrip(tree);
         lines.add(bothToString(newTree));
         longString=Node.toLongString(newTree);
+        //System.out.println("long string: "+longString);
         words=longString.split("\n");
         for(String word:words) lines.add(word);
         boolean ok=tree.toXString().equals(newTree.toXString());
@@ -331,11 +365,18 @@ class Node {
     }
     private static List<List<String>> reports(List<Node> list) {
         List<List<String>> report=new ArrayList<>();
-        int i=0;
-        for(Node tree:list) {
-            List<String> lines=report(tree);
+        for(Node root:list) {
+            List<String> lines=report(root);
             report.add(lines);
         }
+        boolean allAreEquaal=true;
+        for(int i=0;i<report.size()-1;++i) {
+            List<String> x=report.get(i);
+            List<String> y=report.get(i+1);
+            if(!x.equals(y)) { allAreEquaal=false; System.out.println("reports are not equal!\n"+x+"\n"+y); }
+        }
+        System.out.println("reports size is: "+report.size());
+        if(allAreEquaal) { List<List<String>> x=new ArrayList<>(); x.add(report.get(0)); report=x; }
         return report;
     }
     static void chop(List<List<String>> reports) {
@@ -361,47 +402,79 @@ class Node {
         for(String wideLine:wideLines) System.out.println(wideLine);
     }
     private static void handmade() {
+        System.out.println("handmade");
         makeTrees();
+        List<List<String>> handmade1=reports(Arrays.asList(binaryTrees1));
+        System.out.println("report 1: "+handmade1);
+        System.out.println("chope 1");
+        chop(handmade1);
         List<List<String>> handmade2=reports(Arrays.asList(binaryTrees2));
+        System.out.println("report 2: "+handmade2);
+        System.out.println("chope 2");
         chop(handmade2);
         List<List<String>> handmade3=reports(Arrays.asList(binaryTrees3));
+        System.out.println("report 3: "+handmade3);
+        System.out.println("string3: "+string3);
+        System.out.println("chope 3");
         chop(handmade3);
+        // ()()(),     ()(()),     (())(),     (()()),     ((()))
     }
-    private static void doRuns() {
-        for(int nodes=1;nodes<maxNodes;nodes++) {
-            System.out.println(nodes+" nodes.");
-            List<Node> list=allBinaryTrees(nodes);
-            for(Node tree:list) {
-                String string=toBinaryString(tree);
-                int n=Integer.parseInt(string,2);
-                System.out.println("\t"+n+" "+bothToString(tree));
-                //run(tree);
-            }
+    static void doRun(int nodes) {
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> ltrees=Node.allBinaryTrees(nodes,data);
+        System.out.println("has: "+ltrees.size()+" trees.");
+        int n=0;
+        List<List<String>> save=new ArrayList<>();
+        for(Node tree:ltrees) { // do one tree
+            String string=encode(tree);
+            int number=Integer.parseInt(string,2);
+            System.out.println("\t tree "+number+": "+bothToString(tree));
+            //run(tree); // was commented out
+            System.out.println("after run.");
+            List<List<String>> reports=reports(ltrees);
+            System.out.println("reports: "+reports);
+            //System.out.println("string3: "+string3);
+            System.out.println("chop for tree: "+n);
+            chop(reports);
+            ++n;
         }
     }
     public static void main(String[] args) {
-        //handmade();
-        //doRuns();
-        List<Node> list=allBinaryTrees(9);
+        // problems:
+        // duplicate rows before good - maybe fixed
+        // root node has value of an index
+        // sub-roots only use 0 and 1?
+        handmade();
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        for(int nodes=1;nodes<maxNodes;nodes++) {
+            System.out.println("run "+nodes+" nodes. <<<<<<<<<<");
+            doRun(nodes);
+            System.out.println("run "+nodes+" nodes. >>>>>>>>>>");
+        } // was commented out
+        if(true) return;
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> list=Node.allBinaryTrees(9,data);
         for(Node tree:list) {
             //Node.ids=0;
-            String string=toBinaryString(tree);
+            String string=encode(tree);
             int n=Integer.parseInt(string,2);
             System.out.println("\t"+n+" "+bothToString(tree));
             System.out.println("\t"+n+" "+toDataString(tree));
-            preOrder(tree);
+            //preOrder(tree); // was o, but too much data
             // why don't the data values do something reasonable?
             //break;
             //run(tree);
         }
     }
     Node left,right,parent;
-    public int data;
+    public Integer data;
     public final int id=ids++;
+    static String string3=" ((X*X)*X)*X, (X*(X*X))*X, (X*X)*(X*X), X*((X*X)*X), X*(X*(X*X))";
+    static Node[] binaryTrees1=new Node[1]; // use catalan numbers!
     static Node[] binaryTrees2=new Node[2];
     static Node[] binaryTrees3=new Node[5];
     static int ids;
-    static final int maxNodes=5; //11;
+    static final int maxNodes=4; //11;
     static List<Integer> sequentialData=new ArrayList<>();
     static {
         for(int i=0;i<100;++i) sequentialData.add(i);

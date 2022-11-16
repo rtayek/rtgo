@@ -7,7 +7,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import utilities.MyTestWatcher;
+import utilities.*;
 @RunWith(Parameterized.class) public class CatalanTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public CatalanTestCase(int nodes) { this.nodes=nodes; }
@@ -26,28 +26,44 @@ import utilities.MyTestWatcher;
         assertEquals(catalan(nodes),Catalan.catalan2(nodes));
     }
     @Test public void testLongRoundTrip() {
-        List<Node> trees=Node.allBinaryTrees(nodes);
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=Node.allBinaryTrees(nodes,data);
         for(Node node:trees) {
             if(node==null) continue;
             // this is just check, needs to be long
             // lets look at check
-            String expected=node.toBinaryString();
+            String expected=node.encode();
+            String actual=Node.roundTrip(expected);
+            assertEquals(expected,actual);
+        }
+    }
+    @Test public void testMirrorRoundTrip() { // do we need this?
+        // look for duplicate code in node!
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=Node.allBinaryTrees(nodes,data);
+        for(Node node:trees) {
+            if(node==null) continue;
+            Node.mirror(node);
+            String expected=node.encode();
             String actual=Node.roundTrip(expected);
             assertEquals(expected,actual);
         }
     }
     @Test public void testMirror() {
-        List<Node> trees=Node.allBinaryTrees(nodes);
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=Node.allBinaryTrees(nodes,data);
         for(Node node:trees) {
             if(node==null) continue;
+            String expected=node.encode();
             Node.mirror(node);
-            String expected=node.toBinaryString();
-            String actual=Node.roundTrip(expected);
+            Node.mirror(node);
+            String actual=node.encode();
             assertEquals(expected,actual);
         }
     }
     @Test public void testGenerate() {
-        List<Node> trees=Node.allBinaryTrees(nodes);
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=Node.allBinaryTrees(nodes,data);
         //System.out.println("trees "+(catalan(nodes)==trees.size()));
         assertEquals(catalan(nodes),trees.size());
     }

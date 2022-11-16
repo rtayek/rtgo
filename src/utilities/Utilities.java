@@ -343,5 +343,5 @@ public class Utilities {
         }
         return true;
     }
-
+    public static boolean implies(Boolean a,boolean b) { return !a|b; }
 }

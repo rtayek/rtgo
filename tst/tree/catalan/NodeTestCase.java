@@ -1,57 +1,94 @@
 package tree.catalan;
 import static org.junit.Assert.*;
+import static tree.catalan.Node.*;
 import static utilities.ParameterArray.modulo;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import utilities.MyTestWatcher;
+import utilities.*;
 @RunWith(Parameterized.class) public class NodeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    public NodeTestCase(int nodes) { this.nodes=nodes; }
-    @Parameters public static Collection<Object[]> testData() {
-        return modulo(maxNodesToTest); }
+    public NodeTestCase(int nodes) { this.nodes=nodes; watcher.key=new String(nodes+" nodes."); }
+    @Parameters public static Collection<Object[]> testData() { return modulo(maxNodesToTest); }
     // tests binary node which is not really used.
     // we need these for when the binary nodes are really sgf nodes.
     // but it seems hard to subclass binary node to get an sgf node
+    // yes, that's why we added a data variable to the node.
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testPreOrder() {
-        List<Node> trees=Node.allBinaryTrees(nodes);
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=Node.allBinaryTrees(nodes,data);
         boolean anyFailures=false;
         for(Node node:trees) {
             if(node==null) continue;
-            Node.preOrder(node);
+            if(nodes<3) preOrder(node);
             //String expected=node.toBinaryString();
             //String actual=Node.roundTrip(expected);
             //if(!expected.equals(actual)) anyFailures=true;
             //assertEquals(expected,actual);
+            // no test! - fix this
         }
         assertTrue(!anyFailures);
     }
     @Test public void testRoundTripEncodeDecodeBinaryTree() {
-        List<Node> trees=Node.allBinaryTrees(nodes);
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=Node.allBinaryTrees(nodes,data);
         boolean anyFailures=false;
         for(Node node:trees) {
             if(node==null) continue;
-            String expected=node.toBinaryString();
-            String actual=Node.roundTrip(expected);
+            String expected=node.encode();
+            String actual=roundTrip(expected);
             if(!expected.equals(actual)) anyFailures=true;
             //assertEquals(expected,actual);
         }
         assertTrue(!anyFailures);
     }
-    @Test public void testRoundTripToAndFromMultiwayTree() {
-        List<Node> trees=Node.allBinaryTrees(nodes);
+    @Test public void testRoundTripEncodeDecodeBinaryTreeUnravelled() {
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=Node.allBinaryTrees(nodes,data);
+        boolean anyFailures=false;
+        boolean anyDeepailures=false;
         for(Node node:trees) {
             if(node==null) continue;
-            String expected=node.toBinaryString();
-            Node newTree=Node.roundTrip(node);
-            String actual=newTree.toBinaryString();
+            String expected=node.encode();
+            // add string writer and return the tree
+            int n=Integer.parseInt(expected,2);
+            List<Boolean> list=encode(n,expected.length());
+            List<Integer> datas=new ArrayList<>(Node.sequentialData);
+            Node node2=decode(list,datas);
+            String actual=node2.encode();
+            if(!node.deepEquals(node2)) {
+                System.out.println("ex: "+expected);
+                System.out.println("ac: "+actual);
+                anyDeepailures=true;
+            }
+            if(!node.deepEquals(node2)) {
+                anyFailures=true;
+                System.out.println("nodes not equal!");
+                print(node);
+                print(node2);
+            }
+            //assertTrue(node.deepEquals(node2));
+            if(!expected.equals(actual)) anyFailures=true;
+            //assertEquals(expected,actual);
+        }
+        assertTrue(!anyDeepailures);
+        assertTrue(!anyFailures);
+    }
+    @Test public void testRoundTripToAndFromMultiwayTree() {
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=Node.allBinaryTrees(nodes,data);
+        for(Node node:trees) {
+            if(node==null) continue;
+            String expected=node.encode();
+            Node newTree=roundTrip(node);
+            String actual=newTree.encode();
             assertEquals(expected,actual);
         }
     }
     int nodes;
-    static final int maxNodesToTest=9; // was 11
+    static final int maxNodesToTest=3; // was 11
 }
