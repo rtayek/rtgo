@@ -26,7 +26,7 @@ public class Catalan {
     private static void print(Node node) {
         if(node!=null) {
             String encoded=node.encode();
-            int Number=Integer.parseInt(encoded,2);
+            long Number=Long.parseLong(encoded,2);
             System.out.print(Number);
             System.out.print(" "+encoded);
             System.out.println(" "+node.toXString());
@@ -39,13 +39,15 @@ public class Catalan {
     }
     public static void main(String[] args) {
         // uses the Node class here in this package
-        for(int nodes=0;nodes<11;++nodes) { // 15 takes a few minutes.
+        for(int nodes=0;nodes<3;++nodes) { // 15 takes a few minutes.
             Node.ids=0;
             Holder<Integer> data=new Holder<>(0);
             List<Node> trees=Node.allBinaryTrees(nodes,data);
+            System.out.println(trees);
             System.out.println(nodes+" nodes. has "+trees.size()+" trees.");
-            if(trees.size()!=catalans[nodes])
-                System.out.println("ltrees.size()!=catalans[nodes]");
+            if(trees.size()!=catalans[nodes]) {
+                System.out.println(trees.size()+" trees.size()!=catalans["+nodes+"]");
+            }
             for(Node node:trees) {
                 //System.out.println("|||");
                 //print(node);

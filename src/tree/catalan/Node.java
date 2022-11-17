@@ -349,12 +349,11 @@ class Node {
     String toXString() { return toXString(this); }
     String encode() { return encode(this); }
     // add string writer and return the tree
-    public static List<Boolean> encode(int b,int length) {
+    public static List<Boolean> bits(long b,int length) {
         List<Boolean> bits=new ArrayList<>();
         for(int i=length;i>=1;b/=2,--i) bits.add(b%2==1?true:false);
         Collections.reverse(bits);
-        //while(bits.size()>0&&!bits.get(0)) bits.remove(0); // what is this?
-        while(!implies(bits.size()>0,bits.get(0))) bits.remove(0); // what is this?
+        while(!implies(bits.size()>0,bits.get(0))) bits.remove(0);
         if(bits.size()==0) System.out.println("no bits!");
         return bits;
     }
@@ -372,13 +371,34 @@ class Node {
         }
         return null;
     }
+    static Node decode(String binaryString,List<Integer> data) {
+        if(binaryString.equals("")) return null;
+        boolean b=binaryString.charAt(0)=='1';
+        binaryString=binaryString.substring(1); // remoce
+        if(b) {
+            int d=data.get(0); // not changing!
+            data.remove(0);
+            Node root=new Node(d);
+            root.left=decode(binaryString,data);
+            root.right=decode(binaryString,data);
+            return root;
+        }
+        return null;
+    }
+    //int number=Integer.parseInt(expected,2);
+    public static List<Boolean> roundTrip(List<Boolean> list,List<Integer> data) {
+        Node node2=Node.decode(list,data);
+        String actual=encode(node2);
+        // have ths return the binary string.
+        return null;
+    }
     public static String roundTrip(String expected) {
         // add string writer and return the tree
-        int n=Integer.parseInt(expected,2);
-        List<Boolean> list=Node.encode(n,expected.length());
+        long number=Long.parseLong(expected,2);
+        List<Boolean> list=Node.bits(number,expected.length());
         List<Integer> data=new ArrayList<>(sequentialData);
         Node node2=Node.decode(list,data);
-        String actual=node2.encode();
+        String actual=encode(node2);
         return actual;
     }
     static Node roundTrip(Node tree) {
@@ -386,34 +406,80 @@ class Node {
         Node newTree=toBinaryTree(mNodes);
         return newTree.left;
     }
-    static List<Node> allBinaryTrees_(int nodes,Holder<Integer> data) {
-        List<Node> list=null;
-        if(map.containsKey(nodes)) {
-            // System.out.println("using: "+nodes);
-            list=map.get(nodes);
-            return list;
-        }
-        System.out.println("building: "+nodes);
-        list=new ArrayList<>();
-        if(nodes==0) list.add(null);
-        else for(int i=0;i<nodes;i++) {
-            for(Node left:allBinaryTrees_(i,data)) {
-                for(Node right:allBinaryTrees_(nodes-1-i,data)) {
-                    ++data.t;
-                    Node node=new Node(data.t,left,right);
-                    final List<Integer> datas=new ArrayList<>();
-                    Consumer<Node> add=x->datas.add(x.data);
-                    preOrder(node,add);
-                    //System.out.println("data values: "+datas);
-                    list.add(node);
+    static ArrayList<Node> allBinaryTrees_(int nodes,Holder<Integer> data) {
+        ArrayList<Node> trees=new ArrayList<>();
+        ArrayList<String> binaryStrings=null;
+        boolean done=false;
+        if(usingMap2) binaryStrings=new ArrayList<>();
+        if(true&&nodes==0) {
+            trees.add(null);
+            if(!usingMap2); // put trees in map? yes
+            else binaryStrings.add("");
+            done=true;
+            //return trees; // get rid of this!
+            // the above works if we return
+            // so we are returning an empty list.
+        } else {
+            if(!usingMap2) {
+                if(map.containsKey(nodes)) { trees=map.get(nodes); done=true; }
+            } else {
+                if(map2.containsKey(nodes)) { // get and restore trees
+                    binaryStrings=map2.get(nodes);
+                    // convert to list of list of nodes
+                    System.out.println("got binary strings: "+binaryStrings);
+                    for(String string:binaryStrings) {
+                        Node tree=Node.decode(string,sequentialData);
+                        String actual=encode(tree);
+                        if(!actual.equals(string)) System.out.println("1 badness!");
+                        trees.add(tree);
+                    }
+                    System.out.println("got: "+trees);
+                    done=true;
                 }
             }
+            if(done) {
+                System.out.println("got trees: "+nodes+" "+trees);
+                if(usingMap2) System.out.println("got binary strings: "+nodes+" "+binaryStrings);
+            } else {
+                System.out.println("building: "+nodes);
+                for(int i=0;i<nodes;i++) { // this will fall through if nodes=0!
+                    //System.gc();
+                    for(Node left:allBinaryTrees_(i,data)) {
+                        for(Node right:allBinaryTrees_(nodes-1-i,data)) {
+                            ++data.t;
+                            Node node=new Node(data.t,left,right);
+                            final List<Integer> datas=new ArrayList<>();
+                            Consumer<Node> add=x->datas.add(x.data);
+                            preOrder(node,add);
+                            // not using datas?
+                            //System.out.println("data values: "+datas);
+                            trees.add(node);
+                            if(usingMap2) {
+                                // encode and add to list of binary strings
+                                String encoded=encode(node);
+                                System.out.println(encoded+" "+node);
+                                Node actual=Node.decode(encoded,sequentialData);
+                                if(!node.structureDeepEquals(actual)) System.out.println("structures are different!");
+                                binaryStrings.add(encoded);
+                            }
+                        }
+                    }
+                }
+            } // at least one node
         }
-        System.out.println("adding: "+nodes);
-        map.put(nodes,list);
-        return list;
+        if(nodes!=0) {
+            map.put(nodes,trees);
+            if(usingMap2) {
+                System.out.println("putting: "+binaryStrings);
+                map2.put(nodes,binaryStrings);
+            } else if(trees!=null) System.out.println("putting "+trees.size()+" trees");
+        }
+        return trees;
     }
-    static List<Node> allBinaryTrees(int nodes,Holder<Integer> data) { return allBinaryTrees_(nodes,data); }
+    static ArrayList<Node> allBinaryTrees(int nodes,Holder<Integer> data) {
+        System.out.println("staring with: "+nodes+" nodes. --------------");
+        return allBinaryTrees_(nodes,data);
+    }
     static void makeTrees() { // fix these names so they are consistent.
         Node tree0=null;
         Node tree1=new Node(1);
@@ -468,8 +534,8 @@ class Node {
     }
     static String bothToString(Node node) { return toXString(node)+" "+encode(node); }
     static void run(Node tree) {
-        String string=encode(tree);
-        int encoded=Integer.parseInt(string,2);
+        String encoded=encode(tree);
+        long number=Long.parseLong(encoded,2);
         System.out.println(bothToString(tree));
         System.out.println(Node.toLongString(tree));
         Node newTree=roundTrip(tree);
@@ -590,10 +656,10 @@ class Node {
         List<Node> list=Node.allBinaryTrees(2,data);
         for(Node tree:list) {
             //Node.ids=0;
-            String string=encode(tree);
-            int encoded=Integer.parseInt(string,2);
-            System.out.println("\t"+encoded+" "+bothToString(tree));
-            System.out.println("\t"+encoded+" "+toDataString(tree));
+            String encoded=encode(tree);
+            long number=Long.parseLong(encoded,2);
+            System.out.println("\t"+number+" "+bothToString(tree));
+            System.out.println("\t"+number+" "+toDataString(tree));
             //preOrder(tree); // was o, but too much data
             // why don't the data values do something reasonable?
             //break;
@@ -613,13 +679,22 @@ class Node {
     static {
         for(int i=0;i<100;++i) sequentialData.add(i);
     }
-    static SortedMap<Integer,List<Node>> map=new TreeMap<>();
+    static SortedMap<Integer,ArrayList<Node>> map=new TreeMap<>();
+    static SortedMap<Integer,ArrayList<String>> map2=new TreeMap<>();
     static {
         System.out.println("static init");
-        for(int i=0;i<11;++i) {
+        for(int i=0;i<2;++i) {
             Holder<Integer> data=new Holder<>(0);
-            map.put(i,allBinaryTrees(i,data));
+            ArrayList<Node> trees=allBinaryTrees(i,data);
+            map.put(i,trees);
+            for(Node tree:trees) {
+                String encoded=encode(tree);
+                long number=Long.parseLong(encoded,2);
+                System.out.println(i+" "+encoded+" "+number);
+                if(true) break;
+            }
         }
     }
     transient int siblings,descendants; // dangerous!
+    static boolean usingMap2=false;
 }

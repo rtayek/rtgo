@@ -53,8 +53,8 @@ import utilities.*;
         for(Node node:trees) {
             if(node==null) continue;
             String expected=node.encode();
-            int n=Integer.parseInt(expected,2);
-            List<Boolean> list=encode(n,expected.length());
+            int number=Integer.parseInt(expected,2);
+            List<Boolean> list=bits(number,expected.length());
             List<Integer> datas=new ArrayList<>(Node.sequentialData);
             Node node2=decode(list,datas);
             String actual=node2.encode();

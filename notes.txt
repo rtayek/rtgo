@@ -438,6 +438,7 @@ since the catalan has it's own binary node.
 fixed duplicate reports in node.
 11/16/22 deep equals failing because node data is different.
 data in the memoized trees is broken. fix!
+11/17/22 may have to store length with number?
 
 
 
