@@ -53,24 +53,42 @@ import utilities.*;
         boolean anyDeepailures=false;
         for(Node node:trees) {
             if(node==null) continue;
-            
             String expected=node.encode();
             int n=Integer.parseInt(expected,2);
             List<Boolean> list=encode(n,expected.length());
             List<Integer> datas=new ArrayList<>(Node.sequentialData);
             Node node2=decode(list,datas);
             String actual=node2.encode();
+            assertEquals(expected,actual);
             System.out.println(nodes+" nodes.");
-            if(!node.deepEquals(node2)) {
+            boolean structureDeepEquals=node.structureDeepEquals(node2);
+            if(!structureDeepEquals) {
+                System.out.println("structures are not equal!");
                 System.out.println("ex: "+expected);
                 System.out.println("ac: "+actual);
-                anyDeepailures=true;
-            }
-            if(!node.deepEquals(node2)) {
-                anyFailures=true;
+                List<String> report=report(node);
+                List<String> report2=report(node2);
+                System.out.println(report);
+                System.out.println(report2);
+            } else System.out.println("structures are equal.");
+            if(structureDeepEquals) if(!node.deepEquals(node2)) {
                 System.out.println("nodes not equal!");
-                print(node);
-                print(node2);
+                //print(node);
+                //print(node2);
+                //System.out.println(toLongString(node));
+                //System.out.println(toLongString(node2));
+                //System.out.println(node.encode());
+                //System.out.println(node2.encode());
+                node.fix(node2);
+                System.out.println("try to fix.");
+                List<String> report=report(node);
+                List<String> report2=report(node2);
+                System.out.println(report);
+                System.out.println(report2);
+                if(!node.deepEquals(node2)) {
+                    System.out.println("fix failes!");
+                    anyDeepailures=true;
+                } else System.out.println("fix succeeded!");
             }
             //assertTrue(node.deepEquals(node2));
             if(!expected.equals(actual)) anyFailures=true;
@@ -91,5 +109,5 @@ import utilities.*;
         }
     }
     int nodes;
-    static final int maxNodesToTest=3; // was 11
+    static final int maxNodesToTest=11; // was 11
 }

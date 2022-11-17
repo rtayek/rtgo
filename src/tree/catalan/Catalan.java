@@ -25,10 +25,10 @@ public class Catalan {
     public static long catalan(int n) { return f(2*n)/(f(n+1)*f(n)); }
     private static void print(Node node) {
         if(node!=null) {
-            String string=node.encode();
-            int foo=Integer.parseInt(string,2);
-            System.out.print(foo);
-            System.out.print(" "+string);
+            String encoded=node.encode();
+            int Number=Integer.parseInt(encoded,2);
+            System.out.print(Number);
+            System.out.print(" "+encoded);
             System.out.println(" "+node.toXString());
         } else {
             System.out.print("0");

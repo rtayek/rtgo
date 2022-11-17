@@ -151,6 +151,34 @@ class Node {
         root.left=root.right;
         root.right=temp;
     }
+    public boolean structureDeepEquals(Node other) {
+        if(this==other) return true;
+        else if(other==null) { System.out.println("other is null!"); return false; }
+        //else if(!equals(other)) return false;
+        if(left!=null) {
+            boolean isEqual=left.deepEquals(other.left);
+            if(!isEqual) { System.out.println("other.left is not equal!"); return false; }
+        } else if(other.left!=null) { System.out.println("other.left is not null!"); return false; }
+        if(right!=null) {
+            boolean isEqual=right.deepEquals(other.right);
+            if(!isEqual) { System.out.println("other.right is not equal!"); return false; }
+        } else if(other.right!=null) { System.out.println("other.right is not null!"); return false; }
+        return true;
+    }
+    void fix_(Node other) {
+        if(this==other);
+        else if(other==null) throw new RuntimeException("can not fix!");
+        else if(data!=other.data) other.data=data;
+        if(left!=null) left.fix_(other.left);
+        else if(other.left!=null) throw new RuntimeException("can not fix!");
+        if(right!=null) right.fix(other.right);
+        else if(other.right!=null) throw new RuntimeException("can not fix!");
+    }
+    void fix(Node node2) {
+        boolean structureDeepEquals=structureDeepEquals(node2);
+        if(structureDeepEquals) fix_(node2);
+        else throw new RuntimeException("can not fix!");
+    }
     public boolean deepEquals(Node other) {
         if(this==other) return true;
         else if(other==null) return false;
@@ -250,20 +278,20 @@ class Node {
             sb.append(')');
         }
     }
-    static String toXString(Node binaryNode) {
+    static String toXString(Node btree) {
         StringBuffer sb=new StringBuffer();
-        toXString(sb,binaryNode);
+        toXString(sb,btree);
         return sb.toString();
     }
-    static String encode(Node binaryNode) { // to binary string
+    static String encode(Node tree) { // to binary string
         // https://oeis.org/search?q=4%2C20%2C24%2C84%2C88%2C100%2C104%2C112&language=english&go=Search
         StringBuffer sb=new StringBuffer();
-        encode(sb,binaryNode);
+        encode(sb,tree);
         return sb.toString();
     }
-    static String toDataString(Node binaryNode) {
+    static String toDataString(Node tree) {
         StringBuffer sb=new StringBuffer();
-        toDataString(sb,binaryNode);
+        toDataString(sb,tree);
         return sb.toString();
     }
     public static String toLongString(Node tree) {
@@ -399,7 +427,7 @@ class Node {
         System.out.println(ok);
         if(!ok) throw new RuntimeException();
     }
-    private static List<String> report(Node tree) {
+    static List<String> report(Node tree) {
         List<String> lines=new ArrayList<>();
         lines.add(bothToString(tree));
         String longString=Node.toLongString(tree);
