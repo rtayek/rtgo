@@ -1,7 +1,7 @@
 package tree.catalan;
 import static utilities.Utilities.implies;
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.function.*;
 import sgf.MNode;
 import utilities.Holder;
 //https://en.wikipedia.org/wiki/Binary_tree#Encodings
@@ -94,6 +94,7 @@ class Node {
             preOrderTraverse(false,sb,paddingForBoth,rPad,node.right);
         }
     }
+    // https://www.baeldung.com/java-print-binary-tree-diagram
     public static void preOrderTraverse2(Boolean isLeft,StringBuilder sb,String padding,String pointer,Node node) {
         if(node!=null) {
             sb.append(padding);
@@ -129,6 +130,50 @@ class Node {
             //if(node.left!=null) lPad="";
             preOrderTraverse2(true,sb,paddingForBoth,lPad,node.left);
             preOrderTraverse2(false,sb,paddingForBoth,rPad,node.right);
+        }
+    }
+    public static void printSubtree(Boolean isLeft,int indent,Node node) {
+        // https://stackoverflow.com/questions/8964279/coding-a-basic-pretty-printer-for-trees-in-java
+        for(int i=0;i<indent;++i) { System.out.print(" "); }
+        int elemWidth=4;
+        if(node!=null&&(node.left!=null||node.right!=null)) { // maybe just not a leaf?
+            System.out.println("("+node.data);
+            printSubtree(isLeft,indent+elemWidth,node.left); //this is a recursive call, alternatively use the indent formula above if you don't use recursion
+            printSubtree(isLeft,indent+elemWidth,node.right);
+            //we have a new line so print the indent again
+            for(int i=0;i<indent;++i) { System.out.print(" "); }
+            System.out.println(")");
+        } else if(node!=null) {
+            System.out.println(node.data);
+        } else { //empty/non existing node
+            //System.out.println("()");
+        }
+    }
+    public static void printx(String prefix,Node n,boolean isLeft) {
+        //https://stackoverflow.com/a/55153851/51292
+        if(n!=null) {
+            printx(prefix+"     ",n.right,false);
+            System.out.println(prefix+("|-- ")+n.data);
+            printx(prefix+"     ",n.left,true);
+        }
+    }
+    /**
+     * Print a tree structure in a pretty ASCII fromat.
+     * @param prefix Currnet previx. Use "" in initial call!
+     * @param node The current node. Pass the root node of your tree in initial call.
+     * @param getChildrenFunc A {@link Function} that returns the children of a given node.
+     * @param isTail Is node the last of its sibblings. Use true in initial call. (This is needed for pretty printing.)
+     * @param <T> The type of your nodes. Anything that has a toString can be used.
+     */
+    static void printTreeRec(String prefix,Node node,Function<Node,List<Node>> getChildrenFunc,boolean isTail) {
+        String nodeName=""+node.data;
+        String nodeConnection=isTail?"└── ":"├── ";
+        System.out.println(prefix+nodeConnection+nodeName);
+        List<Node> children=getChildrenFunc.apply(node);
+        for(int i=0;i<children.size();i++) {
+            String newPrefix=prefix+(isTail?"    ":"│   ");
+            printTreeRec(newPrefix,children.get(i),getChildrenFunc,i==children.size()-1);
+            System.out.println();
         }
     }
     public static void inOrder(Node root) {
@@ -342,9 +387,14 @@ class Node {
         return newTree.left;
     }
     static List<Node> allBinaryTrees_(int nodes,Holder<Integer> data) {
-        // memoize this!
-        // might have to get this and renumber?
-        List<Node> list=new ArrayList<>();
+        List<Node> list=null;
+        if(map.containsKey(nodes)) {
+            // System.out.println("using: "+nodes);
+            list=map.get(nodes);
+            return list;
+        }
+        System.out.println("building: "+nodes);
+        list=new ArrayList<>();
         if(nodes==0) list.add(null);
         else for(int i=0;i<nodes;i++) {
             for(Node left:allBinaryTrees_(i,data)) {
@@ -359,6 +409,8 @@ class Node {
                 }
             }
         }
+        System.out.println("adding: "+nodes);
+        map.put(nodes,list);
         return list;
     }
     static List<Node> allBinaryTrees(int nodes,Holder<Integer> data) { return allBinaryTrees_(nodes,data); }
@@ -493,6 +545,12 @@ class Node {
         chop(handmade3);
         // ()()(),     ()(()),     (())(),     (()()),     ((()))
     }
+    static List<Node> getChildrenOf(Node node) {
+        ArrayList<Node> nodes=new ArrayList<>();
+        if(node.left!=null) nodes.add(node.left);
+        if(node.right!=null) nodes.add(node.right);
+        return nodes;
+    }
     static void doRun(int nodes) {
         Holder<Integer> data=new Holder<>(0);
         List<Node> trees=Node.allBinaryTrees(nodes,data);
@@ -501,6 +559,15 @@ class Node {
         if(false) {
             System.out.println("reports for "+nodes+" nodes: ");
             for(List<String> report:reports) System.out.println("report0: "+report);
+        }
+        for(Node node:trees) {
+            printSubtree(false,4,node);
+            printx("    ",node,true);
+            getChildrenOf(node);
+            Function<Node,List<Node>> getChildrenFunc=x->getChildrenOf(x);
+            System.out.println("-----");
+            printTreeRec("    ",node,getChildrenFunc,true);
+            System.out.println("------------------------");
         }
         if(nodes==3) System.out.println("string3: "+string3);
         chop(reports);
@@ -513,7 +580,7 @@ class Node {
         //System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
         if(false) {
             doRun(2);
-        } else if(true) for(int nodes=1;nodes<=maxNodes;nodes++) {
+        } else if(true) for(int nodes=1;nodes<=3;nodes++) {
             System.out.println("run "+nodes+" nodes. <<<<<<<<<<");
             doRun(nodes);
             System.out.println("run "+nodes+" nodes. >>>>>>>>>>");
@@ -541,10 +608,18 @@ class Node {
     static Node[] binaryTrees2=new Node[2];
     static Node[] binaryTrees3=new Node[5];
     static int ids;
-    static final int maxNodes=4; //11;
+    static final int maxNodes=10; //11;
     static List<Integer> sequentialData=new ArrayList<>();
     static {
         for(int i=0;i<100;++i) sequentialData.add(i);
+    }
+    static SortedMap<Integer,List<Node>> map=new TreeMap<>();
+    static {
+        System.out.println("static init");
+        for(int i=0;i<11;++i) {
+            Holder<Integer> data=new Holder<>(0);
+            map.put(i,allBinaryTrees(i,data));
+        }
     }
     transient int siblings,descendants; // dangerous!
 }

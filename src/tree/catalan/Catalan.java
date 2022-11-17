@@ -39,17 +39,20 @@ public class Catalan {
     }
     public static void main(String[] args) {
         // uses the Node class here in this package
-        for(int nodes=0;nodes<5;++nodes) { // 15 takes a few minutes.
+        for(int nodes=0;nodes<11;++nodes) { // 15 takes a few minutes.
             Node.ids=0;
             Holder<Integer> data=new Holder<>(0);
-            List<Node> ltrees=Node.allBinaryTrees(nodes,data);
-            System.out.println(nodes+" nodes. has "+ltrees.size()+" trees\n");
-            for(Node node:ltrees) {
-                System.out.println("|||");
-                print(node);
+            List<Node> trees=Node.allBinaryTrees(nodes,data);
+            System.out.println(nodes+" nodes. has "+trees.size()+" trees.");
+            if(trees.size()!=catalans[nodes])
+                System.out.println("ltrees.size()!=catalans[nodes]");
+            for(Node node:trees) {
+                //System.out.println("|||");
+                //print(node);
             }
-            System.out.println("|||||||");
+            //System.out.println("|||||||");
         }
+        System.out.println(catalans.length+" catalans.");
     }
     public static long[] catalans=new long[] {1,1,2,5,14,42,132,429,1430,4862,16796,58786,208012,742900,2674440,9694845,
             35357670,129644790,477638700,1767263190,6564120420l,24466267020l,91482563640l,343059613650l,1289904147324l,

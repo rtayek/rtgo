@@ -42,7 +42,6 @@ import utilities.*;
             String expected=node.encode();
             String actual=roundTrip(expected);
             if(!expected.equals(actual)) anyFailures=true;
-            //assertEquals(expected,actual);
         }
         assertTrue(!anyFailures);
     }
