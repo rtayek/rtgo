@@ -94,6 +94,43 @@ class Node {
             preOrderTraverse(false,sb,paddingForBoth,rPad,node.right);
         }
     }
+    public static void preOrderTraverse2(Boolean isLeft,StringBuilder sb,String padding,String pointer,Node node) {
+        if(node!=null) {
+            sb.append(padding);
+            sb.append(pointer);
+            sb.append(node.data);
+            sb.append(' ');
+            if(isLeft!=null) sb.append(isLeft?'L':'R');
+            else if(node.left!=null&&node.right!=null) {
+                sb.append(' ');
+                sb.append(node.left.data);
+                sb.append(' ');
+                sb.append(node.right.data);
+            }
+            //sb.append(node.left!=null?'T':'F');
+            //sb.append(' ');
+            //sb.append(node.right!=null?'T':'F');
+            sb.append('\n');
+            StringBuilder paddingBuilder=new StringBuilder(padding);
+            String lPad="",rPad="    ";
+            String bothPad="";
+            if(node.left!=null) bothPad="";
+            paddingBuilder.append(bothPad);
+            String paddingForBoth=paddingBuilder.toString();
+            if(node.left!=null) {
+                //String bothPad="│  ";
+                //lPad="";
+                rPad="";
+            }
+            //String rPad="└──";
+            //String lPad=(node.right!=null)?"├──":rPad;
+            // maybe get rid of the both padding
+            // and use spaces for a null node
+            //if(node.left!=null) lPad="";
+            preOrderTraverse2(true,sb,paddingForBoth,lPad,node.left);
+            preOrderTraverse2(false,sb,paddingForBoth,rPad,node.right);
+        }
+    }
     public static void inOrder(Node root) {
         if(root==null) return;
         inOrder(root.left);
@@ -231,7 +268,8 @@ class Node {
     }
     public static String toLongString(Node tree) {
         StringBuilder sb=new StringBuilder();
-        preOrderTraverse(null,sb,"","",tree);
+        //preOrderTraverse(null,sb,"","",tree);
+        preOrderTraverse2(null,sb,"","",tree);
         return sb.toString();
     }
     @Override public String toString() { return "Node [data="+data+", id="+id+"]"; }
@@ -350,6 +388,8 @@ class Node {
     }
     static String bothToString(Node node) { return toXString(node)+" "+encode(node); }
     static void run(Node tree) {
+        String string=encode(tree);
+        int encoded=Integer.parseInt(string,2);
         System.out.println(bothToString(tree));
         System.out.println(Node.toLongString(tree));
         Node newTree=roundTrip(tree);
@@ -362,20 +402,17 @@ class Node {
     private static List<String> report(Node tree) {
         List<String> lines=new ArrayList<>();
         lines.add(bothToString(tree));
-        
         String longString=Node.toLongString(tree);
         String[] words=longString.split("\n");
         for(String word:words) lines.add(word);
-        System.out.println("lines 1: "+lines);
+        //System.out.println("short lines: "+lines);
         Node newTree=roundTrip(tree); // maybe losing ids here?
         lines.add(bothToString(newTree));
-        
         longString=Node.toLongString(newTree);
         //System.out.println("long string: "+longString);
         words=longString.split("\n");
         //for(String word:words) lines.add(word);
         boolean ok=tree.toXString().equals(newTree.toXString());
-        
         lines.add(ok?"good":"fail!");
         lines.add("|||");
         return lines;
@@ -397,7 +434,7 @@ class Node {
         String[] wideLines=new String[depth];
         for(int i=0;i<depth;++i) wideLines[i]="";
         for(List<String> report:reports) {
-            System.out.println("report\n"+report);
+            //System.out.println("report: "+report);
             while(report.size()<depth) report.add("");
             int i=0;
             for(String line:report) {
@@ -414,15 +451,15 @@ class Node {
         System.out.println("handmade");
         makeTrees();
         List<List<String>> handmade1=reports(Arrays.asList(binaryTrees1));
-        System.out.println("report 1: "+handmade1);
+        System.out.println("report sfro 1 node: "+handmade1);
         System.out.println("chope 1");
         chop(handmade1);
         List<List<String>> handmade2=reports(Arrays.asList(binaryTrees2));
-        System.out.println("report 2: "+handmade2);
+        System.out.println("reports for 2 nodes: "+handmade2);
         System.out.println("chope 2");
         chop(handmade2);
         List<List<String>> handmade3=reports(Arrays.asList(binaryTrees3));
-        System.out.println("report 3: "+handmade3);
+        System.out.println("reports for 3 nodes: "+handmade3);
         System.out.println("string3: "+string3);
         System.out.println("chope 3");
         chop(handmade3);
@@ -432,8 +469,11 @@ class Node {
         Holder<Integer> data=new Holder<>(0);
         List<Node> trees=Node.allBinaryTrees(nodes,data);
         System.out.println("has: "+trees.size()+" trees.");
-        int n=0;
         List<List<String>> reports=reports(trees);
+        if(false) {
+            System.out.println("reports for "+nodes+" nodes: ");
+            for(List<String> report:reports) System.out.println("report0: "+report);
+        }
         if(nodes==3) System.out.println("string3: "+string3);
         chop(reports);
         System.out.println("after run.");
@@ -442,10 +482,10 @@ class Node {
         // problems:
         // root node has value of an index
         if(false) handmade();
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        if(true) {
+        //System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        if(false) {
             doRun(2);
-        } else if(false) for(int nodes=1;nodes<=maxNodes;nodes++) {
+        } else if(true) for(int nodes=1;nodes<=maxNodes;nodes++) {
             System.out.println("run "+nodes+" nodes. <<<<<<<<<<");
             doRun(nodes);
             System.out.println("run "+nodes+" nodes. >>>>>>>>>>");
@@ -456,13 +496,13 @@ class Node {
         for(Node tree:list) {
             //Node.ids=0;
             String string=encode(tree);
-            int n=Integer.parseInt(string,2);
-            System.out.println("\t"+n+" "+bothToString(tree));
-            System.out.println("\t"+n+" "+toDataString(tree));
+            int encoded=Integer.parseInt(string,2);
+            System.out.println("\t"+encoded+" "+bothToString(tree));
+            System.out.println("\t"+encoded+" "+toDataString(tree));
             //preOrder(tree); // was o, but too much data
             // why don't the data values do something reasonable?
             //break;
-            //run(tree);
+            run(tree);
         }
     }
     Node left,right,parent;
