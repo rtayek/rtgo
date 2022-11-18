@@ -440,6 +440,7 @@ fixed duplicate reports in node.
 data in the memoized trees is broken. fix!
 11/17/22 may have to store length with number?
 memoized seems faster but structures are different.
+11/18/22 
 
 
 

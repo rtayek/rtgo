@@ -20,6 +20,7 @@ public class MyTestWatcher extends TestWatcher {
     }
     @Override protected void finished(Description description) {
         String finished="finished test "+first.testsRun.size()+" "+ets();
+        if(verbosity) System.out.println(finished);
         if(IO.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread! "+ets());
         String beforeEndCheck=NamedThreadGroup.allNamedThreads.size()+"/"+NamedThreadGroup.ids;
         check.endCheck();
