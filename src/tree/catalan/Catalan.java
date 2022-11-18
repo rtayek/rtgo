@@ -39,11 +39,11 @@ public class Catalan {
     }
     public static void main(String[] args) {
         // uses the Node class here in this package
-        for(int nodes=0;nodes<3;++nodes) { // 15 takes a few minutes.
+        for(int nodes=0;nodes<100;++nodes) { // 15 takes a few minutes.
             Node.ids=0;
             Holder<Integer> data=new Holder<>(0);
             List<Node> trees=Node.allBinaryTrees(nodes,data);
-            System.out.println(trees);
+            //System.out.println(trees);
             System.out.println(nodes+" nodes. has "+trees.size()+" trees.");
             if(trees.size()!=catalans[nodes]) {
                 System.out.println(trees.size()+" trees.size()!=catalans["+nodes+"]");

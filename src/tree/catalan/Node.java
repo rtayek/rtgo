@@ -43,22 +43,17 @@ class Node {
         // return; }
         Node last=lastSibling();
         last.right=node;
-        // System.err.println("added node "+node.id+" as sibling of node "+this.id);
     }
     public void addDescendant(Node node) {
         Node last=lastDescendant();
         last.left=node;
-        // System.err.println("added node "+node.id+" as desendent of node "+last.id);
     }
     public int children() { if(left==null) return 0; left.lastSibling(); return siblings+1; }
     public void addChild(Node node) {
-        // if(left==null)
-        // System.err.println("added node "+node.id+" as first child of node "+this.id);
         if(left==null) { left=node; return; }
         Node last=left.lastSibling();
         if(last==null) throw new RuntimeException("last is null in addChild");
         last.right=node;
-        // System.err.println("added node "+node.id+" as child of node "+this.id);
     }
     public static void preOrder(Node root,Consumer<Node> consumer) {
         if(root==null) return;
@@ -414,7 +409,7 @@ class Node {
         if(true&&nodes==0) {
             trees.add(null);
             if(!usingMap2); // put trees in map? yes
-            else binaryStrings.add("");
+            else binaryStrings.add(null);
             done=true;
             //return trees; // get rid of this!
             // the above works if we return
@@ -433,15 +428,15 @@ class Node {
                         if(!actual.equals(string)) System.out.println("1 badness!");
                         trees.add(tree);
                     }
-                    System.out.println("got: "+trees);
+                    System.out.println("\tgot: "+trees);
                     done=true;
                 }
             }
             if(done) {
-                System.out.println("got trees: "+nodes+" "+trees);
+                ; //System.out.println("\tgot "+trees.size()+" trees for : "+nodes+" nodes.");
                 if(usingMap2) System.out.println("got binary strings: "+nodes+" "+binaryStrings);
             } else {
-                System.out.println("building: "+nodes);
+                System.out.println("building trees with "+nodes+" nodes.");
                 for(int i=0;i<nodes;i++) { // this will fall through if nodes=0!
                     //System.gc();
                     for(Node left:allBinaryTrees_(i,data)) {
@@ -470,9 +465,9 @@ class Node {
         if(nodes!=0) {
             map.put(nodes,trees);
             if(usingMap2) {
-                System.out.println("putting: "+binaryStrings);
+                System.out.println("\tputting: "+binaryStrings);
                 map2.put(nodes,binaryStrings);
-            } else if(trees!=null) System.out.println("putting "+trees.size()+" trees");
+            } else if(trees!=null) ; //System.out.println("\tputting "+trees.size()+" trees");
         }
         return trees;
     }
@@ -683,7 +678,7 @@ class Node {
     static SortedMap<Integer,ArrayList<String>> map2=new TreeMap<>();
     static {
         System.out.println("static init");
-        for(int i=0;i<2;++i) {
+        for(int i=0;i<4;++i) {
             Holder<Integer> data=new Holder<>(0);
             ArrayList<Node> trees=allBinaryTrees(i,data);
             map.put(i,trees);

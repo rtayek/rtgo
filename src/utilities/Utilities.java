@@ -271,7 +271,7 @@ public class Utilities {
         for(String string:strings) sb.append(string).append('\n');
         return sb.toString();
     }
-    static List<String> getFileAsListOfStrings(final File file) {
+    public static List<String> getFileAsListOfStrings(final File file) {
         BufferedReader r=null;
         try {
             r=new BufferedReader(new FileReader(file));
