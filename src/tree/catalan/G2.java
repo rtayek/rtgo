@@ -34,6 +34,26 @@ public class G2 {
         preOrder(node.left,consumer);
         preOrder(node.right,consumer);
     }
+    public static void inOrder(Node root) {
+        if(root==null) return;
+        inOrder(root.left);
+        System.out.println("x");
+        inOrder(root.right);
+    }
+    public static void postOrder(Node root) {
+        if(root==null) return;
+        postOrder(root.left);
+        postOrder(root.right);
+        System.out.println("x");
+    }
+    public static void mirror(Node root) {
+        if(root==null) return;
+        mirror(root.left);
+        mirror(root.right);
+        Node temp=root.left;
+        root.left=root.right;
+        root.right=temp;
+    }
     static ArrayList<Integer> collectData(Node node) {
         // nodes are getting data set, but this only returns 1!
         final ArrayList<Integer> datas=new ArrayList<>();
@@ -46,8 +66,8 @@ public class G2 {
         ArrayList<Node> trees=new ArrayList<>();
         if(n==0) trees.add(null);
         else for(int i=0;i<n;i++) {
-            for(Node left:all(i)) {
-                for(Node right:all(n-1-i)) {
+            for(Node left:all(i,data)) {
+                for(Node right:all(n-1-i,data)) {
                     ++data.t;
                     Node node=new Node(data.t,left,right);
                     node.encoded=encode(node);
@@ -59,19 +79,7 @@ public class G2 {
         if(useMap) map.put(n,trees);
         return trees;
     }
-    ArrayList<Node> all(int nodes) {
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=all(nodes,data);
-        return trees;
-    }
-    ArrayList<Node> run(int n) {
-        et.reset();
-        ArrayList<Node> trees=all(n);
-        System.out.println(n+" "+trees.size()+" "+et);
-        System.out.println(map.keySet());
-        return trees;
-    }
-    static void p(Node x) {
+    static void p(Node x) { // instance?
         StringBuffer sb=new StringBuffer();
         sb.append("pre ").append(x.id);
         sb.append(' ').append(x.data);
@@ -80,31 +88,42 @@ public class G2 {
         sb.append(' ').append(x.right!=null?x.right.encoded:"null");
         System.out.println(sb);
     }
-    private static void printStuff(ArrayList<ArrayList<Node>> all,int nodes) {
+    static void pd(Node x) { StringBuffer sb=new StringBuffer(); sb.append(' ').append(x.data); System.out.print(sb); }
+    static void printStuff(ArrayList<ArrayList<Node>> all,int nodes) {
         ArrayList<Node> trees=all.get(nodes);
         System.out.println(nodes+" nodes.");
         for(int i=0;i<trees.size();++i) {
             System.out.println("tree: "+i);
             Node tree=trees.get(i);
-            final Consumer<Node> p=x->p(x);
+            final Consumer<Node> p=x->pd(x);
             preOrder(tree,p);
-        }}
-    public static void main(String[] arguments) {
-        G2 g2=new G2();
-        if(arguments!=null&&arguments.length>0) g2.useMap=true;
+            System.out.println();
+        }
+    }
+    static ArrayList<ArrayList<Node>> generate(G2 g2,int nodes) {
         ArrayList<ArrayList<Node>> all=new ArrayList<>();
-        for(int i=0;i<=n;i++) {
-            ArrayList<Node> trees=g2.run(i);
+        Holder<Integer> data=new Holder<>(0);
+        for(int i=0;i<=nodes;i++) {
+            g2.et.reset();
+            ArrayList<Node> trees=g2.all(i,data);
+            System.out.println(i+" "+trees.size()+" "+g2.et);
+            System.out.println(g2.map.keySet());
             all.add(trees);
             System.gc();
         }
+        return all;
+    }
+    public static void main(String[] arguments) {
+        G2 g2=new G2();
+        if(arguments!=null&&arguments.length>0) g2.useMap=true;
         int nodes=3;
+        ArrayList<ArrayList<Node>> all=generate(g2,nodes);
         printStuff(all,nodes);
         //ArrayList<Integer> data=collectData(node);
         //System.out.println(data);
     }
     boolean useMap;
     Et et=new Et();
+    // put all here as an instance variable?
     SortedMap<Integer,ArrayList<Node>> map=new TreeMap<>();
-    static int n=3;
 }
