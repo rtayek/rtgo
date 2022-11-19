@@ -419,6 +419,7 @@ class Node {
             //return trees; // get rid of this!
             // the above works if we return
             // so we are returning an empty list.
+            // lets make a new generator for the trees.
         } else {
             if(!usingMap2) {
                 if(map.containsKey(nodes)) { trees=map.get(nodes); done=true; }
@@ -436,7 +437,7 @@ class Node {
                     done=true;
                 }
             }
-            if(done) {
+            if(false&&done) {
                 if(verbose) for(Node tree:trees) System.out.println("\tgot: "+tree+" "+encode(tree));
                 if(verbose) System.out.println("\tgot "+trees.size()+" trees.");
                 if(verbose)
@@ -456,8 +457,9 @@ class Node {
                             Node node=new Node(data.t,left,right);
                             if(verbose) System.out.println("created nod: "+node+" "+encode(node));
                             final List<Integer> datas=new ArrayList<>();
-                            Consumer<Node> add=x->datas.add(x.data);
-                            preOrder(node,add);
+                            Consumer<Node> addData=x->datas.add(x.data);
+                            // this is going to do a lot of unnecessary work!
+                            preOrder(node,addData);
                             // not using datas?
                             //System.out.println("data values: "+datas);
                             trees.add(node);
@@ -679,7 +681,7 @@ class Node {
         //System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
         if(false) {
             doRun(2);
-        } else if(true) for(int nodes=0;nodes<=2;nodes++) {
+        } else if(true) for(int nodes=0;nodes<=3;nodes++) {
             System.out.println("start run for "+nodes+" nodes. <<<<<<<<<<");
             doRun(nodes);
             System.out.println("---");
@@ -702,8 +704,9 @@ class Node {
             run(tree);
         }
     }
-    Node left,right,parent;
+    Node left,right;
     public Integer data;
+    public String encoded;
     public final int id=ids++;
     static String string3=" ((X*X)*X)*X, (X*(X*X))*X, (X*X)*(X*X), X*((X*X)*X), X*(X*(X*X))";
     static Node[] binaryTrees1=new Node[1]; // use catalan numbers!
@@ -713,7 +716,7 @@ class Node {
     static final int maxNodes=10; //11;
     static List<Integer> sequentialData=new ArrayList<>();
     static {
-        for(int i=0;i<100;++i) sequentialData.add(i);
+        for(int i=0;i<0;++i) sequentialData.add(i);
     }
     static SortedMap<Integer,ArrayList<Node>> map=new TreeMap<>();
     static SortedMap<Integer,ArrayList<String>> map2=new TreeMap<>();
@@ -730,7 +733,7 @@ class Node {
             }
         }
     }
-    static boolean verbose=false;
+    static boolean verbose=true;
     transient int siblings,descendants; // dangerous!
     static boolean usingMap2=false;
 }
