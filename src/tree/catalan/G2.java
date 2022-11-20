@@ -6,6 +6,22 @@ public class G2 {
     static class Node {
         private Node(int data) { this.data=data; }
         private Node(int data,Node left,Node right) { this.data=data; this.left=left; this.right=right; }
+        public void preorder(Consumer<Node> consumer) {
+            if(consumer!=null) consumer.accept(this);
+            //System.out.println("1 "+node.data+" "+node.encoded);
+            if(left!=null) left.preorder(consumer);
+            if(right!=null) right.preorder(consumer);
+        }
+        public void inorder(Consumer<Node> consumer) {
+            if(left!=null) left.inorder(consumer);
+            if(consumer!=null) consumer.accept(this);
+            if(right!=null) right.inorder(consumer);
+        }
+        public void postorder(Consumer<Node> consumer) {
+            if(left!=null) left.postorder(consumer);
+            if(right!=null) right.postorder(consumer);
+            if(consumer!=null) consumer.accept(this);
+        }
         Node left,right,parent;
         public final Integer data;
         String encoded;
@@ -93,12 +109,13 @@ public class G2 {
         ArrayList<Node> trees=all.get(nodes);
         System.out.println(nodes+" nodes.");
         for(int i=0;i<trees.size();++i) {
-            System.out.println("tree: "+i);
+            System.out.print("tree "+i+": ");
             Node tree=trees.get(i);
             final Consumer<Node> p=x->pd(x);
             preOrder(tree,p);
             System.out.println();
         }
+        System.out.println("end of nodes "+nodes);
     }
     static ArrayList<ArrayList<Node>> generate(G2 g2,int nodes) {
         ArrayList<ArrayList<Node>> all=new ArrayList<>();
@@ -116,11 +133,27 @@ public class G2 {
     public static void main(String[] arguments) {
         G2 g2=new G2();
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
-        int nodes=3;
+        int nodes=7;
         ArrayList<ArrayList<Node>> all=generate(g2,nodes);
-        printStuff(all,nodes);
-        //ArrayList<Integer> data=collectData(node);
-        //System.out.println(data);
+        for(int i=0;i<all.size();++i) printStuff(all,i);
+        ArrayList<Node> trees=all.get(nodes);
+        int n=trees.size();
+        Node tree=trees.get(n/2);
+        Consumer<Node> p=x->System.out.print(x.data+" ");
+        System.out.print("preorder:  ");
+        tree.preorder(p);
+        System.out.println();
+        System.out.print("inorder:   ");
+        tree.inorder(p);
+        System.out.println();
+        System.out.print("postorder: ");
+        tree.postorder(p);
+        System.out.println();
+        trees=all.get(nodes);
+        n=trees.size();
+        tree=trees.get(n/2);
+        ArrayList<Integer> data=collectData(tree);
+        System.out.println(data);
     }
     boolean useMap;
     Et et=new Et();
