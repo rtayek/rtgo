@@ -1,0 +1,131 @@
+diff --git a/src/tree/catalan/G2.java b/src/tree/catalan/G2.java
+index 55dd39a..db7540d 100644
+--- a/src/tree/catalan/G2.java
++++ b/src/tree/catalan/G2.java
+@@ -6,6 +6,22 @@ public class G2 {
+     static class Node {
+         private Node(int data) { this.data=data; }
+         private Node(int data,Node left,Node right) { this.data=data; this.left=left; this.right=right; }
++        public void preorder(Consumer<Node> consumer) {
++            if(consumer!=null) consumer.accept(this);
++            //System.out.println("1 "+node.data+" "+node.encoded);
++            if(left!=null) left.preorder(consumer);
++            if(right!=null) right.preorder(consumer);
++        }
++        public void inorder(Consumer<Node> consumer) {
++            if(left!=null) left.inorder(consumer);
++            if(consumer!=null) consumer.accept(this);
++            if(right!=null) right.inorder(consumer);
++        }
++        public void postorder(Consumer<Node> consumer) {
++            if(left!=null) left.postorder(consumer);
++            if(right!=null) right.postorder(consumer);
++            if(consumer!=null) consumer.accept(this);
++        }
+         Node left,right,parent;
+         public final Integer data;
+         String encoded;
+@@ -14,7 +30,7 @@ public class G2 {
+     }
+     static void encode(StringBuffer sb,Node node) { // encode
+         if(node==null) sb.append('0');
+-        else {
++        else { // use preorder
+             sb.append('1');
+             encode(sb,node.left);
+             encode(sb,node.right);
+@@ -27,25 +43,6 @@ public class G2 {
+         encode(sb,tree);
+         return sb.toString();
+     }
+-    public static void preOrder(Node node,Consumer<Node> consumer) {
+-        if(node==null) return;
+-        consumer.accept(node);
+-        //System.out.println("1 "+node.data+" "+node.encoded);
+-        preOrder(node.left,consumer);
+-        preOrder(node.right,consumer);
+-    }
+-    public static void inOrder(Node root) {
+-        if(root==null) return;
+-        inOrder(root.left);
+-        System.out.println("x");
+-        inOrder(root.right);
+-    }
+-    public static void postOrder(Node root) {
+-        if(root==null) return;
+-        postOrder(root.left);
+-        postOrder(root.right);
+-        System.out.println("x");
+-    }
+     public static void mirror(Node root) {
+         if(root==null) return;
+         mirror(root.left);
+@@ -54,11 +51,10 @@ public class G2 {
+         root.left=root.right;
+         root.right=temp;
+     }
+-    static ArrayList<Integer> collectData(Node node) {
+-        // nodes are getting data set, but this only returns 1!
++    static ArrayList<Integer> preorderNodes(Node node) {
+         final ArrayList<Integer> datas=new ArrayList<>();
+         Consumer<Node> add=x->datas.add(x.data);
+-        preOrder(node,add);
++        node.preorder(add);
+         return datas;
+     }
+     ArrayList<Node> all(int n,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
+@@ -71,12 +67,15 @@ public class G2 {
+                     ++data.t;
+                     Node node=new Node(data.t,left,right);
+                     node.encoded=encode(node);
+-                    //System.out.println("all "+node.id+" "+node.data+" "+node.encoded);
+                     trees.add(node);
+                 }
+             }
+         }
+-        if(useMap) map.put(n,trees);
++        if(useMap) synchronized(map) {
++            synchronized(trees) {
++                map.put(n,trees);
++            }
++        }
+         return trees;
+     }
+     static void p(Node x) { // instance?
+@@ -93,10 +92,10 @@ public class G2 {
+         ArrayList<Node> trees=all.get(nodes);
+         System.out.println(nodes+" nodes.");
+         for(int i=0;i<trees.size();++i) {
+-            System.out.println("tree: "+i);
++            System.out.print("tree "+i+": ");
+             Node tree=trees.get(i);
+             final Consumer<Node> p=x->pd(x);
+-            preOrder(tree,p);
++            if(tree!=null) tree.preorder(p);
+             System.out.println();
+         }
+     }
+@@ -116,11 +115,19 @@ public class G2 {
+     public static void main(String[] arguments) {
+         G2 g2=new G2();
+         if(arguments!=null&&arguments.length>0) g2.useMap=true;
+-        int nodes=3;
++        int nodes=5;
+         ArrayList<ArrayList<Node>> all=generate(g2,nodes);
+-        printStuff(all,nodes);
+-        //ArrayList<Integer> data=collectData(node);
+-        //System.out.println(data);
++        for(int i=0;i<all.size();++i) printStuff(all,i);
++        Node tree=all.get(3).get(0);
++        ArrayList<Integer> data=preorderNodes(tree);
++        System.out.println(data);
++        Consumer<Node> p=x->System.out.print(x.data+" ");
++        tree.preorder(p);
++        System.out.println();
++        tree.inorder(p);
++        System.out.println();
++        tree.postorder(p);
++        System.out.println();
+     }
+     boolean useMap;
+     Et et=new Et();
