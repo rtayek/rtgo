@@ -442,8 +442,12 @@ data in the memoized trees is broken. fix!
 memoized seems faster but structures are different.
 11/18/22 if i get a tree from the map, i now have a dag.
 concurret mondification problems in new generator code.
-examin encoded and the values for the left and right subtrees. 
-gerator got confusing and has bugs. so i started over with g2.
+examine encoded and the values for the left and right subtrees. 
+generator got confusing and has bugs. so i started over with g2.
+11/19/22
+g2 worked fine for a  while. now i get the .ConcurrentModificationException again.
+
+
 
 
 
