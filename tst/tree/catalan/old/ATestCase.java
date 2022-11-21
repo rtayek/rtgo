@@ -1,8 +1,9 @@
-package tree.catalan;
+package tree.catalan.old;
 import static org.junit.Assert.*;
-import static tree.catalan.Node.*;
+import static tree.catalan.old.Node.*;
 import java.util.ArrayList;
 import org.junit.*;
+import tree.catalan.old.Node;
 import utilities.*;
 public class ATestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

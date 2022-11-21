@@ -6,9 +6,11 @@ import org.junit.*;
 import tree.catalan.G2.Node;
 import utilities.*;
 public class G2TestCase {
+    // round trip?
+    // parameterize?
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @BeforeClass public static void setUpBeforeClass() throws Exception {
-        
+
     }
     @Before public void setUp() throws Exception {
         g2=new G2();

@@ -1,12 +1,13 @@
-package tree.catalan;
+package tree.catalan.old;
 import static org.junit.Assert.*;
-import static tree.catalan.Node.*;
+import static tree.catalan.old.Node.*;
 import static utilities.ParameterArray.modulo;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import tree.catalan.old.Node;
 import utilities.*;
 @RunWith(Parameterized.class) public class NodeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -20,7 +21,7 @@ import utilities.*;
     @After public void tearDown() throws Exception {}
     @Test public void testPreOrder() {
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=Node.allBinaryTrees(nodes,data);
+        List<Node> trees=allBinaryTrees(nodes,data);
         boolean anyFailures=false;
         for(Node node:trees) {
             if(node==null) continue;
@@ -35,7 +36,7 @@ import utilities.*;
     }
     @Test public void testRoundTripEncodeDecodeBinaryTree() {
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=Node.allBinaryTrees(nodes,data);
+        List<Node> trees=allBinaryTrees(nodes,data);
         boolean anyFailures=false;
         for(Node node:trees) {
             if(node==null) continue;
@@ -47,7 +48,7 @@ import utilities.*;
     }
     @Test public void testRoundTripEncodeDecodeBinaryTreeUnravelled() {
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=Node.allBinaryTrees(nodes,data);
+        List<Node> trees=allBinaryTrees(nodes,data);
         boolean anyFailures=false;
         boolean anyDeepailures=false;
         for(Node node:trees) {

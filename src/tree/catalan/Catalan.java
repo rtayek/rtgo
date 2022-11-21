@@ -1,8 +1,9 @@
 package tree.catalan;
 import java.util.List;
+import tree.catalan.G2.Node;
 import utilities.Holder;
 public class Catalan {
-    tree.catalan.Node x;
+    Node x;
     public static final long c(final int n,final int r) { // binomial coefficient
         long i,p;
         if(r<0||n<0||r>n) p=0;
@@ -23,26 +24,12 @@ public class Catalan {
     //C_n       =       1/(n+1)(2n; n)
     public static long catalan2(int n) { return c(2*n,n)/(n+1); }
     public static long catalan(int n) { return f(2*n)/(f(n+1)*f(n)); }
-    private static void print(Node node) {
-        if(node!=null) {
-            String encoded=node.encode();
-            long Number=Long.parseLong(encoded,2);
-            System.out.print(Number);
-            System.out.print(" "+encoded);
-            System.out.println(" "+node.toXString());
-        } else {
-            System.out.print("0");
-            String string="";
-            System.out.print(" "+string);
-            System.out.println(" "+"()");
-        }
-    }
     public static void main(String[] args) {
-        // uses the Node class here in this package
+        G2 g2=new G2();
         for(int nodes=0;nodes<100;++nodes) { // 15 takes a few minutes.
             Node.ids=0;
             Holder<Integer> data=new Holder<>(0);
-            List<Node> trees=Node.allBinaryTrees(nodes,data);
+            List<Node> trees=g2.all(nodes,data);
             //System.out.println(trees);
             System.out.println(nodes+" nodes. has "+trees.size()+" trees.");
             if(trees.size()!=catalans[nodes]) {

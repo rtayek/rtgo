@@ -1,4 +1,4 @@
-package tree.catalan;
+package tree.catalan.old;
 import static utilities.Utilities.implies;
 import java.util.*;
 import java.util.function.*;

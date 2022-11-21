@@ -1,5 +1,5 @@
-package tree.catalan;
-import static tree.catalan.Node.*;
+package tree.catalan.old;
+import static tree.catalan.old.Node.*;
 import java.io.*;
 import java.util.*;
 import java.util.function.Consumer;

@@ -127,52 +127,6 @@ public class G2 {
         final int id=++ids;
         static int ids;
     }
-    static Node decode(List<Boolean> bits,List<Integer> data) {
-        if(bits.size()<=0) return null;
-        boolean b=bits.get(0);
-        bits.remove(0);
-        if(b) {
-            int d=data.get(0);
-            data.remove(0);
-            Node root=new Node(d);
-            root.left=decode(bits,data);
-            root.right=decode(bits,data);
-            return root;
-        }
-        return null;
-    }
-    private Node deserializeHelper(Queue<String> queue) {
-        String nodeValue=queue.poll();
-        if(nodeValue.equals("X")) return null;
-        Node newNode=new Node(Integer.valueOf(nodeValue));
-        newNode.left=deserializeHelper(queue);
-        newNode.right=deserializeHelper(queue);
-        return newNode;
-    }
-    private Node deserializeArray(ArrayList<String> arr) {
-        String value=arr.remove(0);
-        if(value.charAt(0)=='^') { return null; }
-        Node node=new Node(Integer.parseInt(value));
-        node.left=deserializeArray(arr);
-        node.right=deserializeArray(arr);
-        return node;
-    }
-    static Node decode(String binaryString,List<Integer> data) {
-        if(binaryString.equals("")) return null;
-        //System.out.println("bs: "+binaryString+", data: "+data);
-        boolean b=binaryString.charAt(0)=='1';
-        binaryString=binaryString.substring(1); // remove
-        if(b) {
-            if(data.size()==0) return null; // append nulls!
-            int d=data.get(0); // not changing!
-            data.remove(0);
-            Node root=new Node(d);
-            root.left=decode(binaryString,data);
-            root.right=decode(binaryString,data);
-            return root;
-        }
-        return null;
-    }
     public static Node roundTrip(Node expected) {
         // add string writer and return the tree
         String actual=encode(expected);
@@ -238,7 +192,7 @@ public class G2 {
         preOrder(node,add);
         return datas;
     }
-    ArrayList<Node> all(int n,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
+    public ArrayList<Node> all(int n,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
         if(useMap) if(map.containsKey(n)) return map.get(n);
         ArrayList<Node> trees=new ArrayList<>();
         if(n==0) trees.add(null);
