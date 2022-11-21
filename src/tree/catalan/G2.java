@@ -11,7 +11,6 @@ public class G2 {
         private Node(int data,Node left,Node right) { this.data=data; this.left=left; this.right=right; }
         public void preorder(Consumer<Node> consumer) {
             if(consumer!=null) consumer.accept(this);
-            //System.out.println("1 "+node.data+" "+node.encoded);
             if(left!=null) left.preorder(consumer);
             if(right!=null) right.preorder(consumer);
         }
@@ -86,6 +85,42 @@ public class G2 {
             }
             return null;
         }
+        @Override public int hashCode() { return Objects.hash(data); }
+        @Override public boolean equals(Object obj) {
+            if(this==obj) return true;
+            if(obj==null) return false;
+            if(getClass()!=obj.getClass()) return false;
+            Node other=(Node)obj;
+            return data==other.data||data.equals(obj);
+        }
+        public boolean deepEquals(Node other) {
+            if(this==other) return true;
+            else if(other==null) return false;
+            else if(!equals(other)) return false;
+            if(left!=null) {
+                boolean isEqual=left.deepEquals(other.left);
+                if(!isEqual) return false;
+            } else if(other.left!=null) return false;
+            if(right!=null) {
+                boolean isEqual=right.deepEquals(other.right);
+                if(!isEqual) return false;
+            } else if(other.right!=null) return false;
+            return true;
+        }
+        public boolean structureDeepEquals(Node other) {
+            if(this==other) return true;
+            else if(other==null) { System.out.println("other is null!"); return false; }
+            //else if(!equals(other)) return false;
+            if(left!=null) {
+                boolean isEqual=left.deepEquals(other.left);
+                if(!isEqual) { System.out.println("other.left is not equal!"); return false; }
+            } else if(other.left!=null) { System.out.println("other.left is not null!"); return false; }
+            if(right!=null) {
+                boolean isEqual=right.deepEquals(other.right);
+                if(!isEqual) { System.out.println("other.right is not equal!"); return false; }
+            } else if(other.right!=null) { System.out.println("other.right is not null!"); return false; }
+            return true;
+        }
         Node left,right,parent;
         public final Integer data;
         String encoded;
@@ -106,11 +141,29 @@ public class G2 {
         }
         return null;
     }
+    private Node deserializeHelper(Queue<String> queue) {
+        String nodeValue=queue.poll();
+        if(nodeValue.equals("X")) return null;
+        Node newNode=new Node(Integer.valueOf(nodeValue));
+        newNode.left=deserializeHelper(queue);
+        newNode.right=deserializeHelper(queue);
+        return newNode;
+    }
+    private Node deserializeArray(ArrayList<String> arr) {
+        String value=arr.remove(0);
+        if(value.charAt(0)=='^') { return null; }
+        Node node=new Node(Integer.parseInt(value));
+        node.left=deserializeArray(arr);
+        node.right=deserializeArray(arr);
+        return node;
+    }
     static Node decode(String binaryString,List<Integer> data) {
         if(binaryString.equals("")) return null;
+        //System.out.println("bs: "+binaryString+", data: "+data);
         boolean b=binaryString.charAt(0)=='1';
-        binaryString=binaryString.substring(1); // remoce
+        binaryString=binaryString.substring(1); // remove
         if(b) {
+            if(data.size()==0) return null; // append nulls!
             int d=data.get(0); // not changing!
             data.remove(0);
             Node root=new Node(d);
@@ -157,14 +210,18 @@ public class G2 {
     public static void inOrder(Node node,Consumer<Node> consumer) {
         if(node==null) return;
         inOrder(node.left,consumer);
-        System.out.println("x");
+        if(consumer!=null) consumer.accept(node);
         inOrder(node.right,consumer);
+    }
+    static class MyConsumer implements Consumer<Node> {
+        @Override public void accept(Node node) { Node newNode=new Node(node.data); copy=newNode; }
+        Node copy,left,right;
     }
     public static void postOrder(Node node,Consumer<Node> consumer) {
         if(node==null) return;
         postOrder(node.left,consumer);
         postOrder(node.right,consumer);
-        //System.out.println("x");
+        if(consumer!=null) consumer.accept(node);
     }
     public static void mirror(Node root) {
         if(root==null) return;
@@ -210,6 +267,7 @@ public class G2 {
     }
     static void pd(Node x) { StringBuffer sb=new StringBuffer(); sb.append(' ').append(x.data); System.out.print(sb); }
     private static void print(Node tree) {
+        if(tree==null) return;
         Consumer<Node> p=x->System.out.print(x.data+" ");
         System.out.print("preorder:  ");
         tree.preorder(p);
@@ -233,15 +291,15 @@ public class G2 {
         }
         System.out.println("end of nodes "+nodes);
     }
-    static ArrayList<ArrayList<Node>> generate(G2 g2,int nodes) {
+    ArrayList<ArrayList<Node>> generate(int nodes) {
         ArrayList<ArrayList<Node>> all=new ArrayList<>();
         Holder<Integer> data=new Holder<>(0);
         for(int i=0;i<=nodes;i++) {
-            g2.et.reset();
-            ArrayList<Node> trees=g2.all(i,data);
+            et.reset();
+            ArrayList<Node> trees=all(i,data);
             //System.out.println(i+" "+trees.size()+" "+g2.et);
             //System.out.println(g2.map.keySet());
-            all.add(trees);
+            all.add(trees); // stop doing this!
             System.gc();
         }
         return all;
@@ -255,28 +313,32 @@ public class G2 {
         ArrayList<Node> trees;
         int n;
         print(tree);
-        trees=all.get(nodes);
+        trees=all.get(nodes); // can change this
         n=trees.size();
         tree=trees.get(n/2);
+        Node oneWay=roundTrip(tree);
+        if(!tree.deepEquals(oneWay)) System.out.println("one way round trip failure!");
         ArrayList<Integer> data=collectData(tree);
-        System.out.println();
         System.out.println("collect data: "+data);
         StringBuffer stringBuffer=new StringBuffer();
         toDataString(stringBuffer,tree);
         System.out.println("to data string: "+stringBuffer);
         String expected=encode(tree);
         System.out.println("ex: "+expected);
+        String theOtherWay=roundTrip(expected);
+        if(!expected.equals(theOtherWay)) System.out.println("the other way round trip failure!");
         Node decoded=decode(expected,data);
-        System.out.println("round trip: "+encode(decoded));
-        class MyConsumer implements Consumer<Node> {
-            @Override public void accept(Node node) { Node newNode=new Node(node.data); copy=newNode; }
-            Node copy;
-        }
+        String actual=encode(decoded);
+        System.out.println("ac: "+actual);
+        if(!expected.equals(actual)) System.out.println("round trip failurefailure!");
         MyConsumer c2=new MyConsumer();
         postOrder(tree,c2);
-        System.out.println("copy: "+c2.copy);
-        String actual=encode(c2.copy);
+        System.out.println("copy: "+encode(c2.copy));
+        actual=encode(c2.copy);
         System.out.println("ac: "+actual);
+        if(!expected.equals(actual)) System.out.println("copy failurefailure!");
+        ArrayList<Integer> data2=collectData(c2.copy);
+        System.out.println("collect data2: "+data2);
     }
     public static void main(String[] arguments) {
         List<String> x=ManagementFactory.getRuntimeMXBean().getInputArguments();
@@ -285,8 +347,8 @@ public class G2 {
         G2 g2=new G2();
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
         //if(inEclipse()) g2.useMap=true;
-        int nodes=3;
-        ArrayList<ArrayList<Node>> all=generate(g2,nodes);
+        int nodes=2;
+        ArrayList<ArrayList<Node>> all=g2.generate(nodes);
         System.out.println(nodes+" nodes.");
         //for(int i=0;i<all.size();++i) printStuff(all,i);
         ArrayList<Node> trees=all.get(nodes);

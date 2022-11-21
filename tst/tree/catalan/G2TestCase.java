@@ -1,72 +1,73 @@
 package tree.catalan;
 import static org.junit.Assert.*;
-import static tree.catalan.Node.*;
+import static tree.catalan.G2.Node.*;
 import java.util.ArrayList;
 import org.junit.*;
+import tree.catalan.G2.Node;
 import utilities.*;
-public class ATestCase {
+public class G2TestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @BeforeClass public static void setUpBeforeClass() throws Exception {
-        MyTestWatcher.defaultVerbosity=true; //
-        Node.map.clear();
-        Node.map2.clear();
+        
     }
     @Before public void setUp() throws Exception {
+        g2=new G2();
+        //all=new G2().generate(3);
         verbose=false; //
-        //Node.map.clear();
-        //Node.map2.clear();
     }
     @After public void tearDown() throws Exception {}
     @Test public void testEncodeNullFalse() {
-        Node.usingMap2=false;
         Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(0,data);
+        //ArrayList<Node> trees=allBinaryTrees(0,data);
+        all=g2.generate(0);
+        trees=all.get(0);
         Node node=trees.get(0);
         assertNull(node);
         String encoded=encode(node);
         assertEquals("0",encoded);
-        Node node2=decode(encoded,sequentialData);
+        Node node2=decode(encoded,G2.sequentialData);
         assertNull(node2);
     }
     @Test public void testEncodeNulTruel() {
-        Node.usingMap2=true;
+        g2.useMap=true;
         Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(0,data);
+        all=g2.generate(0);
+        trees=all.get(0);
         Node node=trees.get(0);
         assertNull(node);
         String encoded=encode(node);
         assertEquals("0",encoded);
-        Node node2=decode(encoded,sequentialData);
+        Node node2=decode(encoded,G2.sequentialData);
         assertNull(node2);
     }
     @Test public void testEncode1False() {
-        Node.usingMap2=false;
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(1,data);
+        g2.useMap=false;
+        all=g2.generate(1);
+        trees=all.get(1);
         Node node=trees.get(0);
         assertNotNull(node);
         String encoded=encode(node);
         assertEquals("100",encoded);
-        Node node2=decode(encoded,sequentialData);
+        Node node2=decode(encoded,G2.sequentialData);
         assertNotNull(node2);
         assertTrue(node.structureDeepEquals(node2));
     }
     @Test public void testEncode1Truel() {
-        Node.usingMap2=true;
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(1,data);
+        g2.useMap=true;
+        all=g2.generate(1);
+        trees=all.get(1);
         Node node=trees.get(0);
         assertNotNull(node);
         String encoded=encode(node);
         assertEquals("100",encoded);
-        Node node2=decode(encoded,sequentialData);
+        Node node2=decode(encoded,G2.sequentialData);
         assertNotNull(node2);
         assertTrue(node.structureDeepEquals(node2));
     }
     @Test public void test0False() {
-        Node.usingMap2=false;
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(0,data);
+        g2.useMap=false;
+        all=g2.generate(0);
+        trees=all.get(0);
         //print(trees);
         assertTrue(trees!=null&&trees.size()==1&&trees.get(0)==null);
         //Set<Integer> keys=map2.keySet();
@@ -78,9 +79,9 @@ public class ATestCase {
         // we could do this in another test case?
     }
     @Test public void test0Ttue() {
-        Node.usingMap2=true;
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(0,data);
+        g2.useMap=true;
+        all=g2.generate(0);
+        trees=all.get(0);
         //print(trees);
         assertTrue(trees!=null&&trees.size()==1&&trees.get(0)==null);
         //Set<Integer> keys=map2.keySet();
@@ -88,9 +89,9 @@ public class ATestCase {
         //assertTrue(keys!=null&&keys.size()==0);
     }
     @Test public void test1False() {
-        Node.usingMap2=false;
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(1,data);
+        g2.useMap=false;
+        all=g2.generate(1);
+        trees=all.get(1);
         //print(trees);
         assertTrue(trees!=null&&trees.size()==1&&trees.get(0)!=null);
         //Set<Integer> keys=map.keySet();
@@ -98,9 +99,12 @@ public class ATestCase {
         //assertTrue(keys!=null&&keys.size()==1);
     }
     @Test public void test1Ttue() {
-        Node.usingMap2=true;
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(1,data);
+        g2.useMap=true;
+        all=g2.generate(1);
+        System.out.println(all);
+        trees=all.get(1);
+        System.out.println(trees.get(0));
+        System.out.println(encode(trees.get(0)));
         //print(trees);
         assertTrue(trees!=null&&trees.size()==1&&trees.get(0)!=null);
         //Set<Integer> keys=map2.keySet();
@@ -108,23 +112,27 @@ public class ATestCase {
         //assertTrue(keys!=null&&keys.size()==1);
     }
     @Test public void test2False() {
-        Node.usingMap2=false;
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(2,data);
-        print(trees);
+        g2.useMap=false;
+        all=g2.generate(2);
+        trees=all.get(2);
+        //print(trees);
         assertTrue(trees!=null&&trees.size()==2&&trees.get(0)!=null);
         //Set<Integer> keys=map.keySet();
         //System.out.println("keyset: "+keys);
         //assertTrue(keys!=null&&keys.size()==2);
     }
     @Test public void test2Ttue() {
-        Node.usingMap2=true;
-        Holder<Integer> data=new Holder<>(0);
-        ArrayList<Node> trees=allBinaryTrees(2,data);
+        g2.useMap=true;
+        all=g2.generate(2);
+        trees=all.get(2);
         //print(trees);
         assertTrue(trees!=null&&trees.size()==2&&trees.get(0)!=null);
         //Set<Integer> keys=map2.keySet();
         //System.out.println("keyset: "+keys);
         //assertTrue(keys!=null&&keys.size()==2);
     }
+    G2 g2;
+    boolean verbose;
+    ArrayList<Node> trees;
+    ArrayList<ArrayList<Node>> all;
 }
