@@ -306,7 +306,7 @@ class Node {
         }
     }
     static void toDataString(StringBuffer sb,Node node) { // encode
-        if(node==null); //sb.append('x');
+        if(node==null) sb.append('0');
         else {
             sb.append(node.data);
             sb.append('(');
