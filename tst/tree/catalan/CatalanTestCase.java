@@ -28,15 +28,15 @@ import utilities.*;
         //System.out.println(" calc "+(catalan(nodes)==catalan2(nodes)));
         assertEquals(catalan(nodes),Catalan.catalan2(nodes));
     }
+    // add the other test round trip
     @Test public void testLongRoundTrip() {
         Holder<Integer> data=new Holder<>(0);
         List<Node> trees=g2.all(nodes,data);
         for(Node node:trees) {
-            if(node==null) continue;
-            // this is just check, needs to be long
-            // lets look at check
+            if(node==null) continue; // looks like we need this.
+            // this is a round trip
             String expected=Node.encode(node);
-            String actual=roundTrip(expected);
+            String actual=roundTripLong(expected);
             assertEquals(expected,actual);
         }
     }
@@ -47,20 +47,9 @@ import utilities.*;
         for(Node node:trees) {
             if(node==null) continue;
             mirror(node);
+            // this is a round trip
             String expected=encode(node);
-            String actual=roundTrip(expected);
-            assertEquals(expected,actual);
-        }
-    }
-    @Test public void testMirror() {
-        Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=g2.all(nodes,data);
-        for(Node node:trees) {
-            if(node==null) continue;
-            String expected=encode(node);
-            mirror(node);
-            mirror(node);
-            String actual=encode(node);
+            String actual=roundTripLong(expected);
             assertEquals(expected,actual);
         }
     }

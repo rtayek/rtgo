@@ -24,7 +24,8 @@ public class G2 {
             if(right!=null) right.postorder(consumer);
             if(consumer!=null) consumer.accept(this);
         }
-        private static void encode(StringBuffer sb,Node node) { // encode
+        private static void encode(StringBuffer sb,Node node) {
+            // lambda?
             if(node==null) sb.append('0');
             else {
                 sb.append('1');
@@ -48,6 +49,7 @@ public class G2 {
             return bits;
         }
         static void toDataString(StringBuffer sb,Node node) { // encode
+            // lambda?
             if(node==null) sb.append('0');
             else {
                 sb.append(node.data);
@@ -58,6 +60,7 @@ public class G2 {
             }
         }
         static Node decode(List<Boolean> bits,List<Integer> data) {
+            // lambda?
             if(bits.size()<=0) return null;
             boolean b=bits.get(0);
             bits.remove(0);
@@ -72,6 +75,7 @@ public class G2 {
             return null;
         }
         static Node decode(String binaryString,List<Integer> data) {
+            // lambda?
             if(binaryString.equals("")) return null;
             boolean b=binaryString.charAt(0)=='1';
             binaryString=binaryString.substring(1); // remoce
@@ -94,6 +98,7 @@ public class G2 {
             return data==other.data||data.equals(obj);
         }
         public boolean deepEquals(Node other) {
+            // lambda?
             if(this==other) return true;
             else if(other==null) return false;
             else if(!equals(other)) return false;
@@ -108,6 +113,7 @@ public class G2 {
             return true;
         }
         public boolean structureDeepEquals(Node other) {
+            // lambda?
             if(this==other) return true;
             else if(other==null) { System.out.println("other is null!"); return false; }
             //else if(!equals(other)) return false;
@@ -135,7 +141,7 @@ public class G2 {
         Node node2=decode(actual,data);
         return node2;
     }
-    public static String roundTrip(String expected) {
+    public static String roundTripLong(String expected) {
         // add string writer and return the tree
         long number=Long.parseLong(expected,2);
         List<Boolean> list=bits(number,expected.length());
@@ -145,6 +151,7 @@ public class G2 {
         return actual;
     }
     public Node preOrderCopy(Node node) {
+        // lambda?
         if(node==null) return null;
         Node copy=new Node(node.data);
         copy.left=preOrderCopy(node.left);
@@ -152,20 +159,14 @@ public class G2 {
         return copy;
         // do left=, right=, return new node
     }
-    public static void preOrder(Node node,Consumer<Node> consumer) {
+    public static void preOrderx(Node node,Consumer<Node> consumer) {
         if(node==null) return;
         if(consumer!=null) consumer.accept(node);
         //System.out.println("1 "+node.data+" "+node.encoded);
-        preOrder(node.left,consumer);
-        preOrder(node.right,consumer);
+        preOrderx(node.left,consumer);
+        preOrderx(node.right,consumer);
         //  lookslike it need to be postorder to use a lambda
         // otherwise preorder meeds to return a value.
-    }
-    public static void inOrder(Node node,Consumer<Node> consumer) {
-        if(node==null) return;
-        inOrder(node.left,consumer);
-        if(consumer!=null) consumer.accept(node);
-        inOrder(node.right,consumer);
     }
     static class MyConsumer implements Consumer<Node> {
         @Override public void accept(Node node) { Node newNode=new Node(node.data); copy=newNode; }
@@ -189,7 +190,7 @@ public class G2 {
         // nodes are getting data set, but this only returns 1!
         final ArrayList<Integer> datas=new ArrayList<>();
         Consumer<Node> add=x->datas.add(x.data);
-        preOrder(node,add);
+        preOrderx(node,add);
         return datas;
     }
     public ArrayList<Node> all(int n,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
@@ -199,7 +200,7 @@ public class G2 {
         else for(int i=0;i<n;i++) {
             for(Node left:all(i,data)) {
                 for(Node right:all(n-1-i,data)) {
-                    ++data.t;
+                    if(data!=null) ++data.t;
                     Node node=new Node(data.t,left,right);
                     node.encoded=encode(node);
                     //System.out.println("all "+node.id+" "+node.data+" "+node.encoded);
@@ -240,7 +241,7 @@ public class G2 {
             System.out.print("tree "+i+": ");
             Node tree=trees.get(i);
             final Consumer<Node> p=x->pd(x);
-            preOrder(tree,p);
+            preOrderx(tree,p);
             System.out.println();
         }
         System.out.println("end of nodes "+nodes);
@@ -271,7 +272,11 @@ public class G2 {
         n=trees.size();
         tree=trees.get(n/2);
         Node oneWay=roundTrip(tree);
-        if(!tree.deepEquals(oneWay)) System.out.println("one way round trip failure!");
+        if(!tree.deepEquals(oneWay)) {
+            System.out.println("ex: "+encode(tree));
+            System.out.println("ac: "+encode(oneWay));
+            System.out.println("one way round trip failure!");
+        }
         ArrayList<Integer> data=collectData(tree);
         System.out.println("collect data: "+data);
         StringBuffer stringBuffer=new StringBuffer();
@@ -279,7 +284,7 @@ public class G2 {
         System.out.println("to data string: "+stringBuffer);
         String expected=encode(tree);
         System.out.println("ex: "+expected);
-        String theOtherWay=roundTrip(expected);
+        String theOtherWay=roundTripLong(expected);
         if(!expected.equals(theOtherWay)) System.out.println("the other way round trip failure!");
         Node decoded=decode(expected,data);
         String actual=encode(decoded);

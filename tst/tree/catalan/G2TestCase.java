@@ -1,7 +1,8 @@
 package tree.catalan;
 import static org.junit.Assert.*;
+import static tree.catalan.G2.mirror;
 import static tree.catalan.G2.Node.*;
-import java.util.ArrayList;
+import java.util.*;
 import org.junit.*;
 import tree.catalan.G2.Node;
 import utilities.*;
@@ -133,6 +134,31 @@ public class G2TestCase {
         //System.out.println("keyset: "+keys);
         //assertTrue(keys!=null&&keys.size()==2);
     }
+    @Test public void testMirror2() {
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=g2.all(2,data);
+        for(Node node:trees) {
+            if(node==null) continue;
+            String expected=encode(node);
+            mirror(node);
+            mirror(node);
+            String actual=encode(node);
+            assertEquals(expected,actual);
+        }
+    }
+    @Test public void testMirror3() {
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=g2.all(3,data);
+        for(Node node:trees) {
+            if(node==null) continue;
+            String expected=encode(node);
+            mirror(node);
+            mirror(node);
+            String actual=encode(node);
+            assertEquals(expected,actual);
+        }
+    }
+
     G2 g2;
     boolean verbose;
     ArrayList<Node> trees;
