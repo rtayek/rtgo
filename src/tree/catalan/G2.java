@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 import utilities.*;
 public class G2 {
     public static class Node {
-        private Node(int data) { this.data=data; }
-        private Node(int data,Node left,Node right) { this.data=data; this.left=left; this.right=right; }
+        private Node(Integer data) { this.data=data; }
+        private Node(Integer data,Node left,Node right) { this.data=data; this.left=left; this.right=right; }
         public void preorder(Consumer<Node> consumer) {
             if(consumer!=null) consumer.accept(this);
             if(left!=null) left.preorder(consumer);
@@ -24,20 +24,23 @@ public class G2 {
             if(right!=null) right.postorder(consumer);
             if(consumer!=null) consumer.accept(this);
         }
-        private static void encode_(StringBuffer sb,Node node) {
+        private static void encode_(StringBuffer sb,Node node,ArrayList<Integer> data) {
             // lambda?
-            if(node==null) sb.append('0');
-            else {
+            boolean isNotNull=node!=null;
+            if(isNotNull) {
+                if(data!=null) data.add(node.data);
                 sb.append('1');
-                encode_(sb,node.left);
-                encode_(sb,node.right);
-                // append data
+                encode_(sb,node.left,data);
+                encode_(sb,node.right,data);
+            } else {
+                sb.append('0');
+                if(data!=null) data.add(null);
             }
         }
-        public static String encode(Node tree) { // to binary string
+        public static String encode(Node tree,ArrayList<Integer> data) { // to binary string
             // https://oeis.org/search?q=4%2C20%2C24%2C84%2C88%2C100%2C104%2C112&language=english&go=Search
             StringBuffer sb=new StringBuffer();
-            encode_(sb,tree);
+            encode_(sb,tree,data);
             return sb.toString();
         }
         public static List<Boolean> bits(long b,int length) {
@@ -80,7 +83,8 @@ public class G2 {
             boolean b=binaryString.charAt(0)=='1';
             binaryString=binaryString.substring(1);
             if(b) {
-                Integer d=data!=null?data.remove(0):null;
+                Integer d=null;
+                if(data.size()==0) { System.out.println("data: "+data); d=data!=null?data.remove(0):null; }
                 Node root=new Node(d);
                 root.left=decode(binaryString,data);
                 root.right=decode(binaryString,data);
@@ -94,6 +98,8 @@ public class G2 {
             if(obj==null) return false;
             if(getClass()!=obj.getClass()) return false;
             Node other=(Node)obj;
+            boolean equal=data==other.data||data.equals(obj);
+            if(!equal) System.out.println(data+" "+other.data);
             return data==other.data||data.equals(obj);
         }
         public boolean deepEquals(Node other) {
@@ -134,22 +140,28 @@ public class G2 {
     }
     public static Node encodeDecode(Node expected) {
         // add string writer and return the tree
-        String actualEncoded=encode(expected);
-        List<Integer> data=new ArrayList<>(sequentialData);
+        ArrayList<Integer> data=new ArrayList<>();
+        String actualEncoded=encode(expected,data);
+        System.out.println("encode tree: "+actualEncoded);
+        System.out.println("data: "+data);
         // need real data!
         Node actual=decode(actualEncoded,data);
         return actual;
     }
     public static String decodeEncode(String expected,ArrayList<Integer> data) {
         Node decoded=decode(expected,data);
-        String actual=encode(decoded);
+        String actual=encode(decoded,data);
+        if(data!=null) if(data.size()>0) {
+            System.out.println("leftover data: "+data);
+            //throw new RuntimeException("data us not epty!");
+        }
         return actual;
     }
     static String roundTripLong(String expected,long number) {
         List<Boolean> list=bits(number,expected.length());
-        List<Integer> data=new ArrayList<>(sequentialData);
+        ArrayList<Integer> data=new ArrayList<>(sequentialData);
         Node node2=decode(list,data);
-        String actual=encode(node2);
+        String actual=encode(node2,data);
         return actual;
     }
     public static String roundTripLong(String expected) {
@@ -167,8 +179,8 @@ public class G2 {
         // do left=, right=, return new node
     }
     public static void preOrderx(Node node,Consumer<Node> consumer) {
-        if(node==null) return;
         if(consumer!=null) consumer.accept(node);
+        if(node==null) return;
         //System.out.println("1 "+node.data+" "+node.encoded);
         preOrderx(node.left,consumer);
         preOrderx(node.right,consumer);
@@ -196,7 +208,7 @@ public class G2 {
     static ArrayList<Integer> collectData(Node node) {
         // nodes are getting data set, but this only returns 1!
         final ArrayList<Integer> datas=new ArrayList<>();
-        Consumer<Node> add=x->datas.add(x.data);
+        Consumer<Node> add=x->datas.add(x!=null?x.data:null);
         preOrderx(node,add);
         return datas;
     }
@@ -209,7 +221,7 @@ public class G2 {
                 for(Node right:all(n-1-i,data)) {
                     if(data!=null) ++data.t;
                     Node node=new Node(data.t,left,right);
-                    node.encoded=encode(node);
+                    node.encoded=encode(node,null);
                     //System.out.println("all "+node.id+" "+node.data+" "+node.encoded);
                     trees.add(node);
                 }
@@ -278,28 +290,27 @@ public class G2 {
         trees=all.get(nodes); // can change this
         n=trees.size();
         tree=trees.get(n/2);
-        Node oneWay=encodeDecode(tree);
-        if(!tree.deepEquals(oneWay)) {
-            System.out.println("ex: "+encode(tree));
-            System.out.println("ac: "+encode(oneWay));
-            System.out.println("one way round trip failure!");
-        }
+        System.out.println("encoded tree: "+encode(tree,null));
         ArrayList<Integer> data=collectData(tree);
         System.out.println("collect data: "+data);
+        Node oneWay=encodeDecode(tree);
+        if(!tree.deepEquals(oneWay)) {
+            System.out.println("ex: "+encode(tree,null));
+            System.out.println("ac: "+encode(oneWay,null));
+            System.out.println("one way round trip failure!");
+        }
         StringBuffer stringBuffer=new StringBuffer();
         toDataString(stringBuffer,tree);
         System.out.println("to data string: "+stringBuffer);
-        String expected=encode(tree);
+        String expected=encode(tree,null);
         System.out.println("ex: "+expected);
-        String theOtherWay=roundTripLong(expected);
+        String theOtherWay=decodeEncode(expected,data);
         if(!expected.equals(theOtherWay)) System.out.println("the other way round trip failure!");
-        String actual=decodeEncode(expected,data);
-        System.out.println("ac: "+actual);
-        if(!expected.equals(actual)) System.out.println("round trip failurefailure!");
+        // the above used data
         MyConsumer c2=new MyConsumer();
         postOrder(tree,c2);
-        System.out.println("copy: "+encode(c2.copy));
-        actual=encode(c2.copy);
+        System.out.println("copy: "+encode(c2.copy,null));
+        String actual=encode(c2.copy,null);
         System.out.println("ac: "+actual);
         if(!expected.equals(actual)) System.out.println("copy failurefailure!");
         ArrayList<Integer> data2=collectData(c2.copy);
@@ -327,6 +338,8 @@ public class G2 {
     SortedMap<Integer,ArrayList<Node>> map=new TreeMap<>();
     static List<Integer> sequentialData=new ArrayList<>();
     static {
-        for(int i=0;i<100;++i) sequentialData.add(i);
+        ArrayList<Integer> data=new ArrayList<>();
+        for(int i=0;i<100;++i) data.add(i);
+        sequentialData=Collections.unmodifiableList(data);
     }
 }

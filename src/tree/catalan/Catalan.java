@@ -10,15 +10,16 @@ public class Catalan {
         else if(r==0) p=1;
         else if(r>n-r) p=c(n,n-r);
         else {
-            for(p=1,i=n;i>=n-r+1;i--) p=p*i;
+            for(p=1,i=n;i>=n-r+1;--i) p=p*i;
             p=p/f(r);
         }
+        // figure out why this fails first!
         return (int)p;
     }
     static final long f(final int n) { // factorial
         long i,p;
         if(n<=1) p=1;
-        else for(p=n,i=2;i<=n-1;i++) p=p*i;
+        else for(p=n,i=2;i<=n-1;++i) p=p*i;
         return(p);
     }
     //C_n       =       1/(n+1)(2n; n)
