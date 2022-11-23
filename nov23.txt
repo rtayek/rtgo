@@ -1,0 +1,220 @@
+diff --git a/src/tree/catalan/Catalan.java b/src/tree/catalan/Catalan.java
+index f1570bb..ad7bd08 100644
+--- a/src/tree/catalan/Catalan.java
++++ b/src/tree/catalan/Catalan.java
+@@ -27,7 +27,7 @@ public class Catalan {
+     public static long catalan(int n) { return f(2*n)/(f(n+1)*f(n)); }
+     public static void main(String[] args) {
+         G2 g2=new G2();
+-        for(int nodes=0;nodes<100;++nodes) { // 15 takes a few minutes.
++        for(int nodes=0;nodes<10;++nodes) { // 15 takes a few minutes.
+             Node.ids=0;
+             Holder<Integer> data=new Holder<>(0);
+             List<Node> trees=g2.all(nodes,data);
+diff --git a/src/tree/catalan/G2.java b/src/tree/catalan/G2.java
+index 2808a3c..36811e4 100644
+--- a/src/tree/catalan/G2.java
++++ b/src/tree/catalan/G2.java
+@@ -83,8 +83,7 @@ public class G2 {
+             boolean b=binaryString.charAt(0)=='1';
+             binaryString=binaryString.substring(1);
+             if(b) {
+-                Integer d=null;
+-                if(data.size()==0) { System.out.println("data: "+data); d=data!=null?data.remove(0):null; }
++                Integer d=data!=null?data.remove(0):null;
+                 Node root=new Node(d);
+                 root.left=decode(binaryString,data);
+                 root.right=decode(binaryString,data);
+@@ -98,9 +97,9 @@ public class G2 {
+             if(obj==null) return false;
+             if(getClass()!=obj.getClass()) return false;
+             Node other=(Node)obj;
+-            boolean equal=data==other.data||data.equals(obj);
+-            if(!equal) System.out.println(data+" "+other.data);
+-            return data==other.data||data.equals(obj);
++            boolean equal=data.equals(other.data);
++            if(!equal) System.out.println(data+"!="+other.data);
++            return equal;
+         }
+         public boolean deepEquals(Node other) {
+             // lambda?
+@@ -212,22 +211,30 @@ public class G2 {
+         preOrderx(node,add);
+         return datas;
+     }
+-    public ArrayList<Node> all(int n,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
+-        if(useMap) if(map.containsKey(n)) return map.get(n);
++    public ArrayList<Node> all(int nodes,Holder<Integer> data,ArrayList<ArrayList<Node>> all) { // https://www.careercup.com/question?id=14945787
++        if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
++        //if(nodes==0) trees.add(null);
++        //else
++        for(int i=0;i<nodes;i++) {
++            System.out.println("create all treed with "+i+" nodes.");
++            for(Node left:all(i,data,all)) {
+                 ArrayList<Node> trees=new ArrayList<>();
+-        if(n==0) trees.add(null);
+-        else for(int i=0;i<n;i++) {
+-            for(Node left:all(i,data)) {
+-                for(Node right:all(n-1-i,data)) {
++                for(Node right:all(nodes-1-i,data,all)) {
+                     if(data!=null) ++data.t;
+                     Node node=new Node(data.t,left,right);
+                     node.encoded=encode(node,null);
+-                    //System.out.println("all "+node.id+" "+node.data+" "+node.encoded);
+                     trees.add(node);
++                    if(true) {
++                        //System.out.println("all "+node.id+" "+node.data+" "+node.encoded);
++                        Node actalNode=decode(node.encoded,null);
++                        if(!node.structureDeepEquals(actalNode)) System.out.println(node+"!="+actalNode);
++                        String actal=encode(actalNode,null);
++                        if(!node.encoded.equals(actal)) System.out.println(node.encoded+"!="+actal);
+                     }
+                 }
++            } //
+         }
+-        if(useMap) map.put(n,trees);
++        if(useMap) { System.out.println("put trees with "+nodes+" nodes."); map.put(nodes,trees); }
+         return trees;
+     }
+     static void p(Node x) { // instance?
+@@ -267,10 +274,12 @@ public class G2 {
+     }
+     ArrayList<ArrayList<Node>> generate(int nodes) {
+         ArrayList<ArrayList<Node>> all=new ArrayList<>();
++        // doing too much work here!
+         Holder<Integer> data=new Holder<>(0);
+         for(int i=0;i<=nodes;i++) {
+             et.reset();
+-            ArrayList<Node> trees=all(i,data);
++            System.out.println("create all trees with "+i+" nodes.");
++            ArrayList<Node> trees=all(i,data,all);
+             //System.out.println(i+" "+trees.size()+" "+g2.et);
+             //System.out.println(g2.map.keySet());
+             all.add(trees); // stop doing this!
+@@ -322,10 +331,13 @@ public class G2 {
+         System.out.println("in eclipse: "+inEclipse());
+         G2 g2=new G2();
+         if(arguments!=null&&arguments.length>0) g2.useMap=true;
+-        //if(inEclipse()) g2.useMap=true;
++        if(inEclipse()) g2.useMap=true;
++        g2.useMap=false;
++        System.out.println("usi map: "+g2.useMap);
+         int nodes=2;
+         ArrayList<ArrayList<Node>> all=g2.generate(nodes);
+         System.out.println(nodes+" nodes.");
++        if(true) return;
+         //for(int i=0;i<all.size();++i) printStuff(all,i);
+         ArrayList<Node> trees=all.get(nodes);
+         int n=trees.size();
+diff --git a/src/tree/catalan/old/Node.java b/src/tree/catalan/old/Node.java
+index 291d616..0d06c2c 100644
+--- a/src/tree/catalan/old/Node.java
++++ b/src/tree/catalan/old/Node.java
+@@ -193,11 +193,11 @@ class Node {
+         else if(other==null) { System.out.println("other is null!"); return false; }
+         //else if(!equals(other)) return false;
+         if(left!=null) {
+-            boolean isEqual=left.deepEquals(other.left);
++            boolean isEqual=left.structureDeepEquals(other.left);
+             if(!isEqual) { System.out.println("other.left is not equal!"); return false; }
+         } else if(other.left!=null) { System.out.println("other.left is not null!"); return false; }
+         if(right!=null) {
+-            boolean isEqual=right.deepEquals(other.right);
++            boolean isEqual=right.structureDeepEquals(other.right);
+             if(!isEqual) { System.out.println("other.right is not equal!"); return false; }
+         } else if(other.right!=null) { System.out.println("other.right is not null!"); return false; }
+         return true;
+diff --git a/tst/tree/catalan/CatalanTestCase.java b/tst/tree/catalan/CatalanTestCase.java
+index 71ef24a..9e5d991 100644
+--- a/tst/tree/catalan/CatalanTestCase.java
++++ b/tst/tree/catalan/CatalanTestCase.java
+@@ -1,8 +1,8 @@
+ package tree.catalan;
+-import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.*;
+ import static tree.catalan.Catalan.*;
+ import static tree.catalan.G2.*;
+-import static tree.catalan.G2.Node.encode;
++import static tree.catalan.G2.Node.*;
+ import static utilities.ParameterArray.modulo;
+ import java.util.*;
+ import org.junit.*;
+@@ -30,6 +30,41 @@ import utilities.*;
+         if(c1<0||c1<0);
+         else assertEquals(catalan(nodes),Catalan.catalan2(nodes));
+     }
++    @Test public void testEncodeEncode() {
++        Holder<Integer> dataHolder=new Holder<>(0);
++        List<Node> trees=g2.all(nodes,dataHolder);
++        for(Node expected:trees) {
++            if(expected==null) continue; // looks like we need this.
++            String encodedd=encode(expected,null);
++            Node acatual=decode(encodedd,null);
++            assertTrue(expected.deepEquals(acatual));
++        }
++    }
++    @Test public void testEncodeDecodeLong() {
++        Holder<Integer> dataHolder=new Holder<>(0);
++        List<Node> trees=g2.all(nodes,dataHolder);
++        for(Node node:trees) {
++            if(node==null) continue; // looks like we need this.
++            String expected=Node.encode(node,null);
++            // want to pass data to the decode in here
++            String actual=decodeEncode(expected,null);
++            if(!expected.equals(actual)) Utilities.printDifferences(System.out,expected,actual);
++            assertEquals(expected,actual);
++        }
++    }
++    @Test public void testEncodeDecodeLongWithData() {
++        Holder<Integer> dataHolder=new Holder<>(0);
++        List<Node> trees=g2.all(nodes,dataHolder);
++        for(Node node:trees) {
++            if(node==null) continue; // looks like we need this.
++            ArrayList<Integer> data=new ArrayList<>();
++            String expected=Node.encode(node,data);
++            // want to pass data to the deocde in here
++            String actual=decodeEncode(expected,data);
++            if(!expected.equals(actual)) Utilities.printDifferences(System.out,expected,actual);
++            assertEquals(expected,actual);
++        }
++    }
+     // add the other test round trip
+     @Test public void testLongRoundTrip() {
+         Holder<Integer> data=new Holder<>(0);
+@@ -67,5 +102,5 @@ import utilities.*;
+     }
+     int nodes;
+     G2 g2=new G2();
+-    public static final int max=11;
++    public static final int max=3; //11
+ }
+diff --git a/tst/tree/catalan/G2TestCase.java b/tst/tree/catalan/G2TestCase.java
+index 5abc698..39647bd 100644
+--- a/tst/tree/catalan/G2TestCase.java
++++ b/tst/tree/catalan/G2TestCase.java
+@@ -1,7 +1,7 @@
+ package tree.catalan;
+ import static org.junit.Assert.*;
+ import static tree.catalan.G2.mirror;
+-import static tree.catalan.G2.Node.encode;
++import static tree.catalan.G2.Node.*;
+ import java.util.*;
+ import org.junit.*;
+ import tree.catalan.G2.Node;
+@@ -137,6 +137,16 @@ public class G2TestCase {
+             assertEquals(expected,actual);
+         }
+     }
++    @Test public void testEncodeEncode2() {
++        Holder<Integer> dataHolder=new Holder<>(0);
++        List<Node> trees=g2.all(2,dataHolder);
++        for(Node expected:trees) {
++            if(expected==null) continue; // looks like we need this.
++            String encodedd=encode(expected,null);
++            Node acatual=decode(encodedd,null);
++            assertTrue(expected.structureDeepEquals(acatual));
++        }
++    }
+ 
+     G2 g2;
+     boolean verbose;

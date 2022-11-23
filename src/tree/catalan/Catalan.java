@@ -27,7 +27,7 @@ public class Catalan {
     public static long catalan(int n) { return f(2*n)/(f(n+1)*f(n)); }
     public static void main(String[] args) {
         G2 g2=new G2();
-        for(int nodes=0;nodes<100;++nodes) { // 15 takes a few minutes.
+        for(int nodes=0;nodes<100;++nodes) {
             Node.ids=0;
             Holder<Integer> data=new Holder<>(0);
             List<Node> trees=g2.all(nodes,data);

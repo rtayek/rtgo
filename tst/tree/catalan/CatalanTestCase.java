@@ -1,8 +1,8 @@
 package tree.catalan;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static tree.catalan.Catalan.*;
 import static tree.catalan.G2.*;
-import static tree.catalan.G2.Node.encode;
+import static tree.catalan.G2.Node.*;
 import static utilities.ParameterArray.modulo;
 import java.util.*;
 import org.junit.*;
@@ -30,7 +30,16 @@ import utilities.*;
         if(c1<0||c1<0);
         else assertEquals(catalan(nodes),Catalan.catalan2(nodes));
     }
-    // add the other test round trip
+    @Test public void testEncodeEncode() {
+        Holder<Integer> dataHolder=new Holder<>(0);
+        List<Node> trees=g2.all(nodes,dataHolder);
+        for(Node expected:trees) {
+            if(expected==null) continue; // looks like we need this.
+            String encodedd=encode(expected,null);
+            Node acatual=decode(encodedd,null);
+            assertTrue(expected.structureDeepEquals(acatual));
+        }
+    }
     @Test public void testLongRoundTrip() {
         Holder<Integer> data=new Holder<>(0);
         List<Node> trees=g2.all(nodes,data);
@@ -67,5 +76,5 @@ import utilities.*;
     }
     int nodes;
     G2 g2=new G2();
-    public static final int max=11;
+    public static final int max=3; // 11
 }
