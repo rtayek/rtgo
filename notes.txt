@@ -447,6 +447,11 @@ generator got confusing and has bugs. so i started over with g2.
 11/19/22
 g2 worked fine for a  while. now i get the .ConcurrentModificationException again.
 11/22/22 refactoring g2.
+11/23/33 string is passes by value while list items get removed.
+perhaps this is why the decode with a list of boolean worked?
+yes, the bits work since the are in a list and are removed as they are used.
+so fix the binary version or use bits!
+
 
 
 

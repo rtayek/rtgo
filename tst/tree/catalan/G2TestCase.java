@@ -1,7 +1,7 @@
 package tree.catalan;
 import static org.junit.Assert.*;
 import static tree.catalan.G2.mirror;
-import static tree.catalan.G2.Node.encode;
+import static tree.catalan.G2.Node.*;
 import java.util.*;
 import org.junit.*;
 import tree.catalan.G2.Node;
@@ -11,9 +11,7 @@ public class G2TestCase {
     // parameterize?
     // so far, none of these tests use a non null value for data.
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @BeforeClass public static void setUpBeforeClass() throws Exception {
-        
-    }
+    @BeforeClass public static void setUpBeforeClass() throws Exception {}
     @Before public void setUp() throws Exception {
         g2=new G2();
         //all=new G2().generate(3);
@@ -91,6 +89,18 @@ public class G2TestCase {
         String encoded=encode(tree,null);
         assertEquals("100",encoded);
     }
+    @Test public void testDecode100() {
+        String expected="100";
+        // tree is encoded as null
+        // should be "0 maybe?
+        Node tree=Node.decode(expected,null);
+        G2.p(tree);
+        String actual=encode(tree,null);
+        assertEquals(expected,actual);
+        Node actualNode=decode(actual,null);
+        G2.p(actualNode);
+        assertTrue(tree.structureDeepEquals(actualNode));
+    }
     @Test public void test2False() {
         g2.useMap=false;
         all=g2.generate(2);
@@ -113,6 +123,23 @@ public class G2TestCase {
         encoded=encode(tree,null);
         assertEquals("11000",encoded);
     }
+    @Test public void testDecode11100() {
+        String expected="11000";
+        //String expected="10100";
+        // tree is encoded as null
+        // should be "0 maybe?
+        Node tree=Node.decode(expected,null);
+        System.out.println("encoded in node: "+tree.encoded);
+        System.out.println("ex: "+expected);
+        String actual=encode(tree,null);
+        System.out.println("ac: "+actual);
+        Node actualNode=decode(actual,null);
+        G2.p(tree);
+        G2.p(actualNode);
+        assertEquals(expected,actual);
+        assertTrue(tree.structureDeepEquals(actualNode));
+    }
+
     @Test public void testMirror2() {
         Holder<Integer> data=new Holder<>(0);
         List<Node> trees=g2.all(2,data);
