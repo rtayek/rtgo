@@ -99,7 +99,7 @@ public class G2TestCase {
         assertEquals(expected,actual);
         Node actualNode=decode(actual,null);
         G2.p(actualNode);
-        assertTrue(tree.structureDeepEquals(actualNode));
+        assertTrue(structureDeepEquals(tree,actualNode));
     }
     @Test public void test2False() {
         g2.useMap=false;
@@ -137,9 +137,8 @@ public class G2TestCase {
         G2.p(tree);
         G2.p(actualNode);
         assertEquals(expected,actual);
-        assertTrue(tree.structureDeepEquals(actualNode));
+        assertTrue(structureDeepEquals(tree,actualNode));
     }
-
     @Test public void testMirror2() {
         Holder<Integer> data=new Holder<>(0);
         List<Node> trees=g2.all(2,data);
@@ -164,7 +163,6 @@ public class G2TestCase {
             assertEquals(expected,actual);
         }
     }
-    
     G2 g2;
     boolean verbose;
     ArrayList<Node> trees;

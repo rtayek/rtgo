@@ -37,7 +37,19 @@ import utilities.*;
             if(expected==null) continue; // looks like we need this.
             String encodedd=encode(expected,null);
             Node acatual=decode(encodedd,null);
-            assertTrue(expected.structureDeepEquals(acatual));
+            assertTrue(structureDeepEquals(expected,acatual));
+        }
+    }
+    @Test public void testCopy() {
+        Holder<Integer> dataHolder=new Holder<>(0);
+        List<Node> trees=g2.all(nodes,dataHolder);
+        for(Node expected:trees) {
+            //if(expected==null) continue; // looks like we need this.
+            Node actual=copy(expected);
+            assertTrue(structureDeepEquals(expected,actual));
+            String expectedEncoded=encode(expected,null);
+            String actualEncoded=encode(actual,null);
+            assertEquals(expectedEncoded,actualEncoded);
         }
     }
     @Test public void testLongRoundTrip() {
@@ -70,11 +82,9 @@ import utilities.*;
     @Test public void testGenerate() {
         Holder<Integer> data=new Holder<>(0);
         List<Node> trees=g2.all(nodes,data);
-        //System.out.println("trees "+(catalan(nodes)==trees.size()));
         assertEquals(catalan2(nodes),trees.size());
-        // one would think that the first would fail
     }
     int nodes;
     G2 g2=new G2();
-    public static final int max=3; // 11
+    public static final int max=7; // 11
 }

@@ -65,7 +65,7 @@ public class G2 {
         static Node decode(List<Boolean> bits,List<Integer> data) {
             // lambda?
             // get rid of this!
-            if(bits.size()<=0) return null;
+            if(bits.size()==0) return null;
             boolean b=bits.get(0);
             bits.remove(0);
             if(b) {
@@ -121,8 +121,19 @@ public class G2 {
             } else if(other.right!=null) return false;
             return true;
         }
-        public boolean deepEquals(Node other) { return deepEquals_(other,true); }
-        public boolean structureDeepEquals(Node other) { return deepEquals_(other,false); }
+        public static Node copy(Node node) {
+            if(node==null) return null;
+            Node copy=new Node(node.data,node.left,node.right);
+            copy.left=(node.left);
+            copy.right=(node.right);
+            return copy;
+        }
+        public static boolean deepEquals(Node node,Node other) {
+            return node!=null?node.deepEquals_(other,true):other==null;
+        }
+        public static boolean structureDeepEquals(Node node,Node other) {
+            return node!=null?node.deepEquals_(other,false):other==null;
+        }
         Node left,right,parent;
         public final Integer data;
         String encoded;
@@ -158,15 +169,6 @@ public class G2 {
         long number=Long.parseLong(expected,2);
         return roundTripLong(expected,number);
     }
-    public Node preOrderCopy(Node node) {
-        // lambda?
-        if(node==null) return null;
-        Node copy=new Node(node.data);
-        copy.left=preOrderCopy(node.left);
-        copy.right=preOrderCopy(node.right);
-        return copy;
-        // do left=, right=, return new node
-    }
     public static void preOrderx(Node node,Consumer<Node> consumer) {
         if(consumer!=null) consumer.accept(node);
         if(node==null) return;
@@ -177,7 +179,10 @@ public class G2 {
         // otherwise preorder meeds to return a value.
     }
     static class MyConsumer implements Consumer<Node> {
-        @Override public void accept(Node node) { Node newNode=new Node(node.data); copy=newNode; }
+        @Override public void accept(Node node) { //
+            Node newNode=new Node(node.data);
+            copy=newNode;
+        }
         Node copy,left,right;
     }
     public static void postOrder(Node node,Consumer<Node> consumer) {
@@ -241,9 +246,8 @@ public class G2 {
     public ArrayList<Node> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
         if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
         ArrayList<Node> trees=new ArrayList<>();
-        if(nodes==0) {
-            trees.add(null);
-        } else for(int i=0;i<nodes;i++) {
+        if(nodes==0) trees.add(null);
+        else for(int i=0;i<nodes;i++) {
             for(Node left:all(i,data)) {
                 for(Node right:all(nodes-1-i,data)) {
                     if(data!=null) ++data.t;
@@ -260,20 +264,15 @@ public class G2 {
         ArrayList<ArrayList<Node>> all=new ArrayList<>();
         // lost of duplicate work here
         Holder<Integer> data=new Holder<>(0);
-        System.out.println("begin generating.");
         for(int i=0;i<=nodes;i++) {
             //System.out.println("create all trees with "+i+" nodes.");
             et.reset();
-            System.out.println("get all for "+i+" nodes.");
             ArrayList<Node> trees=all(i,data);
             //System.out.println(i+" "+trees.size()+" "+g2.et);
             //System.out.println(g2.map.keySet());
             all.add(trees); // stop doing this!
-            System.out.println("end of get all for "+i+" nodes.");
             System.gc();
         }
-        System.out.println("end generating.");
-        System.out.println("------");
         for(int i=0;i<=nodes;i++) {
             ArrayList<Node> trees=all.get(i);
             int n=0;
@@ -291,18 +290,15 @@ public class G2 {
         boolean notEclipse="true".equalsIgnoreCase(string);
         return !notEclipse;
     }
-    static void foo(int nodes,ArrayList<ArrayList<Node>> all,Node tree) {
+    static void foo(Node tree) {
         ArrayList<Node> trees;
         int n;
         print(tree);
-        trees=all.get(nodes); // can change this
-        n=trees.size();
-        tree=trees.get(n/2);
         System.out.println("encoded tree: "+encode(tree,null));
         ArrayList<Integer> data=collectData(tree);
         System.out.println("collect data: "+data);
         Node oneWay=encodeDecode(tree);
-        if(!tree.deepEquals(oneWay)) {
+        if(!deepEquals(tree,oneWay)) {
             System.out.println("ex: "+encode(tree,null));
             System.out.println("ac: "+encode(oneWay,null));
             System.out.println("one way round trip failure!");
@@ -314,13 +310,14 @@ public class G2 {
         System.out.println("ex: "+expected);
         String theOtherWay=decodeEncode(expected,data);
         if(!expected.equals(theOtherWay)) System.out.println("the other way round trip failure!");
+        System.out.println("the other way round trip succeeded");
         // the above used data
         MyConsumer c2=new MyConsumer();
         postOrder(tree,c2);
-        System.out.println("copy: "+encode(c2.copy,null));
+        System.out.println("copy encoded: "+encode(c2.copy,null));
         String actual=encode(c2.copy,null);
         System.out.println("ac: "+actual);
-        if(!expected.equals(actual)) System.out.println("copy failurefailure!");
+        if(!expected.equals(actual)) System.out.println("copy failure!");
         ArrayList<Integer> data2=collectData(c2.copy);
         System.out.println("collect data2: "+data2);
     }
@@ -332,14 +329,14 @@ public class G2 {
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
         if(inEclipse()) g2.useMap=true;
         g2.useMap=false;
-        int nodes=3;
+        int nodes=2;
         ArrayList<ArrayList<Node>> all=g2.generate(nodes);
         System.out.println(nodes+" nodes.");
         //for(int i=0;i<all.size();++i) printStuff(all,i);
         ArrayList<Node> trees=all.get(nodes);
         int n=trees.size();
         Node tree=trees.get(n/2);
-        foo(nodes,all,tree);
+        foo(tree);
     }
     boolean useMap;
     Et et=new Et();
