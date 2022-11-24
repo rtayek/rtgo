@@ -1,13 +1,13 @@
 package io;
+import static utilities.Utilities.toObjects;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.IntStream;
 import utilities.Pair;
 public class ColorLogs {
     //https://stackoverflow.com/questions/54909752/how-to-change-the-util-logging-logger-printing-colour-in-logging-properties/60434521#60434521
     //https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println/5762502#5762502
     public static String coloredString(String string,String escapeSequence) {
-        //System.out.println("color: "+Arrays.asList(toObjects(escapeSequence.getBytes())));
+        System.out.println("color: "+Arrays.asList(toObjects(escapeSequence.getBytes())));
         return color_RESET+(escapeSequence!=null?escapeSequence:blackOrWhite)+string+color_RESET;
         // try removing trailig reset?
     }
@@ -29,9 +29,6 @@ public class ColorLogs {
         if(containsAGTPKey(string));
         // this is very broken.
         return key!=null?map.get(key):color_YELLOW;
-    }
-    private static Byte[] toObjects(byte[] bytes) {
-        return IntStream.range(0,bytes.length).mapToObj(i->bytes[i]).toArray(Byte[]::new);
     }
     public static String quote(String escapeSequence) {
         StringBuffer stringBuffer=new StringBuffer();

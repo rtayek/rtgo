@@ -2,6 +2,7 @@ package utilities;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.IntStream;
 import javax.lang.model.SourceVersion;
 import io.Logging;
 public class Utilities {
@@ -342,6 +343,12 @@ public class Utilities {
             return false;
         }
         return true;
+    }
+    public static Byte[] toObjects(byte[] bytes) {
+        return IntStream.range(0,bytes.length).mapToObj(i->bytes[i]).toArray(Byte[]::new);
+    }
+    public static Character[] toObjects(char[] characters) {
+        return IntStream.range(0,characters.length).mapToObj(i->characters[i]).toArray(Character[]::new);
     }
     public static boolean implies(Boolean a,boolean b) { return !a|b; }
 }

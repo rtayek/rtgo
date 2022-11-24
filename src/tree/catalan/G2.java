@@ -1,6 +1,6 @@
 package tree.catalan;
 import static tree.catalan.G2.Node.*;
-import static utilities.Utilities.implies;
+import static utilities.Utilities.*;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
@@ -47,7 +47,6 @@ public class G2 {
             List<Boolean> bits=new ArrayList<>();
             for(int i=length;i>=1;b/=2,--i) bits.add(b%2==1?true:false);
             Collections.reverse(bits);
-            System.out.println("bits: "+bits);
             while(!implies(bits.size()>0,bits.get(0))) bits.remove(0);
             if(bits.size()==0) System.out.println("no bits!");
             return bits;
@@ -79,22 +78,20 @@ public class G2 {
             return null;
         }
         static Node decode(String binaryString,List<Integer> data) {
+            List<Character> x=Arrays.asList(toObjects(binaryString.toCharArray()));
+            return decode_(new ArrayList<>(x),data);
+        }
+        static Node decode_(List<Character> binaryString,List<Integer> data) {
             // lambda?
-            System.out.println("binary string: "+binaryString);
             if(binaryString.equals("")) { System.out.println("calling system exit!"); System.exit(1); ; }
             if(binaryString.equals("0")) return null;
-            boolean b=binaryString.charAt(0)=='1';
-            binaryString=binaryString.substring(1);
+            boolean b=binaryString.remove(0)=='1';
             if(b) {
-                //Integer d=null;
-                //if(data.size()==0) { System.out.println("data: "+data); d=data!=null?data.remove(0):null; }
                 Integer d=data!=null?data.remove(0):null;
                 Node node=new Node(d);
-                if(node.id==7) { System.out.println("created node: "+node.id); }
-                node.left=decode(binaryString,data);
-                node.right=decode(binaryString,data);
+                node.left=decode_(binaryString,data);
+                node.right=decode_(binaryString,data);
                 node.encoded=encode(node,null);
-                if(node.id==7) { System.out.println("encoded as: "+node.encoded); }
                 return node;
             }
             return null;
@@ -111,9 +108,6 @@ public class G2 {
         }
         public boolean deepEquals_(Node other,boolean ckeckEqual) {
             // lambda?
-            if(other!=null&&other.id==7) { //
-                System.out.println("at node with other.id: "+id);
-            }
             if(this==other) return true;
             else if(other==null) return false;
             if(ckeckEqual) if(!equals(other)) return false;
@@ -139,8 +133,6 @@ public class G2 {
         // add string writer and return the tree
         ArrayList<Integer> data=new ArrayList<>();
         String actualEncoded=encode(expected,data);
-        System.out.println("encode tree: "+actualEncoded);
-        System.out.println("data: "+data);
         // need real data!
         Node actual=decode(actualEncoded,data);
         return actual;
@@ -246,30 +238,6 @@ public class G2 {
         }
         System.out.println("end of nodes "+nodes);
     }
-    void check(Node node) { // check encoded can round trip
-        //System.out.println("all "+node.id+" "+node.data+" "+node.encoded);
-        if(node==null) return;
-        p(node);
-        Node actalNode=decode(node.encoded,null);
-        actalNode.encoded=encode(actalNode,null);
-        p(actalNode);
-        // this may be adding an extra empty node on the left?
-        if(!node.structureDeepEquals(actalNode)) {
-            System.out.println(node+"!="+actalNode);
-            System.out.print("expected: ");
-            p(node);
-            System.out.println("encoded tree: "+node.encoded);
-            System.out.print("actual: ");
-            p(actalNode);
-        } else {
-            System.out.println(node+"=="+actalNode);
-            p(node);
-            p(actalNode);
-        }
-        String actal=encode(actalNode,null);
-        if(!node.encoded.equals(actal)) System.out.println(node.encoded+"!="+actal);
-        else System.out.println(node.encoded+"=="+actal);
-    }
     public ArrayList<Node> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
         if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
         ArrayList<Node> trees=new ArrayList<>();
@@ -277,14 +245,10 @@ public class G2 {
             trees.add(null);
         } else for(int i=0;i<nodes;i++) {
             for(Node left:all(i,data)) {
-                System.out.println("left: "+left);
                 for(Node right:all(nodes-1-i,data)) {
                     if(data!=null) ++data.t;
                     Node node=new Node(data.t,left,right);
                     node.encoded=encode(node,null); // ?
-                    System.out.println("node with id "+node.id+" encoded as: "+node.encoded);
-                    if(node.id==5) { System.out.println("five node is encoded as:"+node.encoded); }
-                    //System.out.println("all "+node.id+" "+node.data+" "+node.encoded);
                     trees.add(node);
                 }
             }
@@ -309,18 +273,12 @@ public class G2 {
             System.gc();
         }
         System.out.println("end generating.");
-        if(false) return all;
         System.out.println("------");
         for(int i=0;i<=nodes;i++) {
             ArrayList<Node> trees=all.get(i);
-            System.out.println("trees: "+trees);
-            System.out.println(i+" nodes in loop.");
-            if(i==2) { System.out.println("here we are."); }
             int n=0;
             for(Node expected:trees) {
-                System.out.println("check tree: "+ ++n);
                 if(expected==null) continue;
-                //check(expected);
                 String expectedEncoded=encode(expected,null);
                 String actualEncoded=roundTripLong(expectedEncoded);
                 if(!expectedEncoded.equals(actualEncoded)) System.out.println(expectedEncoded="!="+actualEncoded);
@@ -376,7 +334,6 @@ public class G2 {
         g2.useMap=false;
         int nodes=3;
         ArrayList<ArrayList<Node>> all=g2.generate(nodes);
-        if(true) return; // just for now
         System.out.println(nodes+" nodes.");
         //for(int i=0;i<all.size();++i) printStuff(all,i);
         ArrayList<Node> trees=all.get(nodes);
