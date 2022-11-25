@@ -44,10 +44,16 @@ public class G2 {
             return sb.toString();
         }
         public static List<Boolean> bits(long b,int length) {
+            System.out.println("b: "+b+", length: "+length);
             List<Boolean> bits=new ArrayList<>();
             for(int i=length;i>=1;b/=2,--i) bits.add(b%2==1?true:false);
             Collections.reverse(bits);
-            while(!implies(bits.size()>0,bits.get(0))) bits.remove(0);
+            System.out.println(bits+" "+length);
+            while(!implies(bits.size()>0,bits.get(0))) {
+                System.out.println(bits);
+                bits.remove(0);
+                System.out.println(bits);
+            }
             if(bits.size()==0) System.out.println("no bits!");
             return bits;
         }
@@ -140,7 +146,7 @@ public class G2 {
         final int id=++ids;
         static int ids;
     }
-    public static Node encodeDecode(Node expected) {
+    public static Node roundTrip(Node expected) {
         // add string writer and return the tree
         ArrayList<Integer> data=new ArrayList<>();
         String actualEncoded=encode(expected,data);
@@ -148,7 +154,7 @@ public class G2 {
         Node actual=decode(actualEncoded,data);
         return actual;
     }
-    public static String decodeEncode(String expected,ArrayList<Integer> data) {
+    public static String roundTrip(String expected,ArrayList<Integer> data) {
         Node decoded=decode(expected,data);
         String actual=encode(decoded,data);
         if(data!=null) if(data.size()>0) {
@@ -158,6 +164,7 @@ public class G2 {
         return actual;
     }
     static String roundTripLong(String expected,long number) {
+        System.out.println("ex: "+expected+", number: "+number);
         List<Boolean> list=bits(number,expected.length());
         ArrayList<Integer> data=new ArrayList<>(sequentialData);
         Node node2=decode(list,data);
@@ -166,6 +173,10 @@ public class G2 {
     }
     public static String roundTripLong(String expected) {
         // add string writer and return the tree
+        if(expected.equals("0")) // hack
+            return expected;
+        // do we really need this long stuff?s
+        System.out.println("exp: "+expected);
         long number=Long.parseLong(expected,2);
         return roundTripLong(expected,number);
     }
@@ -243,6 +254,17 @@ public class G2 {
         }
         System.out.println("end of nodes "+nodes);
     }
+    static public void print(String prefix,Node node,boolean isLeft) {
+        if(node!=null) {
+            System.out.println(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
+            print(prefix+(isLeft?"|   ":"    "),node.left,true);
+            print(prefix+(isLeft?"|   ":"    "),node.right,false);
+        }
+    }
+    public static void print(String prefi,Node node) {
+        if(node!=null) print(prefi,node,false);
+        else System.out.println("0");
+    }
     public ArrayList<Node> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
         if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
         ArrayList<Node> trees=new ArrayList<>();
@@ -260,28 +282,26 @@ public class G2 {
         if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
         return trees;
     }
+    static int check(Node expected) { // add real data soon!
+        int n=0;
+        Node actual=roundTrip(expected);
+        if(!structureDeepEquals(expected,actual)) { ++n; System.out.println(expected+"!="+actual); }
+        String expectedEncoded=encode(expected,null);
+        String actualEncoded=roundTripLong(expectedEncoded);
+        if(!expectedEncoded.equals(actualEncoded)) { ++n; System.out.println(expectedEncoded="!="+actualEncoded); }
+        String actualEncoded2=roundTrip(expectedEncoded,null);
+        if(!expectedEncoded.equals(actualEncoded2)) { ++n; System.out.println(expectedEncoded="!="+actualEncoded); }
+        return n;
+    }
     ArrayList<ArrayList<Node>> generate(int nodes) {
         ArrayList<ArrayList<Node>> all=new ArrayList<>();
         // lost of duplicate work here
         Holder<Integer> data=new Holder<>(0);
         for(int i=0;i<=nodes;i++) {
-            //System.out.println("create all trees with "+i+" nodes.");
             et.reset();
             ArrayList<Node> trees=all(i,data);
-            //System.out.println(i+" "+trees.size()+" "+g2.et);
-            //System.out.println(g2.map.keySet());
             all.add(trees); // stop doing this!
             System.gc();
-        }
-        for(int i=0;i<=nodes;i++) {
-            ArrayList<Node> trees=all.get(i);
-            int n=0;
-            for(Node expected:trees) {
-                if(expected==null) continue;
-                String expectedEncoded=encode(expected,null);
-                String actualEncoded=roundTripLong(expectedEncoded);
-                if(!expectedEncoded.equals(actualEncoded)) System.out.println(expectedEncoded="!="+actualEncoded);
-            }
         }
         return all;
     }
@@ -293,28 +313,16 @@ public class G2 {
     static void foo(Node tree) {
         ArrayList<Node> trees;
         int n;
+        print("",tree);
         print(tree);
-        System.out.println("encoded tree: "+encode(tree,null));
         ArrayList<Integer> data=collectData(tree);
         System.out.println("collect data: "+data);
-        Node oneWay=encodeDecode(tree);
-        if(!deepEquals(tree,oneWay)) {
-            System.out.println("ex: "+encode(tree,null));
-            System.out.println("ac: "+encode(oneWay,null));
-            System.out.println("one way round trip failure!");
-        }
         StringBuffer stringBuffer=new StringBuffer();
         toDataString(stringBuffer,tree);
         System.out.println("to data string: "+stringBuffer);
         String expected=encode(tree,null);
-        System.out.println("ex: "+expected);
-        String theOtherWay=decodeEncode(expected,data);
-        if(!expected.equals(theOtherWay)) System.out.println("the other way round trip failure!");
-        System.out.println("the other way round trip succeeded");
-        // the above used data
         MyConsumer c2=new MyConsumer();
         postOrder(tree,c2);
-        System.out.println("copy encoded: "+encode(c2.copy,null));
         String actual=encode(c2.copy,null);
         System.out.println("ac: "+actual);
         if(!expected.equals(actual)) System.out.println("copy failure!");
@@ -328,11 +336,15 @@ public class G2 {
         G2 g2=new G2();
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
         if(inEclipse()) g2.useMap=true;
-        g2.useMap=false;
+        //g2.useMap=false;
         int nodes=2;
         ArrayList<ArrayList<Node>> all=g2.generate(nodes);
         System.out.println(nodes+" nodes.");
-        //for(int i=0;i<all.size();++i) printStuff(all,i);
+        for(int i=0;i<=nodes;i++) {
+            ArrayList<Node> trees=all.get(i);
+            int n=0;
+            for(Node expected:trees) { check(expected); }
+        }
         ArrayList<Node> trees=all.get(nodes);
         int n=trees.size();
         Node tree=trees.get(n/2);

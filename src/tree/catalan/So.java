@@ -24,8 +24,8 @@ public class So {
         public static Node copy(Node node) {
             if(node==null) return null;
             Node copy=new Node(node.data,node.left,node.right);
-            copy.left=(node.left);
-            copy.right=(node.right);
+            copy.left=node.left;
+            copy.right=node.right;
             return copy;
         }
         Node left,right,parent;
@@ -58,8 +58,7 @@ public class So {
     }
     static class MyConsumer implements Consumer<Node> {
         @Override public void accept(Node node) { //
-            Node newNode=new Node(node.data);
-            copy=newNode;
+            copy=new Node(node.data);
             // what do we do here?
         }
         Node copy,left,right;

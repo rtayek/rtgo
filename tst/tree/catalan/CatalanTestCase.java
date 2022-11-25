@@ -52,16 +52,23 @@ import utilities.*;
             assertEquals(expectedEncoded,actualEncoded);
         }
     }
+    @Test public void testCheck() {
+        Holder<Integer> data=new Holder<>(0);
+        List<Node> trees=g2.all(nodes,data);
+        for(Node node:trees) {
+            int n=check(node);
+            assertEquals(0,n);
+        }
+    }
     @Test public void testLongRoundTrip() {
         Holder<Integer> data=new Holder<>(0);
         List<Node> trees=g2.all(nodes,data);
         for(Node node:trees) {
-            if(node==null) continue; // looks like we need this.
+            // if(node==null) continue; // looks like we need this.
             // this is a round trip
             String expected=Node.encode(node,null);
             // want to pass data to the deocde in here
             String actual=roundTripLong(expected);
-            //actual=decodeEncode(expected,data);
             assertEquals(expected,actual);
         }
     }
