@@ -6,34 +6,42 @@ import java.util.*;
 import java.util.function.Consumer;
 import utilities.*;
 public class G2 {
-    public static class Node {
-        public Node(Integer data) { this.data=data; }
-        public Node(Integer data,Node left,Node right) { this.data=data; this.left=left; this.right=right; }
-        public void preorder(Consumer<Node> consumer) {
+    public static class Integers implements Iterator<Integer> {
+        @Override public boolean hasNext() { return n<Integer.MAX_VALUE; }
+        @Override public Integer next() { return n++; }
+        Integer n=0;
+    }
+    public static class Node<T> {
+        public Node(T data) { this.data=data; }
+        public Node(T data,Node<T> left,Node<T> right) { this.data=data; this.left=left; this.right=right; }
+        public void preorder(Consumer<Node<T>> consumer) {
             if(consumer!=null) consumer.accept(this);
             if(left!=null) left.preorder(consumer);
             if(right!=null) right.preorder(consumer);
         }
-        public void inorder(Consumer<Node> consumer) {
+        public void inorder(Consumer<Node<T>> consumer) {
             if(left!=null) left.inorder(consumer);
             if(consumer!=null) consumer.accept(this);
             if(right!=null) right.inorder(consumer);
         }
-        public void postorder(Consumer<Node> consumer) {
+        public void postorder(Consumer<Node<T>> consumer) {
             if(left!=null) left.postorder(consumer);
             if(right!=null) right.postorder(consumer);
             if(consumer!=null) consumer.accept(this);
         }
-        public static void preorder(Node node,Consumer<Node> consumer) {
+        public static <T> void preorder(Node<T> node,Consumer<Node<T>> consumer) {
             if(node==null) return;
             node.preorder(consumer);
         }
-        public static void inorder(Node node,Consumer<Node> consumer) { if(node==null) return; node.inorder(consumer); }
-        public static void postorder(Node node,Consumer<Node> consumer) {
+        public static <T> void inorder(Node<T> node,Consumer<Node<T>> consumer) {
+            if(node==null) return;
+            node.inorder(consumer);
+        }
+        public static <T> void postorder(Node<T> node,Consumer<Node<T>> consumer) {
             if(node==null) return;
             node.postorder(consumer);
         }
-        private static void encode_(StringBuffer sb,Node node,ArrayList<Integer> data) {
+        private static <T> void encode_(StringBuffer sb,Node<T> node,ArrayList<T> data) {
             // lambda?
             boolean isNotNull=node!=null;
             if(isNotNull) {
@@ -46,7 +54,7 @@ public class G2 {
                 if(data!=null) data.add(null); // maybe not?
             }
         }
-        public static String encode(Node tree,ArrayList<Integer> data) { // to binary string
+        public static <T> String encode(Node<T> tree,ArrayList<T> data) { // to binary string
             // https://oeis.org/search?q=4%2C20%2C24%2C84%2C88%2C100%2C104%2C112&language=english&go=Search
             StringBuffer sb=new StringBuffer();
             encode_(sb,tree,data);
@@ -60,7 +68,7 @@ public class G2 {
             if(bits.size()==0) System.out.println("no bits!");
             return bits;
         }
-        static void toDataString(StringBuffer sb,Node node) { // encode
+        static <T> void toDataString(StringBuffer sb,Node<T> node) { // encode
             // lambda?
             if(node==null) sb.append('0');
             else {
@@ -71,82 +79,38 @@ public class G2 {
                 sb.append(')');
             }
         }
-        static Node decode(List<Boolean> bits,List<Integer> data) {
+        static <T> Node<T> decode(List<Boolean> bits,List<T> data) {
             // lambda?
             // get rid of this!
             if(bits.size()==0) return null;
             boolean b=bits.get(0);
             bits.remove(0);
             if(b) {
-                Integer d=data!=null?data.remove(0):null;
-                Node root=new Node(d); // lambda?
+                T d=data!=null?data.remove(0):null;
+                Node<T> root=new Node<>(d); // lambda?
                 root.left=decode(bits,data);
                 root.right=decode(bits,data);
                 return root;
             }
             return null;
         }
-        /*
-        function encoding(node n, bitstring s, array data){
-            if(n == NULL){
-                append 0 to s;
-            }
-            else{
-                append 1 to s;
-                append n.data to data;
-                encoding(n.left, s, data);
-                encoding(n.right, s, data);
-            }
-        }
-        function decoding(bitstring s, array data){
-            append first bit of s to x and remove it
-            if(x==1){
-                create new node n
-                remove first element of data and put in n.data
-                n.left = decoding(s, data)
-                n.right = decoding(s,data)
-                return n
-            else{
-                return null
-            }
-            }
-        }
-        node *decoding(list<bool> &s, list<int> &data){
-        if(s.size()==0)
-        return NULL;
-        else{
-        bool b = s.front();
-        s.pop_front();
-        if(b==1){
-            int val = data.front();
-            data.pop_front();
-            node *root=newnode(val);
-            root->left = decoding(s,data);
-            root->right = decoding(s,data);
-            return root;
-        }
-        return NULL;
-        }
-        }
-
-         */
-        static Node decode_(List<Character> binaryString,List<Integer> data) {
+        static <T> Node<T> decode_(List<Character> binaryString,List<T> data) {
             // lambda?
             if(binaryString.size()==0) return null;
             //System.out.println("decodingL "+binaryString);
             boolean b=binaryString.remove(0)=='1';
             if(b) {
-                Integer d=data!=null?data.remove(0):null;
-                Node node=new Node(d);
+                T d=data!=null?data.remove(0):null;
+                Node<T> node=new Node<>(d);
                 node.left=decode_(binaryString,data);
                 node.right=decode_(binaryString,data);
                 node.encoded=encode(node,null);
                 return node;
             }
-            Integer d=data!=null?data.remove(0):null;
+            T d=data!=null?data.remove(0):null;
             return null;
         }
-        static Node decode(String binaryString,List<Integer> data) {
+        static <T> Node<T> decode(String binaryString,List<T> data) {
             List<Character> characters=Arrays.asList(toObjects(binaryString.toCharArray()));
             return decode_(new ArrayList<>(characters),data);
         }
@@ -155,12 +119,12 @@ public class G2 {
             if(this==obj) return true;
             if(obj==null) return false;
             if(getClass()!=obj.getClass()) return false;
-            Node other=(Node)obj;
+            Node<T> other=(Node<T>)obj;
             boolean equal=data.equals(other.data);
             if(!equal) System.out.println(data+" "+other.data);
             return equal;
         }
-        public boolean deepEquals_(Node other,boolean ckeckEqual) {
+        public boolean deepEquals_(Node<T> other,boolean ckeckEqual) {
             // lambda?
             if(this==other) return true;
             else if(other==null) return false;
@@ -175,30 +139,33 @@ public class G2 {
             } else if(other.right!=null) return false;
             return true;
         }
-        public static Node copy(Node node) {
+        public static <T> Node<T> copy(Node<T> node) {
             if(node==null) return null;
-            Node copy=new Node(node.data,node.left,node.right);
+            Node<T> copy=new Node<>(node.data,node.left,node.right);
             copy.left=(node.left);
             copy.right=(node.right);
             return copy;
         }
-        public static boolean deepEquals(Node node,Node other) {
+        public static <T> boolean deepEquals(Node<T> node,Node<T> other) {
             return node!=null?node.deepEquals_(other,true):other==null;
         }
-        public static boolean structureDeepEquals(Node node,Node other) {
+        public static <T> boolean structureDeepEquals(Node<T> node,Node<T> other) {
             return node!=null?node.deepEquals_(other,false):other==null;
         }
-        static int check(Node expected) {
+        static <T> int check(Node<T> expected) {
             int n=0;
             //System.out.println("check: "+expected);
-            Node actual=roundTrip(expected);
+            Node<T> actual=roundTrip(expected);
             if(!structureDeepEquals(expected,actual)) { ++n; System.out.println("0 "+expected+"!="+actual); }
             //if(true) return n;
             ArrayList<Integer> data=new ArrayList<>();
             String expectedEncoded=encode(expected,data);
             if(expectedEncoded.length()!=data.size()) System.out.println("encoded length!=data size!");
             String actualEncoded=roundTripLong(expectedEncoded);
-            if(!expectedEncoded.equals(actualEncoded)) { ++n; System.out.println("1 "+expectedEncoded+"!="+actualEncoded); }
+            if(!expectedEncoded.equals(actualEncoded)) {
+                ++n;
+                System.out.println("1 "+expectedEncoded+"!="+actualEncoded);
+            }
             String actualEncoded2=roundTrip(expectedEncoded,data);
             if(data.size()>0) System.out.println("data size is >0!");
             if(!expectedEncoded.equals(actualEncoded2)) {
@@ -207,14 +174,13 @@ public class G2 {
             }
             return n;
         }
-
-        Node left,right,parent;
-        public final Integer data;
+        Node<T> left,right,parent;
+        public T data;
         String encoded;
         final int id=++ids;
         static int ids;
     }
-    public static Node roundTrip(Node expected) {
+    public static <T> Node<T> roundTrip(Node expected) {
         // add string writer and return the tree
         ArrayList<Integer> data=new ArrayList<>();
         String actualEncoded=encode(expected,data);
@@ -269,14 +235,14 @@ public class G2 {
         root.left=root.right;
         root.right=temp;
     }
-    static ArrayList<Integer> collectData(Node node) {
+    static <T> ArrayList<T> collectData(Node<T> node) {
         // nodes are getting data set, but this only returns 1!
-        final ArrayList<Integer> datas=new ArrayList<>();
-        Consumer<Node> add=x->datas.add(x!=null?x.data:null);
+        final ArrayList<T> datas=new ArrayList<>();
+        Consumer<Node<T>> add=x->datas.add(x!=null?x.data:null);
         preorder(node,add);
         return datas;
     }
-    static void p(Node x) { // instance?
+    static <T> void p(Node<T> x) { // instance?
         StringBuffer sb=new StringBuffer();
         if(x!=null) {
             sb.append("pre id: ").append(x.id);
@@ -287,10 +253,14 @@ public class G2 {
         }
         System.out.println(sb);
     }
-    static void pd(Node x) { StringBuffer sb=new StringBuffer(); sb.append(' ').append(x.data); System.out.print(sb); }
-    private static void print(Node tree) {
+    static <T> void pd(Node<T> x) {
+        StringBuffer sb=new StringBuffer();
+        sb.append(' ').append(x.data);
+        System.out.print(sb);
+    }
+    private static <T> void print(Node<T> tree) {
         if(tree==null) return;
-        Consumer<Node> p=x->System.out.print(x.data+" ");
+        Consumer<Node<T>> p=x->System.out.print(x.data+" ");
         System.out.print("preorder:  ");
         tree.preorder(p);
         System.out.println();
@@ -301,29 +271,31 @@ public class G2 {
         tree.postorder(p);
         System.out.println();
     }
-    static void printStuff(ArrayList<ArrayList<Node>> all,int nodes) {
-        ArrayList<Node> trees=all.get(nodes);
+    static <T>void printStuff(ArrayList<ArrayList<Node<T>>> all,int nodes) {
+        ArrayList<Nod<T>e> trees=all.get(nodes);
         System.out.println(nodes+" nodes.");
         for(int i=0;i<trees.size();++i) {
             System.out.print("tree "+i+": ");
-            Node tree=trees.get(i);
-            final Consumer<Node> p=x->pd(x);
+            Node<T> tree=trees.get(i);
+            final Consumer<Node<T>> p=x->pd(x);
             preorder(tree,p);
             System.out.println();
         }
         System.out.println("end of nodes "+nodes);
     }
-    static public void print(String prefix,Node node,boolean isLeft) {
+    public static <T> void print(String prefix,Node<T> node,boolean isLeft) {
         if(node!=null) {
             System.out.println(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
             print(prefix+(isLeft?"|   ":"    "),node.left,true);
             print(prefix+(isLeft?"|   ":"    "),node.right,false);
         }
     }
-    public static void print(String prefi,Node node) {
+    public static<T> void print(String prefi,Node<T> node) {
         if(node!=null) print(prefi,node,false);
         else System.out.println("0");
     }
+    // all wants a generator
+    // encode wants an empty list
     public ArrayList<Node> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
         if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
         ArrayList<Node> trees=new ArrayList<>();
@@ -331,7 +303,7 @@ public class G2 {
         else for(int i=0;i<nodes;i++) {
             for(Node left:all(i,data)) {
                 for(Node right:all(nodes-1-i,data)) {
-                    if(data!=null) ++data.t;
+                    if(data!=null) ++data.t; // replace with iterator!
                     Node node=new Node(data.t,left,right);
                     node.encoded=encode(node,null); // ?
                     trees.add(node);
@@ -393,9 +365,7 @@ public class G2 {
             System.out.println("check "+i+" nodes.");
             ArrayList<Node> trees=all.get(i);
             int n=0;
-            for(Node expected:trees) {
-                check(expected);
-            }
+            for(Node expected:trees) { check(expected); }
         }
         //if(true) return;
         ArrayList<Node> trees=all.get(nodes);
