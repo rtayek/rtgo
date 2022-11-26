@@ -32,19 +32,19 @@ import utilities.*;
     }
     @Test public void testEncodeEncode() {
         Holder<Integer> dataHolder=new Holder<>(0);
-        List<Node> trees=g2.all(nodes,dataHolder);
-        for(Node expected:trees) {
+        List<Node<Integer>> trees=g2.all(nodes,dataHolder);
+        for(Node<Integer> expected:trees) {
             String encodedd=encode(expected,null);
-            Node acatual=decode(encodedd,null);
+            Node<Integer> acatual=decode(encodedd,null);
             assertTrue(structureDeepEquals(expected,acatual));
         }
     }
     @Test public void testCopy() {
         Holder<Integer> dataHolder=new Holder<>(0);
-        List<Node> trees=g2.all(nodes,dataHolder);
-        for(Node expected:trees) {
+        List<Node<Integer>> trees=g2.all(nodes,dataHolder);
+        for(Node<Integer> expected:trees) {
             //if(expected==null) continue; // looks like we need this.
-            Node actual=copy(expected);
+            Node<Integer> actual=copy(expected);
             assertTrue(structureDeepEquals(expected,actual));
             ArrayList<Integer> data=new ArrayList<>();
             String expectedEncoded=encode(expected,data);
@@ -55,16 +55,16 @@ import utilities.*;
     }
     @Test public void testCheck() {
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=g2.all(nodes,data);
-        for(Node node:trees) {
+        List<Node<Integer>> trees=g2.all(nodes,data);
+        for(Node<Integer> node:trees) {
             int n=check(node);
             assertEquals(0,n);
         }
     }
     @Test public void testLongRoundTrip() {
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=g2.all(nodes,data);
-        for(Node node:trees) {
+        List<Node<Integer>> trees=g2.all(nodes,data);
+        for(Node<Integer> node:trees) {
             // if(node==null) continue; // looks like we need this.
             // this is a round trip
             String expected=Node.encode(node,null);
@@ -76,7 +76,7 @@ import utilities.*;
     @Test public void testMirrorRoundTrip() { // do we need this?
         // look for duplicate code in node!
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=g2.all(nodes,data);
+        List<Node<Integer>> trees=g2.all(nodes,data);
         for(Node node:trees) {
             if(node==null) continue;
             mirror(node);
@@ -89,7 +89,7 @@ import utilities.*;
     }
     @Test public void testGenerate() {
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=g2.all(nodes,data);
+        List<Node<Integer>> trees=g2.all(nodes,data);
         assertEquals(catalan2(nodes),trees.size());
     }
     int nodes;

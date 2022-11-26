@@ -30,13 +30,13 @@ public class Catalan {
         for(int nodes=0;nodes<100;++nodes) {
             Node.ids=0;
             Holder<Integer> data=new Holder<>(0);
-            List<Node> trees=g2.all(nodes,data);
+            List<Node<Integer>> trees=g2.all(nodes,data);
             //System.out.println(trees);
             System.out.println(nodes+" nodes. has "+trees.size()+" trees.");
             if(trees.size()!=catalans[nodes]) {
                 System.out.println(trees.size()+" trees.size()!=catalans["+nodes+"]");
             }
-            for(Node node:trees) {
+            for(Node<Integer> node:trees) {
                 //System.out.println("|||");
                 //print(node);
             }

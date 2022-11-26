@@ -141,7 +141,7 @@ public class G2TestCase {
     }
     @Test public void testMirror2() {
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=g2.all(2,data);
+        List<Node<Integer>> trees=g2.all(2,data);
         for(Node node:trees) {
             if(node==null) continue;
             String expected=encode(node,null);
@@ -153,8 +153,8 @@ public class G2TestCase {
     }
     @Test public void testMirror3() {
         Holder<Integer> data=new Holder<>(0);
-        List<Node> trees=g2.all(3,data);
-        for(Node node:trees) {
+        List<Node<Integer>> trees=g2.all(3,data);
+        for(Node<Integer> node:trees) {
             if(node==null) continue;
             String expected=encode(node,null);
             mirror(node);
@@ -165,6 +165,6 @@ public class G2TestCase {
     }
     G2 g2;
     boolean verbose;
-    ArrayList<Node> trees;
-    ArrayList<ArrayList<Node>> all;
+    ArrayList<Node<Integer>> trees;
+    ArrayList<ArrayList<Node<Integer>>> all;
 }

@@ -158,7 +158,7 @@ public class G2 {
             Node<T> actual=roundTrip(expected);
             if(!structureDeepEquals(expected,actual)) { ++n; System.out.println("0 "+expected+"!="+actual); }
             //if(true) return n;
-            ArrayList<Integer> data=new ArrayList<>();
+            ArrayList<T> data=new ArrayList<>();
             String expectedEncoded=encode(expected,data);
             if(expectedEncoded.length()!=data.size()) System.out.println("encoded length!=data size!");
             String actualEncoded=roundTripLong(expectedEncoded);
@@ -182,16 +182,16 @@ public class G2 {
     }
     public static <T> Node<T> roundTrip(Node expected) {
         // add string writer and return the tree
-        ArrayList<Integer> data=new ArrayList<>();
+        ArrayList<T> data=new ArrayList<>();
         String actualEncoded=encode(expected,data);
-        Node actual=decode(actualEncoded,data);
+        Node<T> actual=decode(actualEncoded,data);
         if(data.size()>0) System.out.println("leftoverdata: "+data);
         return actual;
     }
-    public static String roundTrip(String expected,ArrayList<Integer> data) {
-        ArrayList<Integer> data0=new ArrayList<>(data);
-        Node decoded=decode(expected,data);
-        ArrayList<Integer> data2=new ArrayList<>();
+    public static <T> String roundTrip(String expected,ArrayList<T> data) {
+        ArrayList<T> data0=new ArrayList<>(data);
+        Node<T> decoded=decode(expected,data);
+        ArrayList<T> data2=new ArrayList<>();
         String actual=encode(decoded,data2);
         if(data!=null) {
             if(data.size()>0) {
@@ -221,17 +221,17 @@ public class G2 {
         long number=Long.parseLong(expected,2);
         return roundTripLong(expected,number);
     }
-    static class MyConsumer implements Consumer<Node> {
-        @Override public void accept(Node node) { //
-            if(node!=null) { Node newNode=new Node(node.data); copy=newNode; }
+    static class MyConsumer<T> implements Consumer<Node<T>> {
+        @Override public void accept(Node<T> node) { //
+            if(node!=null) { Node<T> newNode=new Node<>(node.data); copy=newNode; }
         }
-        Node copy,left,right;
+        Node<T> copy,left,right;
     }
-    public static void mirror(Node root) {
+    public static <T> void mirror(Node<T> root) {
         if(root==null) return;
         mirror(root.left);
         mirror(root.right);
-        Node temp=root.left;
+        Node<T> temp=root.left;
         root.left=root.right;
         root.right=temp;
     }
@@ -272,7 +272,7 @@ public class G2 {
         System.out.println();
     }
     static <T>void printStuff(ArrayList<ArrayList<Node<T>>> all,int nodes) {
-        ArrayList<Nod<T>e> trees=all.get(nodes);
+        ArrayList<Node<T>> trees=all.get(nodes);
         System.out.println(nodes+" nodes.");
         for(int i=0;i<trees.size();++i) {
             System.out.print("tree "+i+": ");
@@ -296,15 +296,15 @@ public class G2 {
     }
     // all wants a generator
     // encode wants an empty list
-    public ArrayList<Node> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
+    public ArrayList<Node<Integer>> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
         if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
-        ArrayList<Node> trees=new ArrayList<>();
+        ArrayList<Node<Integer>> trees=new ArrayList<>();
         if(nodes==0) trees.add(null);
         else for(int i=0;i<nodes;i++) {
-            for(Node left:all(i,data)) {
-                for(Node right:all(nodes-1-i,data)) {
+            for(Node<Integer> left:all(i,data)) {
+                for(Node<Integer> right:all(nodes-1-i,data)) {
                     if(data!=null) ++data.t; // replace with iterator!
-                    Node node=new Node(data.t,left,right);
+                    Node<Integer> node=new Node<>(data.t,left,right);
                     node.encoded=encode(node,null); // ?
                     trees.add(node);
                 }
@@ -313,13 +313,13 @@ public class G2 {
         if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
         return trees;
     }
-    ArrayList<ArrayList<Node>> generate(int nodes) {
-        ArrayList<ArrayList<Node>> all=new ArrayList<>();
+    ArrayList<ArrayList<Node<Integer>>> generate(int nodes) {
+        ArrayList<ArrayList<Node<Integer>>> all=new ArrayList<>();
         // lost of duplicate work here
         Holder<Integer> data=new Holder<>(0);
         for(int i=0;i<=nodes;i++) {
             et.reset();
-            ArrayList<Node> trees=all(i,data);
+            ArrayList<Node<Integer>> trees=all(i,data);
             all.add(trees); // stop doing this!
             System.gc();
         }
@@ -330,8 +330,8 @@ public class G2 {
         boolean notEclipse="true".equalsIgnoreCase(string);
         return !notEclipse;
     }
-    static void foo(Node tree) {
-        ArrayList<Node> trees;
+    static void foo(Node<Integer> tree) {
+        ArrayList<Node<Integer>> trees;
         int n;
         print("",tree);
         print(tree);
@@ -342,7 +342,7 @@ public class G2 {
         System.out.println("to data string: "+stringBuffer);
         String expected=encode(tree,null);
         MyConsumer c2=new MyConsumer();
-        postorder(tree,c2);
+        Node.<Integer>postorder(tree,c2);
         String actual=encode(c2.copy,null);
         System.out.println("ac: "+actual);
         if(!expected.equals(actual)) System.out.println("copy failure!");
@@ -358,25 +358,25 @@ public class G2 {
         if(inEclipse()) g2.useMap=true;
         //g2.useMap=false;
         int nodes=9;
-        ArrayList<ArrayList<Node>> all=g2.generate(nodes);
+        ArrayList<ArrayList<Node<Integer>>> all=g2.generate(nodes);
         System.out.println(nodes+" nodes.");
         if(false) { check(all.get(2).get(0)); return; }
         for(int i=0;i<=nodes;i++) {
             System.out.println("check "+i+" nodes.");
-            ArrayList<Node> trees=all.get(i);
+            ArrayList<Node<Integer>> trees=all.get(i);
             int n=0;
-            for(Node expected:trees) { check(expected); }
+            for(Node<Integer> expected:trees) { check(expected); }
         }
         //if(true) return;
-        ArrayList<Node> trees=all.get(nodes);
+        ArrayList<Node<Integer>> trees=all.get(nodes);
         int n=trees.size();
-        Node tree=trees.get(n/2);
+        Node<Integer> tree=trees.get(n/2);
         foo(tree);
     }
     boolean useMap;
     Et et=new Et();
     // put all here as an instance variable?
-    SortedMap<Integer,ArrayList<Node>> map=new TreeMap<>();
+    SortedMap<Integer,ArrayList<Node<Integer>>> map=new TreeMap<>();
     static List<Integer> sequentialData=new ArrayList<>();
     static final int maxNodes=100;
     static {
