@@ -27,14 +27,13 @@ import utilities.*;
         long c2=catalan2(nodes);
         if(c1<0) System.out.println("catalan("+nodes+") fails!");
         if(c2<0) System.out.println("catalan2("+nodes+") fails!");
-        if(c1<0||c1<0);
+        if(c1<0||c1<0); // check for overflow
         else assertEquals(catalan(nodes),Catalan.catalan2(nodes));
     }
     @Test public void testEncodeEncode() {
         Holder<Integer> dataHolder=new Holder<>(0);
         List<Node> trees=g2.all(nodes,dataHolder);
         for(Node expected:trees) {
-            if(expected==null) continue; // looks like we need this.
             String encodedd=encode(expected,null);
             Node acatual=decode(encodedd,null);
             assertTrue(structureDeepEquals(expected,acatual));
@@ -47,9 +46,11 @@ import utilities.*;
             //if(expected==null) continue; // looks like we need this.
             Node actual=copy(expected);
             assertTrue(structureDeepEquals(expected,actual));
-            String expectedEncoded=encode(expected,null);
-            String actualEncoded=encode(actual,null);
+            ArrayList<Integer> data=new ArrayList<>();
+            String expectedEncoded=encode(expected,data);
+            String actualEncoded=encode(actual,data);
             assertEquals(expectedEncoded,actualEncoded);
+            assertTrue(deepEquals(expected,actual));
         }
     }
     @Test public void testCheck() {

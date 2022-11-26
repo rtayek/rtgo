@@ -24,6 +24,15 @@ public class G2 {
             if(right!=null) right.postorder(consumer);
             if(consumer!=null) consumer.accept(this);
         }
+        public static void preorder(Node node,Consumer<Node> consumer) {
+            if(node==null) return;
+            node.preorder(consumer);
+        }
+        public static void inorder(Node node,Consumer<Node> consumer) { if(node==null) return; node.inorder(consumer); }
+        public static void postorder(Node node,Consumer<Node> consumer) {
+            if(node==null) return;
+            node.postorder(consumer);
+        }
         private static void encode_(StringBuffer sb,Node node,ArrayList<Integer> data) {
             // lambda?
             boolean isNotNull=node!=null;
@@ -44,16 +53,10 @@ public class G2 {
             return sb.toString();
         }
         public static List<Boolean> bits(long b,int length) {
-            System.out.println("b: "+b+", length: "+length);
             List<Boolean> bits=new ArrayList<>();
             for(int i=length;i>=1;b/=2,--i) bits.add(b%2==1?true:false);
             Collections.reverse(bits);
-            System.out.println(bits+" "+length);
-            while(!implies(bits.size()>0,bits.get(0))) {
-                System.out.println(bits);
-                bits.remove(0);
-                System.out.println(bits);
-            }
+            while(!implies(bits.size()>0,bits.get(0))) { bits.remove(0); }
             if(bits.size()==0) System.out.println("no bits!");
             return bits;
         }
@@ -83,14 +86,54 @@ public class G2 {
             }
             return null;
         }
-        static Node decode(String binaryString,List<Integer> data) {
-            List<Character> x=Arrays.asList(toObjects(binaryString.toCharArray()));
-            return decode_(new ArrayList<>(x),data);
+        /*
+        function encoding(node n, bitstring s, array data){
+            if(n == NULL){
+                append 0 to s;
+            }
+            else{
+                append 1 to s;
+                append n.data to data;
+                encoding(n.left, s, data);
+                encoding(n.right, s, data);
+            }
         }
+        function decoding(bitstring s, array data){
+            append first bit of s to x and remove it
+            if(x==1){
+                create new node n
+                remove first element of data and put in n.data
+                n.left = decoding(s, data)
+                n.right = decoding(s,data)
+                return n
+            else{
+                return null
+            }
+            }
+        }
+        node *decoding(list<bool> &s, list<int> &data){
+        if(s.size()==0)
+        return NULL;
+        else{
+        bool b = s.front();
+        s.pop_front();
+        if(b==1){
+            int val = data.front();
+            data.pop_front();
+            node *root=newnode(val);
+            root->left = decoding(s,data);
+            root->right = decoding(s,data);
+            return root;
+        }
+        return NULL;
+        }
+        }
+
+         */
         static Node decode_(List<Character> binaryString,List<Integer> data) {
             // lambda?
-            if(binaryString.equals("")) { System.out.println("calling system exit!"); System.exit(1); ; }
-            if(binaryString.equals("0")) return null;
+            if(binaryString.size()==0) return null;
+            //System.out.println("decodingL "+binaryString);
             boolean b=binaryString.remove(0)=='1';
             if(b) {
                 Integer d=data!=null?data.remove(0):null;
@@ -100,7 +143,12 @@ public class G2 {
                 node.encoded=encode(node,null);
                 return node;
             }
+            Integer d=data!=null?data.remove(0):null;
             return null;
+        }
+        static Node decode(String binaryString,List<Integer> data) {
+            List<Character> characters=Arrays.asList(toObjects(binaryString.toCharArray()));
+            return decode_(new ArrayList<>(characters),data);
         }
         @Override public int hashCode() { return Objects.hash(data); }
         @Override public boolean equals(Object obj) {
@@ -140,6 +188,26 @@ public class G2 {
         public static boolean structureDeepEquals(Node node,Node other) {
             return node!=null?node.deepEquals_(other,false):other==null;
         }
+        static int check(Node expected) {
+            int n=0;
+            //System.out.println("check: "+expected);
+            Node actual=roundTrip(expected);
+            if(!structureDeepEquals(expected,actual)) { ++n; System.out.println("0 "+expected+"!="+actual); }
+            //if(true) return n;
+            ArrayList<Integer> data=new ArrayList<>();
+            String expectedEncoded=encode(expected,data);
+            if(expectedEncoded.length()!=data.size()) System.out.println("encoded length!=data size!");
+            String actualEncoded=roundTripLong(expectedEncoded);
+            if(!expectedEncoded.equals(actualEncoded)) { ++n; System.out.println("1 "+expectedEncoded+"!="+actualEncoded); }
+            String actualEncoded2=roundTrip(expectedEncoded,data);
+            if(data.size()>0) System.out.println("data size is >0!");
+            if(!expectedEncoded.equals(actualEncoded2)) {
+                ++n;
+                System.out.println("2 "+expectedEncoded+"!="+actualEncoded);
+            }
+            return n;
+        }
+
         Node left,right,parent;
         public final Integer data;
         String encoded;
@@ -150,23 +218,31 @@ public class G2 {
         // add string writer and return the tree
         ArrayList<Integer> data=new ArrayList<>();
         String actualEncoded=encode(expected,data);
-        // need real data!
         Node actual=decode(actualEncoded,data);
+        if(data.size()>0) System.out.println("leftoverdata: "+data);
         return actual;
     }
     public static String roundTrip(String expected,ArrayList<Integer> data) {
+        ArrayList<Integer> data0=new ArrayList<>(data);
         Node decoded=decode(expected,data);
-        String actual=encode(decoded,data);
-        if(data!=null) if(data.size()>0) {
-            System.out.println("leftover data: "+data);
-            //throw new RuntimeException("data us not epty!");
+        ArrayList<Integer> data2=new ArrayList<>();
+        String actual=encode(decoded,data2);
+        if(data!=null) {
+            if(data.size()>0) {
+                System.out.println("leftover data: "+data);
+                //throw new RuntimeException("data us not epty!");
+            }
+            if(!data0.equals(data2)) {
+                System.out.println("d0 "+data0+"!="+data2);
+                //throw new RuntimeException(data0+"!="+data2);
+            }
         }
         return actual;
     }
     static String roundTripLong(String expected,long number) {
-        System.out.println("ex: "+expected+", number: "+number);
         List<Boolean> list=bits(number,expected.length());
         ArrayList<Integer> data=new ArrayList<>(sequentialData);
+        // maybe add data as parameter?
         Node node2=decode(list,data);
         String actual=encode(node2,data);
         return actual;
@@ -176,31 +252,14 @@ public class G2 {
         if(expected.equals("0")) // hack
             return expected;
         // do we really need this long stuff?s
-        System.out.println("exp: "+expected);
         long number=Long.parseLong(expected,2);
         return roundTripLong(expected,number);
     }
-    public static void preOrderx(Node node,Consumer<Node> consumer) {
-        if(consumer!=null) consumer.accept(node);
-        if(node==null) return;
-        //System.out.println("1 "+node.data+" "+node.encoded);
-        preOrderx(node.left,consumer);
-        preOrderx(node.right,consumer);
-        //  lookslike it need to be postorder to use a lambda
-        // otherwise preorder meeds to return a value.
-    }
     static class MyConsumer implements Consumer<Node> {
         @Override public void accept(Node node) { //
-            Node newNode=new Node(node.data);
-            copy=newNode;
+            if(node!=null) { Node newNode=new Node(node.data); copy=newNode; }
         }
         Node copy,left,right;
-    }
-    public static void postOrder(Node node,Consumer<Node> consumer) {
-        if(node==null) return;
-        postOrder(node.left,consumer);
-        postOrder(node.right,consumer);
-        if(consumer!=null) consumer.accept(node);
     }
     public static void mirror(Node root) {
         if(root==null) return;
@@ -214,7 +273,7 @@ public class G2 {
         // nodes are getting data set, but this only returns 1!
         final ArrayList<Integer> datas=new ArrayList<>();
         Consumer<Node> add=x->datas.add(x!=null?x.data:null);
-        preOrderx(node,add);
+        preorder(node,add);
         return datas;
     }
     static void p(Node x) { // instance?
@@ -249,7 +308,7 @@ public class G2 {
             System.out.print("tree "+i+": ");
             Node tree=trees.get(i);
             final Consumer<Node> p=x->pd(x);
-            preOrderx(tree,p);
+            preorder(tree,p);
             System.out.println();
         }
         System.out.println("end of nodes "+nodes);
@@ -282,17 +341,6 @@ public class G2 {
         if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
         return trees;
     }
-    static int check(Node expected) { // add real data soon!
-        int n=0;
-        Node actual=roundTrip(expected);
-        if(!structureDeepEquals(expected,actual)) { ++n; System.out.println(expected+"!="+actual); }
-        String expectedEncoded=encode(expected,null);
-        String actualEncoded=roundTripLong(expectedEncoded);
-        if(!expectedEncoded.equals(actualEncoded)) { ++n; System.out.println(expectedEncoded="!="+actualEncoded); }
-        String actualEncoded2=roundTrip(expectedEncoded,null);
-        if(!expectedEncoded.equals(actualEncoded2)) { ++n; System.out.println(expectedEncoded="!="+actualEncoded); }
-        return n;
-    }
     ArrayList<ArrayList<Node>> generate(int nodes) {
         ArrayList<ArrayList<Node>> all=new ArrayList<>();
         // lost of duplicate work here
@@ -322,7 +370,7 @@ public class G2 {
         System.out.println("to data string: "+stringBuffer);
         String expected=encode(tree,null);
         MyConsumer c2=new MyConsumer();
-        postOrder(tree,c2);
+        postorder(tree,c2);
         String actual=encode(c2.copy,null);
         System.out.println("ac: "+actual);
         if(!expected.equals(actual)) System.out.println("copy failure!");
@@ -337,14 +385,19 @@ public class G2 {
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
         if(inEclipse()) g2.useMap=true;
         //g2.useMap=false;
-        int nodes=2;
+        int nodes=9;
         ArrayList<ArrayList<Node>> all=g2.generate(nodes);
         System.out.println(nodes+" nodes.");
+        if(false) { check(all.get(2).get(0)); return; }
         for(int i=0;i<=nodes;i++) {
+            System.out.println("check "+i+" nodes.");
             ArrayList<Node> trees=all.get(i);
             int n=0;
-            for(Node expected:trees) { check(expected); }
+            for(Node expected:trees) {
+                check(expected);
+            }
         }
+        //if(true) return;
         ArrayList<Node> trees=all.get(nodes);
         int n=trees.size();
         Node tree=trees.get(n/2);
@@ -355,9 +408,10 @@ public class G2 {
     // put all here as an instance variable?
     SortedMap<Integer,ArrayList<Node>> map=new TreeMap<>();
     static List<Integer> sequentialData=new ArrayList<>();
+    static final int maxNodes=100;
     static {
         ArrayList<Integer> data=new ArrayList<>();
-        for(int i=0;i<100;++i) data.add(i);
+        for(int i=0;i<maxNodes;++i) data.add(i); // start at 1?
         sequentialData=Collections.unmodifiableList(data);
     }
 }
