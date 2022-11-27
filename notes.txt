@@ -451,6 +451,12 @@ g2 worked fine for a  while. now i get the .ConcurrentModificationException agai
 perhaps this is why the decode with a list of boolean worked?
 yes, the bits work since the are in a list and are removed as they are used.
 so fix the binary version or use bits!
+fixed string buffer by using a list of characters.
+made g2.node generic.
+i could make node have the interface for a multiple node tree.
+then we could have the data be the sgf properties and eliminate mnode andthe sgf node.
+started work on cleaning up sgf tests again.
+trying to relax the constraints for the parser test cases, but keep them for the round trip test cases.
 
 
 

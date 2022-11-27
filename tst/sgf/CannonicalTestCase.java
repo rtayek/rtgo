@@ -47,7 +47,7 @@ import utilities.*;
         // but we do not want the RT node in the sgf!
         // need to check the add new root switch.
     }
-    @Test(timeout=100) public void testLeastCommonAncester() {
+    @Test() public void testLeastCommonAncester() {
         // seems to be working for multiplegames
         MNode root=MNode.restore(new StringReader(originalSgf));
         boolean hasMultipleGames=root.children.size()>1;

@@ -293,6 +293,7 @@ public class SgfNode {
         StringReader stringReader=new StringReader(expectedSgf);
         if(true) {
             games=sgfRoundTrip(stringReader,stringWriter);
+            actualSgf=stringWriter.toString();
         } else try {
             if((games=restoreSgf(stringReader))!=null) {
                 games.saveSgf(stringWriter,noIndent);

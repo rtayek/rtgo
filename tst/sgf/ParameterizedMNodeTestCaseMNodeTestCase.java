@@ -14,5 +14,5 @@ import utilities.*;
         objects.addAll(sgfFiles());
         return ParameterArray.parameterize(objects);
     }
-    public ParameterizedMNodeTestCaseMNodeTestCase(String key) { this.key=key; }
+    public ParameterizedMNodeTestCaseMNodeTestCase(Object key) { this.key=key; }
 }

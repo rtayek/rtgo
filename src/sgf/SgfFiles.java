@@ -16,7 +16,7 @@ public class SgfFiles {
             if(arguments.length>0) {
                 String sgf=getSgfData(key);
                 SgfNode games=restoreSgf(new StringReader(sgf));
-                if(games!=null) if(games.right!=null) System.out.println(n+" "+key+" "+games.right);
+                if(games!=null) if(games.right!=null) System.out.println(n+" "+key+" has more than one game: "+games.right);
             } else System.out.println(n+" "+key);
             ++n;
         }

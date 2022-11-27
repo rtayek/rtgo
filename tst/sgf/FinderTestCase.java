@@ -22,7 +22,7 @@ class Verifier extends SgfAcceptorImpl {
 }
 @RunWith(Parameterized.class) public class FinderTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    public FinderTestCase(String key) { this.key=key; }
+    public FinderTestCase(Object key) { this.key=key; }
     @Parameters public static Collection<Object[]> data() {
         Set<Object> objects=new LinkedHashSet<>();
         objects.addAll(sgfDataKeySet());
@@ -64,5 +64,5 @@ class Verifier extends SgfAcceptorImpl {
     }
     SgfNode games;
     boolean old=false;
-    final String key;
+    final Object key;
 }

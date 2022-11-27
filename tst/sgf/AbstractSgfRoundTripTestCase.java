@@ -27,9 +27,11 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         return ok;
     }
     @Test public void testSgfRoundTrip() throws Exception {
+        if(expectedSgf==null) return;
         StringReader stringReader=new StringReader(expectedSgf);
         StringWriter stringWriter=new StringWriter();
         SgfNode games=sgfRoundTrip(stringReader,stringWriter);
+        if(games!=null&&games.right!=null) System.out.println("42 more than one game!");
         String actualSgf=stringWriter.toString();
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         Boolean ok=specialCases(actualSgf);

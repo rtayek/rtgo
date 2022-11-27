@@ -246,8 +246,11 @@ public class Parser {
         //System.out.println("main "+god.et);
         //combineAndCheckKogosJosekiDictionary();
         //System.out.println(sgfData);
-        for(Object key:sgfDataKeySet()) {
-            //System.out.println("key: "+key);
+        List<Object> objects=new ArrayList<>();
+        objects.addAll(sgfDataKeySet());
+        objects.addAll(sgfFiles());
+        for(Object key:objects) {
+            System.out.println("key: "+key);
             String expectedSgf=getSgfData(key);
             expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
             SgfNode games=restoreSgf(expectedSgf);
