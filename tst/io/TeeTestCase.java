@@ -1,5 +1,5 @@
 package io;
-import static io.Tee.lineSeparator;
+import static io.Constants.lineSeparator;
 import static org.junit.Assert.assertEquals;
 import java.io.*;
 import java.util.logging.LogManager;

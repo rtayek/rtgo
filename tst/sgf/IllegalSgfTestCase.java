@@ -23,7 +23,7 @@ import utilities.MyTestWatcher;
         System.out.println("expectedSgf: "+expectedSgf);
         SgfNode games=null;
         if(expectedSgf!=null) games=restoreSgf(new StringReader(expectedSgf));
-        //assertNull(key,games); // allow null for now
+        //assertNull(key.toString(),games); // allow null for now
     }
     String key;
 }

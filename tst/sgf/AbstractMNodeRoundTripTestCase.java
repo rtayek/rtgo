@@ -13,7 +13,7 @@ public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTri
         String actualSgf=stringWriter.toString();
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         Boolean ok=specialCases(actualSgf);
-        if(ok) return;
+        //if(ok) return;
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
 }

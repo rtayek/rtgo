@@ -1,8 +1,7 @@
 package sgf;
-import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.*;
-import org.junit.*;
+import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -55,6 +54,5 @@ import utilities.*;
         System.out.println(objects.size()+" keys");
         return ParameterArray.parameterize(objects);
     }
-    @Ignore @Test public void testActual() throws Exception { assertEquals("Expected","Actual"); }
     public SmallerParameterizedRoundTripTestCase(Object key) { this.key=key; }
 }

@@ -1,7 +1,6 @@
 package sgf;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
-import static sgf.SgfNode.sgfRoundTrip;
 import java.io.StringReader;
 import java.util.*;
 import org.junit.*;
@@ -11,7 +10,6 @@ import org.junit.runners.Parameterized.Parameters;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
 import utilities.*;
-
 @RunWith(Parameterized.class) public class CannonicalTestCase {
     public CannonicalTestCase(Object key) { this.key=key; }
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -22,22 +20,22 @@ import utilities.*;
         return ParameterArray.parameterize(objects);
     }
     @Before public void setUp() throws Exception {
-        originalSgf=getSgfData(key);
+        expectedSgf=getSgfData(key);
         // no prepare here!
     }
     @After public void tearDown() throws Exception {}
-    @Ignore @Test public void testThatGeneralTreeAlwaysHasRTProperty() {
+    @Test public void testThatGeneralTreeAlwaysHasRTProperty() {
         // this will depend on whether the add new rot switch is on.
-        SgfNode games=restoreSgf(new StringReader(originalSgf));
+        SgfNode games=restoreSgf(new StringReader(expectedSgf));
         MNode root=MNode.toGeneralTree(games);
         // this mnay not be present
         // check the add new root flag in mnode.
         SgfProperty property=root.properties.get(0);
         assertEquals(P.RT,property.p());
     }
-    @Ignore @Test public void testSaveMultupleGames() {
+    @Test public void testSaveMultupleGames() {
         Model model=new Model();
-        model.restore(new StringReader(originalSgf));
+        model.restore(new StringReader(expectedSgf));
         boolean hasMultipleGames=model.root().children.size()>1;
         String sgfString=model.save();
         boolean containsRTNode=sgfString.contains("RT[Tgo root]");
@@ -46,11 +44,13 @@ import utilities.*;
         //assertEquals(hasMultipleGames,containsRTNode);
         // but we do not want the RT node in the sgf!
         // need to check the add new root switch.
+        // 11/28/22 seems like we are doing this somewhere else.
     }
-    @Test() public void testLeastCommonAncester() {
+    @Ignore @Test() public void testLeastCommonAncester() {
+        // ignoring for now as it is slow
         // seems to be working for multiplegames
-        MNode root=MNode.restore(new StringReader(originalSgf));
-        boolean hasMultipleGames=root.children.size()>1;
+        MNode root=MNode.restore(new StringReader(expectedSgf));
+        boolean hasMultipleGames=root!=null&&root.children.size()>1;
         assertNotNull(root);
         List<MNode> list1=MakeList.toList(root);
         List<MNode> list2=MakeList.toList(root);
@@ -62,33 +62,11 @@ import utilities.*;
         }
         for(MNode node1:list1) for(MNode node2:list2) if(!node2.equals(node1)) {
             List<MNode> list=root.lca(node1,node2);
-            assertNotNull(list);
+            assertNotNull(key.toString(),list);
         }
         //System.setOut(x);
     }
-    @Test public void testCannonical() {
-        String expectedSgf=sgfRoundTrip(originalSgf);
-        String actualSgf=sgfRoundTrip(expectedSgf);
-        assertEquals(key.toString(),expectedSgf,actualSgf);
-    }
-    @Ignore @Test public void testCannonicalRoundTripTwice() {
-        try {
-            Model model=new Model();
-            //System.out.println("or:\n"+originalSgf);
-            model.restore(new StringReader(originalSgf));
-            //System.out.println("restored");
-            String expectedSgf=model.save();
-            //System.out.println("ex:\n"+expectedSgf);
-            model=new Model();
-            model.restore(new StringReader(expectedSgf));
-            String actualSgf=model.save();
-            //System.out.println("ac:\n"+actualSgf);
-            assertEquals(key.toString(),expectedSgf,actualSgf);
-        } catch(Exception e) {
-            fail("'"+key+"' caught: "+e);
-        }
-    }
     Object key;
-    String originalSgf;
+    String expectedSgf;
     static final Set<String> paths=new LinkedHashSet<>();
 }

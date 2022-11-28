@@ -1,6 +1,6 @@
 package sgf;
 import java.util.*;
-import controller.GTPBackEnd;
+
 public class HexAscii {
     static char encode(byte nybble) {
         if(0<=nybble&&nybble<16) return ascii[nybble];
@@ -10,8 +10,8 @@ public class HexAscii {
         if('0'<=c&&c<='9') return (byte)(c-'0');
         else if('a'<=c&&c<='f') return (byte)(c-'a'+10);
         else {
-            if(c==GTPBackEnd.lineFeed) throw new RuntimeException("it's a linefeed!");
-            else throw new RuntimeException(Integer.valueOf(c)+" it's not a linefeed!");
+            if(c=='\n') throw new RuntimeException("it's a line feed!");
+            else throw new RuntimeException(Integer.valueOf(c)+" it's not a line feed!");
             //throw new RuntimeException("'"+c+"' is not in [0-9a-f]");
         }
     }

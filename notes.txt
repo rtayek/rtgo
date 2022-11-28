@@ -453,17 +453,14 @@ yes, the bits work since the are in a list and are removed as they are used.
 so fix the binary version or use bits!
 fixed string buffer by using a list of characters.
 made g2.node generic.
+11/26/22
 i could make node have the interface for a multiple node tree.
 then we could have the data be the sgf properties and eliminate mnode andthe sgf node.
 started work on cleaning up sgf tests again.
 trying to relax the constraints for the parser test cases, but keep them for the round trip test cases.
-
-
-
-
-
-
-
-
-
-
+11/28/22
+idea: see if we can remember if we read in a file as opposed to creating a new game or something.
+maybe then we have 3 cases: 1) ours, 2) not ours, 3) new game
+file ray-SmartGo-2022-01-07.2.sgf causes problems
+some tests are failing because of multiple games.
+maybe add a root.right!=null to key printout when failing?

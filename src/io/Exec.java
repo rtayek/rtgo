@@ -1,4 +1,5 @@
 package io;
+import static io.Constants.lineSeparator;
 import static java.lang.Math.max;
 import java.io.*;
 import java.util.*;
@@ -18,7 +19,7 @@ public class Exec {
         try {
             br=new BufferedReader(new InputStreamReader(inputStream));
             String line=null;
-            while((line=br.readLine())!=null) { sb.append(line+System.getProperty("line.separator")); }
+            while((line=br.readLine())!=null) { sb.append(line+lineSeparator); }
         } finally {
             br.close();
         }

@@ -1,6 +1,6 @@
 package io;
+import static io.Constants.lineSeparator;
 import static io.Logging.flushingStreamHandler;
-import static io.Tee.lineSeparator;
 import static org.junit.Assert.*;
 import java.io.*;
 import java.util.logging.*;

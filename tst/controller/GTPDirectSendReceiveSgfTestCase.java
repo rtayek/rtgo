@@ -45,7 +45,7 @@ import utilities.*;
     @Test public void testGetSgfFromModel() throws Exception {
         String actualSgf=getSgfFromModel(expectedSgf);
         //Parser.printDifferences(expectedSgf,actualSgf);
-        assertEquals(key,expectedSgf,actualSgf);
+        assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     String sendSgfToModel(String expectedSgf) {
         Model model=new Model();
@@ -70,7 +70,7 @@ import utilities.*;
     }
     @Test public void testSendSgfToModel() throws Exception {
         String actualSgf=sendSgfToModel(expectedSgf);
-        assertEquals(key,expectedSgf,actualSgf);
+        assertEquals(key.toString().toString(),expectedSgf,actualSgf);
     }
     boolean useHexAscii=true;
     final String key;

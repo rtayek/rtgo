@@ -1,5 +1,4 @@
 package controller;
-import static controller.GTPBackEnd.lineFeed;
 import static io.Init.first;
 import static org.junit.Assert.*;
 import java.util.Collection;
@@ -95,7 +94,7 @@ public abstract class AbstractBothTestCase {
         //both.backEnd.waitForDone();
         // different code than test connected tgo stop
         // does a send, wait, receive
-        Response response=both.frontEnd.sendAndReceive(Command.name.name()+lineFeed);
+        Response response=both.frontEnd.sendAndReceive(Command.name.name()+'\n');
         assertTrue(response.isOk());
         assertTrue(response.response.startsWith(Model.sgfApplicationName));
     }

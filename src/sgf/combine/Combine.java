@@ -73,7 +73,6 @@ public class Combine { // the purpose of this class is to combine two sgf files
         System.err.println("exit combine");
         return combined;
     }
-    static final String eoln=System.getProperty("line.separator");
     static final boolean atHome=true;
     public static final File pathToHere=new File("sgf");// new
     // do not put a ./ in front of the "sgf"!

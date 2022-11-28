@@ -982,7 +982,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return mNodes;
     }
-    public static MNode mNoderoundTrip2(String expectedSgf,Writer writer) {
+    public static MNode modelRoundTrip2(String expectedSgf,Writer writer) {
         // move to model package?
         // only used in one test method.
         SgfNode games=restoreSgf(new StringReader(expectedSgf));

@@ -52,21 +52,21 @@ public class GTPBackEnd implements Runnable,Stopable {
             return namedThread;
         }
     }
-    public void linefeed() {
+    public void writeLinefeed() {
         try {
-            out.write(lineFeed);
+            out.write('\n');
             out.flush();
         } catch(IOException e) {
-            Logging.mainLogger.finer("linefeed: "+e);
+            Logging.mainLogger.finer("write line feed: "+e);
         }
     }
     private boolean sendWithoutLineFeeds(Character character,Integer id,String string) {
         // maybe make a send that just takes a string?
         // construct the the string here.
         // should be identical to back end.
-        // 7/3/22 confusing name. sends a reply and adds a linefeed.
+        // 7/3/22 confusing name. sends a reply and adds a line feed.
         // this seems to insure that all of the responses
-        // sent back to the front end, do end in linefeeds.
+        // sent back to the front end, do end in line feeds.
         //
         try {
             out.write(character);
@@ -76,7 +76,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 Logging.mainLogger.fine("writing: "+" "+character+string+" on "+out);
                 out.write(string);
             }
-            out.write(lineFeed);
+            out.write('\n');
             out.flush();
             return true;
         } catch(SocketException e) {
@@ -88,7 +88,7 @@ public class GTPBackEnd implements Runnable,Stopable {
     }
     public boolean send(Character character,int id,String string) {
         boolean isOk=sendWithoutLineFeeds(character,id,string);
-        linefeed();
+        writeLinefeed();
         return isOk;
     }
     boolean send(Character character,int id,Failure failure) {
@@ -229,9 +229,9 @@ public class GTPBackEnd implements Runnable,Stopable {
             case list_commands:
                 try {
                     sendWithoutLineFeeds(okCharacter,message.id,"");
-                    for(Command c:Command.values()) out.write(""+c+lineFeed);
+                    for(Command c:Command.values()) out.write(""+c+'\n');
                     out.flush();
-                    linefeed();
+                    writeLinefeed();
                 } catch(IOException e) {
                     e.printStackTrace();
                     send(badCharacter,message.id,"throws "+e);
@@ -356,7 +356,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 // replace above with syntax error?
                 break;
             case showboard:
-                send(okCharacter,message.id,/* get past the '='*/lineFeed+model.toString());
+                send(okCharacter,message.id,/* get past the '='*/'\n'+model.toString());
                 break;
             case tgo_goto_node:
                 // go to the specified node
@@ -617,8 +617,7 @@ public class GTPBackEnd implements Runnable,Stopable {
     public static final String protocolVersionString="2";
     public static final String unknownCommandMessage="unknown command";
     public static final Character tab='\t';
-    public static final Character lineFeed='\n';
     public static final Character carriageReturn='\r';
-    public static final String twoLineFeeds=""+lineFeed+lineFeed;
+    public static final String twoLineFeeds="\n\n";
     static final String pipeBrokenMessage="Pipe broken";
 }

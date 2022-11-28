@@ -37,5 +37,4 @@ public class OldTee extends FilterOutputStream /* make this into a writer or mak
         System.out.println("tee'd");
     }
     Vector<OutputStream> streams=new Vector<OutputStream>();
-    public static String lineSeparator=System.getProperty("line.separator");
 }

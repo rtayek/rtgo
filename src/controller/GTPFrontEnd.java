@@ -26,7 +26,7 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
     }
     public void sendString(String string) {
         try {
-            out.write(string+lineFeed);
+            out.write(string+'\n');
             out.flush();
         } catch(IOException e) {
             if(!isStopping) Logging.mainLogger.severe(this+" "+isStopping()+" caught: "+" "+this);
@@ -36,12 +36,12 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
         String s="";
         try {
             String string;
-            // looks like it reads until double linefeed?
+            // looks like it reads until double line feed?
             // gtp/ passive base reads one line and executes.
             Logging.mainLogger.info("FE '"+name+"' waiting to receive.");
             for(string=in.readLine();string!=null;string=in.readLine()) { // xyzzy
                 Logging.mainLogger.info("FE '"+name+"' received: '"+string+"'.");
-                s+=string+lineFeed;
+                s+=string+'\n';
                 boolean breakOnLinefeed=true; // looks like we need this!
                 if(breakOnLinefeed&&string.equals("")) {
                     Logging.mainLogger.info("FE '"+name+"' read empty string. breaking out of read loop.");
@@ -86,7 +86,7 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
             return null;
         }
         char c;
-        if(s.length()>0) for(c=s.charAt(0);s.length()>1&&(c==' '||c==lineFeed||c=='\r');c=s.charAt(0)) {
+        if(s.length()>0) for(c=s.charAt(0);s.length()>1&&(c==' '||c=='\n'||c=='\r');c=s.charAt(0)) {
             Logging.mainLogger.info(name+" discarding character: "+c);
             s=s.substring(1);
             //if(true) throw new RuntimeException(getClass().getSimpleName()+" oops");
@@ -135,7 +135,7 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
         String string;
         try {
             for(string=in.readLine();string!=null;string=in.readLine()) {
-                out.write(string+lineFeed);
+                out.write(string+'\n');
                 out.flush();
             }
             in.close();

@@ -144,5 +144,4 @@ public class Tee extends FilterOutputStream {
     PrintStream previousOut,previousErr;
     public final PrintStream printStream;
     Vector<OutputStream> streams=new Vector<OutputStream>();
-    public static String lineSeparator=System.getProperty("line.separator");
 }

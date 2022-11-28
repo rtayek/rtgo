@@ -126,5 +126,4 @@ public class CommandLine {
     }
     public static void main(String[] arguments) throws IOException { new CommandLine().run(); }
     Model model=new Model("command line");
-    static String lineSeparator=System.getProperty("line.separator");
 }

@@ -1,5 +1,4 @@
 package controller;
-import static controller.GTPBackEnd.lineFeed;
 import static org.junit.Assert.*;
 import java.io.IOException;
 import org.junit.*;
@@ -18,7 +17,7 @@ public /*abstract*/ class TeardownOrderTestCase {
         Runner(BothEnds both) { this.both=both; }
         public @Override void run() {
             while(true) { // no way to break out
-                Response response=both.frontEnd.sendAndReceive(Command.name.name()+lineFeed);
+                Response response=both.frontEnd.sendAndReceive(Command.name.name()+'\n');
                 assertNotNull(response);
                 assertTrue(response.isOk());
                 assertEquals(Model.sgfApplicationName,response.response);

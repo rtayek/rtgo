@@ -1,5 +1,5 @@
 package controller;
-import static controller.GTPBackEnd.*;
+import static controller.GTPBackEnd.tab;
 import java.util.Arrays;
 import io.Logging;
 public class Message {
@@ -31,7 +31,7 @@ public class Message {
                 arguments[0]=tokens[0];
                 arguments[1]=stripped.substring(hack+Command.tgo_receive_sgf.name().length());
                 arguments[1]=strip(arguments[1]);
-                // now we gave problems with a bunch of linefeeds
+                // now we have problems with a bunch of line feeds
                 Logging.mainLogger.info(this.toString());
             }
         }
@@ -43,7 +43,7 @@ public class Message {
         for(int i=0;i<trimmed.length();i++) { // remove most control characters
             Character c=trimmed.charAt(i);
             if(Character.isISOControl(c)) { // check the spec on this
-                if(c.equals(lineFeed)||c.equals(tab)) stripped+=c;
+                if(c.equals('\n')||c.equals(tab)) stripped+=c;
             } else stripped+=c;
         }
         trimmed=stripped;

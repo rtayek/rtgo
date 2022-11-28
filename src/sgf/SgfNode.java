@@ -70,12 +70,10 @@ public class SgfNode {
             actual=actual.replaceAll("\\\\r","");
             return actual;
         }
-        //public final String eoln=System.getProperty("line.separator");
         public final boolean removeTrailingLineFeed=true;
         public final boolean roundTripFirst=false; // was true
         public final boolean removeCarriageReturn=true;
         public final boolean removeLineFeed=true;
-        public final String eoln="\n";
         public final Indent indent=new Indent("");
     }
     public static SgfOptions options=new SgfOptions();
@@ -174,11 +172,7 @@ public class SgfNode {
             left.saveSgf_(writer,indent);
             if(left.right!=null) writer.write(indent.indent()+')');
         } else writer.write(')');
-        if(right!=null) {
-            writer.write(options.eoln);
-            writer.write(indent.indent()+'(');
-            right.saveSgf_(writer,indent);
-        }
+        if(right!=null) { writer.write('\n'); writer.write(indent.indent()+'('); right.saveSgf_(writer,indent); }
         indent.out();
         writer.flush();
     }
@@ -291,17 +285,8 @@ public class SgfNode {
         SgfNode games=null;
         String actualSgf=null;
         StringReader stringReader=new StringReader(expectedSgf);
-        if(true) {
-            games=sgfRoundTrip(stringReader,stringWriter);
-            actualSgf=stringWriter.toString();
-        } else try {
-            if((games=restoreSgf(stringReader))!=null) {
-                games.saveSgf(stringWriter,noIndent);
-                actualSgf=stringWriter.toString();
-            }
-        } catch(Exception e) {
-            System.out.println("rt caught: "+e);
-        }
+        games=sgfRoundTrip(stringReader,stringWriter);
+        actualSgf=stringWriter.toString();
         return actualSgf;
     }
     public static SgfNode sgfRoundTrip(Reader reader,Writer writer) {

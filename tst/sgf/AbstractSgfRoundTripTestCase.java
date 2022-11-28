@@ -3,12 +3,14 @@ import static io.IO.noIndent;
 import static org.junit.Assert.*;
 import static sgf.Parser.restoreSgf;
 import static sgf.SgfNode.*;
-import static utilities.Utilities.implies;
 import java.io.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
 public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+    // add setup and check alwaysPrepare
+    //         if(alwaysPrepare) prepare();
+    @Override @Before public void setUp() throws Exception { super.setUp(); if(!alwaysPrepare) prepare(); }
     public Boolean specialCases(String actualSgf) {
         Boolean ok=false; // no more assertions are needed
         if(expectedSgf.equals("")) expectedSgf=null;
@@ -27,6 +29,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         return ok;
     }
     @Test public void testSgfRoundTrip() throws Exception {
+        assertFalse(expectedSgf.contains("\n"));
         if(expectedSgf==null) return;
         StringReader stringReader=new StringReader(expectedSgf);
         StringWriter stringWriter=new StringWriter();
@@ -34,16 +37,19 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         if(games!=null&&games.right!=null) System.out.println("42 more than one game!");
         String actualSgf=stringWriter.toString();
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        // how to do this more often?
         Boolean ok=specialCases(actualSgf);
-        if(ok) return;
+        //if(ok) return;
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
+        assertFalse(expectedSgf.contains("\n"));
         StringReader reader=expectedSgf!=null?new StringReader(expectedSgf):null;
         boolean isOk=sgfRoundTripTwice(reader);
-        assertTrue(isOk);
+        assertTrue(key.toString(),isOk);
     }
     @Test public void testSgfSaveAndRestore() throws Exception {
+        assertFalse(expectedSgf.contains("\n"));
         SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null,actual;
         StringWriter stringWriter=new StringWriter();
         String sgf=null;
@@ -52,16 +58,10 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
             sgf=stringWriter.toString();
             actual=restoreSgf(new StringReader(sgf));
         } else return;
-        assertTrue(expected.deepEquals(actual));
-    }
-    @Test public void testHexAscii() {
-        String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
-        String actualSgf=encoded!=null?HexAscii.decodeToString(encoded):null;
-        assertTrue(implies(expectedSgf==null,encoded==null));
-        assertTrue(implies(encoded==null,actualSgf==null));
-        assertEquals(expectedSgf,actualSgf);
+        assertTrue(key.toString(),expected.deepEquals(actual));
     }
     @Test public void testSgfCannonical() {
+        assertFalse(expectedSgf.contains("\n"));
         String actualSgf=sgfRoundTrip(expectedSgf);
         String actual2=sgfRoundTrip(actualSgf);
         assertEquals(key.toString(),actualSgf,actual2);

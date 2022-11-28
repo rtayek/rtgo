@@ -67,7 +67,7 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testGtpLineFeeds() throws Exception {
         String actual=new GTPBackEnd(Command.name.name(),directModel).runCommands(directJustRun);
         assertTrue(actual.startsWith(""+okCharacter));
-        actual=new GTPBackEnd(Command.name.name()+lineFeed,directModel).runCommands(directJustRun);
+        actual=new GTPBackEnd(Command.name.name()+'\n',directModel).runCommands(directJustRun);
         assertTrue(actual.startsWith(""+okCharacter));
         actual=new GTPBackEnd(Command.name.name()+twoLineFeeds,directModel).runCommands(directJustRun);
         assertTrue(actual.startsWith(""+okCharacter));
@@ -105,9 +105,9 @@ public abstract class AbstractGTPDirectTestCase {
             actual.response=actual.response.substring(0,actual.response.length()-2);
         }
         assertTrue(actual.response.endsWith(values[values.length-1].name()));
-        assertTrue(actual.response.startsWith(lineFeed+values[0].name()+"\n"));
+        assertTrue(actual.response.startsWith('\n'+values[0].name()+"\n"));
         for(Command command:values) if(!command.equals(Command.values()[Command.values().length-1]))
-            assertTrue(actual.response.contains(command.name()+lineFeed));
+            assertTrue(actual.response.contains(command.name()+'\n'));
         else assertTrue(actual.response.endsWith(command.name()));
     }
     @Test public void testGypUnknownCommand() throws Exception {
@@ -221,7 +221,7 @@ public abstract class AbstractGTPDirectTestCase {
         // look at sgf stuff. combine maybe
     }
     @Test public void testGtpPassWithClearBoard() throws Exception {
-        String commands=""+Command.clear_board+lineFeed+Command.play.name()+" "+Move.blackPass.nameWithColor()+"\n";
+        String commands=""+Command.clear_board+'\n'+Command.play.name()+" "+Move.blackPass.nameWithColor()+"\n";
         String response=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
         // this has 2 commands
         Response actual=Response.response(response);
@@ -250,7 +250,7 @@ public abstract class AbstractGTPDirectTestCase {
         System.out.println("directJustRun: "+directJustRun);
         Point point=new Point(0,0);
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
-        String commands=Command.play.name()+" Black "+noI+lineFeed+Command.play.name()+" White A1"+lineFeed;
+        String commands=Command.play.name()+" Black "+noI+'\n'+Command.play.name()+" White A1"+'\n';
         // this has 2 commands
         String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
         Response[] responses=Response.responses(actual);
@@ -279,7 +279,7 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testBlackPlayTwoMovesInARowDirectStrict() throws Exception {
         // this should be allowed?
         directModel.strict=true;
-        String commands=Command.play.name()+" Black "+"A1"+lineFeed+Command.play.name()+" Black A2"+lineFeed;
+        String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
         String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
         Response[] responses=Response.responses(actual);
         Logging.mainLogger.info(responses.length+" responses.");
@@ -290,7 +290,7 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testBlackPlayTwoMovesInARowDiect() throws Exception {
         // this should be allowed?
         directModel.strict=false;
-        String commands=Command.play.name()+" Black "+"A1"+lineFeed+Command.play.name()+" Black A2"+lineFeed;
+        String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
         String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
         Response[] responses=Response.responses(actual);
         Logging.mainLogger.info(responses.length+" responses.");
@@ -301,7 +301,7 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testUndo() throws Exception {
         Point point=new Point(0,0);
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
-        String commands=Command.play.name()+" Black "+noI+lineFeed+Command.undo.name()+"\n";
+        String commands=Command.play.name()+" Black "+noI+'\n'+Command.undo.name()+"\n";
         // i may have to roll up a new model?
         String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
         assertTrue(actual.startsWith(""+okCharacter));
