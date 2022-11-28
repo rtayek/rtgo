@@ -464,3 +464,12 @@ maybe then we have 3 cases: 1) ours, 2) not ours, 3) new game
 file ray-SmartGo-2022-01-07.2.sgf causes problems
 some tests are failing because of multiple games.
 maybe add a root.right!=null to key printout when failing?
+lost of errors about my root, so setting: addNewRoot=false;
+addNewRoot probably needs to be a flag in the mode,
+depending if we started a new game or read in an old game.
+ogs games with eric seem to be missing the variations.
+these files seem to have a lot of extra parentheses.
+whth the actual from the round  trips do not have these.
+so moving these to a new directory ogs/
+down to tst/ having 49 errors and 112 failures.
+

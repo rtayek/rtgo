@@ -1190,7 +1190,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public final String name;
     private boolean isWaitingForMoveCompleteOnBoard;
     private transient boolean checkingForLegalMove;
-    public boolean addNewRoot=true; // probably was a bas idea
+    public boolean addNewRoot=false; // probably was a bas idea
     // sometimes, but maybe not always
     public boolean allowMultipleGames=true; // bad name fix later
     transient Role role=Role.anything;

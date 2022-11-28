@@ -29,7 +29,6 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         return ok;
     }
     @Test public void testSgfRoundTrip() throws Exception {
-        assertFalse(expectedSgf.contains("\n"));
         if(expectedSgf==null) return;
         StringReader stringReader=new StringReader(expectedSgf);
         StringWriter stringWriter=new StringWriter();

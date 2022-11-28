@@ -14,12 +14,16 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         boolean ok=model.save(stringWriter);
         assertTrue(ok);
         String actualSgf=stringWriter.toString();
-        System.out.println(actualSgf);
+        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testModelRestoreAndSave() throws Exception {
-        String actual=sgfRoundTrip(expectedSgf);
-        assertEquals(key.toString(),expectedSgf,actual);
+        String actualSgf=sgfRoundTrip(expectedSgf);
+        //if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        // this one looks unusual
+        //if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        assertEquals(key.toString(),expectedSgf,actualSgf);
         // failing probably due to add new root problem
         Model model=new Model();
         System.out.println("ex: "+expectedSgf);
@@ -27,18 +31,19 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         StringWriter stringWriter=new StringWriter();
         boolean ok=model.save(stringWriter);
         assertTrue(key.toString(),ok);
-        String actualSgf=stringWriter.toString();
-        actualSgf=SgfNode.options.removeUnwanted(actualSgf);
+        String actualSgf2=stringWriter.toString();
+        actualSgf2=SgfNode.options.removeUnwanted(actualSgf2);
         //Utilities.printDifferences(System.out,expectedSgf,actualSgf);
         System.out.println("ex: "+expectedSgf);
-        System.out.println("ac0: "+actual);
-        System.out.println("ac: "+actualSgf);
-        assertEquals(key.toString(),expectedSgf,actualSgf);
+        System.out.println("ac0: "+actualSgf);
+        System.out.println("ac: "+actualSgf2);
+        assertEquals(key.toString(),expectedSgf,actualSgf2);
     }
     @Test public void testLongRoundTrip() throws Exception {
         StringWriter stringWriter=new StringWriter();
         MNode games=Model.modelRoundTrip(expectedSgf!=null?new StringReader(expectedSgf):null,stringWriter);
         String actualSgf=expectedSgf!=null?stringWriter.toString():null;
+        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testModelRestoreAndSave1() throws Exception {
@@ -48,10 +53,10 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         StringWriter stringWriter=new StringWriter();
         boolean ok=model.save(stringWriter);
         assertTrue(key.toString(),ok);
-        String actual=stringWriter.toString();
-        actual=actual.replace("\n",""); // who is putting the line feed in?
-        if(!expectedSgf.equals(actual)); //printDifferences(expected,actual);
-        assertEquals(key.toString(),expectedSgf,actual);
+        String actualSgf=stringWriter.toString();
+        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        if(!expectedSgf.equals(actualSgf)); //printDifferences(expected,actual);
+        assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testLongRoundTrip21() throws Exception {
         StringWriter stringWriter=new StringWriter();
@@ -60,22 +65,20 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         if(expectedSgf==null) actualSgf=null; // hack for now
         System.out.println("ex: "+expectedSgf);
         System.out.println("ac: "+actualSgf);
-        actualSgf=SgfNode.options.prepareSgf(actualSgf); // actual has line feeds now
+        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testCannonicalRoundTripTwice() {
-        // belongs in round trip hierarchy
+        assertFalse(expectedSgf.contains("\n"));
         try {
             Model model=new Model();
-            //System.out.println("or:\n"+originalSgf);
             model.restore(new StringReader(expectedSgf));
-            //System.out.println("restored");
             String expectedSgf2=model.save();
-            //System.out.println("ex:\n"+expectedSgf);
+            if(expectedSgf2!=null) expectedSgf2=SgfNode.options.prepareSgf(expectedSgf2);
             model=new Model();
             model.restore(new StringReader(expectedSgf2));
             String actualSgf=model.save();
-            //System.out.println("ac:\n"+actualSgf);
+            if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
             assertEquals(key.toString(),expectedSgf2,actualSgf);
         } catch(Exception e) {
             fail("'"+key+"' caught: "+e);
