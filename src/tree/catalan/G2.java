@@ -271,7 +271,7 @@ public class G2 {
         tree.postorder(p);
         System.out.println();
     }
-    static <T>void printStuff(ArrayList<ArrayList<Node<T>>> all,int nodes) {
+    static <T> void printStuff(ArrayList<ArrayList<Node<T>>> all,int nodes) {
         ArrayList<Node<T>> trees=all.get(nodes);
         System.out.println(nodes+" nodes.");
         for(int i=0;i<trees.size();++i) {
@@ -290,7 +290,7 @@ public class G2 {
             print(prefix+(isLeft?"|   ":"    "),node.right,false);
         }
     }
-    public static<T> void print(String prefi,Node<T> node) {
+    public static <T> void print(String prefi,Node<T> node) {
         if(node!=null) print(prefi,node,false);
         else System.out.println("0");
     }
@@ -342,14 +342,31 @@ public class G2 {
         System.out.println("to data string: "+stringBuffer);
         String expected=encode(tree,null);
         MyConsumer c2=new MyConsumer();
-        Node.<Integer>postorder(tree,c2);
+        Node.<Integer> postorder(tree,c2);
         String actual=encode(c2.copy,null);
         System.out.println("ac: "+actual);
         if(!expected.equals(actual)) System.out.println("copy failure!");
         ArrayList<Integer> data2=collectData(c2.copy);
         System.out.println("collect data2: "+data2);
     }
+    public static void example() { // https://www.red-bean.com/sgf/var.html
+        Node<Character> e=new Node<>('e');
+        Node<Character> d=new Node<>('d',e,null);
+        Node<Character> c=new Node<>('c');
+        Node<Character> b=new Node<>('b',c,d);
+        Node<Character> i=new Node<>('i');
+        Node<Character> h=new Node<>('h',i,null);
+        Node<Character> g=new Node<>('g',h,null);
+        Node<Character> a=new Node<>('a',b,null);
+        Node<Character> j=new Node<>('j');
+        Node<Character> f=new Node<>('f',g,j);
+        Node<Character> root=new Node<>('r',a,f);
+        print("",root);
+        print(root);
+    }
     public static void main(String[] arguments) {
+        example();
+        if(true) return;
         List<String> x=ManagementFactory.getRuntimeMXBean().getInputArguments();
         System.out.println(x);
         System.out.println("in eclipse: "+inEclipse());
@@ -357,7 +374,7 @@ public class G2 {
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
         if(inEclipse()) g2.useMap=true;
         //g2.useMap=false;
-        int nodes=9;
+        int nodes=11;
         ArrayList<ArrayList<Node<Integer>>> all=g2.generate(nodes);
         System.out.println(nodes+" nodes.");
         if(false) { check(all.get(2).get(0)); return; }
