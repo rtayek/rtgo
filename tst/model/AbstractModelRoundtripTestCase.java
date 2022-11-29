@@ -19,9 +19,9 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
     }
     @Test public void testModelRestoreAndSave() throws Exception {
         String actualSgf=sgfRoundTrip(expectedSgf);
-        //if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
-        // this one looks unusual
-        //if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        // then it does a restore and a save.
+        // this one looks more complicated than is necessary.
+        //the round trip above could be package if we removed it.
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
         // failing probably due to add new root problem
@@ -34,9 +34,9 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         String actualSgf2=stringWriter.toString();
         actualSgf2=SgfNode.options.removeUnwanted(actualSgf2);
         //Utilities.printDifferences(System.out,expectedSgf,actualSgf);
-        System.out.println("ex: "+expectedSgf);
-        System.out.println("ac0: "+actualSgf);
-        System.out.println("ac: "+actualSgf2);
+        //System.out.println("ex: "+expectedSgf);
+        //System.out.println("ac0: "+actualSgf);
+        //System.out.println("ac: "+actualSgf2);
         assertEquals(key.toString(),expectedSgf,actualSgf2);
     }
     @Test public void testLongRoundTrip() throws Exception {

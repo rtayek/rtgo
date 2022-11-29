@@ -161,10 +161,9 @@ public class Parser {
         }
         return sequence;
     }
-    private static SgfNode restoreSgf(String string) { return string!=null?restoreSgf(new StringReader(string)):null; }
     public static SgfNode restoreSgf(Reader reader) {
         SgfNode games=new Parser().parse(reader);
-        if(games!=null) if(games.right!=null); //System.out.println("2 more than one game!");
+        if(games!=null) if(games.right!=null) System.out.println("2 more than one game!");
         return games;
     }
     private SgfNode parse(Reader reader) {
@@ -253,7 +252,7 @@ public class Parser {
             System.out.println("key: "+key);
             String expectedSgf=getSgfData(key);
             expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
-            SgfNode games=restoreSgf(expectedSgf);
+            SgfNode games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
             if(games!=null) if(games.right!=null) System.out.println(key+" right: "+games.right);
             //System.out.println(games);
         }
@@ -304,7 +303,6 @@ public class Parser {
                     (;)
                     """;
     public static final String noVariation="(;FF[4]GM[1]SZ[19];B[aa];W[bb];B[cc];W[dd];B[ad];W[bd])";
-    public static final String simple="(;FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))";
     public static final String simpleWithVariations="(;FF[4]C[root](;B[aa]C[a];C[b]W[bb](;C[c]B[cc])(;C[d]B[dd];C[e]W[ee]))(;C[f]B[ff](;C[g]W[gg];C[h]B[hh];C[i]W[ii])(;C[j]W[jj];)))";
     public static final String oneVariationAtMoveThree="(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg]))";
     public static final String twoVariationsAtMoveThree="(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]N[Var A];W[dd];B[ad];W[bd])(;B[hh]N[Var B];W[hg])(;B[gg]N[Var C];W[gh];B[hh];W[hg];B[kk]))";
@@ -374,7 +372,6 @@ public class Parser {
         sgfData.put("emptyWithSemicolon",emptyWithSemicolon);
         sgfData.put("twoEmptyWithSemicolon",twoEmptyWithSemicolon);
         sgfData.put("noVariation",noVariation);
-        sgfData.put("simple",simple);
         sgfData.put("simpleWithVariations",simpleWithVariations);
         sgfData.put("oneVariationAtMoveThree",oneVariationAtMoveThree);
         sgfData.put("twoVariationsAtMoveThree",twoVariationsAtMoveThree);

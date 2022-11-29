@@ -176,11 +176,6 @@ public class SgfNode {
         indent.out();
         writer.flush();
     }
-    public String saveSgf(Indent indent) {
-        StringWriter stringWriter=new StringWriter();
-        saveSgf(stringWriter,indent);
-        return stringWriter.toString();
-    }
     public void saveSgf(Writer writer,Indent indent) {
         try {
             writer.write(indent.indent()+'(');
@@ -293,9 +288,22 @@ public class SgfNode {
         if(reader==null) return null;
         SgfNode games=restoreSgf(reader);
         if(games!=null) games.saveSgf(writer,noIndent);
-        // allow null for now (11/8/22).
         return games;
     }
+    // lets try to make everyone use this one
+    // except for maybe a restore then a save and a restore.
+    // maybe add third trip?
+    // like round trip o the nodes for above and on the sgf for below?
+    public static SgfNode roundTrip(SgfNode expected,StringWriter stringWriter) {
+        SgfNode actualSgf=null;
+        if(expected!=null) {
+            expected.saveSgf(stringWriter,noIndent);
+            String sgf=stringWriter.toString();
+            actualSgf=restoreSgf(new StringReader(sgf));
+        }
+        return actualSgf;
+    }
+    
     public static boolean sgfRoundTripTwice(Reader original) {
         Writer writer=new StringWriter();
         sgfRoundTrip(original,writer);

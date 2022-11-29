@@ -1,5 +1,4 @@
 package sgf;
-import static io.IO.noIndent;
 import static org.junit.Assert.*;
 import static sgf.Parser.restoreSgf;
 import static sgf.SgfNode.*;
@@ -11,9 +10,9 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     // add setup and check alwaysPrepare
     //         if(alwaysPrepare) prepare();
     @Override @Before public void setUp() throws Exception { super.setUp(); if(!alwaysPrepare) prepare(); }
-    public Boolean specialCases(String actualSgf) {
+    private Boolean specialCases(String actualSgf) {
         Boolean ok=false; // no more assertions are needed
-        if(expectedSgf.equals("")) expectedSgf=null;
+        if(expectedSgf.equals("")) expectedSgf=null; //11/29/22
         else if(expectedSgf.equals("()")) expectedSgf=null;
         if(expectedSgf==null) {
             if(actualSgf==null) ok=true;
@@ -37,7 +36,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         String actualSgf=stringWriter.toString();
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         // how to do this more often?
-        Boolean ok=specialCases(actualSgf);
+        //Boolean ok=specialCases(actualSgf);
         //if(ok) return;
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
@@ -49,15 +48,10 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     }
     @Test public void testSgfSaveAndRestore() throws Exception {
         assertFalse(expectedSgf.contains("\n"));
-        SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null,actual;
+        SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
         StringWriter stringWriter=new StringWriter();
-        String sgf=null;
-        if(expected!=null) {
-            expected.saveSgf(stringWriter,noIndent);
-            sgf=stringWriter.toString();
-            actual=restoreSgf(new StringReader(sgf));
-        } else return;
-        assertTrue(key.toString(),expected.deepEquals(actual));
+        SgfNode actualSgf=roundTrip(expected,stringWriter);
+        if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
     }
     @Test public void testSgfCannonical() {
         assertFalse(expectedSgf.contains("\n"));
