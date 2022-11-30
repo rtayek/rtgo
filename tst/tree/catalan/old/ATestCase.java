@@ -3,9 +3,8 @@ import static org.junit.Assert.*;
 import static tree.catalan.old.Node.*;
 import java.util.ArrayList;
 import org.junit.*;
-import tree.catalan.old.Node;
 import utilities.*;
-public class ATestCase {
+@Ignore public class ATestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @BeforeClass public static void setUpBeforeClass() throws Exception {
         MyTestWatcher.defaultVerbosity=true; //

@@ -469,7 +469,10 @@ addNewRoot probably needs to be a flag in the mode,
 depending if we started a new game or read in an old game.
 ogs games with eric seem to be missing the variations.
 these files seem to have a lot of extra parentheses.
-whth the actual from the round  trips do not have these.
+while the actual from the round  trips do not have these.
 so moving these to a new directory ogs/
 down to tst/ having 49 errors and 112 failures.
+11/30/22 looks like we found a bug in mnode!
+show up in the new g2 mndeo2 where some nodes get processed more than once.
+
 

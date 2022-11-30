@@ -30,8 +30,7 @@ import utilities.*;
         MNode root=MNode.toGeneralTree(games);
         // this mnay not be present
         // check the add new root flag in mnode.
-        SgfProperty property=root.properties.get(0);
-        assertEquals(P.RT,property.p());
+        if(root!=null) { SgfProperty property=root.properties.get(0); assertEquals(P.RT,property.p()); }
     }
     @Test public void testSaveMultupleGames() {
         Model model=new Model();

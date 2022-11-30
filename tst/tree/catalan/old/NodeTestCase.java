@@ -7,9 +7,8 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import tree.catalan.old.Node;
 import utilities.*;
-@RunWith(Parameterized.class) public class NodeTestCase {
+@Ignore @RunWith(Parameterized.class) public class NodeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public NodeTestCase(int nodes) { this.nodes=nodes; watcher.key=new String(nodes+" nodes."); }
     @Parameters public static Collection<Object[]> testData() { return modulo(maxNodesToTest); }

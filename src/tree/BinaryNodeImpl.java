@@ -31,7 +31,10 @@ class BinaryNodeImpl extends tree.Arborescence.ABC { // seems to be a clone of s
         return node;
     }
     @Override public void addSibling(Arborescence node) {
-        Arborescence llastSibling=lastSibling();
+        Arborescence lastSibling=lastSibling();
+        if(lastSibling==null) lastSibling=this;
+        //lastSibling.right=node;
+        // problem here. how to set right
         Arborescence oldRight=right();
         //node.parent=right=node;
         //node.right=oldRight;

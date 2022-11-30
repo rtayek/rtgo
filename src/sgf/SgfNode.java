@@ -176,6 +176,25 @@ public class SgfNode {
         indent.out();
         writer.flush();
     }
+    private void preorderSaveSgf_(Writer writer,Indent indent) throws IOException {
+        // hard to get the parentheses correct.
+        writer.write(toString());
+        if(left!=null) {
+            if(right!=null) writer.write('(');
+            left.preorderSaveSgf_(writer,indent);
+        }
+        if(right!=null) {
+            if(right!=null) writer.write('(');
+            right.preorderSaveSgf_(writer,indent);
+        }
+        if(left!=null) if(right!=null) writer.write(')');
+        writer.flush();
+    }
+    void preorderSaveSgf(Writer writer,Indent indent) throws IOException {
+        writer.write('(');
+        preorderSaveSgf_(writer,indent);
+        writer.write(')');
+    }
     public void saveSgf(Writer writer,Indent indent) {
         try {
             writer.write(indent.indent()+'(');
@@ -303,7 +322,6 @@ public class SgfNode {
         }
         return actualSgf;
     }
-    
     public static boolean sgfRoundTripTwice(Reader original) {
         Writer writer=new StringWriter();
         sgfRoundTrip(original,writer);
@@ -321,7 +339,34 @@ public class SgfNode {
             return false;
         } else return true;
     }
+    /*
+    (;FF[4]C[root](;C[a];C[b](;C[c])
+    (;C[d];C[e]))
+    (;C[f](;C[g];C[h];C[i])
+    (;C[j])))
+
+    (;FF[4]C[root];C[a];C[b];C[c]
+            ;C[d];C[e]
+                    ;C[f];C[g];C[h];C[i]
+                            ;C[j])
+
+    (;FF[4]C[root];C[a](;C[b];C[c];C[d];C[e];C[f];C[g](;C[h];C[i];C[j])))
+
+
+    acdfgj
+     */
+    static void foo() throws IOException {
+        String key="sgfExamleFromRedBean";
+        String expected=getSgfData(key);
+        SgfNode games=restoreSgf(new StringReader(expected));
+        StringWriter stringWriter=new StringWriter();
+        games.preorderSaveSgf(stringWriter,noIndent);
+        String sgf=stringWriter.toString();
+        System.out.println(expected);
+        System.out.println(sgf);
+    }
     public static void main(String[] args) throws IOException {
+        if(true) { foo(); return; }
         Set<String> keys=new LinkedHashSet(
                 List.of("comments1","twoEmptyWithSemicolon","smartgo4","twosmallgamesflat","smartgo42"));
         for(Object key:Parser.sgfDataKeySet()) {

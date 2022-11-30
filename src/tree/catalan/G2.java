@@ -11,6 +11,59 @@ public class G2 {
         @Override public Integer next() { return n++; }
         Integer n=0;
     }
+    public static class MNode2<T> {
+        public MNode2(T data,MNode2<T> parent) {
+            // maybe just use t as first argument?
+            this.parent=parent;
+            this.data=data;
+        }
+        public static <T> void print(MNode2<T> tree,String indent,boolean last) {
+            if(tree==null) return;
+            System.out.println(indent+"+- "+tree.data);
+            indent+=last?"   ":"|  ";
+            for(int i=0;i<tree.children.size();i++) {
+                print(tree.children.get(i),indent,i==tree.children.size()-1);
+            }
+        }
+        MNode2<T> parent;
+        ArrayList<MNode2<T>> children=new ArrayList<>();
+        // add a set temporarily to see if we are adding stuff in twice?
+        public T data;
+        final int id=++ids;
+        static int ids;
+    }
+    /*
+    Given a general tree with ordered but not indexed children,
+    encode the first child as the left child of its parent,
+    and each other node as a right child of its (former) sibling.
+
+    The reverse is: Given a binary tree with distinguished left
+    and right children, read the left child of a node as its
+    first child and the right child as its next sibling.                // is this throwing if there is a variation on the first move in the game?
+     */
+    public static <T> Node<T> oldFrom(MNode2<T> mNode2) {
+        //System.out.println("processing: "+mNode2.data);
+        Node<T> left=null,tail=null;
+        for(int i=0;i<mNode2.children.size();++i) {
+            if(i==0) {
+                left=tail=oldFrom(mNode2.children.get(i));
+                //System.out.println("added "+left.data);
+                // is this throwing if there is a variation on the first move in the game?
+                if(left.right!=null) {
+                    //ystem.out.println("wierdness at: "+left.data);
+                    // maybe not so weird after a;l?
+                    //throw new RuntimeException("wierdness!");
+                }
+            } else {
+                Node<T> newRight=oldFrom(mNode2.children.get(i));
+                //System.out.println("added "+newRight.data);
+                tail.right=newRight;
+                tail=newRight;
+            }
+        }
+        Node<T> binaryNode=new Node<>(mNode2.data,left,null); // first child
+        return binaryNode;
+    }
     public static class Node<T> {
         public Node(T data) { this.data=data; }
         public Node(T data,Node<T> left,Node<T> right) { this.data=data; this.left=left; this.right=right; }
@@ -174,13 +227,38 @@ public class G2 {
             }
             return n;
         }
+        public static <T> MNode2<T> from_(Node<T> node,MNode2<T> grandParent) {
+            if(node==null) return null;
+            //System.out.println("processing: "+node.data);
+            boolean ok=Node.processed.add((Character)node.data);
+            if(!ok) System.out.println(node.data+" already added!");
+            MNode2<T> parent=new MNode2<T>(node.data,grandParent);
+            if(grandParent!=null) grandParent.children.add(parent);
+            if(node.left!=null) {
+                for(Node<T> n=node.left;n!=null;n=n.right) {
+                    MNode2<T> newMNode2=from_(n,parent);
+                    //parent.children.add(newMNode2);
+                }
+            }
+            // this seems to work, but it's different from my MNode's!
+            if(node.right!=null) { System.out.println("rigt!=null"); MNode2<T> newMNode2=from_(node.right,parent); }
+            return parent;
+        }
+        public static <T> MNode2<T> from(Node<T> node) {
+            processed.clear();
+            Node<T> extra=new Node<T>(null,null,null);
+            extra.left=node;
+            //if(node.right!=null) throw new RuntimeException("node.right!=null");
+            return from_(node,null);
+        }
         Node<T> left,right,parent;
         public T data;
         String encoded;
         final int id=++ids;
         static int ids;
+        static LinkedHashSet<Character> processed=new LinkedHashSet<>();
     }
-    public static <T> Node<T> roundTrip(Node expected) {
+    public static <T> Node<T> roundTrip(Node<T> expected) {
         // add string writer and return the tree
         ArrayList<T> data=new ArrayList<>();
         String actualEncoded=encode(expected,data);
@@ -209,7 +287,7 @@ public class G2 {
         List<Boolean> list=bits(number,expected.length());
         ArrayList<Integer> data=new ArrayList<>(sequentialData);
         // maybe add data as parameter?
-        Node node2=decode(list,data);
+        Node<Integer> node2=decode(list,data);
         String actual=encode(node2,data);
         return actual;
     }
@@ -341,7 +419,7 @@ public class G2 {
         toDataString(stringBuffer,tree);
         System.out.println("to data string: "+stringBuffer);
         String expected=encode(tree,null);
-        MyConsumer c2=new MyConsumer();
+        MyConsumer<Integer> c2=new MyConsumer<Integer>();
         Node.<Integer> postorder(tree,c2);
         String actual=encode(c2.copy,null);
         System.out.println("ac: "+actual);
@@ -363,6 +441,15 @@ public class G2 {
         Node<Character> root=new Node<>('r',a,f);
         print("",root);
         print(root);
+        System.out.println("convert to general");
+        MNode2<Character> mway=from(root);
+        MNode2.<Character>print(mway,"  ",true);
+        System.out.println("convert back to binary");
+        Node<Character> root2=oldFrom(mway);
+        print("",root2);
+        print(root2);
+        System.out.println(deepEquals(root,root2));
+        System.out.println(structureDeepEquals(root,root2));
     }
     public static void main(String[] arguments) {
         example();

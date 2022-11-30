@@ -20,6 +20,7 @@ public abstract class AbstractArborescenceTestCase {
         assertTrue(child.siblings().size()==2);
     }
     @Test public void testChildren() { assertTrue(arborescence.children().size()==0); }
+    @Test public void testChildrenOfParent() { assertTrue(parent.children().size()==1); }
     @Test public void testDescendents() {
         assertTrue(arborescence.descendents().size()==0);
         assertTrue(parent.descendents().size()==1);
@@ -30,6 +31,7 @@ public abstract class AbstractArborescenceTestCase {
         System.out.println(child.data());
         System.out.println("parent: "+parent);
         System.out.println("child: "+child);
+        System.out.println("child.right: "+child.right());
         System.out.println("child.siblings: "+child.siblings());
         System.out.println("sibling: "+sibling);
         System.out.println("sibling's siblings: "+sibling.siblings());
