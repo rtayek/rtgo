@@ -4,33 +4,13 @@ import static utilities.Utilities.*;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
+import tree.catalan.RedBean.MNode2;
 import utilities.*;
 public class G2 {
     public static class Integers implements Iterator<Integer> {
         @Override public boolean hasNext() { return n<Integer.MAX_VALUE; }
         @Override public Integer next() { return n++; }
         Integer n=0;
-    }
-    public static class MNode2<T> {
-        public MNode2(T data,MNode2<T> parent) {
-            // maybe just use t as first argument?
-            this.parent=parent;
-            this.data=data;
-        }
-        public static <T> void print(MNode2<T> tree,String indent,boolean last) {
-            if(tree==null) return;
-            System.out.println(indent+"+- "+tree.data);
-            indent+=last?"   ":"|  ";
-            for(int i=0;i<tree.children.size();i++) {
-                print(tree.children.get(i),indent,i==tree.children.size()-1);
-            }
-        }
-        MNode2<T> parent;
-        ArrayList<MNode2<T>> children=new ArrayList<>();
-        // add a set temporarily to see if we are adding stuff in twice?
-        public T data;
-        final int id=++ids;
-        static int ids;
     }
     /*
     Given a general tree with ordered but not indexed children,
@@ -41,29 +21,6 @@ public class G2 {
     and right children, read the left child of a node as its
     first child and the right child as its next sibling.                // is this throwing if there is a variation on the first move in the game?
      */
-    public static <T> Node<T> oldFrom(MNode2<T> mNode2) {
-        //System.out.println("processing: "+mNode2.data);
-        Node<T> left=null,tail=null;
-        for(int i=0;i<mNode2.children.size();++i) {
-            if(i==0) {
-                left=tail=oldFrom(mNode2.children.get(i));
-                //System.out.println("added "+left.data);
-                // is this throwing if there is a variation on the first move in the game?
-                if(left.right!=null) {
-                    //ystem.out.println("wierdness at: "+left.data);
-                    // maybe not so weird after a;l?
-                    //throw new RuntimeException("wierdness!");
-                }
-            } else {
-                Node<T> newRight=oldFrom(mNode2.children.get(i));
-                //System.out.println("added "+newRight.data);
-                tail.right=newRight;
-                tail=newRight;
-            }
-        }
-        Node<T> binaryNode=new Node<>(mNode2.data,left,null); // first child
-        return binaryNode;
-    }
     public static class Node<T> {
         public Node(T data) { this.data=data; }
         public Node(T data,Node<T> left,Node<T> right) { this.data=data; this.left=left; this.right=right; }
@@ -192,6 +149,7 @@ public class G2 {
             } else if(other.right!=null) return false;
             return true;
         }
+        @Override public String toString() { return "Node [data="+data+"]"; }
         public static <T> Node<T> copy(Node<T> node) {
             if(node==null) return null;
             Node<T> copy=new Node<>(node.data,node.left,node.right);
@@ -230,18 +188,26 @@ public class G2 {
         public static <T> MNode2<T> from_(Node<T> node,MNode2<T> grandParent) {
             if(node==null) return null;
             //System.out.println("processing: "+node.data);
-            boolean ok=Node.processed.add((Character)node.data);
-            if(!ok) System.out.println(node.data+" already added!");
+            boolean ok=processed.add((Character)node.data);
+            if(!ok) {
+                System.out.println(node.data+" already processed!");
+                //return null;
+            }
             MNode2<T> parent=new MNode2<T>(node.data,grandParent);
             if(grandParent!=null) grandParent.children.add(parent);
             if(node.left!=null) {
                 for(Node<T> n=node.left;n!=null;n=n.right) {
+                    if(n.data.equals('d')) System.out.println("d1, parent is: "+parent.data);
                     MNode2<T> newMNode2=from_(n,parent);
                     //parent.children.add(newMNode2);
                 }
             }
             // this seems to work, but it's different from my MNode's!
-            if(node.right!=null) { System.out.println("rigt!=null"); MNode2<T> newMNode2=from_(node.right,parent); }
+            if(node.right!=null) {
+                //System.out.println("rigt!=null");
+                MNode2<T> newMNode2=from_(node.right,parent);
+                if(node.right.data.equals('d')) System.out.println("d2, parent is: "+parent.data);
+            }
             return parent;
         }
         public static <T> MNode2<T> from(Node<T> node) {
@@ -336,7 +302,7 @@ public class G2 {
         sb.append(' ').append(x.data);
         System.out.print(sb);
     }
-    private static <T> void print(Node<T> tree) {
+    public static <T> void print(Node<T> tree) {
         if(tree==null) return;
         Consumer<Node<T>> p=x->System.out.print(x.data+" ");
         System.out.print("preorder:  ");
@@ -427,33 +393,7 @@ public class G2 {
         ArrayList<Integer> data2=collectData(c2.copy);
         System.out.println("collect data2: "+data2);
     }
-    public static void example() { // https://www.red-bean.com/sgf/var.html
-        Node<Character> e=new Node<>('e');
-        Node<Character> d=new Node<>('d',e,null);
-        Node<Character> c=new Node<>('c');
-        Node<Character> b=new Node<>('b',c,d);
-        Node<Character> i=new Node<>('i');
-        Node<Character> h=new Node<>('h',i,null);
-        Node<Character> g=new Node<>('g',h,null);
-        Node<Character> a=new Node<>('a',b,null);
-        Node<Character> j=new Node<>('j');
-        Node<Character> f=new Node<>('f',g,j);
-        Node<Character> root=new Node<>('r',a,f);
-        print("",root);
-        print(root);
-        System.out.println("convert to general");
-        MNode2<Character> mway=from(root);
-        MNode2.<Character>print(mway,"  ",true);
-        System.out.println("convert back to binary");
-        Node<Character> root2=oldFrom(mway);
-        print("",root2);
-        print(root2);
-        System.out.println(deepEquals(root,root2));
-        System.out.println(structureDeepEquals(root,root2));
-    }
     public static void main(String[] arguments) {
-        example();
-        if(true) return;
         List<String> x=ManagementFactory.getRuntimeMXBean().getInputArguments();
         System.out.println(x);
         System.out.println("in eclipse: "+inEclipse());

@@ -53,6 +53,7 @@ public class MNode {
         return parent;
     }
     public static MNode toGeneralTree(SgfNode binaryNode) {
+        // this looksbroken. see red bean test case.
         if(binaryNode==null) return null; // maybe return and empty root! (my MNode root)
         if(binaryNode.right!=null) { Logging.mainLogger.info("binaryNode.right is non null!"); }
         MNode mRoot=new MNode(null);
@@ -109,7 +110,7 @@ public class MNode {
         if(!ok) System.out.println("not ok!");
         return root;
     }
-
+    
     public static MNode quietLoad(Reader reader) {
         PrintStream old=System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
@@ -135,7 +136,7 @@ public class MNode {
         Collection<SgfNode> path=finder.pathToTarget;
         return path;
     }
-    
+
     public static void main(String[] args) {
         System.out.println(Init.first);
         //lookAtRoot();

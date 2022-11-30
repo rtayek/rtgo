@@ -474,5 +474,6 @@ so moving these to a new directory ogs/
 down to tst/ having 49 errors and 112 failures.
 11/30/22 looks like we found a bug in mnode!
 show up in the new g2 mndeo2 where some nodes get processed more than once.
+lookslike MNode toGeneralTree is broken.
 
 
