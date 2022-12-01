@@ -12,6 +12,11 @@ public class G2 {
         @Override public Integer next() { return n++; }
         Integer n=0;
     }
+    public static class Characters implements Iterator<Character> {
+        @Override public boolean hasNext() { return character<Character.MAX_VALUE; }
+        @Override public Character next() { return ++character; }
+        Character character='a';
+    }
     /*
     Given a general tree with ordered but not indexed children,
     encode the first child as the left child of its parent,
@@ -351,37 +356,36 @@ public class G2 {
     // and checkfor duplicates not using map?
     // new map is same as old map
     // figure this out later
-
-    public static class Generate {
+    // maybe always generate with long and relabel?
+    public static class Generate<T> {
         public Generate(boolean useMap) { this.useMap=useMap; }
-        public ArrayList<Node<Integer>> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
+        public ArrayList<Node<T>> all(int nodes,Iterator<T> iterator) { // https://www.careercup.com/question?id=14945787
             if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
-            ArrayList<Node<Integer>> trees=new ArrayList<>();
-            for(int i=0;i<nodes;i++) {
-                if(i==0) trees.add(null);
-                else for(Node<Integer> left:all(i,data)) {
-                    for(Node<Integer> right:all(nodes-1-i,data)) {
-                        if(data!=null) ++data.t; // replace with iterator!
-                        Node<Integer> node=new Node<>(data.t,left,right);
-                        node.encoded=encode(node,null); // ?
-                        trees.add(node);
-                    }
+            ArrayList<Node<T>> trees=new ArrayList<>();
+            for(int i=0;i<nodes;i++) if(i==0) trees.add(null);
+            else for(Node<T> left:all(i,iterator)) {
+                for(Node<T> right:all(nodes-1-i,iterator)) {
+                    T data=iterator!=null&&iterator.hasNext()?iterator.next():null;
+                    Node<T> node=new Node<>(data,left,right);
+                    node.encoded=encode(node,null); // ?
+                    trees.add(node);
                 }
-
             }
             if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
             return trees;
         }
         final boolean useMap;
-        final TreeMap<Integer,ArrayList<Node<Integer>>> map=new TreeMap<>();
+        final TreeMap<Integer,ArrayList<Node<T>>> map=new TreeMap<>();
     }
     public ArrayList<Node<Integer>> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
-        if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
+        if(useMap) if(map.containsKey(nodes)) return map.get
+                (nodes);
         ArrayList<Node<Integer>> trees=new ArrayList<>();
         if(nodes==0) trees.add(null);
         else for(int i=0;i<nodes;i++) {
             for(Node<Integer> left:all(i,data)) {
-                for(Node<Integer> right:all(nodes-1-i,data)) {
+                for(Node<Integer> right:all(nodes-1-i,data))
+                {
                     if(data!=null) ++data.t; // replace with iterator!
                     Node<Integer> node=new Node<>(data.t,left,right);
                     node.encoded=encode(node,null); // ?
