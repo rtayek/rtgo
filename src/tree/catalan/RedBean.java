@@ -1,5 +1,4 @@
 package tree.catalan;
-import static tree.catalan.G2.Node.*;
 import static tree.catalan.RedBean.MNode2.print;
 import java.util.*;
 import tree.catalan.G2.Node;
@@ -13,14 +12,16 @@ public class RedBean {
         }
         public static <T> Node<T> oldFrom(MNode2<T> mNode2) {
             // this is broken.
-            //System.out.println("processing: "+mNode2.data);
+            System.out.println("processing: "+mNode2.data);
             boolean ok=processed.add((Character)mNode2.data);
             if(!ok) System.out.println(mNode2.data+" already processed!");
             Node<T> left=null,tail=null;
             for(int i=0;i<mNode2.children.size();++i) {
                 if(i==0) {
+                    MNode2<T> child=mNode2.children.get(i);
+                    System.out.println("first child: "+child.data);
                     left=tail=oldFrom(mNode2.children.get(i));
-                    //System.out.println("added "+left.data);
+                    System.out.println("left: "+left.data+" first "+left.data);
                     // is this throwing if there is a variation on the first move in the game?
                     if(left.right!=null) {
                         //ystem.out.println("wierdness at: "+left.data);
@@ -28,10 +29,14 @@ public class RedBean {
                         //throw new RuntimeException("wierdness!");
                     }
                 } else {
+                    MNode2<T> child=mNode2.children.get(i);
+                    System.out.println("left: "+left.data+" child: "+child.data);
                     Node<T> newRight=oldFrom(mNode2.children.get(i));
-                    //System.out.println("added "+newRight.data);
+                    System.out.println("left: "+left.data+" added "+newRight.data);
+                    System.out.println("left: "+left.data+" tail "+tail.data);
                     tail.right=newRight;
                     tail=newRight;
+                    System.out.println("new tail "+tail.data);
                 }
             }
             Node<T> binaryNode=new Node<>(mNode2.data,left,null); // first child
@@ -70,21 +75,22 @@ public class RedBean {
         static int ids;
         static LinkedHashSet<Character> processed=new LinkedHashSet<>();
     }
-    static Node<Character> sample() {
+    static Node<Character> binary() {
+        // this may not be coded up correctly
         Node<Character> e=new Node<>('e');
         Node<Character> d=new Node<>('d',e,null);
-        Node<Character> c=new Node<>('c');
-        Node<Character> b=new Node<>('b',c,d);
+        Node<Character> c=new Node<>('c',null,d);
+        Node<Character> b=new Node<>('b',c,null);
         Node<Character> i=new Node<>('i');
         Node<Character> h=new Node<>('h',i,null);
-        Node<Character> g=new Node<>('g',h,null);
-        Node<Character> a=new Node<>('a',b,null);
         Node<Character> j=new Node<>('j');
-        Node<Character> f=new Node<>('f',g,j);
-        Node<Character> root=new Node<>('r',a,f);
+        Node<Character> g=new Node<>('g',h,j);
+        Node<Character> f=new Node<>('f',g,null);
+        Node<Character> a=new Node<>('a',b,f);
+        Node<Character> root=new Node<>('r',a,null);
         return root;
     }
-    static MNode2<Character> sample2() {
+    static MNode2<Character> mway() {
         MNode2<Character> root=new MNode2<>('r',null);
         MNode2<Character> a=new MNode2<>('a',root);
         root.children.add(a);
@@ -109,33 +115,13 @@ public class RedBean {
         return root;
     }
     public static void example() { // https://www.red-bean.com/sgf/var.html
-        Node<Character> bRoot=sample();
+        Node<Character> bRoot=binary();
         System.out.println("coded binary sample");
         G2.print("",bRoot);
         G2.print(bRoot);
         System.out.println("coded mway sample");
-        MNode2<Character> mRoot=sample2();
+        MNode2<Character> mRoot=mway();
         print(mRoot,"",true);
-        System.out.println("converted mway sample");
-        Node<Character> bRoot2=MNode2.oldFrom(mRoot);
-        System.out.println(deepEquals(bRoot,bRoot2));
-        System.out.println(structureDeepEquals(bRoot,bRoot2));
-        G2.print("",bRoot2);
-        G2.print(bRoot2);
-        if(true) return;
-        System.out.println("-----------------");
-        print(mRoot,"  ",true);
-        System.out.println("convert to general");
-        MNode2<Character> mway=from(bRoot);
-        print(mway,"  ",true);
-        System.out.println("mway has "+mway.children.size()+" children.");
-        System.out.println("convert back to binary");
-        MNode2.processed.clear();
-        Node<Character> root2=MNode2.oldFrom(mway);
-        G2.print("",root2);
-        G2.print(root2);
-        System.out.println(deepEquals(bRoot,root2));
-        System.out.println(structureDeepEquals(bRoot,root2));
     }
     public static void main(String[] arguments) { example(); }
 }

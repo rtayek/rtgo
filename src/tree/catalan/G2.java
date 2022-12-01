@@ -137,16 +137,32 @@ public class G2 {
         public boolean deepEquals_(Node<T> other,boolean ckeckEqual) {
             // lambda?
             if(this==other) return true;
-            else if(other==null) return false;
-            if(ckeckEqual) if(!equals(other)) return false;
+            else if(other==null) {
+                System.out.println(data+" othe ris null!" );
+                return false;}
+            if(ckeckEqual) if(!equals(other)) {
+                System.out.println(data+" "+other.data);
+                return false; }
             if(left!=null) {
                 boolean isEqual=left.deepEquals_(other.left,ckeckEqual);
-                if(!isEqual) return false;
-            } else if(other.left!=null) return false;
+                if(!isEqual) {
+                    System.out.println(left.data+"!="+other.left.data);
+                    return false; }
+                System.out.println(left.data+"=="+other.left.data);
+            } else if(other.left!=null) {
+                System.out.println(data+" othe left is null!");
+                return false;}
             if(right!=null) {
                 boolean isEqual=right.deepEquals_(other.right,ckeckEqual);
-                if(!isEqual) return false;
-            } else if(other.right!=null) return false;
+                if(!isEqual) {
+                    System.out.println(right.data+"!="+other.right.data);
+                    return false; }
+                System.out.println(right.data+"=="+other.right.data);
+            } else if(other.right!=null) {
+                System.out.println(data+" othe right is not null!");
+                System.out.println("other right "+other.right.data);
+                return false;
+            }
             return true;
         }
         @Override public String toString() { return "Node [data="+data+"]"; }

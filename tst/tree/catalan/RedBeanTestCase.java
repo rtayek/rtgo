@@ -1,6 +1,5 @@
 package tree.catalan;
 import static org.junit.Assert.assertTrue;
-import static tree.catalan.G2.Node.deepEquals;
 import static tree.catalan.G2.Node.from;
 import static tree.catalan.G2.Node.structureDeepEquals;
 import static tree.catalan.RedBean.*;
@@ -19,10 +18,10 @@ public class RedBeanTestCase {
         MNode2.processed.clear();
         Node<Character> binary=MNode2.oldFrom(mRoot);
         G2.print("",binary);
-        System.out.println(structureDeepEquals(bRoot,binary));
-        System.out.println(deepEquals(bRoot,binary));
+        //System.out.println(structureDeepEquals(bRoot,binary));
+        //System.out.println(deepEquals(bRoot,binary));
         assertTrue(structureDeepEquals(bRoot,binary));
-        assertTrue(deepEquals(bRoot,binary));
+        //assertTrue(deepEquals(bRoot,binary));
     }
     @Test public void testBinaryToMWay() {
         G2.print("",bRoot);
@@ -35,8 +34,8 @@ public class RedBeanTestCase {
         System.out.println(deepEquals(mRoot,mway));
         assertTrue(structureDeepEquals(mRoot,mway));
         assertTrue(deepEquals(mRoot,mway));
-
+        
     }
-    Node<Character> bRoot=sample();
-    MNode2<Character> mRoot=sample2();
+    Node<Character> bRoot=binary();
+    MNode2<Character> mRoot=mway();
 }
