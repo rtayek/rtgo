@@ -43,6 +43,25 @@ public class RedBean {
             indent+=last?"   ":"|  ";
             for(int i=0;i<tree.children.size();i++) { print(tree.children.get(i),indent,i==tree.children.size()-1); }
         }
+        private boolean deepEquals_(MNode2<T> other,boolean ckeckEqual) {
+            // lambda?
+            if(this==other) return true;
+            else if(other==null) return false;
+            if(ckeckEqual) if(!equals(other)) return false;
+            if(children.size()!=other.children.size()) return false;
+            for(int i=0;i<children.size();++i) {
+                MNode2<T> child=children.get(i);
+                MNode2<T> otherChild=other.children.get(i);
+                if(!child.deepEquals_(otherChild,ckeckEqual)) return false;
+            }
+            return true;
+        }
+        public static <T> boolean deepEquals(MNode2<T> node,MNode2<T> other) {
+            return node!=null?node.deepEquals_(other,true):other==null;
+        }
+        public static <T> boolean structureDeepEquals(MNode2<T> node,MNode2<T> other) {
+            return node!=null?node.deepEquals_(other,false):other==null;
+        }
         MNode2<T> parent;
         ArrayList<MNode2<T>> children=new ArrayList<>();
         // add a set temporarily to see if we are adding stuff in twice?

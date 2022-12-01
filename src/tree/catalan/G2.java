@@ -195,6 +195,7 @@ public class G2 {
             }
             MNode2<T> parent=new MNode2<T>(node.data,grandParent);
             if(grandParent!=null) grandParent.children.add(parent);
+            //else throw new RuntimeException("gradparent is null!");
             if(node.left!=null) {
                 for(Node<T> n=node.left;n!=null;n=n.right) {
                     if(n.data.equals('d')) System.out.println("d1, parent is: "+parent.data);
