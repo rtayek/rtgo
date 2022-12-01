@@ -51,6 +51,14 @@ public class G2 {
             if(node==null) return;
             node.postorder(consumer);
         }
+        public static <T> void mirror(Node<T> root) {
+            if(root==null) return;
+            mirror(root.left);
+            mirror(root.right);
+            Node<T> temp=root.left;
+            root.left=root.right;
+            root.right=temp;
+        }
         private static <T> void encode_(StringBuffer sb,Node<T> node,ArrayList<T> data) {
             // lambda?
             boolean isNotNull=node!=null;
@@ -131,36 +139,26 @@ public class G2 {
             if(getClass()!=obj.getClass()) return false;
             Node<T> other=(Node<T>)obj;
             boolean equal=data.equals(other.data);
-            if(!equal) System.out.println(data+" "+other.data);
+            if(!equal) if(verbose) System.out.println(data+" "+other.data);
             return equal;
         }
         public boolean deepEquals_(Node<T> other,boolean ckeckEqual) {
             // lambda?
             if(this==other) return true;
-            else if(other==null) {
-                System.out.println(data+" othe ris null!" );
-                return false;}
-            if(ckeckEqual) if(!equals(other)) {
-                System.out.println(data+" "+other.data);
-                return false; }
+            else if(other==null) { System.out.println(data+" othe ris null!"); return false; }
+            if(ckeckEqual) if(!equals(other)) { if(verbose) System.out.println(data+" "+other.data); return false; }
             if(left!=null) {
                 boolean isEqual=left.deepEquals_(other.left,ckeckEqual);
-                if(!isEqual) {
-                    System.out.println(left.data+"!="+other.left.data);
-                    return false; }
-                System.out.println(left.data+"=="+other.left.data);
-            } else if(other.left!=null) {
-                System.out.println(data+" othe left is null!");
-                return false;}
+                if(!isEqual) { if(verbose) System.out.println(left.data+"!="+other.left.data); return false; }
+                if(verbose) System.out.println(left.data+"=="+other.left.data);
+            } else if(other.left!=null) { if(verbose) System.out.println(data+" othe left is null!"); return false; }
             if(right!=null) {
                 boolean isEqual=right.deepEquals_(other.right,ckeckEqual);
-                if(!isEqual) {
-                    System.out.println(right.data+"!="+other.right.data);
-                    return false; }
-                System.out.println(right.data+"=="+other.right.data);
+                if(!isEqual) { System.out.println(right.data+"!="+other.right.data); return false; }
+                if(verbose) System.out.println(right.data+"=="+other.right.data);
             } else if(other.right!=null) {
-                System.out.println(data+" othe right is not null!");
-                System.out.println("other right "+other.right.data);
+                if(verbose) System.out.println(data+" othe right is not null!");
+                if(verbose) System.out.println("other right "+other.right.data);
                 return false;
             }
             return true;
@@ -288,14 +286,6 @@ public class G2 {
         }
         Node<T> copy,left,right;
     }
-    public static <T> void mirror(Node<T> root) {
-        if(root==null) return;
-        mirror(root.left);
-        mirror(root.right);
-        Node<T> temp=root.left;
-        root.left=root.right;
-        root.right=temp;
-    }
     static <T> ArrayList<T> collectData(Node<T> node) {
         // nodes are getting data set, but this only returns 1!
         final ArrayList<T> datas=new ArrayList<>();
@@ -357,6 +347,34 @@ public class G2 {
     }
     // all wants a generator
     // encode wants an empty list
+    // use a new map
+    // and checkfor duplicates not using map?
+    // new map is same as old map
+    // figure this out later
+
+    public static class Generate {
+        public Generate(boolean useMap) { this.useMap=useMap; }
+        public ArrayList<Node<Integer>> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
+            if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
+            ArrayList<Node<Integer>> trees=new ArrayList<>();
+            for(int i=0;i<nodes;i++) {
+                if(i==0) trees.add(null);
+                else for(Node<Integer> left:all(i,data)) {
+                    for(Node<Integer> right:all(nodes-1-i,data)) {
+                        if(data!=null) ++data.t; // replace with iterator!
+                        Node<Integer> node=new Node<>(data.t,left,right);
+                        node.encoded=encode(node,null); // ?
+                        trees.add(node);
+                    }
+                }
+
+            }
+            if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
+            return trees;
+        }
+        final boolean useMap;
+        final TreeMap<Integer,ArrayList<Node<Integer>>> map=new TreeMap<>();
+    }
     public ArrayList<Node<Integer>> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
         if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
         ArrayList<Node<Integer>> trees=new ArrayList<>();
@@ -377,6 +395,7 @@ public class G2 {
     ArrayList<ArrayList<Node<Integer>>> generate(int nodes) {
         ArrayList<ArrayList<Node<Integer>>> all=new ArrayList<>();
         // lost of duplicate work here
+        // maybe make a map <Integer,ArrayList<ArrayList<Node<Integer>>>>
         Holder<Integer> data=new Holder<>(0);
         for(int i=0;i<=nodes;i++) {
             et.reset();
@@ -440,6 +459,7 @@ public class G2 {
     SortedMap<Integer,ArrayList<Node<Integer>>> map=new TreeMap<>();
     static List<Integer> sequentialData=new ArrayList<>();
     static final int maxNodes=100;
+    static Boolean verbose=false;
     static {
         ArrayList<Integer> data=new ArrayList<>();
         for(int i=0;i<maxNodes;++i) data.add(i); // start at 1?

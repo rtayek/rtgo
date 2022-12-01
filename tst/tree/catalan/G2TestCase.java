@@ -1,16 +1,15 @@
 package tree.catalan;
 import static org.junit.Assert.*;
-import static tree.catalan.G2.mirror;
 import static tree.catalan.G2.Node.*;
 import java.util.*;
 import org.junit.*;
 import tree.catalan.G2.Node;
 import utilities.*;
 public class G2TestCase {
+    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // round trip?
     // parameterize?
     // so far, none of these tests use a non null value for data.
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @BeforeClass public static void setUpBeforeClass() throws Exception {}
     @Before public void setUp() throws Exception {
         g2=new G2();
