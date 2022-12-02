@@ -295,6 +295,7 @@ public class G2 {
         // nodes are getting data set, but this only returns 1!
         final ArrayList<T> datas=new ArrayList<>();
         Consumer<Node<T>> add=x->datas.add(x!=null?x.data:null);
+        // make this check for duplicates!
         preorder(node,add);
         return datas;
     }
@@ -357,35 +358,36 @@ public class G2 {
     // new map is same as old map
     // figure this out later
     // maybe always generate with long and relabel?
-    public static class Generate<T> {
-        public Generate(boolean useMap) { this.useMap=useMap; }
+    public static class Generator<T> {
+        public Generator(boolean useMap) { this.useMap=useMap; }
         public ArrayList<Node<T>> all(int nodes,Iterator<T> iterator) { // https://www.careercup.com/question?id=14945787
             if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
             ArrayList<Node<T>> trees=new ArrayList<>();
-            for(int i=0;i<nodes;i++) if(i==0) trees.add(null);
-            else for(Node<T> left:all(i,iterator)) {
-                for(Node<T> right:all(nodes-1-i,iterator)) {
-                    T data=iterator!=null&&iterator.hasNext()?iterator.next():null;
-                    Node<T> node=new Node<>(data,left,right);
-                    node.encoded=encode(node,null); // ?
-                    trees.add(node);
+            if(nodes==0) trees.add(null);
+            else for(int i=0;i<nodes;i++) {
+                for(Node<T> left:all(i,iterator)) {
+                    for(Node<T> right:all(nodes-1-i,iterator)) {
+                        T data=iterator!=null&&iterator.hasNext()?iterator.next():null;
+                        Node<T> node=new Node<>(data,left,right);
+                        node.encoded=encode(node,null); // ?
+                        trees.add(node);
+                    }
                 }
             }
             if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
+            //System.out.println(nodes+" nodes, "+trees);
             return trees;
         }
         final boolean useMap;
         final TreeMap<Integer,ArrayList<Node<T>>> map=new TreeMap<>();
     }
     public ArrayList<Node<Integer>> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
-        if(useMap) if(map.containsKey(nodes)) return map.get
-                (nodes);
+        if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
         ArrayList<Node<Integer>> trees=new ArrayList<>();
         if(nodes==0) trees.add(null);
         else for(int i=0;i<nodes;i++) {
             for(Node<Integer> left:all(i,data)) {
-                for(Node<Integer> right:all(nodes-1-i,data))
-                {
+                for(Node<Integer> right:all(nodes-1-i,data)) {
                     if(data!=null) ++data.t; // replace with iterator!
                     Node<Integer> node=new Node<>(data.t,left,right);
                     node.encoded=encode(node,null); // ?
@@ -398,14 +400,25 @@ public class G2 {
     }
     ArrayList<ArrayList<Node<Integer>>> generate(int nodes) {
         ArrayList<ArrayList<Node<Integer>>> all=new ArrayList<>();
-        // lost of duplicate work here
-        // maybe make a map <Integer,ArrayList<ArrayList<Node<Integer>>>>
-        Holder<Integer> data=new Holder<>(0);
-        for(int i=0;i<=nodes;i++) {
-            et.reset();
-            ArrayList<Node<Integer>> trees=all(i,data);
-            all.add(trees); // stop doing this!
-            System.gc();
+        if(true) {
+            Generator<Integer> generator=new Generator<>(false);
+            Iterator<Integer> iterator=new G2.Integers();
+            for(int i=0;i<=nodes;i++) {
+                ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
+                all.add(trees); // stop doing this!
+                System.gc();
+            }
+            //
+        } else {
+            // lost of duplicate work here
+            // maybe make a map <Integer,ArrayList<ArrayList<Node<Integer>>>>
+            Holder<Integer> data=new Holder<>(0);
+            for(int i=0;i<=nodes;i++) {
+                et.reset();
+                ArrayList<Node<Integer>> trees=all(i,data);
+                all.add(trees); // stop doing this!
+                System.gc();
+            }
         }
         return all;
     }

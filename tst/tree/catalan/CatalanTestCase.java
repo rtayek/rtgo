@@ -1,7 +1,7 @@
 package tree.catalan;
 import static org.junit.Assert.*;
 import static tree.catalan.Catalan.*;
-import static tree.catalan.G2.*;
+import static tree.catalan.G2.roundTripLong;
 import static tree.catalan.G2.Node.*;
 import static utilities.ParameterArray.modulo;
 import java.util.*;
@@ -9,8 +9,8 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import tree.catalan.G2.Node;
-import utilities.*;
+import tree.catalan.G2.*;
+import utilities.MyTestWatcher;
 @RunWith(Parameterized.class) public class CatalanTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public CatalanTestCase(int nodes) { this.nodes=nodes; }
@@ -31,8 +31,7 @@ import utilities.*;
         else assertEquals(catalan(nodes),Catalan.catalan2(nodes));
     }
     @Test public void testEncodeEncode() {
-        Holder<Integer> dataHolder=new Holder<>(0);
-        List<Node<Integer>> trees=g2.all(nodes,dataHolder);
+        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
         for(Node<Integer> expected:trees) {
             String encodedd=encode(expected,null);
             Node<Integer> acatual=decode(encodedd,null);
@@ -40,30 +39,27 @@ import utilities.*;
         }
     }
     @Test public void testCopy() {
-        Holder<Integer> dataHolder=new Holder<>(0);
-        List<Node<Integer>> trees=g2.all(nodes,dataHolder);
+        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
         for(Node<Integer> expected:trees) {
             //if(expected==null) continue; // looks like we need this.
             Node<Integer> actual=copy(expected);
             assertTrue(structureDeepEquals(expected,actual));
-            ArrayList<Integer> data=new ArrayList<>();
-            String expectedEncoded=encode(expected,data);
-            String actualEncoded=encode(actual,data);
+            ArrayList<Integer> data2=new ArrayList<>();
+            String expectedEncoded=encode(expected,data2);
+            String actualEncoded=encode(actual,data2);
             assertEquals(expectedEncoded,actualEncoded);
             assertTrue(deepEquals(expected,actual));
         }
     }
     @Test public void testCheck() {
-        Holder<Integer> data=new Holder<>(0);
-        List<Node<Integer>> trees=g2.all(nodes,data);
+        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
         for(Node<Integer> node:trees) {
             int n=check(node);
             assertEquals(0,n);
         }
     }
     @Test public void testLongRoundTrip() {
-        Holder<Integer> data=new Holder<>(0);
-        List<Node<Integer>> trees=g2.all(nodes,data);
+        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
         for(Node<Integer> node:trees) {
             // if(node==null) continue; // looks like we need this.
             // this is a round trip
@@ -75,8 +71,7 @@ import utilities.*;
     }
     @Test public void testMirrorRoundTrip() { // do we need this?
         // look for duplicate code in node!
-        Holder<Integer> data=new Holder<>(0);
-        List<Node<Integer>> trees=g2.all(nodes,data);
+        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
         for(Node node:trees) {
             if(node==null) continue;
             mirror(node);
@@ -88,11 +83,11 @@ import utilities.*;
         }
     }
     @Test public void testGenerate() {
-        Holder<Integer> data=new Holder<>(0);
-        List<Node<Integer>> trees=g2.all(nodes,data);
+        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
         assertEquals(catalan2(nodes),trees.size());
     }
     int nodes;
-    G2 g2=new G2();
+    Generator<Integer> generator=new Generator<>(false);
+    Iterator<Integer> iterator=new G2.Integers();
     public static final int max=7; // 11
 }

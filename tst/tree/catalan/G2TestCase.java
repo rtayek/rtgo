@@ -3,7 +3,7 @@ import static org.junit.Assert.*;
 import static tree.catalan.G2.Node.*;
 import java.util.*;
 import org.junit.*;
-import tree.catalan.G2.Node;
+import tree.catalan.G2.*;
 import utilities.*;
 public class G2TestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -164,6 +164,8 @@ public class G2TestCase {
     }
     G2 g2;
     boolean verbose;
+    Generator<Integer> generator=new Generator<>(false);
+    Iterator<Integer> iterator=new G2.Integers();
     ArrayList<Node<Integer>> trees;
     ArrayList<ArrayList<Node<Integer>>> all;
 }
