@@ -31,7 +31,7 @@ import utilities.MyTestWatcher;
         else assertEquals(catalan(nodes),Catalan.catalan2(nodes));
     }
     @Test public void testEncodeEncode() {
-        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
+        ArrayList<Node<Integer>> trees=Generator.all(nodes,iterator,false);
         for(Node<Integer> expected:trees) {
             String encodedd=encode(expected,null);
             Node<Integer> acatual=decode(encodedd,null);
@@ -39,7 +39,7 @@ import utilities.MyTestWatcher;
         }
     }
     @Test public void testCopy() {
-        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
+        ArrayList<Node<Integer>> trees=Generator.all(nodes,iterator,false);
         for(Node<Integer> expected:trees) {
             //if(expected==null) continue; // looks like we need this.
             Node<Integer> actual=copy(expected);
@@ -52,14 +52,14 @@ import utilities.MyTestWatcher;
         }
     }
     @Test public void testCheck() {
-        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
+        ArrayList<Node<Integer>> trees=Generator.all(nodes,iterator,false);
         for(Node<Integer> node:trees) {
             int n=check(node);
             assertEquals(0,n);
         }
     }
     @Test public void testLongRoundTrip() {
-        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
+        ArrayList<Node<Integer>> trees=Generator.all(nodes,iterator,false);
         for(Node<Integer> node:trees) {
             // if(node==null) continue; // looks like we need this.
             // this is a round trip
@@ -71,8 +71,8 @@ import utilities.MyTestWatcher;
     }
     @Test public void testMirrorRoundTrip() { // do we need this?
         // look for duplicate code in node!
-        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
-        for(Node node:trees) {
+        ArrayList<Node<Integer>> trees=Generator.all(nodes,iterator,false);
+        for(Node<Integer> node:trees) {
             if(node==null) continue;
             mirror(node);
             // this is a round trip
@@ -83,11 +83,10 @@ import utilities.MyTestWatcher;
         }
     }
     @Test public void testGenerate() {
-        ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
+        ArrayList<Node<Integer>> trees=Generator.all(nodes,iterator,false);
         assertEquals(catalan2(nodes),trees.size());
     }
     int nodes;
-    Generator<Integer> generator=new Generator<>(false);
     Iterator<Integer> iterator=new G2.Integers();
     public static final int max=7; // 11
 }

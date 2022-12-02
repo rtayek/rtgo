@@ -11,17 +11,18 @@ public class RedBean {
             this.data=data;
         }
         public static <T> Node<T> oldFrom(MNode2<T> mNode2) {
-            // this is broken.
-            System.out.println("processing: "+mNode2.data);
+            // this is broken. maybe not
+            //System.out.println("processing: "+mNode2.data);
+            // did we remove the extra node we added?
             boolean ok=processed.add((Character)mNode2.data);
             if(!ok) System.out.println(mNode2.data+" already processed!");
             Node<T> left=null,tail=null;
             for(int i=0;i<mNode2.children.size();++i) {
                 if(i==0) {
                     MNode2<T> child=mNode2.children.get(i);
-                    System.out.println("first child: "+child.data);
+                    //System.out.println("first child: "+child.data);
                     left=tail=oldFrom(mNode2.children.get(i));
-                    System.out.println("left: "+left.data+" first "+left.data);
+                    //System.out.println("left: "+left.data+" first "+left.data);
                     // is this throwing if there is a variation on the first move in the game?
                     if(left.right!=null) {
                         //ystem.out.println("wierdness at: "+left.data);
@@ -30,13 +31,13 @@ public class RedBean {
                     }
                 } else {
                     MNode2<T> child=mNode2.children.get(i);
-                    System.out.println("left: "+left.data+" child: "+child.data);
+                    //System.out.println("left: "+left.data+" child: "+child.data);
                     Node<T> newRight=oldFrom(mNode2.children.get(i));
-                    System.out.println("left: "+left.data+" added "+newRight.data);
-                    System.out.println("left: "+left.data+" tail "+tail.data);
+                    //System.out.println("left: "+left.data+" added "+newRight.data);
+                    //System.out.println("left: "+left.data+" tail "+tail.data);
                     tail.right=newRight;
                     tail=newRight;
-                    System.out.println("new tail "+tail.data);
+                    //System.out.println("new tail "+tail.data);
                 }
             }
             Node<T> binaryNode=new Node<>(mNode2.data,left,null); // first child

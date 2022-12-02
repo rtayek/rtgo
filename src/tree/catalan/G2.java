@@ -5,7 +5,7 @@ import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
 import tree.catalan.RedBean.MNode2;
-import utilities.*;
+import utilities.Et;
 public class G2 {
     public static class Integers implements Iterator<Integer> {
         @Override public boolean hasNext() { return n<Integer.MAX_VALUE; }
@@ -217,7 +217,7 @@ public class G2 {
             //else throw new RuntimeException("gradparent is null!");
             if(node.left!=null) {
                 for(Node<T> n=node.left;n!=null;n=n.right) {
-                    if(n.data.equals('d')) System.out.println("d1, parent is: "+parent.data);
+                    if(false&&n.data.equals('d')) System.out.println("d1, parent is: "+parent.data);
                     MNode2<T> newMNode2=from_(n,parent);
                     //parent.children.add(newMNode2);
                 }
@@ -232,10 +232,10 @@ public class G2 {
         }
         public static <T> MNode2<T> from(Node<T> node) {
             processed.clear();
-            Node<T> extra=new Node<T>(null,null,null);
-            extra.left=node;
+            MNode2<T> extra=new MNode2<T>(null,null);
             //if(node.right!=null) throw new RuntimeException("node.right!=null");
-            return from_(node,null);
+            MNode2<T> mNode2=from_(node,extra);
+            return extra;
         }
         Node<T> left,right,parent;
         public T data;
@@ -360,7 +360,8 @@ public class G2 {
     // maybe always generate with long and relabel?
     public static class Generator<T> {
         public Generator(boolean useMap) { this.useMap=useMap; }
-        public ArrayList<Node<T>> all(int nodes,Iterator<T> iterator) { // https://www.careercup.com/question?id=14945787
+        // maybe add useMap flag to all? and make all_?
+        private ArrayList<Node<T>> all(int nodes,Iterator<T> iterator) { // https://www.careercup.com/question?id=14945787
             if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
             ArrayList<Node<T>> trees=new ArrayList<>();
             if(nodes==0) trees.add(null);
@@ -375,52 +376,24 @@ public class G2 {
                 }
             }
             if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
-            //System.out.println(nodes+" nodes, "+trees);
             return trees;
+        }
+        public static <T> ArrayList<Node<T>> all(int nodes,Iterator<T> iterator,boolean useMap) {
+            Generator<T> generator=new Generator<>(useMap);
+            ArrayList<Node<T>> trees=generator.all(nodes,iterator);
+            return trees;
+        }
+        public static ArrayList<ArrayList<Node<Integer>>> all(int nodes) {
+            ArrayList<ArrayList<Node<Integer>>> all=new ArrayList<>();
+            Iterator<Integer> iterator=new G2.Integers();
+            for(int i=0;i<=nodes;++i) {
+                ArrayList<Node<Integer>> trees=Generator.all(i,iterator,false);
+                all.add(trees);
+            }
+            return all;
         }
         final boolean useMap;
         final TreeMap<Integer,ArrayList<Node<T>>> map=new TreeMap<>();
-    }
-    public ArrayList<Node<Integer>> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787
-        if(useMap) if(map.containsKey(nodes)) return map.get(nodes);
-        ArrayList<Node<Integer>> trees=new ArrayList<>();
-        if(nodes==0) trees.add(null);
-        else for(int i=0;i<nodes;i++) {
-            for(Node<Integer> left:all(i,data)) {
-                for(Node<Integer> right:all(nodes-1-i,data)) {
-                    if(data!=null) ++data.t; // replace with iterator!
-                    Node<Integer> node=new Node<>(data.t,left,right);
-                    node.encoded=encode(node,null); // ?
-                    trees.add(node);
-                }
-            }
-        }
-        if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
-        return trees;
-    }
-    ArrayList<ArrayList<Node<Integer>>> generate(int nodes) {
-        ArrayList<ArrayList<Node<Integer>>> all=new ArrayList<>();
-        if(true) {
-            Generator<Integer> generator=new Generator<>(false);
-            Iterator<Integer> iterator=new G2.Integers();
-            for(int i=0;i<=nodes;i++) {
-                ArrayList<Node<Integer>> trees=generator.all(nodes,iterator);
-                all.add(trees); // stop doing this!
-                System.gc();
-            }
-            //
-        } else {
-            // lost of duplicate work here
-            // maybe make a map <Integer,ArrayList<ArrayList<Node<Integer>>>>
-            Holder<Integer> data=new Holder<>(0);
-            for(int i=0;i<=nodes;i++) {
-                et.reset();
-                ArrayList<Node<Integer>> trees=all(i,data);
-                all.add(trees); // stop doing this!
-                System.gc();
-            }
-        }
-        return all;
     }
     public static boolean inEclipse() {
         String string=System.getProperty("notEclipse");
@@ -454,8 +427,8 @@ public class G2 {
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
         if(inEclipse()) g2.useMap=true;
         //g2.useMap=false;
-        int nodes=11;
-        ArrayList<ArrayList<Node<Integer>>> all=g2.generate(nodes);
+        int nodes=10;
+        ArrayList<ArrayList<Node<Integer>>> all=G2.Generator.all(nodes);
         System.out.println(nodes+" nodes.");
         if(false) { check(all.get(2).get(0)); return; }
         for(int i=0;i<=nodes;i++) {
@@ -481,5 +454,6 @@ public class G2 {
         ArrayList<Integer> data=new ArrayList<>();
         for(int i=0;i<maxNodes;++i) data.add(i); // start at 1?
         sequentialData=Collections.unmodifiableList(data);
+        System.out.println("end static init.");
     }
 }

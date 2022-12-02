@@ -1,7 +1,6 @@
 package tree.catalan;
 import java.util.*;
 import tree.catalan.G2.*;
-import utilities.Holder;
 public class Catalan {
     Node x;
     public static final long c(final int n,final int r) { // binomial coefficient
@@ -26,21 +25,17 @@ public class Catalan {
     public static long catalan2(int n) { return c(2*n,n)/(n+1); }
     public static long catalan(int n) { return f(2*n)/(f(n+1)*f(n)); }
     public static void main(String[] args) {
-        G2 g2=new G2();
-        Generator<Integer> generator=new Generator<>(false);
         for(int nodes=0;nodes<10;++nodes) {
             System.out.println("nodes: "+nodes);
             Node.ids=0;
-            Holder<Integer> data=new Holder<>(0);
             Iterator<Integer> iterator=new G2.Integers();
-            List<Node<Integer>> trees=g2.all(nodes,data);
-            List<Node<Integer>> trees2=generator.all(nodes,iterator);
+            List<Node<Integer>> trees=Generator.all(nodes,iterator,false);
             //System.out.println("trees: "+trees);
             //System.out.println("trees2: "+trees2);
             //System.out.println(nodes+" nodes. has "+trees.size()+" trees.");
             //System.out.println(nodes+" nodes. has "+trees2.size()+" trees2.");
             if(trees.size()!=catalans[nodes]) { System.out.println(trees.size()+" trees.size()!=catalans["+nodes+"]"); }
-            if(trees2.size()!=catalans[nodes]) { System.out.println(trees2.size()+" trees2.size()!=catalans["+nodes+"]"); }
+            else System.out.println(trees.size()+" trees.");
             for(Node<Integer> node:trees) {
                 //System.out.println("|||");
                 //print(node);
