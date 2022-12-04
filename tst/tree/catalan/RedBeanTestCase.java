@@ -14,21 +14,21 @@ public class RedBeanTestCase {
     @Test public void testMWayToBinary() {
         print(mRoot,"",true);
         System.out.println(mRoot.children);
-        G2.print("",bRoot);
+        G2.print(bRoot,"");
         MNode2.processed.clear();
         Node<Character> binary=MNode2.oldFrom(mRoot);
-        G2.print("",binary);
+        G2.print(binary,"");
         //System.out.println(structureDeepEquals(bRoot,binary));
         //System.out.println(deepEquals(bRoot,binary));
         assertTrue(structureDeepEquals(bRoot,binary));
         //assertTrue(deepEquals(bRoot,binary));
     }
     @Test public void testBinaryToMWay() {
-        G2.print("",bRoot);
+        G2.print(bRoot,"");
         print(mRoot,"",true);
         System.out.println(mRoot.children);
         Node.processed.clear();
-        MNode2<Character> mway=from(bRoot);
+        MNode2<Character> mway=from(bRoot,null);
         print(mway,"",true);
         System.out.println(structureDeepEquals(mRoot,mway));
         System.out.println(deepEquals(mRoot,mway));

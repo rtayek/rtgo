@@ -12,7 +12,7 @@ public class MyTestWatcher extends TestWatcher {
         ++tests;
         //Init.first.restoreSystmeIO();
         et.reset();
-        if(verbosity) System.out.println("starting test: "+klass.getName()+"."+description.getMethodName()+" "+ets());
+        if(verbosity) System.out.println("starting test: "+key+" "+klass.getName()+"."+description.getMethodName()+" "+ets());
         if(IO.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread!");
         // fix this so there is only one test et!
         first.testsRun.add(klass.getName()+"."+description.getMethodName());

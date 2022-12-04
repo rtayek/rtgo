@@ -18,53 +18,53 @@ public class G2TestCase {
     }
     @After public void tearDown() throws Exception {}
     @Test public void testEncodeNullFalse() {
-        trees=Generator.all(0,iterator,false);
+        trees=Generator.one(0,iterator,false);
         Node<Integer> node=trees.get(0);
         assertNull(node);
         String encoded=encode(node,null);
         assertEquals("0",encoded);
     }
     @Test public void testEncodeNulTruel() {
-        trees=Generator.all(0,iterator,true);
+        trees=Generator.one(0,iterator,true);
         Node<Integer> node=trees.get(0);
         assertNull(node);
         String encoded=encode(node,null);
         assertEquals("0",encoded);
     }
     @Test public void testEncode1False() {
-        trees=Generator.all(1,iterator,false);
+        trees=Generator.one(1,iterator,false);
         Node<Integer> expected=trees.get(0);
         assertNotNull(expected);
         String encoded=encode(expected,null);
         assertEquals("100",encoded);
     }
     @Test public void testEncode1Truel() {
-        trees=Generator.all(1,iterator,true);
+        trees=Generator.one(1,iterator,true);
         Node<Integer> node=trees.get(0);
         assertNotNull(node);
         String encoded=encode(node,null);
         assertEquals("100",encoded);
     }
     @Test public void test0False() {
-        trees=Generator.all(0,iterator,false);
+        trees=Generator.one(0,iterator,false);
         Node<Integer> tree=trees.get(0);
         String encoded=encode(tree,null);
         assertEquals("0",encoded);
     }
     @Test public void test0Ttue() {
-        trees=Generator.all(0,iterator,true);
+        trees=Generator.one(0,iterator,true);
         Node<Integer> tree=trees.get(0);
         String encoded=encode(tree,null);
         assertEquals("0",encoded);
     }
     @Test public void test1False() {
-        trees=Generator.all(1,iterator,false);
+        trees=Generator.one(1,iterator,false);
         Node<Integer> tree=trees.get(0);
         String encoded=encode(tree,null);
         assertEquals("100",encoded);
     }
     @Test public void test1Ttue() {
-        trees=Generator.all(1,iterator,true);
+        trees=Generator.one(1,iterator,true);
         Node<Integer> tree=trees.get(0);
         String encoded=encode(tree,null);
         assertEquals("100",encoded);
@@ -82,7 +82,7 @@ public class G2TestCase {
         assertTrue(structureDeepEquals(tree,actualNode));
     }
     @Test public void test2False() {
-        trees=Generator.all(2,iterator,false);
+        trees=Generator.one(2,iterator,false);
         Node<Integer> tree=trees.get(0);
         String encoded=encode(tree,null);
         assertEquals("10100",encoded);
@@ -91,7 +91,7 @@ public class G2TestCase {
         assertEquals("11000",encoded);
     }
     @Test public void test2Ttue() {
-        trees=Generator.all(2,iterator,true);
+        trees=Generator.one(2,iterator,true);
         Node<Integer> tree=trees.get(0);
         String encoded=encode(tree,null);
         assertEquals("10100",encoded);
@@ -116,7 +116,7 @@ public class G2TestCase {
         assertTrue(structureDeepEquals(tree,actualNode));
     }
     @Test public void testMirror2() {
-        trees=Generator.all(2,iterator,false);
+        trees=Generator.one(2,iterator,false);
         for(Node<Integer> node:trees) {
             if(node==null) continue;
             String expected=encode(node,null);
@@ -127,7 +127,7 @@ public class G2TestCase {
         }
     }
     @Test public void testMirror3() {
-        trees=Generator.all(3,iterator,false);
+        trees=Generator.one(3,iterator,false);
         for(Node<Integer> node:trees) {
             if(node==null) continue;
             String expected=encode(node,null);

@@ -2,7 +2,6 @@ package tree.catalan;
 import java.util.*;
 import tree.catalan.G2.*;
 public class Catalan {
-    Node x;
     public static final long c(final int n,final int r) { // binomial coefficient
         long i,p;
         if(r<0||n<0||r>n) p=0;
@@ -29,7 +28,7 @@ public class Catalan {
             System.out.println("nodes: "+nodes);
             Node.ids=0;
             Iterator<Integer> iterator=new G2.Integers();
-            List<Node<Integer>> trees=Generator.all(nodes,iterator,false);
+            List<Node<Integer>> trees=Generator.one(nodes,iterator,false);
             //System.out.println("trees: "+trees);
             //System.out.println("trees2: "+trees2);
             //System.out.println(nodes+" nodes. has "+trees.size()+" trees.");

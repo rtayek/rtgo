@@ -34,6 +34,26 @@ public class G2 {
             if(left!=null) left.preorder(consumer);
             if(right!=null) right.preorder(consumer);
         }
+        public static <T> Node<T> copy(Node<T> node) {
+            if(node==null) return null;
+            Node<T> copy=new Node<>(node.data,node.left,node.right);
+            copy.left=(copy(node.left));
+            copy.right=(copy(node.right));
+            return copy;
+        }
+        public static <T,U> Node<U> reLabel_(Node<T> node,Iterator<U> iterator) {
+            U data=iterator!=null?iterator.next():null;
+            Node<U> newNode=new Node<U>(data);
+            return newNode;
+        }
+        @SuppressWarnings("unchecked") public static <T,U> Node<U> reLabel(Node<T>node,Iterator<U> iterator) {
+            if(node==null) return null;
+            Node<U> copy=Node.reLabel_(node,iterator);
+            copy.left= (Node<U>)node.left;
+            copy.right=(Node<U>)node.right;
+            System.out.println("relabel: "+node.data+"->"+copy.data);
+            return copy;
+        }
         public void inorder(Consumer<Node<T>> consumer) {
             if(left!=null) left.inorder(consumer);
             if(consumer!=null) consumer.accept(this);
@@ -151,57 +171,25 @@ public class G2 {
         public boolean deepEquals_(Node<T> other,boolean ckeckEqual) {
             // lambda?
             if(this==other) return true;
-            else if(other==null) {
-                if(verbose)
-                    System.out.println(data+" othe ris null!");
-                return false;
-            }
-            if(ckeckEqual)
-                if(!equals(other)) {
-                    if(verbose)
-                        System.out.println(data+" "+other.data);
-                    return false;
-                }
+            else if(other==null) { if(verbose) System.out.println(data+" othe ris null!"); return false; }
+            if(ckeckEqual) if(!equals(other)) { if(verbose) System.out.println(data+" "+other.data); return false; }
             if(left!=null) {
                 boolean isEqual=left.deepEquals_(other.left,ckeckEqual);
-                if(!isEqual) {
-                    if(verbose)
-                        System.out.println(left.data+"!="+other.left.data);
-                    return false;
-                }
-                if(verbose)
-                    System.out.println(left.data+"=="+other.left.data);
-            } else if(other.left!=null) {
-                if(verbose)
-                    System.out.println(data+" othe left is null!");
-                return false;
-            }
+                if(!isEqual) { if(verbose) System.out.println(left.data+"!="+other.left.data); return false; }
+                if(verbose) System.out.println(left.data+"=="+other.left.data);
+            } else if(other.left!=null) { if(verbose) System.out.println(data+" othe left is null!"); return false; }
             if(right!=null) {
                 boolean isEqual=right.deepEquals_(other.right,ckeckEqual);
-                if(!isEqual) {
-                    if(verbose)
-                        System.out.println(right.data+"!="+other.right.data);
-                    return false;
-                }
-                if(verbose)
-                    System.out.println(right.data+"=="+other.right.data);
+                if(!isEqual) { if(verbose) System.out.println(right.data+"!="+other.right.data); return false; }
+                if(verbose) System.out.println(right.data+"=="+other.right.data);
             } else if(other.right!=null) {
-                if(verbose)
-                    System.out.println(data+" othe right is not null!");
-                if(verbose)
-                    System.out.println("other right "+other.right.data);
+                if(verbose) System.out.println(data+" othe right is not null!");
+                if(verbose) System.out.println("other right "+other.right.data);
                 return false;
             }
             return true;
         }
         @Override public String toString() { return "Node [data="+data+"]"; }
-        public static <T> Node<T> copy(Node<T> node) {
-            if(node==null) return null;
-            Node<T> copy=new Node<>(node.data,node.left,node.right);
-            copy.left=(node.left);
-            copy.right=(node.right);
-            return copy;
-        }
         public static <T> boolean deepEquals(Node<T> node,Node<T> other) {
             return node!=null?node.deepEquals_(other,true):other==null;
         }
@@ -236,31 +224,16 @@ public class G2 {
         // Given a binary tree with distinguished left and right children,
         // read the left child of a node as its first child and the right child as its next sibling.
         public static <T> MNode2<T> from_(Node<T> node,MNode2<T> grandParent) {
-            if(node==null) return null;
-            if(node.data!=null)
-                if(((Character)node.data).equals('.')) {
-                    int x=0;
-                    x++;
-                } else {
-                    int x=0;
-                    x++;
-                }
+            if(node==null) { if(grandParent!=null) grandParent.children.add(null); return null; }
             boolean ok=processed.add((Character)node.data);
-            if(!ok) {
-                System.out.println(node.data+" already processed!");
-                if(false) if(node.data.equals('k')) { System.out.println("node was: "+node.data); node.data=null; }
-                return null;
-            }
+            if(!ok) { System.out.println(node.data+" "+node.id+"  node already processed!"); return null; }
             MNode2<T> parent=new MNode2<T>(node.data,grandParent);
-            if(grandParent!=null) {
-                grandParent.children.add(parent);
-                System.out.println(node.data+": "+parent);
+            if(grandParent!=null) grandParent.children.add(parent);
+            else {
+                System.out.println("gradparent is null!");
             }
-
-            //else throw new RuntimeException("gradparent is null!");
             if(node.left!=null) {
                 for(Node<T> n=node.left;n!=null;n=n.right) {
-                    if(false&&n.data.equals('d')) System.out.println("d1, parent is: "+parent.data);
                     MNode2<T> newMNode2=from_(n,parent);
                     //parent.children.add(newMNode2);
                 }
@@ -269,7 +242,6 @@ public class G2 {
             if(node.right!=null) {
                 //System.out.println("rigt!=null");
                 MNode2<T> newMNode2=from_(node.right,grandParent);
-                if(node.right.data.equals('d')) System.out.println("d2, parent is: "+parent.data);
             }
             return parent;
         }
@@ -280,12 +252,13 @@ public class G2 {
             MNode2<T> mNode2=from_(node,extra);
             return extra;
         }
-        public static <T> MNode2<T> from(Node<T> node) {
+        public static <T> MNode2<T> from(Node<T> node,MNode2<T> parent) {
+            System.out.println("using parent: "+parent);
             processed.clear();
-            MNode2<T> mNode2=from_(node,null);
-            return mNode2;
+            MNode2<T> mNode2=from_(node.left,parent);
+            System.out.println("returning parent: "+parent);
+            return parent;
         }
-
         Node<T> left,right,parent;
         public T data;
         String encoded;
@@ -389,15 +362,15 @@ public class G2 {
         }
         System.out.println("end of nodes "+nodes);
     }
-    public static <T> void print(String prefix,Node<T> node,boolean isLeft) {
+    private static <T> void print(Node<T> node,String prefix,boolean isLeft) {
         if(node!=null) {
             System.out.println(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
-            print(prefix+(isLeft?"|   ":"    "),node.left,true);
-            print(prefix+(isLeft?"|   ":"    "),node.right,false);
+            print(node.left,prefix+(isLeft?"|   ":"    "),true);
+            print(node.right,prefix+(isLeft?"|   ":"    "),false);
         }
     }
-    public static <T> void print(String prefi,Node<T> node) {
-        if(node!=null) print(prefi,node,true);
+    public static <T> void print(Node<T> node,String prefix) {
+        if(node!=null) print(node,prefix,true);
         else System.out.println("0");
     }
     // all wants a generator
@@ -427,7 +400,7 @@ public class G2 {
             if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
             return trees;
         }
-        public static <T> ArrayList<Node<T>> all(int nodes,Iterator<T> iterator,boolean useMap) {
+        public static <T> ArrayList<Node<T>> one(int nodes,Iterator<T> iterator,boolean useMap) {
             Generator<T> generator=new Generator<>(useMap);
             ArrayList<Node<T>> trees=generator.all(nodes,iterator);
             return trees;
@@ -436,7 +409,7 @@ public class G2 {
             ArrayList<ArrayList<Node<Integer>>> all=new ArrayList<>();
             Iterator<Integer> iterator=new G2.Integers();
             for(int i=0;i<=nodes;++i) {
-                ArrayList<Node<Integer>> trees=Generator.all(i,iterator,false);
+                ArrayList<Node<Integer>> trees=Generator.one(i,iterator,false);
                 all.add(trees);
             }
             return all;
@@ -452,7 +425,7 @@ public class G2 {
     static void foo(Node<Integer> tree) {
         ArrayList<Node<Integer>> trees;
         int n;
-        print("",tree);
+        print(tree,"");
         print(tree);
         ArrayList<Integer> data=collectData(tree);
         System.out.println("collect data: "+data);
@@ -492,7 +465,7 @@ public class G2 {
         Node<Integer> tree=trees.get(n/2);
         foo(tree);
     }
-    boolean useMap;
+    boolean useMap; // set in main and never used.
     Et et=new Et();
     // put all here as an instance variable?
     SortedMap<Integer,ArrayList<Node<Integer>>> map=new TreeMap<>();

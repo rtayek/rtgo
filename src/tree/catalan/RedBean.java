@@ -11,27 +11,26 @@ public class RedBean {
             this.data=data;
         }
         public static <T> Node<T> oldFrom(MNode2<T> mNode2) {
+            if(mNode2==null) { return null; }
             // this is broken. maybe not
             //System.out.println("processing: "+mNode2.data);
             // did we remove the extra node we added?
-            if(((Character)mNode2.data).equals('.')) {
-                int x=0;
-                x++;
-            }
             boolean ok=processed.add((Character)mNode2.data);
-            if(!ok) System.out.println(mNode2.data+" already processed!");
+            if(!ok) System.out.println(mNode2.data+" MNode2 already processed!");
             Node<T> left=null,tail=null;
             for(int i=0;i<mNode2.children.size();++i) {
                 if(i==0) {
                     MNode2<T> child=mNode2.children.get(i);
-                    //System.out.println("first child: "+child.data);
-                    left=tail=oldFrom(mNode2.children.get(i));
-                    //System.out.println("left: "+left.data+" first "+left.data);
-                    // is this throwing if there is a variation on the first move in the game?
-                    if(left.right!=null) {
-                        //ystem.out.println("wierdness at: "+left.data);
-                        // maybe not so weird after a;l?
-                        //throw new RuntimeException("wierdness!");
+                    if(child!=null) {
+                        //System.out.println("first child: "+child.data);
+                        left=tail=oldFrom(mNode2.children.get(i));
+                        //System.out.println("left: "+left.data+" first "+left.data);
+                        // is this throwing if there is a variation on the first move in the game?
+                        if(left.right!=null) {
+                            //ystem.out.println("wierdness at: "+left.data);
+                            // maybe not so weird after a;l?
+                            //throw new RuntimeException("wierdness!");
+                        }
                     }
                 } else {
                     MNode2<T> child=mNode2.children.get(i);
@@ -48,10 +47,11 @@ public class RedBean {
             return binaryNode;
         }
         public static <T> void print(MNode2<T> tree,String indent,boolean last) {
-            if(tree==null) return;
-            System.out.println(indent+"+- "+tree.data);
+            System.out.println(indent+"+- "+(tree!=null?tree.data:"0"));
             indent+=last?"   ":"|  ";
-            for(int i=0;i<tree.children.size();i++) { print(tree.children.get(i),indent,i==tree.children.size()-1); }
+            if(tree!=null) for(int i=0;i<tree.children.size();i++) {
+                print(tree.children.get(i),indent,i==tree.children.size()-1);
+            }
         }
         private boolean deepEquals_(MNode2<T> other,boolean ckeckEqual) {
             // lambda?
@@ -122,7 +122,7 @@ public class RedBean {
     public static void example() { // https://www.red-bean.com/sgf/var.html
         Node<Character> bRoot=binary();
         System.out.println("coded binary sample");
-        G2.print("",bRoot);
+        G2.print(bRoot,"");
         G2.print(bRoot);
         System.out.println("coded mway sample");
         MNode2<Character> mRoot=mway();
