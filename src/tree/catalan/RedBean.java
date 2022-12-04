@@ -14,6 +14,10 @@ public class RedBean {
             // this is broken. maybe not
             //System.out.println("processing: "+mNode2.data);
             // did we remove the extra node we added?
+            if(((Character)mNode2.data).equals('.')) {
+                int x=0;
+                x++;
+            }
             boolean ok=processed.add((Character)mNode2.data);
             if(!ok) System.out.println(mNode2.data+" already processed!");
             Node<T> left=null,tail=null;

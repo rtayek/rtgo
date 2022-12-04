@@ -13,31 +13,21 @@ import utilities.*;
     @Parameters public static Collection<Object[]> parameters() {
         Set<Object> objects=new LinkedHashSet<>();
         int[] x=new int[] {0,0};
-        objects.add(x);
-        x=new int[] {1,0};
-        objects.add(x);
-        x=new int[] {2,0};
-        objects.add(x);
-        x=new int[] {2,1};
-        objects.add(x);
-        x=new int[] {3,0};
-        objects.add(x);
-        x=new int[] {3,1};
-        objects.add(x);
-        x=new int[] {3,2};
-        objects.add(x);
-        x=new int[] {3,3};
-        objects.add(x);
-        x=new int[] {3,4};
-        objects.add(x);
+        for(int nodes=0;nodes<6;++nodes) {
+            long trees=Catalan.catalan(nodes);
+            for(int tree=0;tree<trees;++tree) {
+                x=new int[] {nodes,tree};
+                objects.add(x);
+            }
+        }
         return ParameterArray.parameterize(objects);
     }
     public ParameterizedNodeRoundTripTestCase(int[] x) {
         nodes=x[0];
-        int n=x[1];
+        int tree=x[1];
         Iterator<Character> iterator=new G2.Characters();
         ArrayList<Node<Character>> trees=G2.Generator.all(nodes,iterator,false);
-        bRoot=trees.get(n);
+        bRoot=trees.get(tree);
     }
     int nodes;
 }

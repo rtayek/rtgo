@@ -91,7 +91,7 @@ public class G2TestCase {
         assertEquals("11000",encoded);
     }
     @Test public void test2Ttue() {
-        trees=Generator.all(1,iterator,true);
+        trees=Generator.all(2,iterator,true);
         Node<Integer> tree=trees.get(0);
         String encoded=encode(tree,null);
         assertEquals("10100",encoded);

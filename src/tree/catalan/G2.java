@@ -143,6 +143,7 @@ public class G2 {
             if(obj==null) return false;
             if(getClass()!=obj.getClass()) return false;
             Node<T> other=(Node<T>)obj;
+            if((data==null)!=(other.data==null)) return false;
             boolean equal=data.equals(other.data);
             if(!equal) if(verbose) System.out.println(data+" "+other.data);
             return equal;
@@ -150,20 +151,45 @@ public class G2 {
         public boolean deepEquals_(Node<T> other,boolean ckeckEqual) {
             // lambda?
             if(this==other) return true;
-            else if(other==null) { System.out.println(data+" othe ris null!"); return false; }
-            if(ckeckEqual) if(!equals(other)) { if(verbose) System.out.println(data+" "+other.data); return false; }
+            else if(other==null) {
+                if(verbose)
+                    System.out.println(data+" othe ris null!");
+                return false;
+            }
+            if(ckeckEqual)
+                if(!equals(other)) {
+                    if(verbose)
+                        System.out.println(data+" "+other.data);
+                    return false;
+                }
             if(left!=null) {
                 boolean isEqual=left.deepEquals_(other.left,ckeckEqual);
-                if(!isEqual) { if(verbose) System.out.println(left.data+"!="+other.left.data); return false; }
-                if(verbose) System.out.println(left.data+"=="+other.left.data);
-            } else if(other.left!=null) { if(verbose) System.out.println(data+" othe left is null!"); return false; }
+                if(!isEqual) {
+                    if(verbose)
+                        System.out.println(left.data+"!="+other.left.data);
+                    return false;
+                }
+                if(verbose)
+                    System.out.println(left.data+"=="+other.left.data);
+            } else if(other.left!=null) {
+                if(verbose)
+                    System.out.println(data+" othe left is null!");
+                return false;
+            }
             if(right!=null) {
                 boolean isEqual=right.deepEquals_(other.right,ckeckEqual);
-                if(!isEqual) { System.out.println(right.data+"!="+other.right.data); return false; }
-                if(verbose) System.out.println(right.data+"=="+other.right.data);
+                if(!isEqual) {
+                    if(verbose)
+                        System.out.println(right.data+"!="+other.right.data);
+                    return false;
+                }
+                if(verbose)
+                    System.out.println(right.data+"=="+other.right.data);
             } else if(other.right!=null) {
-                if(verbose) System.out.println(data+" othe right is not null!");
-                if(verbose) System.out.println("other right "+other.right.data);
+                if(verbose)
+                    System.out.println(data+" othe right is not null!");
+                if(verbose)
+                    System.out.println("other right "+other.right.data);
                 return false;
             }
             return true;
@@ -204,16 +230,33 @@ public class G2 {
             }
             return n;
         }
+        // Given a general tree with ordered but not indexed children,
+        // encode the first child as the left child of its parent,
+        // and each other node as a right child of its (former) sibling.
+        // Given a binary tree with distinguished left and right children,
+        // read the left child of a node as its first child and the right child as its next sibling.
         public static <T> MNode2<T> from_(Node<T> node,MNode2<T> grandParent) {
             if(node==null) return null;
-            //System.out.println("processing: "+node.data);
+            if(node.data!=null)
+                if(((Character)node.data).equals('.')) {
+                    int x=0;
+                    x++;
+                } else {
+                    int x=0;
+                    x++;
+                }
             boolean ok=processed.add((Character)node.data);
             if(!ok) {
                 System.out.println(node.data+" already processed!");
-                //return null;
+                if(false) if(node.data.equals('k')) { System.out.println("node was: "+node.data); node.data=null; }
+                return null;
             }
             MNode2<T> parent=new MNode2<T>(node.data,grandParent);
-            if(grandParent!=null) grandParent.children.add(parent);
+            if(grandParent!=null) {
+                grandParent.children.add(parent);
+                System.out.println(node.data+": "+parent);
+            }
+
             //else throw new RuntimeException("gradparent is null!");
             if(node.left!=null) {
                 for(Node<T> n=node.left;n!=null;n=n.right) {
@@ -221,22 +264,28 @@ public class G2 {
                     MNode2<T> newMNode2=from_(n,parent);
                     //parent.children.add(newMNode2);
                 }
-            }
+            } else if(node.right!=null) System.out.println("can not be a game!");
             // this seems to work, but it's different from my MNode's!
             if(node.right!=null) {
                 //System.out.println("rigt!=null");
-                MNode2<T> newMNode2=from_(node.right,parent);
+                MNode2<T> newMNode2=from_(node.right,grandParent);
                 if(node.right.data.equals('d')) System.out.println("d2, parent is: "+parent.data);
             }
             return parent;
         }
-        public static <T> MNode2<T> from(Node<T> node) {
+        public static <T> MNode2<T> oldFfrom(Node<T> node) {
             processed.clear();
             MNode2<T> extra=new MNode2<T>(null,null);
             //if(node.right!=null) throw new RuntimeException("node.right!=null");
             MNode2<T> mNode2=from_(node,extra);
             return extra;
         }
+        public static <T> MNode2<T> from(Node<T> node) {
+            processed.clear();
+            MNode2<T> mNode2=from_(node,null);
+            return mNode2;
+        }
+
         Node<T> left,right,parent;
         public T data;
         String encoded;
@@ -348,7 +397,7 @@ public class G2 {
         }
     }
     public static <T> void print(String prefi,Node<T> node) {
-        if(node!=null) print(prefi,node,false);
+        if(node!=null) print(prefi,node,true);
         else System.out.println("0");
     }
     // all wants a generator
