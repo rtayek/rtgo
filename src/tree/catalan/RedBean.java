@@ -1,9 +1,22 @@
 package tree.catalan;
 import static tree.catalan.RedBean.MNode2.print;
 import java.util.*;
-import tree.catalan.G2.Node;
+import java.util.function.Consumer;
+import tree.catalan.G2.*;
 public class RedBean {
     public static class MNode2<T> {
+        public void preorder(Consumer<MNode2<T>> consumer) {
+            if(consumer!=null) consumer.accept(this);
+            for(MNode2<T> child:children) if(child!=null) child.preorder(consumer);
+        }
+        public static <T>void preorder(MNode2<T> mNode2,Consumer<MNode2<T>> consumer) {
+            if(mNode2!=null) mNode2.preorder(consumer);
+        }
+        static <T> void relabel(MNode2<T> node,final Iterator<T> i) {
+            Consumer<MNode2<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
+            preorder(node,relabel);
+        }
+
         @Override public String toString() { return "MNode2 [data="+data+"]"; }
         public MNode2(T data,MNode2<T> parent) {
             // maybe just use t as first argument?
@@ -122,11 +135,20 @@ public class RedBean {
     public static void example() { // https://www.red-bean.com/sgf/var.html
         Node<Character> bRoot=binary();
         System.out.println("coded binary sample");
+        //G2.print(bRoot,"");
+        Characters i=new Characters();
+        Node.<Character> relabel(bRoot,i); // since i uses 'r' for the root.
+        System.out.println("after relabel");
         G2.print(bRoot,"");
-        G2.print(bRoot);
         System.out.println("coded mway sample");
         MNode2<Character> mRoot=mway();
+        i=new Characters();
+        MNode2.<Character> relabel(mRoot,i); // since i uses 'r' for the root.
+        System.out.println("after relabel");
         print(mRoot,"",true);
+        // since mway to binary seems to work,
+        // let's see why binary to mway fails.
+
     }
     public static void main(String[] arguments) { example(); }
 }

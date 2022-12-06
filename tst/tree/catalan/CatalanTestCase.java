@@ -52,14 +52,18 @@ import utilities.MyTestWatcher;
         }
     }
     @Test public void testRelabel() {
+        System.out.println(nodes+" nodes.");
         ArrayList<Node<Integer>> trees=Generator.one(nodes,iterator,false);
         for(Node<Integer> expected:trees) {
+            System.out.println("expected:");
             G2.print(expected,"");
             Iterator<Character> j=new G2.Characters();
-            Node<Character> actual=Node.reLabel(expected,j);
+            Node<Character> actual=Node.reLabelCopy(expected,j);
+            System.out.println("after first relabel:");
             G2.print(actual,"");
             Iterator<Integer> i=new G2.Integers();
-            Node<Integer> actual2=Node.reLabel(actual,i);
+            Node<Integer> actual2=Node.reLabelCopy(expected,i);
+            System.out.println("after seond relabel:");
             G2.print(actual2,"");
             // fails because ?
             assertTrue(structureDeepEquals(expected,actual2));

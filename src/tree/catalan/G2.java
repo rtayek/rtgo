@@ -10,12 +10,12 @@ public class G2 {
     public static class Integers implements Iterator<Integer> {
         @Override public boolean hasNext() { return n<Integer.MAX_VALUE; }
         @Override public Integer next() { return n++; }
-        Integer n=0;
+        Integer n=2; // -1?
     }
     public static class Characters implements Iterator<Character> {
         @Override public boolean hasNext() { return character<Character.MAX_VALUE; }
         @Override public Character next() { return ++character; }
-        Character character='a';
+        Character character='a'+1;
     }
     /*
     Given a general tree with ordered but not indexed children,
@@ -41,17 +41,17 @@ public class G2 {
             copy.right=(copy(node.right));
             return copy;
         }
-        public static <T,U> Node<U> reLabel_(Node<T> node,Iterator<U> iterator) {
-            U data=iterator!=null?iterator.next():null;
-            Node<U> newNode=new Node<U>(data);
-            return newNode;
-        }
-        @SuppressWarnings("unchecked") public static <T,U> Node<U> reLabel(Node<T>node,Iterator<U> iterator) {
+        public static <T,U> Node<U> reLabelCopy_(Node<T> node,Iterator<U> iterator) {
             if(node==null) return null;
-            Node<U> copy=Node.reLabel_(node,iterator);
-            copy.left= (Node<U>)node.left;
-            copy.right=(Node<U>)node.right;
-            System.out.println("relabel: "+node.data+"->"+copy.data);
+            U data=iterator!=null&&iterator.hasNext()?iterator.next():null;
+            Node<U> copy=new Node<U>(data);
+            copy.left=Node.reLabelCopy_(node.left,iterator);
+            copy.right=Node.reLabelCopy_(node.right,iterator);
+            return copy;
+        }
+        public static <T,U> Node<U> reLabelCopy(Node<T> node,Iterator<U> iterator) {
+            if(node==null) return null;
+            Node<U> copy=Node.reLabelCopy_(node,iterator);
             return copy;
         }
         public void inorder(Consumer<Node<T>> consumer) {
@@ -86,6 +86,7 @@ public class G2 {
         }
         private static <T> void encode_(StringBuffer sb,Node<T> node,ArrayList<T> data) {
             // lambda?
+            // use consumer of node instead of array list of node?
             boolean isNotNull=node!=null;
             if(isNotNull) {
                 if(data!=null) data.add(node.data);
@@ -258,6 +259,10 @@ public class G2 {
             MNode2<T> mNode2=from_(node.left,parent);
             System.out.println("returning parent: "+parent);
             return parent;
+        }
+        static <T> void relabel(Node<T> node,final Iterator<T> i) {
+            Consumer<Node<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
+            preorder(node,relabel);
         }
         Node<T> left,right,parent;
         public T data;
@@ -448,8 +453,8 @@ public class G2 {
         G2 g2=new G2();
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
         if(inEclipse()) g2.useMap=true;
-        //g2.useMap=false;
-        int nodes=10;
+        g2.useMap=false;
+        int nodes=3;
         ArrayList<ArrayList<Node<Integer>>> all=G2.Generator.all(nodes);
         System.out.println(nodes+" nodes.");
         if(false) { check(all.get(2).get(0)); return; }
@@ -457,7 +462,11 @@ public class G2 {
             System.out.println("check "+i+" nodes.");
             ArrayList<Node<Integer>> trees=all.get(i);
             int n=0;
-            for(Node<Integer> expected:trees) { check(expected); }
+            for(Node<Integer> expected:trees) {
+                check(expected);
+                G2.print(expected,"");
+                //G2.print(expected);
+            }
         }
         //if(true) return;
         ArrayList<Node<Integer>> trees=all.get(nodes);
