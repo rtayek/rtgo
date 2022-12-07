@@ -24,11 +24,15 @@ public class RedBeanTestCase {
         //assertTrue(deepEquals(bRoot,binary));
     }
     @Test public void testBinaryToMWay() {
+        System.out.println("original binary.");
         G2.print(bRoot,"");
+        System.out.println("original mway.");
         print(mRoot,"",true);
         System.out.println(mRoot.children);
+        System.out.println("converting from binary.");
         Node.processed.clear();
         MNode2<Character> mway=from(bRoot,null);
+        System.out.println("mway from binary.");
         print(mway,"",true);
         System.out.println(structureDeepEquals(mRoot,mway));
         System.out.println(deepEquals(mRoot,mway));

@@ -9,12 +9,17 @@ public class RoundTripTestCase extends AbstractRoundTripTestCase {
     //ArrayList<Node<Character>> trees=new ArrayList<>();
     @Override @Before public void setUp() throws Exception {}
     @Override @After public void tearDown() throws Exception {}
-    Iterator<Character> iterator=new G2.Characters();
-    ArrayList<Node<Character>> trees=Generator.one(10,iterator,false);
+    Iterator<Long> iterator=new G2.Longs();
+    ArrayList<Node<Long>> trees=Generator.one(10,iterator,false);
     {
         // bRoot=trees.get(0);
+        //  Node<Long> bRoot;
+        //bRoot=trees.get(8420);
         key="red bean sample";
-        bRoot=binary();
-        bRoot=trees.get(8420);
+        Node<Character> binary=binary();
+        Iterator<Long> i=new G2.Longs();
+        bRoot=Node.reLabelCopy(binary,i);
+        System.out.println("relabeled bRoot:");
+        G2.print(bRoot,"");
     }
 }

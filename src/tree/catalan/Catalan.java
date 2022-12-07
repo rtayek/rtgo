@@ -27,15 +27,15 @@ public class Catalan {
         for(int nodes=0;nodes<10;++nodes) {
             System.out.println("nodes: "+nodes);
             Node.ids=0;
-            Iterator<Integer> iterator=new G2.Integers();
-            List<Node<Integer>> trees=Generator.one(nodes,iterator,false);
+            Iterator<Long> iterator=new G2.Longs();
+            List<Node<Long>> trees=Generator.one(nodes,iterator,false);
             //System.out.println("trees: "+trees);
             //System.out.println("trees2: "+trees2);
             //System.out.println(nodes+" nodes. has "+trees.size()+" trees.");
             //System.out.println(nodes+" nodes. has "+trees2.size()+" trees2.");
             if(trees.size()!=catalans[nodes]) { System.out.println(trees.size()+" trees.size()!=catalans["+nodes+"]"); }
             else System.out.println(trees.size()+" trees.");
-            for(Node<Integer> node:trees) {
+            for(Node<Long> node:trees) {
                 //System.out.println("|||");
                 //print(node);
             }

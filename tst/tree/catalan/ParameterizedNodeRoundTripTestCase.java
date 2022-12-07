@@ -14,7 +14,7 @@ import utilities.*;
         //node: 10, tree: 8360
         Set<Object> objects=new LinkedHashSet<>();
         int[] x=new int[] {0,0};
-        for(int nodes=0;nodes<=3;++nodes) {
+        for(int nodes=0;nodes<=5;++nodes) {
             long trees=Catalan.catalan(nodes);
             for(int tree=0;tree<trees;++tree) {
                 x=new int[] {nodes,tree};
@@ -27,9 +27,9 @@ import utilities.*;
         nodes=x[0];
         int tree=x[1];
         watcher.key=key="node: "+nodes+", tree: "+tree;
-        Iterator<Character> iterator=new G2.Characters();
+        Iterator<Long> iterator=new G2.Longs();
         boolean useMap=false;
-        ArrayList<Node<Character>> trees=G2.Generator.one(nodes,iterator,useMap);
+        ArrayList<Node<Long>> trees=G2.Generator.one(nodes,iterator,useMap);
         bRoot=trees.get(tree);
     }
     int nodes;

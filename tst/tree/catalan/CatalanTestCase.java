@@ -31,20 +31,20 @@ import utilities.MyTestWatcher;
         else assertEquals(catalan(nodes),Catalan.catalan2(nodes));
     }
     @Test public void testEncodeEncode() {
-        ArrayList<Node<Integer>> trees=Generator.<Integer> one(nodes,iterator,false);
-        for(Node<Integer> expected:trees) {
+        ArrayList<Node<Long>> trees=Generator.<Long> one(nodes,iterator,false);
+        for(Node<Long> expected:trees) {
             String encodedd=encode(expected,null);
-            Node<Integer> acatual=decode(encodedd,null);
+            Node<Long> acatual=decode(encodedd,null);
             assertTrue(structureDeepEquals(expected,acatual));
         }
     }
     @Test public void testCopy() {
-        ArrayList<Node<Integer>> trees=Generator.one(nodes,iterator,false);
-        for(Node<Integer> expected:trees) {
+        ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
+        for(Node<Long> expected:trees) {
             //if(expected==null) continue; // looks like we need this.
-            Node<Integer> actual=copy(expected);
+            Node<Long> actual=copy(expected);
             assertTrue(structureDeepEquals(expected,actual));
-            ArrayList<Integer> data2=new ArrayList<>();
+            ArrayList<Long> data2=new ArrayList<>();
             String expectedEncoded=encode(expected,data2);
             String actualEncoded=encode(actual,data2);
             assertEquals(expectedEncoded,actualEncoded);
@@ -53,33 +53,28 @@ import utilities.MyTestWatcher;
     }
     @Test public void testRelabel() {
         System.out.println(nodes+" nodes.");
-        ArrayList<Node<Integer>> trees=Generator.one(nodes,iterator,false);
-        for(Node<Integer> expected:trees) {
-            System.out.println("expected:");
-            G2.print(expected,"");
+        ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
+        for(Node<Long> expected:trees) {
             Iterator<Character> j=new G2.Characters();
             Node<Character> actual=Node.reLabelCopy(expected,j);
-            System.out.println("after first relabel:");
-            G2.print(actual,"");
-            Iterator<Integer> i=new G2.Integers();
-            Node<Integer> actual2=Node.reLabelCopy(expected,i);
-            System.out.println("after seond relabel:");
-            G2.print(actual2,"");
-            // fails because ?
-            assertTrue(structureDeepEquals(expected,actual2));
-            assertTrue(deepEquals(expected,actual2));
+            Iterator<Long> i=new G2.Longs();
+            Node<Long> actual2=Node.reLabelCopy(expected,i);
+            Iterator<Character> k=new G2.Characters();
+            Node<Character> actual3=Node.reLabelCopy(expected,k);
+            assertTrue(structureDeepEquals(actual,actual3));
+            assertTrue(deepEquals(actual,actual3));
         }
     }
     @Test public void testCheck() {
-        ArrayList<Node<Integer>> trees=Generator.one(nodes,iterator,false);
-        for(Node<Integer> node:trees) {
+        ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
+        for(Node<Long> node:trees) {
             int n=check(node);
             assertEquals(0,n);
         }
     }
     @Test public void testLongRoundTrip() {
-        ArrayList<Node<Integer>> trees=Generator.one(nodes,iterator,false);
-        for(Node<Integer> node:trees) {
+        ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
+        for(Node<Long> node:trees) {
             // if(node==null) continue; // looks like we need this.
             // this is a round trip
             String expected=Node.encode(node,null);
@@ -90,8 +85,8 @@ import utilities.MyTestWatcher;
     }
     @Test public void testMirrorRoundTrip() { // do we need this?
         // look for duplicate code in node!
-        ArrayList<Node<Integer>> trees=Generator.one(nodes,iterator,false);
-        for(Node<Integer> node:trees) {
+        ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
+        for(Node<Long> node:trees) {
             if(node==null) continue;
             mirror(node);
             // this is a round trip
@@ -102,10 +97,10 @@ import utilities.MyTestWatcher;
         }
     }
     @Test public void testGenerate() {
-        ArrayList<Node<Integer>> trees=Generator.one(nodes,iterator,false);
+        ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
         assertEquals(catalan2(nodes),trees.size());
     }
     int nodes;
-    Iterator<Integer> iterator=new G2.Integers();
+    Iterator<Long> iterator=new G2.Longs();
     public static final int max=7; // 11
 }

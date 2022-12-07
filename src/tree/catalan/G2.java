@@ -7,15 +7,15 @@ import java.util.function.Consumer;
 import tree.catalan.RedBean.MNode2;
 import utilities.Et;
 public class G2 {
-    public static class Integers implements Iterator<Integer> {
-        @Override public boolean hasNext() { return n<Integer.MAX_VALUE; }
-        @Override public Integer next() { return n++; }
-        Integer n=2; // -1?
+    public static class Longs implements Iterator<Long> {
+        @Override public boolean hasNext() { return n<Long.MAX_VALUE; }
+        @Override public Long next() { return n++; }
+        Long n=2l; // -1?
     }
     public static class Characters implements Iterator<Character> {
         @Override public boolean hasNext() { return character<Character.MAX_VALUE; }
         @Override public Character next() { return ++character; }
-        Character character='a'+1;
+        Character character='a'+2;
     }
     /*
     Given a general tree with ordered but not indexed children,
@@ -224,9 +224,9 @@ public class G2 {
         // and each other node as a right child of its (former) sibling.
         // Given a binary tree with distinguished left and right children,
         // read the left child of a node as its first child and the right child as its next sibling.
-        public static <T> MNode2<T> from_(Node<T> node,MNode2<T> grandParent) {
+        private static <T> MNode2<T> from_(Node<T> node,MNode2<T> grandParent) {
             if(node==null) { if(grandParent!=null) grandParent.children.add(null); return null; }
-            boolean ok=processed.add((Character)node.data);
+            boolean ok=processed.add(node.data);
             if(!ok) { System.out.println(node.data+" "+node.id+"  node already processed!"); return null; }
             MNode2<T> parent=new MNode2<T>(node.data,grandParent);
             if(grandParent!=null) grandParent.children.add(parent);
@@ -246,13 +246,6 @@ public class G2 {
             }
             return parent;
         }
-        public static <T> MNode2<T> oldFfrom(Node<T> node) {
-            processed.clear();
-            MNode2<T> extra=new MNode2<T>(null,null);
-            //if(node.right!=null) throw new RuntimeException("node.right!=null");
-            MNode2<T> mNode2=from_(node,extra);
-            return extra;
-        }
         public static <T> MNode2<T> from(Node<T> node,MNode2<T> parent) {
             System.out.println("using parent: "+parent);
             processed.clear();
@@ -260,6 +253,23 @@ public class G2 {
             System.out.println("returning parent: "+parent);
             return parent;
         }
+        public MNode2<Long> from(Node<Long> root) {
+            Node<Long> extra=new Node<>(null);
+            extra.left=root;
+            MNode2<Long> extraMNode2=new MNode2<>(null,null);
+            Node.processed.clear();
+            MNode2<Long> mroot=Node.<Long> from(extra,extraMNode2);
+            mroot.data=0l;
+            return extraMNode2;
+        }
+        private static <T> MNode2<T> oldFfrom(Node<T> node) {
+            processed.clear();
+            MNode2<T> extra=new MNode2<T>(null,null);
+            //if(node.right!=null) throw new RuntimeException("node.right!=null");
+            MNode2<T> mNode2=from_(node,extra);
+            return extra;
+        }
+        
         static <T> void relabel(Node<T> node,final Iterator<T> i) {
             Consumer<Node<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
             preorder(node,relabel);
@@ -269,7 +279,7 @@ public class G2 {
         String encoded;
         final int id=++ids;
         static int ids;
-        static LinkedHashSet<Character> processed=new LinkedHashSet<>();
+        static LinkedHashSet processed=new LinkedHashSet<>();
     }
     public static <T> Node<T> roundTrip(Node<T> expected) {
         // add string writer and return the tree
@@ -298,9 +308,9 @@ public class G2 {
     }
     static String roundTripLong(String expected,long number) {
         List<Boolean> list=bits(number,expected.length());
-        ArrayList<Integer> data=new ArrayList<>(sequentialData);
+        ArrayList<Long> data=new ArrayList<>(sequentialData);
         // maybe add data as parameter?
-        Node<Integer> node2=decode(list,data);
+        Node<Long> node2=decode(list,data);
         String actual=encode(node2,data);
         return actual;
     }
@@ -368,6 +378,7 @@ public class G2 {
         System.out.println("end of nodes "+nodes);
     }
     private static <T> void print(Node<T> node,String prefix,boolean isLeft) {
+        // lambda
         if(node!=null) {
             System.out.println(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
             print(node.left,prefix+(isLeft?"|   ":"    "),true);
@@ -381,7 +392,7 @@ public class G2 {
     // all wants a generator
     // encode wants an empty list
     // use a new map
-    // and checkfor duplicates not using map?
+    // and check for duplicates not using map?
     // new map is same as old map
     // figure this out later
     // maybe always generate with long and relabel?
@@ -410,11 +421,11 @@ public class G2 {
             ArrayList<Node<T>> trees=generator.all(nodes,iterator);
             return trees;
         }
-        public static ArrayList<ArrayList<Node<Integer>>> all(int nodes) {
-            ArrayList<ArrayList<Node<Integer>>> all=new ArrayList<>();
-            Iterator<Integer> iterator=new G2.Integers();
+        public static ArrayList<ArrayList<Node<Long>>> all(int nodes) {
+            ArrayList<ArrayList<Node<Long>>> all=new ArrayList<>();
+            Iterator<Long> iterator=new G2.Longs();
             for(int i=0;i<=nodes;++i) {
-                ArrayList<Node<Integer>> trees=Generator.one(i,iterator,false);
+                ArrayList<Node<Long>> trees=Generator.one(i,iterator,false);
                 all.add(trees);
             }
             return all;
@@ -427,23 +438,23 @@ public class G2 {
         boolean notEclipse="true".equalsIgnoreCase(string);
         return !notEclipse;
     }
-    static void foo(Node<Integer> tree) {
-        ArrayList<Node<Integer>> trees;
+    static void foo(Node<Long> tree) {
+        ArrayList<Node<Long>> trees;
         int n;
         print(tree,"");
         print(tree);
-        ArrayList<Integer> data=collectData(tree);
+        ArrayList<Long> data=collectData(tree);
         System.out.println("collect data: "+data);
         StringBuffer stringBuffer=new StringBuffer();
         toDataString(stringBuffer,tree);
         System.out.println("to data string: "+stringBuffer);
         String expected=encode(tree,null);
-        MyConsumer<Integer> c2=new MyConsumer<Integer>();
-        Node.<Integer> postorder(tree,c2);
+        MyConsumer<Long> c2=new MyConsumer<Long>();
+        Node.<Long> postorder(tree,c2);
         String actual=encode(c2.copy,null);
         System.out.println("ac: "+actual);
         if(!expected.equals(actual)) System.out.println("copy failure!");
-        ArrayList<Integer> data2=collectData(c2.copy);
+        ArrayList<Long> data2=collectData(c2.copy);
         System.out.println("collect data2: "+data2);
     }
     public static void main(String[] arguments) {
@@ -455,35 +466,35 @@ public class G2 {
         if(inEclipse()) g2.useMap=true;
         g2.useMap=false;
         int nodes=3;
-        ArrayList<ArrayList<Node<Integer>>> all=G2.Generator.all(nodes);
+        ArrayList<ArrayList<Node<Long>>> all=G2.Generator.all(nodes);
         System.out.println(nodes+" nodes.");
         if(false) { check(all.get(2).get(0)); return; }
         for(int i=0;i<=nodes;i++) {
             System.out.println("check "+i+" nodes.");
-            ArrayList<Node<Integer>> trees=all.get(i);
+            ArrayList<Node<Long>> trees=all.get(i);
             int n=0;
-            for(Node<Integer> expected:trees) {
+            for(Node<Long> expected:trees) {
                 check(expected);
                 G2.print(expected,"");
                 //G2.print(expected);
             }
         }
         //if(true) return;
-        ArrayList<Node<Integer>> trees=all.get(nodes);
+        ArrayList<Node<Long>> trees=all.get(nodes);
         int n=trees.size();
-        Node<Integer> tree=trees.get(n/2);
+        Node<Long> tree=trees.get(n/2);
         foo(tree);
     }
     boolean useMap; // set in main and never used.
     Et et=new Et();
     // put all here as an instance variable?
     SortedMap<Integer,ArrayList<Node<Integer>>> map=new TreeMap<>();
-    static List<Integer> sequentialData=new ArrayList<>();
+    static List<Long> sequentialData=new ArrayList<>();
     static final int maxNodes=100;
     static Boolean verbose=false;
     static {
-        ArrayList<Integer> data=new ArrayList<>();
-        for(int i=0;i<maxNodes;++i) data.add(i); // start at 1?
+        ArrayList<Long> data=new ArrayList<>();
+        for(int i=0;i<maxNodes;++i) data.add((long)i); // start at 1?
         sequentialData=Collections.unmodifiableList(data);
         System.out.println("end static init.");
     }
