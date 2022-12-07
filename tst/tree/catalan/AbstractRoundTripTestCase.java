@@ -10,10 +10,10 @@ public abstract class AbstractRoundTripTestCase {
     @After public void tearDown() throws Exception {}
     @Test public void testNodeRoundTrip() {
         if(bRoot==null) System.out.println("binary tree is null.");
-        //if(verbose) { System.out.println("bRoot"); G2.print(bRoot,"   "); }
+        if(verbose) { System.out.println("bRoot"); G2.print(bRoot,"   "); }
         mRoot=Node.from(bRoot);
         if(verbose) { System.out.println("mRoot"); MNode2.print(mRoot,"",true); }
-        
+
         MNode2.processed.clear();
         Node<Long> actual=MNode2.oldFrom(mRoot);
         assertNotNull(actual);

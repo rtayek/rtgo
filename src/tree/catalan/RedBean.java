@@ -16,7 +16,7 @@ public class RedBean {
             Consumer<MNode2<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
             preorder(node,relabel);
         }
-        
+
         @Override public String toString() { return "MNode2 [data="+data+"]"; }
         public MNode2(T data,MNode2<T> parent) {
             // maybe just use t as first argument?
@@ -59,7 +59,7 @@ public class RedBean {
             Node<T> binaryNode=new Node<>(mNode2.data,left,null); // first child
             return binaryNode;
         }
-
+        
         public static <T> void print(MNode2<T> tree,String indent,boolean last) {
             System.out.println(indent+"+- "+(tree!=null?tree.data:"0"));
             indent+=last?"   ":"|  ";
@@ -67,11 +67,24 @@ public class RedBean {
                 print(tree.children.get(i),indent,i==tree.children.size()-1);
             }
         }
+        @Override public int hashCode() { return Objects.hash(data); }
+        @Override public boolean equals(Object obj) {
+            if(this==obj) return true;
+            if(obj==null) return false;
+            if(getClass()!=obj.getClass()) return false;
+            MNode2<T> other=(MNode2<T>)obj;
+            if((data==null)!=(other.data==null)) return false;
+            boolean equal=data.equals(other.data);
+            //if(!equal) if(verbose) System.out.println(data+" "+other.data);
+            return equal;
+        }
         private boolean deepEquals_(MNode2<T> other,boolean ckeckEqual) {
             // lambda?
             if(this==other) return true;
             else if(other==null) return false;
-            if(ckeckEqual) if(!equals(other)) return false;
+            if(ckeckEqual) {
+                //System.out.println("cheching: "+this+" "+other);
+                if(!equals(other)) return false;}
             if(children.size()!=other.children.size()) return false;
             for(int i=0;i<children.size();++i) {
                 MNode2<T> child=children.get(i);
@@ -152,7 +165,7 @@ public class RedBean {
         print(mRoot,"",true);
         // since mway to binary seems to work,
         // let's see why binary to mway fails.
-        
+
     }
     public static void main(String[] arguments) { example(); }
 }

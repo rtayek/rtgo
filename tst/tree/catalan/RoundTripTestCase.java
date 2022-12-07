@@ -20,6 +20,6 @@ public class RoundTripTestCase extends AbstractRoundTripTestCase {
         Iterator<Long> i=new G2.Longs();
         bRoot=Node.reLabelCopy(binary,i);
         System.out.println("relabeled bRoot:");
-        G2.print(bRoot,"");
+        //G2.print(bRoot,"");
     }
 }

@@ -163,7 +163,7 @@ public class G2 {
             if(this==obj) return true;
             if(obj==null) return false;
             if(getClass()!=obj.getClass()) return false;
-            Node<T> other=(Node<T>)obj;
+            @SuppressWarnings("unchecked") Node<T> other=(Node<T>)obj;
             if((data==null)!=(other.data==null)) return false;
             boolean equal=data.equals(other.data);
             if(!equal) if(verbose) System.out.println(data+" "+other.data);
@@ -226,43 +226,36 @@ public class G2 {
         // read the left child of a node as its first child and the right child as its next sibling.
         private static <T> MNode2<T> from_(Node<T> node,MNode2<T> grandParent) {
             if(node==null) { if(grandParent!=null) grandParent.children.add(null); return null; }
+            //System.out.println("processing: "+node.data+" <<<<<<");
             boolean ok=processed.add(node.data);
             if(!ok) { System.out.println(node.data+" "+node.id+"  node already processed!"); return null; }
             MNode2<T> parent=new MNode2<T>(node.data,grandParent);
             if(grandParent!=null) grandParent.children.add(parent);
-            else {
-                System.out.println("gradparent is null!");
-            }
+            else System.out.println("gradparent is null!");
             if(node.left!=null) {
                 for(Node<T> n=node.left;n!=null;n=n.right) {
+                    if(verbose) if(processed.contains(n.data)) System.out.println("1 will be already processed"+n);
                     MNode2<T> newMNode2=from_(n,parent);
-                    //parent.children.add(newMNode2);
                 }
             } else if(node.right!=null) System.out.println("can not be a game!");
             // this seems to work, but it's different from my MNode's!
             if(node.right!=null) {
-                //System.out.println("rigt!=null");
+                if(verbose) if(processed.contains(node.right.data))
+                    System.out.println("2 will be already processed"+node.right);
                 MNode2<T> newMNode2=from_(node.right,grandParent);
             }
-            return parent;
-        }
-        public static <T> MNode2<T> from(Node<T> node,MNode2<T> parent) {
-            System.out.println("using parent: "+parent);
-            processed.clear();
-            MNode2<T> mNode2=from_(node.left,parent);
-            System.out.println("returning parent: "+parent);
+            //System.out.println("end processing: "+node.data+" >>>>>>");
             return parent;
         }
         public static <T> MNode2<T> from(Node<T> root) {
             Node<T> extra=new Node<>(null);
             extra.left=root;
             MNode2<T> extraMNode2=new MNode2<>(null,null);
-            Node.processed.clear();
-            MNode2<T> mroot=from(extra,extraMNode2);
+            processed.clear();
+            MNode2<T> mNode2=from_(extra.left,extraMNode2);
             //mroot.data=0l;
             return extraMNode2;
         }
-
         private static <T> MNode2<T> oldFfrom(Node<T> node) {
             processed.clear();
             MNode2<T> extra=new MNode2<T>(null,null);
@@ -270,7 +263,6 @@ public class G2 {
             MNode2<T> mNode2=from_(node,extra);
             return extra;
         }
-
         static <T> void relabel(Node<T> node,final Iterator<T> i) {
             Consumer<Node<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
             preorder(node,relabel);
