@@ -253,15 +253,16 @@ public class G2 {
             System.out.println("returning parent: "+parent);
             return parent;
         }
-        public MNode2<Long> from(Node<Long> root) {
-            Node<Long> extra=new Node<>(null);
+        public static <T> MNode2<T> from(Node<T> root) {
+            Node<T> extra=new Node<>(null);
             extra.left=root;
-            MNode2<Long> extraMNode2=new MNode2<>(null,null);
+            MNode2<T> extraMNode2=new MNode2<>(null,null);
             Node.processed.clear();
-            MNode2<Long> mroot=Node.<Long> from(extra,extraMNode2);
-            mroot.data=0l;
+            MNode2<T> mroot=from(extra,extraMNode2);
+            //mroot.data=0l;
             return extraMNode2;
         }
+
         private static <T> MNode2<T> oldFfrom(Node<T> node) {
             processed.clear();
             MNode2<T> extra=new MNode2<T>(null,null);
@@ -269,7 +270,7 @@ public class G2 {
             MNode2<T> mNode2=from_(node,extra);
             return extra;
         }
-        
+
         static <T> void relabel(Node<T> node,final Iterator<T> i) {
             Consumer<Node<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
             preorder(node,relabel);

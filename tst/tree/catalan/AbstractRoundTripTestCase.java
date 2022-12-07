@@ -8,21 +8,12 @@ public abstract class AbstractRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
-    public MNode2<Long> from(Node<Long> root) {
-        Node<Long> extra=new Node<>(null);
-        extra.left=root;
-        MNode2<Long> extraMNode2=new MNode2<>(null,null);
-        Node.processed.clear();
-        MNode2<Long> mroot=Node.<Long> from(extra,extraMNode2);
-        mroot.data=0l;
-        return extraMNode2;
-    }
     @Test public void testNodeRoundTrip() {
         if(bRoot==null) System.out.println("binary tree is null.");
         //if(verbose) { System.out.println("bRoot"); G2.print(bRoot,"   "); }
-        mRoot=from(bRoot);
+        mRoot=Node.from(bRoot);
         if(verbose) { System.out.println("mRoot"); MNode2.print(mRoot,"",true); }
-
+        
         MNode2.processed.clear();
         Node<Long> actual=MNode2.oldFrom(mRoot);
         assertNotNull(actual);

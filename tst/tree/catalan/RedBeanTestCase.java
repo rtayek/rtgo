@@ -1,11 +1,7 @@
 package tree.catalan;
 import static org.junit.Assert.assertTrue;
-import static tree.catalan.G2.Node.from;
-import static tree.catalan.G2.Node.structureDeepEquals;
 import static tree.catalan.RedBean.*;
-import static tree.catalan.RedBean.MNode2.deepEquals;
-import static tree.catalan.RedBean.MNode2.print;
-import static tree.catalan.RedBean.MNode2.structureDeepEquals;
+import static tree.catalan.RedBean.MNode2.*;
 import org.junit.*;
 import tree.catalan.G2.Node;
 import tree.catalan.RedBean.MNode2;
@@ -20,26 +16,23 @@ public class RedBeanTestCase {
         G2.print(binary,"");
         //System.out.println(structureDeepEquals(bRoot,binary));
         //System.out.println(deepEquals(bRoot,binary));
-        assertTrue(structureDeepEquals(bRoot,binary));
-        //assertTrue(deepEquals(bRoot,binary));
+        assertTrue(Node.structureDeepEquals(bRoot,binary));
+        assertTrue(Node.deepEquals(bRoot,binary));
     }
     @Test public void testBinaryToMWay() {
-        System.out.println("original binary.");
-        G2.print(bRoot,"");
-        System.out.println("original mway.");
-        print(mRoot,"",true);
-        System.out.println(mRoot.children);
-        System.out.println("converting from binary.");
         Node.processed.clear();
-        MNode2<Character> mway=from(bRoot,null);
+        MNode2<Character> mway=Node.from(bRoot);
         System.out.println("mway from binary.");
-        print(mway,"",true);
-        System.out.println(structureDeepEquals(mRoot,mway));
-        System.out.println(deepEquals(mRoot,mway));
-        assertTrue(structureDeepEquals(mRoot,mway));
-        assertTrue(deepEquals(mRoot,mway));
-        
+        MNode2<Character> r=mway.children.get(0);
+        print(r,"",true);
+        System.out.println(structureDeepEquals(mRoot,r));
+        System.out.println(deepEquals(mRoot,r));
+        System.out.println("mway expected");
+        print(mRoot,"",true);
+        assertTrue(structureDeepEquals(mRoot,r));
+        assertTrue(deepEquals(mRoot,r));
+
     }
-    Node<Character> bRoot=binary();
-    MNode2<Character> mRoot=mway();
+    final Node<Character> bRoot=binary();
+    final MNode2<Character> mRoot=mway();
 }
