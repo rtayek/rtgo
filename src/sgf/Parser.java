@@ -234,9 +234,15 @@ public class Parser {
     }
     public static String getSgfData(Object key) {
         String sgf=null;
+        if(key==null) return null;
         if(key instanceof String) sgf=sgfData.get(key);
         else if(key instanceof File) sgf=utilities.Utilities.fromFile((File)key);
-        else throw new RuntimeException(key+" is not a string or a file!");
+        else {
+            System.out.println(key+" is not a string or a file!");
+            IO.stackTrace(10);
+            //System.exit(1);
+            throw new RuntimeException(key+" is not a string or a file!");
+        }
         return sgf;
     }
     public static void main(String[] argument) throws Exception {

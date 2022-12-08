@@ -7,7 +7,8 @@ public class ColorLogs {
     //https://stackoverflow.com/questions/54909752/how-to-change-the-util-logging-logger-printing-colour-in-logging-properties/60434521#60434521
     //https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println/5762502#5762502
     public static String coloredString(String string,String escapeSequence) {
-        System.out.println("color: "+Arrays.asList(toObjects(escapeSequence.getBytes())));
+        if(escapeSequence!=null) System.out.println("color: "+Arrays.asList(toObjects(escapeSequence.getBytes())));
+        else System.out.println("escape sequence is null!");
         return color_RESET+(escapeSequence!=null?escapeSequence:blackOrWhite)+string+color_RESET;
         // try removing trailig reset?
     }

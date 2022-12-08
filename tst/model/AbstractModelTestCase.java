@@ -1,4 +1,5 @@
 package model;
+import static org.junit.Assert.assertNotNull;
 import java.io.StringReader;
 import java.util.Collection;
 import org.junit.*;
@@ -8,6 +9,7 @@ public class AbstractModelTestCase extends AbstractMNodeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public static boolean checkBoardInRoot(Object key) {
         // move this?
+        if(key==null) { System.out.println("key is null!"); return true; }
         String expectedSgf=Parser.getSgfData(key);
         Model original=new Model();
         original.restore(new StringReader(expectedSgf));
@@ -24,7 +26,14 @@ public class AbstractModelTestCase extends AbstractMNodeTestCase {
         return hasABoard;
     }
     @Test public void testCheckBoardInRoot() {
+        if(key==null) {
+            //IO.stackTrace(10);
+            //System.out.println("system exit");
+            //System.exit(1);
+        }
+        assertNotNull(key);
         boolean ok=checkBoardInRoot(key);
+        System.out.println("after key: "+key);
         // always fails because none of these have a board in root.
         // that seems to be the usual case.
         // that is always the usual case,

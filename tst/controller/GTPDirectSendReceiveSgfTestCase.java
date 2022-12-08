@@ -44,6 +44,7 @@ import utilities.*;
     }
     @Test public void testGetSgfFromModel() throws Exception {
         String actualSgf=getSgfFromModel(expectedSgf);
+        actualSgf=SgfNode.options.prepareSgf(actualSgf);
         //Parser.printDifferences(expectedSgf,actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
@@ -70,6 +71,7 @@ import utilities.*;
     }
     @Test public void testSendSgfToModel() throws Exception {
         String actualSgf=sendSgfToModel(expectedSgf);
+        actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString().toString(),expectedSgf,actualSgf);
     }
     boolean useHexAscii=true;

@@ -31,6 +31,15 @@ public abstract class AbstractSgfParserTestCase {
         //assertNotNull(key.toString(),expectedSgf); 11/8/22 allow for now
         if(alwaysPrepare) prepare();
     }
+    @Test public void testLey() throws Exception {
+        if(!(key!=null||expectedSgf!=null))
+            System.out.println("key!=null||expectedSgf!=null");
+        assertTrue(key!=null||expectedSgf!=null);
+        // not currently failing except for one null key.
+        // this only happens when all of the model tests are run together.
+        //
+        // maybe allow as an edge case?
+    }
     @Test public void testParse() throws Exception {
         if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
             if(!expectedSgf.endsWith(")"))
@@ -42,9 +51,10 @@ public abstract class AbstractSgfParserTestCase {
     @Test public void testHexAscii() {
         String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
         String actualSgf=encoded!=null?HexAscii.decodeToString(encoded):null;
-        assertTrue(key.toString(),implies(expectedSgf==null,encoded==null));
-        assertTrue(key.toString(),implies(encoded==null,actualSgf==null));
-        assertEquals(key.toString(),expectedSgf,actualSgf);
+        String keyString=key!=null?key.toString():null;
+        assertTrue(keyString,implies(expectedSgf==null,encoded==null));
+        assertTrue(keyString,implies(encoded==null,actualSgf==null));
+        assertEquals(keyString,expectedSgf,actualSgf);
     }
     
     boolean alwaysPrepare=false;

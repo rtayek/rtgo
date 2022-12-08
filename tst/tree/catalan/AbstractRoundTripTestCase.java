@@ -13,7 +13,7 @@ public abstract class AbstractRoundTripTestCase {
         if(verbose) { System.out.println("bRoot"); G2.print(bRoot,"   "); }
         mRoot=Node.from(bRoot);
         if(verbose) { System.out.println("mRoot"); MNode2.print(mRoot,"",true); }
-
+        
         MNode2.processed.clear();
         Node<Long> actual=MNode2.from(mRoot);
         assertNotNull(actual);
@@ -28,7 +28,7 @@ public abstract class AbstractRoundTripTestCase {
         }
         assertTrue(key.toString(),Node.deepEquals(bRoot,actual.left));
     }
-    boolean verbose=true;
+    boolean verbose=false;
     Object key="";
     Node<Long> bRoot;
     MNode2<Long> mRoot;
