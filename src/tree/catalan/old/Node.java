@@ -378,13 +378,13 @@ class Node {
         return null;
     }
     //int number=Integer.parseInt(expected,2);
-    public static List<Boolean> roundTrip(List<Boolean> list,List<Integer> data) {
+    public static List<Boolean> listDecodeEncode(List<Boolean> list,List<Integer> data) {
         Node node2=Node.decode(list,data);
         String actual=encode(node2);
         // have ths return the binary string.
         return null;
     }
-    public static String roundTrip(String expected) {
+    public static String longDecodeEncode(String expected) {
         // add string writer and return the tree
         long number=Long.parseLong(expected,2);
         List<Boolean> list=Node.bits(number,expected.length());

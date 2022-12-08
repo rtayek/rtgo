@@ -9,57 +9,40 @@ public class RedBean {
             if(consumer!=null) consumer.accept(this);
             for(MNode2<T> child:children) if(child!=null) child.preorder(consumer);
         }
-        public static <T>void preorder(MNode2<T> mNode2,Consumer<MNode2<T>> consumer) {
+        public static <T> void preorder(MNode2<T> mNode2,Consumer<MNode2<T>> consumer) {
             if(mNode2!=null) mNode2.preorder(consumer);
         }
         static <T> void relabel(MNode2<T> node,final Iterator<T> i) {
             Consumer<MNode2<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
             preorder(node,relabel);
         }
-
         @Override public String toString() { return "MNode2 [data="+data+"]"; }
         public MNode2(T data,MNode2<T> parent) {
             // maybe just use t as first argument?
             this.parent=parent;
             this.data=data;
         }
-        public static <T> Node<T> oldFrom(MNode2<T> mNode2) {
+        public static <T> Node<T> from(MNode2<T> mNode2) {
             if(mNode2==null) { return null; }
-            // this is broken. maybe not
-            //System.out.println("processing: "+mNode2.data);
-            // did we remove the extra node we added?
             boolean ok=processed.add(mNode2.data);
             if(!ok) System.out.println(mNode2.data+" MNode2 already processed!");
             Node<T> left=null,tail=null;
             for(int i=0;i<mNode2.children.size();++i) {
+                MNode2<T> child=mNode2.children.get(i);
                 if(i==0) {
-                    MNode2<T> child=mNode2.children.get(i);
                     if(child!=null) {
-                        //System.out.println("first child: "+child.data);
-                        left=tail=oldFrom(mNode2.children.get(i));
-                        //System.out.println("left: "+left.data+" first "+left.data);
-                        // is this throwing if there is a variation on the first move in the game?
-                        if(left.right!=null) {
-                            //ystem.out.println("wierdness at: "+left.data);
-                            // maybe not so weird after a;l?
-                            //throw new RuntimeException("wierdness!");
-                        }
-                    }
+                        left=tail=from(child);
+                        if(left.right!=null) throw new RuntimeException("wierdness!");
+                    } else System.out.println("first chile is null!");
                 } else {
-                    MNode2<T> child=mNode2.children.get(i);
-                    //System.out.println("left: "+left.data+" child: "+child.data);
-                    Node<T> newRight=oldFrom(mNode2.children.get(i));
-                    //System.out.println("left: "+left.data+" added "+newRight.data);
-                    //System.out.println("left: "+left.data+" tail "+tail.data);
+                    Node<T> newRight=from(child);
                     tail.right=newRight;
                     tail=newRight;
-                    //System.out.println("new tail "+tail.data);
                 }
             }
             Node<T> binaryNode=new Node<>(mNode2.data,left,null); // first child
             return binaryNode;
         }
-        
         public static <T> void print(MNode2<T> tree,String indent,boolean last) {
             System.out.println(indent+"+- "+(tree!=null?tree.data:"0"));
             indent+=last?"   ":"|  ";
@@ -84,7 +67,8 @@ public class RedBean {
             else if(other==null) return false;
             if(ckeckEqual) {
                 //System.out.println("cheching: "+this+" "+other);
-                if(!equals(other)) return false;}
+                if(!equals(other)) return false;
+            }
             if(children.size()!=other.children.size()) return false;
             for(int i=0;i<children.size();++i) {
                 MNode2<T> child=children.get(i);
@@ -99,9 +83,7 @@ public class RedBean {
         public static <T> boolean structureDeepEquals(MNode2<T> node,MNode2<T> other) {
             return node!=null?node.deepEquals_(other,false):other==null;
         }
-        public static <T> LinkedHashSet<T> processed() {
-            return processed;
-        }
+        public static <T> LinkedHashSet<T> processed() { return processed; }
         MNode2<T> parent;
         ArrayList<MNode2<T>> children=new ArrayList<>();
         // add a set temporarily to see if we are adding stuff in twice?
@@ -165,7 +147,6 @@ public class RedBean {
         print(mRoot,"",true);
         // since mway to binary seems to work,
         // let's see why binary to mway fails.
-
     }
     public static void main(String[] arguments) { example(); }
 }

@@ -16,18 +16,20 @@ public class MNode {
     public SgfNode toBinaryTree() {
         SgfNode left=null,tail=null;
         for(int i=0;i<children.size();++i) {
+            MNode child=children.get(i);
             if(i==0) {
-                left=tail=children.get(i).toBinaryTree();
-                // is this throwing if there is a variation on the first move in the game?
-                if(left.right!=null) throw new RuntimeException("wierdness!");
+                if(child!=null) {
+                    left=tail=child.toBinaryTree();
+                    if(left.right!=null) throw new RuntimeException("wierdness!");
+                } else System.out.println("first chile is null!");
             } else {
-                SgfNode newRight=children.get(i).toBinaryTree();
+                SgfNode newRight=child.toBinaryTree();
                 tail.right=newRight;
                 tail=newRight;
             }
         }
-        SgfNode binaryNode=new SgfNode(properties,null,left); // first child
-        return binaryNode;
+        SgfNode node=new SgfNode(properties,null,left); // first child
+        return node;
     }
     public static void setIsAMoveFlags(MNode node) {
         // copy of code in sgf node.
@@ -39,35 +41,37 @@ public class MNode {
         }
         if(node.hasAMoveType&&node.hasASetupType) parserLogger.severe("node has move and setup type properties!");
     }
-    private static MNode toGeneralTree(SgfNode binaryNode,MNode grandParent) {
-        if(binaryNode==null) return null;
+    private static MNode toGeneralTree(SgfNode node,MNode grandParent) {
+        if(node==null) { if(grandParent!=null) grandParent.children.add(null); return null; }
         MNode parent=new MNode(grandParent);
         if(grandParent!=null) grandParent.children.add(parent);
         else throw new RuntimeException("gradparent is null!");
-        parent.properties.addAll(binaryNode.properties);
+        parent.properties.addAll(node.properties);
         setIsAMoveFlags(parent);
-        if(binaryNode.left!=null) { @SuppressWarnings("unused") MNode child=toGeneralTree(binaryNode.left,parent); }
-        if(binaryNode.right!=null) {
-            @SuppressWarnings("unused") MNode child=toGeneralTree(binaryNode.right,grandParent);
+        if(node.left!=null) { @SuppressWarnings("unused") MNode child=toGeneralTree(node.left,parent); }
+        if(node.right!=null) {
+            @SuppressWarnings("unused") MNode child=toGeneralTree(node.right,grandParent);
         } else; //Logging.mainLogger.severe("binaryNode.right is null!");
         return parent;
     }
-    public static MNode toGeneralTree(SgfNode binaryNode) {
+    public static MNode toGeneralTree(SgfNode node) {
         // this looks broken. see red bean test case.
-        if(binaryNode==null) return null; // maybe return and empty root! (my MNode root)
-        if(binaryNode.right!=null) { Logging.mainLogger.info("binaryNode.right is non null!"); }
-        MNode mRoot=new MNode(null);
+        //if(node==null) return null; // maybe return and empty root! (my MNode root)
+        if(node!=null&&node.right!=null) { Logging.mainLogger.info("binaryNode.right is non null!"); }
+        SgfNode extra=new SgfNode();
+        extra.left=node; // might be null
+        MNode extraMNode=new MNode(null);
         try {
             SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
-            mRoot.properties.add(property);
+            extraMNode.properties.add(property);
         } catch(Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        mRoot.data=mRoot.id; // just so it's not null
+        extraMNode.data=extraMNode.id; // just so it's not null
         //System.out.println("new root and children: "+mRoot+" "+mRoot.children);
-        @SuppressWarnings("unused") MNode mNode=toGeneralTree(binaryNode,mRoot);
-        return mRoot;
+        @SuppressWarnings("unused") MNode mNode=toGeneralTree(extra.left,extraMNode);
+        return extraMNode;
     }
     public List<MNode> lca(MNode current,MNode target) {
         // another find in sgf!
@@ -110,7 +114,6 @@ public class MNode {
         if(!ok) System.out.println("not ok!");
         return root;
     }
-
     public static MNode quietLoad(Reader reader) {
         PrintStream old=System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
@@ -136,7 +139,6 @@ public class MNode {
         Collection<SgfNode> path=finder.pathToTarget;
         return path;
     }
-    
     public static void main(String[] args) {
         System.out.println(Init.first);
         //lookAtRoot();

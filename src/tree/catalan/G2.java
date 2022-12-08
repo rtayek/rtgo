@@ -4,6 +4,7 @@ import static utilities.Utilities.*;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
+import io.Logging;
 import tree.catalan.RedBean.MNode2;
 import utilities.Et;
 public class G2 {
@@ -200,7 +201,7 @@ public class G2 {
         static <T> int check(Node<T> expected) {
             int n=0;
             //System.out.println("check: "+expected);
-            Node<T> actual=roundTrip(expected);
+            Node<T> actual=encodeDecode(expected);
             if(!structureDeepEquals(expected,actual)) { ++n; System.out.println("0 "+expected+"!="+actual); }
             //if(true) return n;
             ArrayList<T> data=new ArrayList<>();
@@ -211,7 +212,7 @@ public class G2 {
                 ++n;
                 System.out.println("1 "+expectedEncoded+"!="+actualEncoded);
             }
-            String actualEncoded2=roundTrip(expectedEncoded,data);
+            String actualEncoded2=decodeEncode(expectedEncoded,data);
             if(data.size()>0) System.out.println("data size is >0!");
             if(!expectedEncoded.equals(actualEncoded2)) {
                 ++n;
@@ -247,21 +248,16 @@ public class G2 {
             //System.out.println("end processing: "+node.data+" >>>>>>");
             return parent;
         }
-        public static <T> MNode2<T> from(Node<T> root) {
+        public static <T> MNode2<T> from(Node<T> node) {
+            //if(node==null) return null; // maybe return and empty root! (my MNode root)
+            if(node!=null&&node.right!=null) { Logging.mainLogger.info("binaryNode.right is non null!"); }
             Node<T> extra=new Node<>(null);
-            extra.left=root;
+            extra.left=node; // might be null
             MNode2<T> extraMNode2=new MNode2<>(null,null);
             processed.clear();
             MNode2<T> mNode2=from_(extra.left,extraMNode2);
             //mroot.data=0l;
             return extraMNode2;
-        }
-        private static <T> MNode2<T> oldFfrom(Node<T> node) {
-            processed.clear();
-            MNode2<T> extra=new MNode2<T>(null,null);
-            //if(node.right!=null) throw new RuntimeException("node.right!=null");
-            MNode2<T> mNode2=from_(node,extra);
-            return extra;
         }
         static <T> void relabel(Node<T> node,final Iterator<T> i) {
             Consumer<Node<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
@@ -274,7 +270,7 @@ public class G2 {
         static int ids;
         static LinkedHashSet processed=new LinkedHashSet<>();
     }
-    public static <T> Node<T> roundTrip(Node<T> expected) {
+    public static <T> Node<T> encodeDecode(Node<T> expected) {
         // add string writer and return the tree
         ArrayList<T> data=new ArrayList<>();
         String actualEncoded=encode(expected,data);
@@ -282,7 +278,7 @@ public class G2 {
         if(data.size()>0) System.out.println("leftoverdata: "+data);
         return actual;
     }
-    public static <T> String roundTrip(String expected,ArrayList<T> data) {
+    public static <T> String decodeEncode(String expected,ArrayList<T> data) {
         ArrayList<T> data0=new ArrayList<>(data);
         Node<T> decoded=decode(expected,data);
         ArrayList<T> data2=new ArrayList<>();

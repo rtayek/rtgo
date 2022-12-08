@@ -15,7 +15,7 @@ public abstract class AbstractRoundTripTestCase {
         if(verbose) { System.out.println("mRoot"); MNode2.print(mRoot,"",true); }
 
         MNode2.processed.clear();
-        Node<Long> actual=MNode2.oldFrom(mRoot);
+        Node<Long> actual=MNode2.from(mRoot);
         assertNotNull(actual);
         if(verbose) {
             System.out.println("actual:");

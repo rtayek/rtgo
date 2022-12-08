@@ -12,7 +12,7 @@ public class RedBeanTestCase {
         System.out.println(mRoot.children);
         G2.print(bRoot,"");
         MNode2.processed.clear();
-        Node<Character> binary=MNode2.oldFrom(mRoot);
+        Node<Character> binary=MNode2.from(mRoot);
         G2.print(binary,"");
         //System.out.println(structureDeepEquals(bRoot,binary));
         //System.out.println(deepEquals(bRoot,binary));

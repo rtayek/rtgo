@@ -479,6 +479,9 @@ seems like i coded up the binary sample as an maway tree.
 fixed that and now mway to binary seems to work.
 so the to binary tree in mnode should ok.
 12/1/22 work on round trip in red bean/g2 stuff.
+12/7/22 looks like the round trip stuff tree/catalan works!
+now i can try to reverse engineer that into existing sgf tree.
+
 
 
 

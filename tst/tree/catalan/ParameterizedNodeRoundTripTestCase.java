@@ -14,7 +14,7 @@ import utilities.*;
         //node: 10, tree: 8360
         Set<Object> objects=new LinkedHashSet<>();
         int[] x=new int[] {0,0};
-        for(int nodes=3;nodes<=3;++nodes) {
+        for(int nodes=0;nodes<=7;++nodes) {
             long trees=Catalan.catalan(nodes);
             for(int tree=0;tree<trees;++tree) {
                 x=new int[] {nodes,tree};

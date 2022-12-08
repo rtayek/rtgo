@@ -40,7 +40,7 @@ import utilities.*;
         for(Node node:trees) {
             if(node==null) continue;
             String expected=node.encode();
-            String actual=roundTrip(expected);
+            String actual=longDecodeEncode(expected);
             if(!expected.equals(actual)) anyFailures=true;
         }
         assertTrue(!anyFailures);
