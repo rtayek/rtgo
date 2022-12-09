@@ -1,10 +1,9 @@
-package tree.catalan;
+package tree;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import tree.catalan.G2.Node;
 import utilities.*;
 @RunWith(Parameterized.class) public class ParameterizedNodeRoundTripTestCase extends AbstractRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

@@ -1,15 +1,15 @@
-package tree.catalan;
+package tree;
 import static org.junit.Assert.*;
-import static tree.catalan.Catalan.*;
-import static tree.catalan.G2.roundTripLong;
-import static tree.catalan.G2.Node.*;
+import static tree.Catalan.*;
+import static tree.G2.roundTripLong;
+import static tree.Node.*;
 import static utilities.ParameterArray.modulo;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import tree.catalan.G2.*;
+import tree.G2.Generator;
 import utilities.MyTestWatcher;
 @RunWith(Parameterized.class) public class CatalanTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -56,11 +56,11 @@ import utilities.MyTestWatcher;
         ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
         for(Node<Long> expected:trees) {
             Iterator<Character> j=new G2.Characters();
-            Node<Character> actual=Node.reLabelCopy(expected,j);
+            Node<Character> actual=reLabelCopy(expected,j);
             Iterator<Long> i=new G2.Longs();
-            Node<Long> actual2=Node.reLabelCopy(expected,i);
+            Node<Long> actual2=reLabelCopy(expected,i);
             Iterator<Character> k=new G2.Characters();
-            Node<Character> actual3=Node.reLabelCopy(expected,k);
+            Node<Character> actual3=reLabelCopy(expected,k);
             assertTrue(structureDeepEquals(actual,actual3));
             assertTrue(deepEquals(actual,actual3));
         }
@@ -77,7 +77,7 @@ import utilities.MyTestWatcher;
         for(Node<Long> node:trees) {
             // if(node==null) continue; // looks like we need this.
             // this is a round trip
-            String expected=Node.encode(node,null);
+            String expected=encode(node,null);
             // want to pass data to the deocde in here
             String actual=roundTripLong(expected);
             assertEquals(expected,actual);

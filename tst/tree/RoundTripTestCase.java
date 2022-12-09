@@ -1,8 +1,9 @@
-package tree.catalan;
-import static tree.catalan.RedBean.binary;
+package tree;
+import static tree.Node.reLabelCopy;
+import static tree.RedBean.binary;
 import java.util.*;
 import org.junit.*;
-import tree.catalan.G2.*;
+import tree.G2.Generator;
 import utilities.MyTestWatcher;
 public class RoundTripTestCase extends AbstractRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -18,7 +19,7 @@ public class RoundTripTestCase extends AbstractRoundTripTestCase {
         key="red bean sample";
         Node<Character> binary=binary();
         Iterator<Long> i=new G2.Longs();
-        bRoot=Node.reLabelCopy(binary,i);
+        bRoot=reLabelCopy(binary,i);
         System.out.println("relabeled bRoot:");
         //G2.print(bRoot,"");
     }

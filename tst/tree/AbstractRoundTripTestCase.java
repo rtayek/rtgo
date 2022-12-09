@@ -1,8 +1,11 @@
-package tree.catalan;
+package tree;
 import static org.junit.Assert.*;
+import static tree.MNode.from;
+import static tree.MNode.print;
+import static tree.MNode.processed;
+import static tree.Node.deepEquals;
+import static tree.Node.from;
 import org.junit.*;
-import tree.catalan.G2.Node;
-import tree.catalan.RedBean.MNode2;
 import utilities.MyTestWatcher;
 public abstract class AbstractRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -11,25 +14,22 @@ public abstract class AbstractRoundTripTestCase {
     @Test public void testNodeRoundTrip() {
         if(bRoot==null) System.out.println("binary tree is null.");
         if(verbose) { System.out.println("bRoot"); G2.print(bRoot,"   "); }
-        mRoot=Node.from(bRoot);
-        if(verbose) { System.out.println("mRoot"); MNode2.print(mRoot,"",true); }
-        
-        MNode2.processed.clear();
-        Node<Long> actual=MNode2.from(mRoot);
+        mRoot=from(bRoot);
+        if(verbose) { System.out.println("mRoot"); print(mRoot,"",true); }
+        processed.clear();
+        Node<Long> actual=from(mRoot);
         assertNotNull(actual);
-        if(verbose) {
-            System.out.println("actual:");
-            G2.print(actual.left,"   ");}
-        if(!Node.deepEquals(bRoot,actual.left)) {
+        if(verbose) { System.out.println("actual:"); G2.print(actual.left,"   "); }
+        if(!deepEquals(bRoot,actual.left)) {
             System.out.println("bRoot");
             G2.print(bRoot,"   ");
             System.out.println("actual");
             G2.print(actual.left,"   ");
         }
-        assertTrue(key.toString(),Node.deepEquals(bRoot,actual.left));
+        assertTrue(key.toString(),deepEquals(bRoot,actual.left));
     }
     boolean verbose=false;
     Object key="";
     Node<Long> bRoot;
-    MNode2<Long> mRoot;
+    MNode<Long> mRoot;
 }

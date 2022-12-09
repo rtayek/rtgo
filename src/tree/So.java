@@ -1,4 +1,4 @@
-package tree.catalan;
+package tree;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import utilities.Holder;

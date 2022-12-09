@@ -1,9 +1,9 @@
-package tree.catalan;
+package tree;
 import static org.junit.Assert.*;
-import static tree.catalan.G2.Node.*;
+import static tree.Node.*;
 import java.util.*;
 import org.junit.*;
-import tree.catalan.G2.*;
+import tree.G2.Generator;
 import utilities.MyTestWatcher;
 public class G2TestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -73,11 +73,11 @@ public class G2TestCase {
         String expected="100";
         // tree is encoded as null
         // should be "0 maybe?
-        Node<Long> tree=Node.decode(expected,null);
+        Node<Long> tree=decode(expected,null);
         G2.p(tree);
         String actual=encode(tree,null);
         assertEquals(expected,actual);
-        Node actualNode=decode(actual,null);
+        Node<Long> actualNode=decode(actual,null);
         G2.p(actualNode);
         assertTrue(structureDeepEquals(tree,actualNode));
     }
@@ -104,7 +104,7 @@ public class G2TestCase {
         //String expected="10100";
         // tree is encoded as null
         // should be "0 maybe?
-        Node<Long> tree=Node.decode(expected,null);
+        Node<Long> tree=decode(expected,null);
         System.out.println("encoded in node: "+tree.encoded);
         System.out.println("ex: "+expected);
         String actual=encode(tree,null);

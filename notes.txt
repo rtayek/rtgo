@@ -481,6 +481,10 @@ so the to binary tree in mnode should ok.
 12/1/22 work on round trip in red bean/g2 stuff.
 12/7/22 looks like the round trip stuff tree/catalan works!
 now i can try to reverse engineer that into existing sgf tree.
+12/8/22 more tests passing. checked in before deleting old stuff.
+refactored tree stuff and deleted old code.
+
+
 
 
 
