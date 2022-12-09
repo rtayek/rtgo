@@ -1,13 +1,13 @@
 package sgf;
 import java.io.File;
 import java.util.*;
-import org.junit.Rule;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import utilities.*;
 // https://stackoverflow.com/questions/14082004/create-multiple-parameter-sets-in-one-parameterized-class-junit
-@RunWith(Parameterized.class) public class SmallerParameterizedRoundTripTestCase extends AbstractSgfRoundTripTestCase {
+@Ignore @RunWith(Parameterized.class) public class SmallerParameterizedRoundTripTestCase extends AbstractSgfRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public static File[] someFiles(String dir) {
         String[] filenames=new String[] { //
@@ -33,12 +33,11 @@ import utilities.*;
         Set<Object> objects=new LinkedHashSet<>();
         //objects.addAll(sgfDataKeySet());
         String dir="sgf";
-        dir="sgf/recentogsgames";
-        // some problems here. can not find the files in recent!
+        dir="ogs";
         if(true) { // all files in dir and subdirectoroes.
             objects.addAll(Parser.sgfFiles(dir));
         }
-        if(true) {
+        if(false) {
             File[] files=someFiles(dir); // some files in dir. not recursive.
             System.out.println("adding: "+Arrays.asList((Object[])(files))+" files.");
             List<Object> fileList=new ArrayList<>(Arrays.asList((Object[])(files)));
@@ -54,5 +53,8 @@ import utilities.*;
         System.out.println(objects.size()+" keys");
         return ParameterArray.parameterize(objects);
     }
-    public SmallerParameterizedRoundTripTestCase(Object key) { this.key=key; }
+    public SmallerParameterizedRoundTripTestCase(Object key) {
+        this.key=key;
+        watcher.key=key;
+    }
 }

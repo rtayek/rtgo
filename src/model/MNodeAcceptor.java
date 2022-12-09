@@ -46,7 +46,7 @@ public interface MNodeAcceptor {
         void visit(MNode node) {
             stack.push(node);
             acceptor.accept(node,this);
-            for(MNode child:node.children) visit(child);
+            if(node!=null) for(MNode child:node.children) visit(child);
             stack.pop();
         }
         MNodeAcceptor acceptor;
@@ -75,11 +75,13 @@ public interface MNodeAcceptor {
         // seems like this is only used for least common ancestor
         MNodeFinder(MNode target) { this.target=target; }
         @Override public void accept(MNode node,Traverser traverser) {
-            if(node.equals(target)) if(found==null) { //just the first one
-                found=node;
-                ancestors.addAll(traverser.stack);
-                // ancestors.add(node); // add in the target!
-            } else Logging.mainLogger.warning(""+" "+"found another: "+found+" "+node);
+            if(node!=null) {
+                if(node.equals(target)) if(found==null) { //just the first one
+                    found=node;
+                    ancestors.addAll(traverser.stack);
+                    // ancestors.add(node); // add in the target!
+                } else Logging.mainLogger.warning(""+" "+"found another: "+found+" "+node);
+            } else System.out.println("in accept node is null!");
         }
         public static MNodeFinder find(MNode target,MNode games) {
             MNodeFinder finder=new MNodeFinder(target);

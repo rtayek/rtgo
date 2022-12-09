@@ -474,7 +474,7 @@ so moving these to a new directory ogs/
 down to tst/ having 49 errors and 112 failures.
 11/30/22 looks like we found a bug in mnode!
 show up in the new g2 mndeo2 where some nodes get processed more than once.
-lookslike MNode toGeneralTree is broken.
+looks like MNode toGeneralTree is broken.
 seems like i coded up the binary sample as an maway tree.
 fixed that and now mway to binary seems to work.
 so the to binary tree in mnode should ok.
@@ -483,6 +483,7 @@ so the to binary tree in mnode should ok.
 now i can try to reverse engineer that into existing sgf tree.
 12/8/22 more tests passing. checked in before deleting old stuff.
 refactored tree stuff and deleted old code.
+seems like someone keeps making and empty sgf/saved.sgf.
 
 
 

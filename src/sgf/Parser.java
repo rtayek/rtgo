@@ -253,7 +253,7 @@ public class Parser {
         //System.out.println(sgfData);
         List<Object> objects=new ArrayList<>();
         objects.addAll(sgfDataKeySet());
-        objects.addAll(sgfFiles());
+        //objects.addAll(sgfFiles());
         for(Object key:objects) {
             System.out.println("key: "+key);
             String expectedSgf=getSgfData(key);

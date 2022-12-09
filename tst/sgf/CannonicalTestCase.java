@@ -11,7 +11,7 @@ import model.MNodeAcceptor.MakeList;
 import model.Model;
 import utilities.*;
 @RunWith(Parameterized.class) public class CannonicalTestCase {
-    public CannonicalTestCase(Object key) { this.key=key; }
+    public CannonicalTestCase(Object key) { this.key=key; watcher.key=key; }
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> parameters() {
         Set<Object> objects=new LinkedHashSet<>();
@@ -45,7 +45,7 @@ import utilities.*;
         // need to check the add new root switch.
         // 11/28/22 seems like we are doing this somewhere else.
     }
-    @Ignore @Test() public void testLeastCommonAncester() {
+    @Test() public void testLeastCommonAncester() {
         // ignoring for now as it is slow
         // seems to be working for multiplegames
         MNode root=MNode.restore(new StringReader(expectedSgf));
@@ -59,10 +59,13 @@ import utilities.*;
             //System.out.println(originalSgf);
             //System.out.println("list1: "+list1);
         }
-        for(MNode node1:list1) for(MNode node2:list2) if(!node2.equals(node1)) {
-            List<MNode> list=root.lca(node1,node2);
-            assertNotNull(key.toString(),list);
-        }
+        for(MNode node1:list1) //
+            for(MNode node2:list2) //
+                if(!node1.equals(node2)) { //
+                    List<MNode> list=root.lca(node1,node2);
+                    //System.out.println(node1+" "+node2+" "+list);
+                    assertNotNull(key.toString(),list);
+                }
         //System.setOut(x);
     }
     Object key;
