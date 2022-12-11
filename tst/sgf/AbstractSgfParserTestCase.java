@@ -5,6 +5,7 @@ import static sgf.SgfNode.SgfOptions.containsQuotedControlCharacters;
 import static utilities.Utilities.implies;
 import java.io.StringReader;
 import org.junit.*;
+import io.IO;
 import sgf.SgfNode.SgfOptions;
 import utilities.MyTestWatcher;
 public abstract class AbstractSgfParserTestCase {
@@ -31,9 +32,11 @@ public abstract class AbstractSgfParserTestCase {
         //assertNotNull(key.toString(),expectedSgf); 11/8/22 allow for now
         if(alwaysPrepare) prepare();
     }
-    @Test public void testLey() throws Exception {
-        if(!(key!=null||expectedSgf!=null))
+    @Test public void testKey() throws Exception {
+        if(!(key!=null||expectedSgf!=null)) {
             System.out.println("key!=null||expectedSgf!=null");
+            IO.stackTrace(10);
+        }
         assertTrue(key!=null||expectedSgf!=null);
         // not currently failing except for one null key.
         // this only happens when all of the model tests are run together.

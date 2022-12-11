@@ -23,6 +23,7 @@ public class RoundTripTestCase {
         String expected=stringWriter.toString();
         Reader reader=new StringReader(expected);
         stringWriter=new StringWriter();
+        // does round trip belong here?
         games=Model.modelRoundTrip(reader,stringWriter);
         String actual=stringWriter.toString();
         try {

@@ -31,13 +31,24 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         if(expectedSgf==null) return;
         StringReader stringReader=new StringReader(expectedSgf);
         StringWriter stringWriter=new StringWriter();
-        SgfNode games=sgfRoundTrip(stringReader,stringWriter);
+        SgfNode games=sgfRestoreAndSave(stringReader,stringWriter);
         if(games!=null&&games.right!=null) System.out.println("42 more than one game!");
         String actualSgf=stringWriter.toString();
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         // how to do this more often?
         //Boolean ok=specialCases(actualSgf);
         //if(ok) return;
+        assertEquals(key.toString(),expectedSgf,actualSgf);
+    }
+    @Test public void testSPreordergfRoundTrip() throws Exception {
+        //String key="sgfExamleFromRedBean";
+        //String expected=getSgfData(key);
+        if(expectedSgf==null) return;
+        if(expectedSgf.equals("")) return;
+        expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
+        String actualSgf=SgfNode.preOrderRouundTrip(expectedSgf);
+        System.out.println(expectedSgf);
+        System.out.println(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
@@ -50,13 +61,13 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         assertFalse(expectedSgf.contains("\n"));
         SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
         StringWriter stringWriter=new StringWriter();
-        SgfNode actualSgf=roundTrip(expected,stringWriter);
+        SgfNode actualSgf=sgfSaveAndRestore(expected,stringWriter);
         if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
     }
     @Test public void testSgfCannonical() {
         assertFalse(expectedSgf.contains("\n"));
-        String actualSgf=sgfRoundTrip(expectedSgf);
-        String actual2=sgfRoundTrip(actualSgf);
+        String actualSgf=sgfRestoreAndSave(expectedSgf);
+        String actual2=sgfRestoreAndSave(actualSgf);
         assertEquals(key.toString(),actualSgf,actual2);
     }
 }

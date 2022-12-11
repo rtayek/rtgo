@@ -1,6 +1,6 @@
 package model;
 import static org.junit.Assert.*;
-import static sgf.SgfNode.sgfRoundTrip;
+import static sgf.SgfNode.sgfRestoreAndSave;
 import java.io.*;
 import org.junit.*;
 import sgf.*;
@@ -18,7 +18,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testModelRestoreAndSave() throws Exception {
-        String actualSgf=sgfRoundTrip(expectedSgf);
+        String actualSgf=sgfRestoreAndSave(expectedSgf);
         // then it does a restore and a save.
         // this one looks more complicated than is necessary.
         //the round trip above could be package if we removed it.

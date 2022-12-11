@@ -7,6 +7,7 @@ public class ModelTestCase extends AbstractModelTestCase {
     @Override @Before public void setUp() throws Exception {
         key=Parser.empty;
         key="sgfExamleFromRedBean";
+        //key=null;
         super.setUp();
     }
 }

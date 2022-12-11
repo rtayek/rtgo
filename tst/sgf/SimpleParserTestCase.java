@@ -1,7 +1,7 @@
 package sgf;
 import static io.IO.noIndent;
 import static org.junit.Assert.assertEquals;
-import static sgf.SgfNode.sgfRoundTrip;
+import static sgf.SgfNode.sgfRestoreAndSave;
 import java.io.*;
 import java.util.*;
 import org.junit.*;
@@ -51,7 +51,7 @@ public class SimpleParserTestCase {
         StringWriter stringWriter=new StringWriter();
         root.saveSgf(stringWriter,noIndent);
         String expected=stringWriter.toString();
-        String actual=sgfRoundTrip(expected);
+        String actual=sgfRestoreAndSave(expected);
         assertEquals(expected,actual);
     }
 }

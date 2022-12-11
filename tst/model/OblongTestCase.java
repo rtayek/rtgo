@@ -8,7 +8,7 @@ import io.Logging;
 import sgf.*;
 public class OblongTestCase {
     @Before public void setUp() throws Exception {
-        File file=new File("sgf/lecoblong.sgf");
+        File file=new File("ogs/lecoblong.sgf");
         expectedSgf=getSgfData(file);
     }
     @After public void tearDown() throws Exception {}

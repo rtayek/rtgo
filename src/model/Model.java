@@ -962,8 +962,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         StringWriter stringWriter=new StringWriter();
         SgfNode games=restoreSgf(new StringReader(expectedSgf));
         if(games==null) return null; // return empty node!
-        // maybe return empty nod if sgf is ""?
-        games.saveSgf(stringWriter,noIndent);
+        // maybe return empty node if sgf is ""?
+        //games.saveSgf(stringWriter,noIndent); // writes sgf from binary tree.
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();
         model.setRoot(mNodes0);

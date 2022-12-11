@@ -24,7 +24,7 @@ public class SgfNode {
                 expectedSgf=SgfNode.options.removeUnwanted(expectedSgf);
                 if(roundTripFirst) {
                     //printDifferences(expectedSgf,expectedSgf);
-                    expectedSgf=sgfRoundTrip(expectedSgf);
+                    expectedSgf=sgfRestoreAndSave(expectedSgf);
                     //printDifferences(expectedSgf,expectedSgf);
                     //if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
                 } else {
@@ -179,14 +179,8 @@ public class SgfNode {
     private void preorderSaveSgf_(Writer writer,Indent indent) throws IOException {
         // hard to get the parentheses correct.
         writer.write(toString());
-        if(left!=null) {
-            if(right!=null) writer.write('(');
-            left.preorderSaveSgf_(writer,indent);
-        }
-        if(right!=null) {
-            if(right!=null) writer.write('(');
-            right.preorderSaveSgf_(writer,indent);
-        }
+        if(left!=null) { if(right!=null) writer.write('('); left.preorderSaveSgf_(writer,indent); }
+        if(right!=null) { if(right!=null) writer.write('('); right.preorderSaveSgf_(writer,indent); }
         if(left!=null) if(right!=null) writer.write(')');
         writer.flush();
     }
@@ -292,28 +286,27 @@ public class SgfNode {
         } else if(!properties.equals(other.properties)) return false;
         return true;
     }
-    public static String sgfRoundTrip(String expectedSgf) { //restore and save
-        if(expectedSgf==null) // hack for now
-            return null;
-        StringWriter stringWriter=new StringWriter();
-        SgfNode games=null;
-        String actualSgf=null;
-        StringReader stringReader=new StringReader(expectedSgf);
-        games=sgfRoundTrip(stringReader,stringWriter);
-        actualSgf=stringWriter.toString();
-        return actualSgf;
-    }
-    public static SgfNode sgfRoundTrip(Reader reader,Writer writer) {
+    public static SgfNode sgfRestoreAndSave(Reader reader,Writer writer) {
         if(reader==null) return null;
         SgfNode games=restoreSgf(reader);
         if(games!=null) games.saveSgf(writer,noIndent);
         return games;
     }
+    public static String sgfRestoreAndSave(String expectedSgf) { //restore and save
+        if(expectedSgf==null) return null;
+        StringWriter stringWriter=new StringWriter();
+        StringReader stringReader=new StringReader(expectedSgf);
+        SgfNode games=sgfRestoreAndSave(stringReader,stringWriter);
+        String actualSgf=stringWriter.toString();
+        return actualSgf;
+    }
     // lets try to make everyone use this one
     // except for maybe a restore then a save and a restore.
     // maybe add third trip?
     // like round trip o the nodes for above and on the sgf for below?
-    public static SgfNode roundTrip(SgfNode expected,StringWriter stringWriter) {
+    // apr 23
+    // maybe rename to restoreSave and saveRestore?
+    public static SgfNode sgfSaveAndRestore(SgfNode expected,StringWriter stringWriter) {
         SgfNode actualSgf=null;
         if(expected!=null) {
             expected.saveSgf(stringWriter,noIndent);
@@ -324,7 +317,7 @@ public class SgfNode {
     }
     public static boolean sgfRoundTripTwice(Reader original) {
         Writer writer=new StringWriter();
-        sgfRoundTrip(original,writer);
+        sgfRestoreAndSave(original,writer);
         String expected=writer.toString(); // cannonical form?
         writer=new StringWriter();
         //roundTrip();
@@ -355,18 +348,41 @@ public class SgfNode {
 
     acdfgj
      */
-    static void foo() throws IOException {
-        String key="sgfExamleFromRedBean";
-        String expected=getSgfData(key);
-        SgfNode games=restoreSgf(new StringReader(expected));
+    public static String preOrderRouundTrip(String expectedSgf) throws IOException {
+        SgfNode games=restoreSgf(new StringReader(expectedSgf));
+        if(games!=null) System.out.println(games.right);
+        else System.out.println("'"+expectedSgf+"'");
         StringWriter stringWriter=new StringWriter();
         games.preorderSaveSgf(stringWriter,noIndent);
-        String sgf=stringWriter.toString();
-        System.out.println(expected);
-        System.out.println(sgf);
+        String actualSgf=stringWriter.toString();
+        return actualSgf;
     }
     public static void main(String[] args) throws IOException {
-        if(true) { foo(); return; }
+        if(true) {
+            System.out.println("foo");
+            Set<Object> objects=new LinkedHashSet<>();
+            objects.addAll(sgfDataKeySet());
+            objects.addAll(sgfFiles());
+            for(Object key:objects) {
+                System.out.println(key);
+                System.out.print(key);
+                String expected=getSgfData(key);
+                expected=SgfNode.options.prepareSgf(expected);
+                SgfNode games=restoreSgf(new StringReader(expected));
+                if(games!=null) System.out.print(" right: "+games.right);
+                String sgf=null;
+                if(games!=null) {
+                    StringWriter stringWriter=new StringWriter();
+                    games.preorderSaveSgf(stringWriter,noIndent);
+                    sgf=stringWriter.toString();
+                }
+                //System.out.println(expected);
+                //System.out.println(sgf);
+                boolean ok=expected.equals(sgf);
+                System.out.println(" "+ok);
+            }
+            return;
+        }
         Set<String> keys=new LinkedHashSet(
                 List.of("comments1","twoEmptyWithSemicolon","smartgo4","twosmallgamesflat","smartgo42"));
         for(Object key:Parser.sgfDataKeySet()) {

@@ -6,7 +6,6 @@ public class SgfRoundTripTestCase extends AbstractSgfRoundTripTestCase {
     @Override @Before public void setUp() throws Exception {
         key=Parser.empty;
         key="sgfExamleFromRedBean";
-        
         super.setUp();
     }
 }
