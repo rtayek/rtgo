@@ -55,12 +55,15 @@ import utilities.MyTestWatcher;
         System.out.println(nodes+" nodes.");
         ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
         for(Node<Long> expected:trees) {
+            System.out.println("ex: "+G2.pPrint(expected));
             Iterator<Character> j=new G2.Characters();
             Node<Character> actual=reLabelCopy(expected,j);
+            System.out.println("ac:"+G2.pPrint(actual));
             Iterator<Long> i=new G2.Longs();
             Node<Long> actual2=reLabelCopy(expected,i);
             Iterator<Character> k=new G2.Characters();
-            Node<Character> actual3=reLabelCopy(expected,k);
+            Node<Character> actual3=reLabelCopy(actual2,k);
+            System.out.println("a3:"+G2.pPrint(actual3));
             assertTrue(structureDeepEquals(actual,actual3));
             assertTrue(deepEquals(actual,actual3));
         }

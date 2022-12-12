@@ -8,12 +8,19 @@ public class G2 {
     public static class Longs implements Iterator<Long> {
         @Override public boolean hasNext() { return n<Long.MAX_VALUE; }
         @Override public Long next() { return n++; }
-        Long n=2l; // -1?
+        Long n=1l; // -1?
     }
     public static class Characters implements Iterator<Character> {
+        Characters(char first) { character=first; }
+        Characters() { this((char)('a'-1)); }
         @Override public boolean hasNext() { return character<Character.MAX_VALUE; }
-        @Override public Character next() { return ++character; }
-        Character character='a'+2;
+        @Override public Character next() { return character++; }
+        Character character='a'-1;
+    }
+    public static class Strings implements Iterator<String> {
+        @Override public boolean hasNext() { return n<Long.MAX_VALUE; }
+        @Override public String next() { return (++n).toString(); }
+        Long n=0l; // starts at 1.
     }
     /*
     Given a general tree with ordered but not indexed children,
@@ -65,6 +72,12 @@ public class G2 {
         long number=Long.parseLong(expected,2);
         return roundTripLong(expected,number);
     }
+    static class CountingConsumer<T> implements Consumer<Node<T>> {
+        @Override public void accept(Node<T> node) { //
+            if(node!=null) ++n;
+        }
+        int n;
+    }
     static class MyConsumer<T> implements Consumer<Node<T>> {
         @Override public void accept(Node<T> node) { //
             if(node!=null) { Node<T> newNode=new Node<>(node.data); copy=newNode; }
@@ -108,9 +121,7 @@ public class G2 {
         tree.postorder(p);
         System.out.println();
     }
-    static <T> void printStuff(ArrayList<ArrayList<Node<T>>> all,int nodes) {
-        ArrayList<Node<T>> trees=all.get(nodes);
-        System.out.println(nodes+" nodes.");
+    public static <T> void printStuff(ArrayList<Node<T>> trees) {
         for(int i=0;i<trees.size();++i) {
             System.out.print("tree "+i+": ");
             Node<T> tree=trees.get(i);
@@ -118,6 +129,11 @@ public class G2 {
             preorder(tree,p);
             System.out.println();
         }
+    }
+    public static <T> void printStuff(ArrayList<ArrayList<Node<T>>> all,int nodes) {
+        ArrayList<Node<T>> trees=all.get(nodes);
+        System.out.println(nodes+" nodes.");
+        printStuff(trees);
         System.out.println("end of nodes "+nodes);
     }
     private static <T> void print(Node<T> node,String prefix,boolean isLeft) {
@@ -132,13 +148,22 @@ public class G2 {
         if(node!=null) print(node,prefix,true);
         else System.out.println("0");
     }
-    // all wants a generator
-    // encode wants an empty list
-    // use a new map
-    // and check for duplicates not using map?
-    // new map is same as old map
-    // figure this out later
-    // maybe always generate with long and relabel?
+    public static <T> void pPrint(Node<T> root,StringBuffer sb) {
+        if(root==null) return;
+        sb.append(root.data);
+        if(root.left==null&&root.right==null) return;
+        sb.append('(');
+        pPrint(root.left,sb);
+        sb.append(')');
+        // only if right child is present to
+        // avoid extra parenthesis
+        if(root.right!=null) { sb.append('('); pPrint(root.right,sb); sb.append(')'); }
+    }
+    public static <T> String pPrint(Node<T> root) {
+        StringBuffer sb=new StringBuffer();
+        pPrint(root,sb);
+        return sb.toString();
+    }
     public static class Generator<T> {
         public Generator(boolean useMap) { this.useMap=useMap; }
         // maybe add useMap flag to all? and make all_?
@@ -212,7 +237,7 @@ public class G2 {
         ArrayList<ArrayList<Node<Long>>> all=G2.Generator.all(nodes);
         System.out.println(nodes+" nodes.");
         if(false) { check(all.get(2).get(0)); return; }
-        for(int i=0;i<=nodes;i++) {
+        if(false) for(int i=0;i<=nodes;i++) {
             System.out.println("check "+i+" nodes.");
             ArrayList<Node<Long>> trees=all.get(i);
             int n=0;
@@ -222,7 +247,19 @@ public class G2 {
                 //G2.print(expected);
             }
         }
-        //if(true) return;
+        ArrayList<Node<Long>> some=all.get(3);
+        for(int i=0;i<some.size();++i) {
+            System.out.print("tree "+i+": ");
+            Node<Long> tree=some.get(i);
+            final Consumer<Node<Long>> p=x1->pd(x1);
+            preorder(tree,p);
+            System.out.println();
+            print(tree,"");
+            System.out.println(pPrint(tree));
+        }
+        Node<Character> redBean=RedBean.binary();
+        System.out.println(pPrint(redBean));
+        if(true) return;
         ArrayList<Node<Long>> trees=all.get(nodes);
         int n=trees.size();
         Node<Long> tree=trees.get(n/2);
@@ -239,6 +276,6 @@ public class G2 {
         ArrayList<Long> data=new ArrayList<>();
         for(int i=0;i<maxNodes;++i) data.add((long)i); // start at 1?
         sequentialData=Collections.unmodifiableList(data);
-        System.out.println("end static init.");
+        //System.out.println("end static init.");
     }
 }

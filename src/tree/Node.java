@@ -4,6 +4,7 @@ import static utilities.Utilities.*;
 import java.util.*;
 import java.util.function.Consumer;
 import io.Logging;
+import tree.G2.CountingConsumer;
 public class Node<T> {
     public Node(T data) { this.data=data; }
     public Node(T data,Node<T> left,Node<T> right) { this.data=data; this.left=left; this.right=right; }
@@ -73,7 +74,7 @@ public class Node<T> {
             encode_(sb,node.right,data);
         } else {
             sb.append('0');
-            if(data!=null) data.add(null); // maybe not?
+            //if(data!=null) data.add(null); // maybe not?
         }
     }
     public static <T> String encode(Node<T> tree,ArrayList<T> data) { // to binary string
@@ -129,10 +130,10 @@ public class Node<T> {
             node.encoded=encode(node,null);
             return node;
         }
-        T d=data!=null?data.remove(0):null;
+        //T d=data!=null?data.remove(0):null;
         return null;
     }
-    static <T> Node<T> decode(String binaryString,List<T> data) {
+    public static <T> Node<T> decode(String binaryString,List<T> data) {
         List<Character> characters=Arrays.asList(toObjects(binaryString.toCharArray()));
         return decode_(new ArrayList<>(characters),data);
     }
@@ -171,6 +172,11 @@ public class Node<T> {
     @Override public String toString() { return "Node [data="+data+"]"; }
     public static <T> boolean deepEquals(Node<T> node,Node<T> other) {
         return node!=null?node.deepEquals_(other,true):other==null;
+    }
+    public static <T> int count(Node<T> node) {
+        CountingConsumer<T> consumer=new CountingConsumer<>();
+        if(node!=null) Node.postorder(node,consumer);
+        return consumer.n;
     }
     public static <T> boolean structureDeepEquals(Node<T> node,Node<T> other) {
         return node!=null?node.deepEquals_(other,false):other==null;

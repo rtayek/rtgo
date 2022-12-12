@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 import io.*;
 import model.Move;
+import tree.*;
 import utilities.Holder;
 public class SgfNode {
     // maybe put a bunch of this stuff into interface Sgf?
@@ -193,6 +194,7 @@ public class SgfNode {
         try {
             writer.write(indent.indent()+'(');
             saveSgf_(writer,indent);
+            writer.write(indent.indent()+')');
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -358,28 +360,63 @@ public class SgfNode {
         return actualSgf;
     }
     public static void main(String[] args) throws IOException {
+        System.err.println(Init.first);
         if(true) {
-            System.out.println("foo");
+            Logging.setUpLogging();
+            System.out.println(parserLogger.getLevel());
             Set<Object> objects=new LinkedHashSet<>();
             objects.addAll(sgfDataKeySet());
-            objects.addAll(sgfFiles());
+            //objects.addAll(sgfFiles());
             for(Object key:objects) {
-                System.out.println(key);
+                if(true) {
+                    String ex=getSgfData(key);
+                    ex=SgfNode.options.prepareSgf(ex);
+                    System.out.println("expected:\n"+ex);
+                    Node<Character> redBean=RedBean.binary();
+                    int n=Node.count(redBean);
+                    System.out.println(n+" nodes.");
+                    System.out.println("hand coded binary:");
+                    System.out.println(G2.pPrint(redBean));
+                    System.out.println("---");
+                    //System.out.println("r(a(b(c()(d(e))))(f(g(h(i))(j))))");
+                    Iterator<String> i=new G2.Strings();
+                    Node<String> string=tree.Node.reLabelCopy(redBean,i);
+                    System.out.println("sytings:\n"+G2.pPrint(string));
+                    ArrayList<String> labels=new ArrayList<>();
+                    String encoded=Node.encode(string,labels);
+                    System.out.println("red bean encoded: "+encoded);
+                    System.out.println(labels.size()+" old labels:\n"+labels);
+                    ArrayList<String> newLabels=new ArrayList<>();
+                    char l='`';
+                    for(String label:labels) newLabels.add(new String(";C["+(l++)+"]"));
+                    System.out.println(newLabels.size()+" new labels:\n"+newLabels);
+                    Node<String> relabelled=Node.decode(encoded,newLabels);
+                    relabelled.data=";FF[4]C[root]";
+                    System.out.println("relabellesd:\n"+G2.pPrint(relabelled));
+                    String expected=getSgfData(key);
+                    expected=SgfNode.options.prepareSgf(expected);
+                    System.out.println("---");
+                    System.out.println("expected:\n"+expected);
+                }
                 System.out.print(key);
-                String expected=getSgfData(key);
-                expected=SgfNode.options.prepareSgf(expected);
-                SgfNode games=restoreSgf(new StringReader(expected));
-                if(games!=null) System.out.print(" right: "+games.right);
-                String sgf=null;
+                String expectedSgf=getSgfData(key);
+                expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
+                SgfNode games=restoreSgf(new StringReader(expectedSgf));
+                if(games!=null) if(games.right!=null) System.out.print(" 2");
+                else System.out.print(" 1");
+                else System.out.print(" 0");
+                String preorderSsgf=null;
                 if(games!=null) {
                     StringWriter stringWriter=new StringWriter();
                     games.preorderSaveSgf(stringWriter,noIndent);
-                    sgf=stringWriter.toString();
+                    preorderSsgf=stringWriter.toString();
                 }
-                //System.out.println(expected);
-                //System.out.println(sgf);
-                boolean ok=expected.equals(sgf);
-                System.out.println(" "+ok);
+                System.out.println(expectedSgf);
+                System.out.println("preorderSsgf");
+                System.out.println(preorderSsgf);
+                boolean ok=expectedSgf.equals(preorderSsgf);
+                if(!ok) System.out.println(" "+ok);
+                if(true) break;
             }
             return;
         }
@@ -387,13 +424,13 @@ public class SgfNode {
                 List.of("comments1","twoEmptyWithSemicolon","smartgo4","twosmallgamesflat","smartgo42"));
         for(Object key:Parser.sgfDataKeySet()) {
             System.out.println(key);
-            String expected=getSgfData(key);
-            System.out.println(expected);
-            SgfNode games=restoreSgf(new StringReader(expected));
+            String expectedSgf=getSgfData(key);
+            System.out.println(expectedSgf);
+            SgfNode games=restoreSgf(new StringReader(expectedSgf));
             StringWriter stringWriter=new StringWriter();
             games.saveSgf(stringWriter,standardIndent);
-            String actual4=stringWriter.toString();
-            System.out.println(actual4);
+            String actualSgf=stringWriter.toString();
+            System.out.println(actualSgf);
             System.out.println("------------");
         }
     }

@@ -163,7 +163,6 @@ public class Parser {
     }
     public static SgfNode restoreSgf(Reader reader) {
         SgfNode games=new Parser().parse(reader);
-        if(games!=null) if(games.right!=null) System.out.println("2 more than one game!");
         return games;
     }
     private SgfNode parse(Reader reader) {

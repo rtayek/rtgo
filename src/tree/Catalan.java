@@ -1,6 +1,6 @@
 package tree;
 import java.util.*;
-import tree.G2.*;
+import tree.G2.Generator;
 public class Catalan {
     public static final long c(final int n,final int r) { // binomial coefficient
         long i,p;
@@ -37,9 +37,12 @@ public class Catalan {
             if(trees.size()!=catalans[nodes]) {
                 System.out.println(trees.size()+" trees.size()!=catalans["+nodes+"]");
             } else System.out.println(trees.size()+" trees.");
+            int i=0;
             for(Node<Long> node:trees) {
-                //System.out.println("|||");
-                //print(node);
+                if(node!=null)
+                    if(RedBean.encoded.equals(node.encoded))
+                        System.out.println("node: "+nodes+", tree: "+i+": "+node);
+                ++i;
             }
             //System.out.println("|||||||");
             System.out.println("end of nodes: "+nodes);

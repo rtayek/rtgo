@@ -22,6 +22,8 @@ public class RedBeanTestCase {
         //System.out.println(deepEquals(bRoot,binary));
         assertTrue(structureDeepEquals(bRoot,binary));
         assertTrue(deepEquals(bRoot,binary));
+        System.out.println(G2.pPrint(bRoot));
+        System.out.println(G2.pPrint(binary));
     }
     @Test public void testBinaryToMWay() {
         Node.processed.clear();

@@ -24,6 +24,7 @@ class Traverser { // half of a visitor
         Traverser traverser=new Traverser(acceptor);
         String expectedSgf=getSgfData("simpleWithVariations");
         SgfNode games_=restoreSgf(new StringReader(expectedSgf));
+        if(games_!=null) if(games_.right!=null) System.out.println(" 2 more than one game!");
         MNode games=MNode.toGeneralTree(games_);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");

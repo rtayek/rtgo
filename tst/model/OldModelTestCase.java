@@ -227,7 +227,7 @@ public class OldModelTestCase {
         }
     }
     @Test public void testSave() {
-        File file=new File("sgf/saved.sgf");
+        File file=new File("tmp/saved.sgf");
         if(file.exists()) file.delete();
         boolean ok=model.save(IO.toWriter(file));
         assertTrue(ok);

@@ -1,9 +1,13 @@
 package tree;
 import static tree.MNode.print;
-import tree.G2.Characters;
+import java.util.*;
+import tree.G2.*;
 public class RedBean {
-    static Node<Character> binary() {
+    public static Node<Character> binary() {
         // this may not be coded up correctly
+        // it was not, but it's still not right
+        // it seems right!
+        /*
         Node<Character> e=new Node<>('e');
         Node<Character> d=new Node<>('d',e,null);
         Node<Character> c=new Node<>('c',null,d);
@@ -15,7 +19,20 @@ public class RedBean {
         Node<Character> f=new Node<>('f',g,null);
         Node<Character> a=new Node<>('a',b,f);
         Node<Character> root=new Node<>('r',a,null);
-        return root;
+         */
+        Node<Character> r,a,b,c,d,e,f,g,h,i,j;
+        e=new Node<>('e');
+        d=new Node<>('d',e,null);
+        c=new Node<>('c',null,d);
+        b=new Node<>('b',c,null);
+        i=new Node<>('i');
+        h=new Node<>('h',i,null);
+        j=new Node<>('j');
+        g=new Node<>('g',h,j);
+        f=new Node<>('f',g,null);
+        a=new Node<>('a',b,f);
+        r=new Node<>('r',a,null);
+        return r;
     }
     static MNode<Character> mway() {
         MNode<Character> root=new MNode<>('r',null);
@@ -44,19 +61,48 @@ public class RedBean {
     public static void example() { // https://www.red-bean.com/sgf/var.html
         Node<Character> bRoot=binary();
         System.out.println("coded binary sample");
-        //G2.print(bRoot,"");
-        Characters i=new Characters();
-        Node.<Character> relabel(bRoot,i); // since i uses 'r' for the root.
-        System.out.println("after relabel");
+        boolean relabel=false;
         G2.print(bRoot,"");
+        if(relabel) {
+            Characters i=new Characters();
+            Node.<Character> relabel(bRoot,i); // since i uses 'r' for the root.
+            System.out.println("after relabel");
+            G2.print(bRoot,"");
+        }
         System.out.println("coded mway sample");
         MNode<Character> mRoot=mway();
-        i=new Characters();
-        MNode.<Character> relabel(mRoot,i); // since i uses 'r' for the root.
-        System.out.println("after relabel");
         print(mRoot,"",true);
+        if(relabel) {
+            Characters i=new Characters();
+            MNode.<Character> relabel(mRoot,i); // since i uses 'r' for the root.
+            System.out.println("after relabel");
+            print(mRoot,"",true);
+        }
         // since mway to binary seems to work,
         // let's see why binary to mway fails.
     }
-    public static void main(String[] arguments) { example(); }
+    public static Node<String> readBean() {
+        // node: 11, tree: 50256: Node
+        int nodes=11,tree=50256;
+        Iterator<String> iterator=new G2.Strings();
+        ArrayList<Node<String>> trees=Generator.one(nodes,iterator,false);
+        return trees.get(tree);
+    }
+    public static void main(String[] arguments) {
+        //example();
+        Node<Character> bRoot=binary();
+        System.out.println(G2.pPrint(bRoot));
+        System.out.println("red bean:");
+        Node<String> redBean=readBean();
+        if(!encoded.equals(redBean.encoded)) System.out.println("badness!");
+        System.out.println(G2.pPrint(redBean));
+        Characters i=new Characters();
+        Node.<Character> relabel(bRoot,i); // since i uses 'r' for the root.
+        System.out.println("after relabel");
+        System.out.println(G2.pPrint(bRoot));
+        // looks like the print out the same!
+        // r(a(b(c()(d(e))))(f(g(h(i))(j)))) is correct.
+
+    }
+    public static final String encoded="11110110000111100010000";
 }

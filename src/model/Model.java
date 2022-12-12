@@ -962,6 +962,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         StringWriter stringWriter=new StringWriter();
         SgfNode games=restoreSgf(new StringReader(expectedSgf));
         if(games==null) return null; // return empty node!
+        if(games!=null) if(games.right!=null) System.out.println(" 2 more than one game!");
         // maybe return empty node if sgf is ""?
         //games.saveSgf(stringWriter,noIndent); // writes sgf from binary tree.
         MNode mNodes0=MNode.toGeneralTree(games);
@@ -987,6 +988,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // only used in one test method.
         SgfNode games=restoreSgf(new StringReader(expectedSgf));
         if(games==null) return null;
+        if(games!=null) if(games.right!=null) System.out.println(" 2 more than one game!");
         games.saveSgf(new StringWriter(),noIndent);
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();

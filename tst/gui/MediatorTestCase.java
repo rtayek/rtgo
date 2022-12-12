@@ -17,7 +17,7 @@ public class MediatorTestCase {
         // lots of duplicate code. file.getName().endsWith(".sgf")
     }
     @Test public void testGetExtension2() {
-        File file=new File("saved");
+        File file=new File("savedxyz");
         String extention=Model.getExtension(file);
         if(extention==null||!extention.equalsIgnoreCase("sgf")) file=new File(file.getParent(),file.getName()+".sgf");
         assertTrue(file.getName().endsWith(".sgf"));
