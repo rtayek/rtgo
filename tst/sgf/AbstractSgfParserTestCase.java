@@ -30,6 +30,11 @@ public abstract class AbstractSgfParserTestCase {
         if(expectedSgf==null) return;
         else; //System.out.println("ex before fix: "+expectedSgf);
         //assertNotNull(key.toString(),expectedSgf); 11/8/22 allow for now
+        int p=Parser.parentheses(expectedSgf);
+        if(p!=0) {
+            System.out.println(" bad parentheses: "+p);
+            throw new RuntimeException(key+" bad parentheses: "+p);
+        }
         if(alwaysPrepare) prepare();
     }
     @Test public void testKey() throws Exception {

@@ -45,9 +45,9 @@ import utilities.*;
         // need to check the add new root switch.
         // 11/28/22 seems like we are doing this somewhere else.
     }
-    @Test() public void testLeastCommonAncester() {
+    @Ignore @Test() public void testLeastCommonAncester() { // slow, so ignore for now.
         // ignoring for now as it is slow
-        // seems to be working for multiplegames
+        // seems to be working for multiple games
         MNode root=MNode.restore(new StringReader(expectedSgf));
         boolean hasMultipleGames=root!=null&&root.children.size()>1;
         assertNotNull(root);

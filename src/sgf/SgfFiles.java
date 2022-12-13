@@ -15,8 +15,11 @@ public class SgfFiles {
         for(Object key:objects) {
             if(arguments.length>0) {
                 String sgf=getSgfData(key);
+                int p=parentheses(sgf);
+                if(p!=0) System.out.println("parentheses count: "+p);
                 SgfNode games=restoreSgf(new StringReader(sgf));
-                if(games!=null) if(games.right!=null) System.out.println(n+" "+key+" has more than one game: "+games.right);
+                if(games!=null)
+                    if(games.right!=null) System.out.println(n+" "+key+" has more than one game: "+games.right);
             } else System.out.println(n+" "+key);
             ++n;
         }

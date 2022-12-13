@@ -161,10 +161,7 @@ public class Parser {
         }
         return sequence;
     }
-    public static SgfNode restoreSgf(Reader reader) {
-        SgfNode games=new Parser().parse(reader);
-        return games;
-    }
+    public static SgfNode restoreSgf(Reader reader) { SgfNode games=new Parser().parse(reader); return games; }
     private SgfNode parse(Reader reader) {
         if(reader==null) return null;
         try {
@@ -243,6 +240,15 @@ public class Parser {
             throw new RuntimeException(key+" is not a string or a file!");
         }
         return sgf;
+    }
+    public static int parentheses(String string) { // parentheses
+        int count=0;
+        for(Character c:string.toCharArray()) {
+            if(c.equals('(')) ++count;
+            else if(c.equals(')')) --count;
+            if(count<0) System.out.println("count is negative!");
+        }
+        return count;
     }
     public static void main(String[] argument) throws Exception {
         System.out.println(Init.first);

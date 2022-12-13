@@ -27,6 +27,14 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         }
         return ok;
     }
+    @Test public void testSgfSaveAndRestore() throws Exception {
+        // but does a restore first, then a deep equals on the trees.
+        assertFalse(expectedSgf.contains("\n"));
+        SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
+        StringWriter stringWriter=new StringWriter();
+        SgfNode actualSgf=sgfSaveAndRestore(expected,stringWriter);
+        if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
+    }
     @Test public void testSgfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
         StringReader stringReader=new StringReader(expectedSgf);
@@ -47,8 +55,10 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         if(expectedSgf.equals("")) return;
         expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
         String actualSgf=SgfNode.preOrderRouundTrip(expectedSgf);
-        System.out.println(expectedSgf);
-        System.out.println(actualSgf);
+        //System.out.println(expectedSgf);
+        //System.out.println(actualSgf);
+        int p=Parser.parentheses(expectedSgf);
+        if(p!=0) System.out.println(" bad parentheses: "+p);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
@@ -56,13 +66,6 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         StringReader reader=expectedSgf!=null?new StringReader(expectedSgf):null;
         boolean isOk=sgfRoundTripTwice(reader);
         assertTrue(key.toString(),isOk);
-    }
-    @Test public void testSgfSaveAndRestore() throws Exception {
-        assertFalse(expectedSgf.contains("\n"));
-        SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
-        StringWriter stringWriter=new StringWriter();
-        SgfNode actualSgf=sgfSaveAndRestore(expected,stringWriter);
-        if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
     }
     @Test public void testSgfCannonical() {
         assertFalse(expectedSgf.contains("\n"));

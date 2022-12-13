@@ -487,6 +487,7 @@ seems like someone keeps making and empty sgf/saved.sgf.
 12/10/22 always prepare in abstract parser test case is false.
 so so all of the round trip needs to do some sort or prepare on the expected sgf.
 and then the actual sgf needs some preparation (removing cr's and lf's).
+12/12/22 saving (to sgf string) the redbean sample directly from an mnode works!
 
 
 

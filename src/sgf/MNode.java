@@ -114,6 +114,12 @@ public class MNode {
         if(!ok) System.out.println("not ok!");
         return root;
     }
+    public static MNode mNodeDirectRoundTrip(StringReader stringReader,StringWriter stringWriter) {
+        MNode root=MNode.restore(stringReader);
+        String actual=saveDirectly(root);
+        stringWriter.write(actual);
+        return root;
+    }
     public static MNode quietLoad(Reader reader) {
         PrintStream old=System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
@@ -139,8 +145,50 @@ public class MNode {
         Collection<SgfNode> path=finder.pathToTarget;
         return path;
     }
-    public static void main(String[] args) {
+    public static String toString(MNode mNode) {
+        StringBuffer stringBuffer=new StringBuffer(";");
+        //if(false) { stringBuffer.append("{id="+sgfId); stringBuffer.append("}"); }
+        for(Iterator<SgfProperty> i=mNode.properties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
+        return stringBuffer.toString();
+    }
+    private static void saveDirectly_(Writer writer,MNode root,Indent indent) throws IOException {
+        if(root!=null) {
+            writer.write(toString(root));
+            ArrayList<MNode> children=root.children;
+            int n=children.size();
+            for(int i=0;i<children.size();++i) {
+                if(n>1) writer.write(indent.indent()+'(');
+                saveDirectly_(writer,children.get(i),indent);
+                if(n>1) writer.write(indent.indent()+')');
+            }
+        }
+        return;
+    }
+    public static void saveDirectly(Writer writer,MNode root,Indent indent) throws IOException  {
+        if(root==null) return;
+        if(indent==null) indent=new Indent(IO.standardIndent);
+        writer.write(indent.indent()+'(');
+        saveDirectly_(writer,root,indent);
+        writer.write(indent.indent()+')');
+    }
+    public static MNode restoreRedBean() {
+        String expectedSgf=Parser.sgfExamleFromRedBean;
+        MNode mNode=restore(new StringReader(expectedSgf));
+        return mNode;
+    }
+    public static String saveDirectly(MNode mNode) {
+        StringWriter stringWriter=new StringWriter();
+        MNode x=mNode.children.iterator().next();
+        try {
+            saveDirectly(stringWriter,x,noIndent);
+        } catch(IOException e) {
+            System.out.println("caught: "+e);
+        }
+        return stringWriter.toString();
+    }
+    public static void main(String[] args) throws IOException {
         System.out.println(Init.first);
+        if(true) { MNode mNode=restoreRedBean(); saveDirectly(mNode); return; }
         //lookAtRoot();
         String oneGame="(;GM[1];B[as];B[at])";
         System.out.println(oneGame);
