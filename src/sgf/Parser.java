@@ -241,9 +241,23 @@ public class Parser {
         }
         return sgf;
     }
+    public static Set<Object> findMultipleGames(Set<Object> objects) {
+        Set<Object> many=new LinkedHashSet<>();
+        for(Object key:objects) {
+            String sgf=getSgfData(key);
+            int p=parentheses(sgf);
+            if(p!=0) System.out.println("parentheses count: "+p);
+            SgfNode games=restoreSgf(new StringReader(sgf));
+            if(games!=null) if(games.right!=null) {
+                many.add(key);
+                System.out.println(key+" has more than one game: "+games.right);
+            }
+        }
+        return many;
+    }
     public static int parentheses(String string) { // parentheses
         int count=0;
-        for(Character c:string.toCharArray()) {
+        if(string!=null) for(Character c:string.toCharArray()) {
             if(c.equals('(')) ++count;
             else if(c.equals(')')) --count;
             if(count<0) System.out.println("count is negative!");
@@ -400,6 +414,7 @@ public class Parser {
         sgfData.put("smartgo4",smartgo4);
         sgfData.put("smartgo42",smartgo42);
         sgfData.put("smartgo43",smartgo43);
+        System.out.println(sgfData.keySet());
         //System.out.println(sgfData.size()+" sgf strings in parser map.");
     }
     static {

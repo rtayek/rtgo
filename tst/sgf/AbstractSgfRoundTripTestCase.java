@@ -29,7 +29,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     }
     @Test public void testSgfSaveAndRestore() throws Exception {
         // but does a restore first, then a deep equals on the trees.
-        assertFalse(expectedSgf.contains("\n"));
+        if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
         SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
         StringWriter stringWriter=new StringWriter();
         SgfNode actualSgf=sgfSaveAndRestore(expected,stringWriter);
@@ -37,18 +37,19 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     }
     @Test public void testSgfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
-        StringReader stringReader=new StringReader(expectedSgf);
-        StringWriter stringWriter=new StringWriter();
-        SgfNode games=sgfRestoreAndSave(stringReader,stringWriter);
-        if(games!=null&&games.right!=null) System.out.println("42 more than one game!");
-        String actualSgf=stringWriter.toString();
+        String actualSgf=sgfRestoreAndSave(expectedSgf);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        if(actualSgf.length()==expectedSgf.length()+1) if(actualSgf.endsWith(")")) {
+            System.out.println(key+"removing extra ')' "+actualSgf.length());
+            if(true) throw new RuntimeException(key+"removing extra ')' "+actualSgf.length());
+            actualSgf=actualSgf.substring(0,actualSgf.length()-1);
+        }
         // how to do this more often?
         //Boolean ok=specialCases(actualSgf);
         //if(ok) return;
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
-    @Test public void testSPreordergfRoundTrip() throws Exception {
+    @Ignore @Test public void testSPreordergfRoundTrip() throws Exception {
         //String key="sgfExamleFromRedBean";
         //String expected=getSgfData(key);
         if(expectedSgf==null) return;
@@ -62,13 +63,13 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
-        assertFalse(expectedSgf.contains("\n"));
+        if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
         StringReader reader=expectedSgf!=null?new StringReader(expectedSgf):null;
         boolean isOk=sgfRoundTripTwice(reader);
         assertTrue(key.toString(),isOk);
     }
     @Test public void testSgfCannonical() {
-        assertFalse(expectedSgf.contains("\n"));
+        if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
         String actualSgf=sgfRestoreAndSave(expectedSgf);
         String actual2=sgfRestoreAndSave(actualSgf);
         assertEquals(key.toString(),actualSgf,actual2);

@@ -9,20 +9,26 @@ public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTri
     @Test public void testMMNodeRoundTrip() throws Exception {
         int p=Parser.parentheses(expectedSgf);
         if(p!=0) System.out.println("ex bad parentheses: "+p);
-        StringReader stringReader=new StringReader(expectedSgf);
-        StringWriter stringWriter=new StringWriter();
-        MNode root=mNodeRoundTrip(stringReader,stringWriter);
-        String actualSgf=stringWriter.toString();
+        String actualSgf=null;
+        if(expectedSgf!=null) {
+            StringReader stringReader=new StringReader(expectedSgf);
+            StringWriter stringWriter=new StringWriter();
+            MNode root=mNodeRoundTrip(stringReader,stringWriter);
+            actualSgf=stringWriter.toString();
+        }
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         /*int*/ p=Parser.parentheses(actualSgf);
         if(p!=0) System.out.println("ac bad parentheses: "+p);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
-    @Ignore @Test public void testMMNodeDirectRoundTrip() throws Exception {
-        StringReader stringReader=new StringReader(expectedSgf);
-        StringWriter stringWriter=new StringWriter();
-        MNode root=MNode.mNodeDirectRoundTrip(stringReader,stringWriter);
-        String actualSgf=stringWriter.toString();
+    @Test public void testMMNodeDirectRoundTrip() throws Exception {
+        String actualSgf=null;
+        if(expectedSgf!=null) {
+            StringReader stringReader=new StringReader(expectedSgf);
+            StringWriter stringWriter=new StringWriter();
+            MNode root=MNode.mNodeDirectRoundTrip(stringReader,stringWriter);
+            actualSgf=stringWriter.toString();
+        }
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         //Boolean ok=specialCases(actualSgf);
         //if(ok) return;

@@ -178,12 +178,12 @@ public class MNode {
     }
     public static String saveDirectly(MNode mNode) {
         StringWriter stringWriter=new StringWriter();
-        MNode x=mNode.children.iterator().next();
-        try {
-            saveDirectly(stringWriter,x,noIndent);
-        } catch(IOException e) {
-            System.out.println("caught: "+e);
-        }
+        for(MNode child:mNode.children) // save all of the games
+            try {
+                saveDirectly(stringWriter,child,noIndent);
+            } catch(IOException e) {
+                System.out.println("caught: "+e);
+            }
         return stringWriter.toString();
     }
     public static void main(String[] args) throws IOException {

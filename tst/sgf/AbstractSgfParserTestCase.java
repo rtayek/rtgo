@@ -11,37 +11,37 @@ import utilities.MyTestWatcher;
 public abstract class AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public void prepare() {
-        // consolidate so we only have one of these?
-        expectedSgf=SgfNode.options.prepareSgf(expectedSgf); // move this stuff to round trip?
-        if(SgfNode.options.removeLineFeed) if(expectedSgf.contains("\n)")) {
-            System.out.println("lf badness");
-            System.exit(0);
-        }
-        if(containsQuotedControlCharacters(key,expectedSgf)) {
-            System.out.println(key+" contains quoted control characters.");
-            expectedSgf=SgfOptions.removeQuotedControlCharacters(expectedSgf);
+        if(expectedSgf!=null) {
+            // consolidate so we only have one of these?
+            expectedSgf=SgfNode.options.prepareSgf(expectedSgf); // move this stuff to round trip?
+            if(SgfNode.options.removeLineFeed) if(expectedSgf.contains("\n)")) {
+                System.out.println("lf badness");
+                System.exit(0);
+            }
+            if(containsQuotedControlCharacters(key,expectedSgf)) {
+                System.out.println(key+" contains quoted control characters.");
+                expectedSgf=SgfOptions.removeQuotedControlCharacters(expectedSgf);
+            }
         }
         assertFalse(containsQuotedControlCharacters(key.toString(),expectedSgf));
     }
     @Before public void setUp() throws Exception {
         //System.out.println("key: "+key);
         watcher.key=key;
+        if(true) if(key==null) throw new RuntimeException("key: "+key+" is nul!");
         expectedSgf=getSgfData(key);
-        if(expectedSgf==null) return;
+        if(expectedSgf==null) {
+            if(true) throw new RuntimeException("key: "+key+" returns nul!");
+            return;
+        }
         else; //System.out.println("ex before fix: "+expectedSgf);
         //assertNotNull(key.toString(),expectedSgf); 11/8/22 allow for now
         int p=Parser.parentheses(expectedSgf);
-        if(p!=0) {
-            System.out.println(" bad parentheses: "+p);
-            throw new RuntimeException(key+" bad parentheses: "+p);
-        }
+        if(p!=0) { System.out.println(" bad parentheses: "+p); throw new RuntimeException(key+" bad parentheses: "+p); }
         if(alwaysPrepare) prepare();
     }
     @Test public void testKey() throws Exception {
-        if(!(key!=null||expectedSgf!=null)) {
-            System.out.println("key!=null||expectedSgf!=null");
-            IO.stackTrace(10);
-        }
+        if(!(key!=null||expectedSgf!=null)) { System.out.println("key!=null||expectedSgf!=null"); IO.stackTrace(10); }
         assertTrue(key!=null||expectedSgf!=null);
         // not currently failing except for one null key.
         // this only happens when all of the model tests are run together.
@@ -50,8 +50,7 @@ public abstract class AbstractSgfParserTestCase {
     }
     @Test public void testParse() throws Exception {
         if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
-            if(!expectedSgf.endsWith(")"))
-                System.out.println(key+" does not end with an close parenthesis");
+            if(!expectedSgf.endsWith(")")) System.out.println(key+" does not end with an close parenthesis");
             //fail(key+" does not end with an close parenthesis");
         } else if(!expectedSgf.equals("")) fail(key.toString()+" does not start with an open parenthesis");
         games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
@@ -64,7 +63,6 @@ public abstract class AbstractSgfParserTestCase {
         assertTrue(keyString,implies(encoded==null,actualSgf==null));
         assertEquals(keyString,expectedSgf,actualSgf);
     }
-    
     boolean alwaysPrepare=false;
     public Object key;
     public String expectedSgf;
