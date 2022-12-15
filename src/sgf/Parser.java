@@ -230,6 +230,7 @@ public class Parser {
     }
     public static String getSgfData(Object key) {
         String sgf=null;
+        if(key==null) throw new RuntimeException(key+" key is null!");
         if(key==null) return null;
         if(key instanceof String) sgf=sgfData.get(key);
         else if(key instanceof File) sgf=utilities.Utilities.fromFile((File)key);

@@ -1,6 +1,5 @@
 package sgf;
 import static io.IO.*;
-import static io.Logging.parserLogger;
 import static sgf.Parser.*;
 import java.io.*;
 //http://en.wikipedia.org/wiki/Binary_tree#Encoding_general_trees_as_binary_trees
@@ -31,23 +30,17 @@ public class MNode {
         SgfNode node=new SgfNode(properties,null,left); // first child
         return node;
     }
-    public static void setIsAMoveFlags(MNode node) {
-        // copy of code in sgf node.
-        // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
-        for(SgfProperty property:node.properties) {
-            if(property.p() instanceof Setup) node.hasASetupType=true;
-            if(property.p() instanceof sgf.Move) { node.hasAMoveType=true; }
-            if((property.p().equals(P.W)||property.p().equals(P.B))) node.hasAMove=true;
-        }
-        if(node.hasAMoveType&&node.hasASetupType) parserLogger.severe("node has move and setup type properties!");
-    }
     private static MNode toGeneralTree(SgfNode node,MNode grandParent) {
         if(node==null) { if(grandParent!=null) grandParent.children.add(null); return null; }
         MNode parent=new MNode(grandParent);
         if(grandParent!=null) grandParent.children.add(parent);
         else throw new RuntimeException("gradparent is null!");
         parent.properties.addAll(node.properties);
-        setIsAMoveFlags(parent);
+        if(node!=null) {
+            node.setIsAMoveFlags();
+            //
+            if(bad) System.out.println("node has move and setup type properties!");
+        }
         if(node.left!=null) { @SuppressWarnings("unused") MNode child=toGeneralTree(node.left,parent); }
         if(node.right!=null) {
             @SuppressWarnings("unused") MNode child=toGeneralTree(node.right,grandParent);
@@ -164,7 +157,7 @@ public class MNode {
         }
         return;
     }
-    public static void saveDirectly(Writer writer,MNode root,Indent indent) throws IOException  {
+    public static void saveDirectly(Writer writer,MNode root,Indent indent) throws IOException {
         if(root==null) return;
         if(indent==null) indent=new Indent(IO.standardIndent);
         writer.write(indent.indent()+'(');

@@ -29,7 +29,6 @@ import utilities.*;
     }
     @Test public void testMultipleGames() { // how does it do that?
         String expectedSgf=sgfRestoreAndSave(originalSgf);
-        //System.out.println("exx: "+expectedSgf);
         //assertFalse(expectedSgf.contains(P.RT.toString()));
         // why would we expect this?
     }

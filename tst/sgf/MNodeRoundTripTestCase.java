@@ -7,6 +7,5 @@ public class MNodeRoundTripTestCase extends AbstractMNodeRoundTripTestCase {
         key=Parser.empty;
         key="sgfExamleFromRedBean";
         //sgfExamleFromRedBean
-        super.setUp();
     }
 }

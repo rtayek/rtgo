@@ -20,7 +20,6 @@ import utilities.MyTestWatcher;
     public IllegalSgfTestCase(String key) { this.key=key; }
     @Test public void testParse() throws Exception {
         String expectedSgf=getSgfData(key);
-        System.out.println("expectedSgf: "+expectedSgf);
         SgfNode games=null;
         if(expectedSgf!=null) games=restoreSgf(new StringReader(expectedSgf));
         //assertNull(key.toString(),games); // allow null for now

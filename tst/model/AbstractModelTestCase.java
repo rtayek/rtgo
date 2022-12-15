@@ -6,7 +6,7 @@ import org.junit.*;
 import io.IO;
 import sgf.*;
 import utilities.MyTestWatcher;
-public class AbstractModelTestCase extends AbstractMNodeTestCase {
+public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public static boolean checkBoardInRoot(Object key) {
         // move this?

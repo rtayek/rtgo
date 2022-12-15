@@ -87,25 +87,36 @@ public class SgfNode {
         this.right=right;
         this.properties=new ArrayList<>();
         if(properties!=null) this.properties.addAll(properties);
-        setIsAMoveFlags(this);
+        setIsAMoveFlags();
     }
-    public static void setIsAMoveFlags(SgfNode node) {
+    void setFlags() {
         // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
-        for(SgfProperty property:node.properties) {
-            if(property.p() instanceof Setup) node.hasASetupType=true;
-            if(property.p() instanceof sgf.Move) { node.hasAMoveType=true; }
-            if((property.p().equals(P.W)||property.p().equals(P.B))) node.hasAMove=true;
+        for(SgfProperty property:properties) {
+            if(property.p() instanceof Setup) hasASetupType=true;
+            if(property.p() instanceof sgf.Move) { hasAMoveType=true; }
+            if((property.p().equals(P.W)||property.p().equals(P.B))) hasAMove=true;
         }
-        if(node.hasAMoveType&&node.hasASetupType) {
+    }
+    private boolean checkFlags() {
+        boolean ok=true;
+        if(hasAMoveType&&hasASetupType) {
             parserLogger.severe("node has move and setup type properties!");
             System.out.println("node has move and setup type properties!");
             if(!ignoreMoveAndSetupFlags) { IO.stackTrace(10); System.exit(1); }
+            ok=false;
         }
+        return ok;
+    }
+    public void setIsAMoveFlags() { setFlags(); boolean ok=checkFlags(); System.out.println(ok); }
+    public void preorderCheck() {
+        setIsAMoveFlags();
+        if(left!=null) left.preorderCheck();
+        if(right!=null) { right.preorderCheck(); }
     }
     void add(SgfProperty property) {
         if(properties==null) properties=new ArrayList<>();
         properties.add(property);
-        setIsAMoveFlags(this);
+        setIsAMoveFlags();
     }
     private SgfNode lastSibling_(Holder<Integer> h) {
         SgfNode node=null,last=this;
@@ -174,11 +185,7 @@ public class SgfNode {
             left.saveSgf_(writer,indent);
             if(left.right!=null) writer.write(indent.indent()+')');
         } else writer.write(')');
-        if(right!=null) {
-            writer.write('\n');
-            writer.write(indent.indent()+'(');
-            right.saveSgf_(writer,indent);
-        }
+        if(right!=null) { writer.write('\n'); writer.write(indent.indent()+'('); right.saveSgf_(writer,indent); }
         indent.out();
         writer.flush();
     }
@@ -359,7 +366,7 @@ public class SgfNode {
 
     acdfgj
      */
-    public static String preOrderRouundTrip(String expectedSgf) throws IOException {
+    public static String preorderRouundTrip(String expectedSgf) throws IOException {
         SgfNode games=restoreSgf(new StringReader(expectedSgf));
         if(games!=null) System.out.println(games.right);
         else System.out.println("'"+expectedSgf+"'");

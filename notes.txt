@@ -494,10 +494,9 @@ extra ')' was being done b: saveSgf(Writer writer,Indent indent).
 ignoring testSPreordergfRoundTrip reduces errors to near zero.
 all the sgf test pass except for 3 edge cases (null key).
 all of tst/ test cases pass except for 8 errors and 4 failures.
-
-
-
-
+since mnode direct works, maybe we should just always use that?
+maybe not, seems like the sgf round trip works with multiple games.
+lots of duplication in sgf tests. let's try to consolidate.
 
 
 

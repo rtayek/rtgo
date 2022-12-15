@@ -13,5 +13,11 @@ public class SgfFiles {
         objects.addAll(sgfFiles());
         Set<Object> many=findMultipleGames(objects);
         System.out.println(many);
+        for(Object key:objects) {
+            System.out.println("key: "+key);
+            String expectedSgf=getSgfData(key);
+            ///setIsAMoveFlags();
+        }
+
     }
 }

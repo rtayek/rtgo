@@ -35,10 +35,10 @@ public class SgfMoveCoordinateSystemTestCase {
         traverser.visit(games);
         SgfNode move1=games.left;
         SgfNode move2=games.left.left;
-        System.out.println(games);
-        System.out.println(move1);
-        System.out.println(move2);
-        System.out.println(acceptor.moves);
+        //System.out.println(games);
+        //System.out.println(move1);
+        //System.out.println(move2);
+        //System.out.println(acceptor.moves);
         assertEquals(2,acceptor.moves.size());
     }
 }

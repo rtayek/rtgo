@@ -49,15 +49,11 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         //if(ok) return;
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
-    @Ignore @Test public void testSPreordergfRoundTrip() throws Exception {
-        //String key="sgfExamleFromRedBean";
-        //String expected=getSgfData(key);
+    @Test public void testSPreordergfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
         if(expectedSgf.equals("")) return;
         expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
-        String actualSgf=SgfNode.preOrderRouundTrip(expectedSgf);
-        //System.out.println(expectedSgf);
-        //System.out.println(actualSgf);
+        String actualSgf=SgfNode.preorderRouundTrip(expectedSgf);
         int p=Parser.parentheses(expectedSgf);
         if(p!=0) System.out.println(" bad parentheses: "+p);
         assertEquals(key.toString(),expectedSgf,actualSgf);
