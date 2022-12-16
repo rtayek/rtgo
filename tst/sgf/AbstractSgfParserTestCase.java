@@ -29,10 +29,7 @@ public abstract class AbstractSgfParserTestCase {
         watcher.key=key;
         if(true) if(key==null) throw new RuntimeException("key: "+key+" is nul!");
         expectedSgf=getSgfData(key);
-        if(expectedSgf==null) {
-            if(false) throw new RuntimeException("key: "+key+" returns nul!");
-            return;
-        }
+        if(expectedSgf==null) { if(false) throw new RuntimeException("key: "+key+" returns nul!"); return; }
         int p=Parser.parentheses(expectedSgf);
         if(p!=0) { System.out.println(" bad parentheses: "+p); throw new RuntimeException(key+" bad parentheses: "+p); }
         if(alwaysPrepare) prepare();
@@ -66,9 +63,16 @@ public abstract class AbstractSgfParserTestCase {
             //fail(key+" does not end with an close parenthesis");
         } else if(!expectedSgf.equals("")) fail(key.toString()+" sgf does not start with an open parenthesis");
         games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
-        games.preorderCheck();
+        if(games!=null) games.oldPreorderCheckFlags();
     }
-    
+    @Test public void testFlagsNew() {
+        if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
+            if(!expectedSgf.endsWith(")")) System.out.println(key+" sgf does not end with an close parenthesis");
+            //fail(key+" does not end with an close parenthesis");
+        } else if(!expectedSgf.equals("")) fail(key.toString()+" sgf does not start with an open parenthesis");
+        games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
+        if(games!=null) games.preorderCheckFlags();
+    }
     boolean alwaysPrepare=false;
     public Object key;
     public String expectedSgf;

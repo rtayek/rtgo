@@ -29,8 +29,13 @@ public class SgfNodeTestCase {
         node.add(property);
         assertTrue(node.hasAMoveType);
         assertTrue(node.hasAMove);
+        node.setFlags();
+        node.checkFlags();
         MNode mNode=MNode.toGeneralTree(node);
         for(MNode child:mNode.children) {
+            System.out.println(child);
+            child.setFlags();
+            child.checkFlags();
             assertTrue(child.hasAMoveType);
             assertTrue(child.hasAMove);
         }
@@ -44,6 +49,7 @@ public class SgfNodeTestCase {
         assertFalse(node.hasAMove);
         MNode mNode=MNode.toGeneralTree(node);
         for(MNode child:mNode.children) {
+            child.setFlags();
             assertTrue(child.hasAMoveType);
             assertFalse(child.hasAMove);
         }

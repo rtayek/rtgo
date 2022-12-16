@@ -1,5 +1,6 @@
 package sgf;
 import static io.IO.*;
+import static io.Logging.parserLogger;
 import static sgf.Parser.*;
 import java.io.*;
 //http://en.wikipedia.org/wiki/Binary_tree#Encoding_general_trees_as_binary_trees
@@ -12,6 +13,24 @@ import model.MNodeAcceptor.MNodeFinder;
 // txt <- sgf <- mnode <- model
 public class MNode {
     public MNode(MNode parent) { this.parent=parent; hasAMove=hasAMoveType=false; }
+    public void setFlags() {
+        // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
+        for(SgfProperty property:properties) {
+            if(property.p() instanceof Setup) hasASetupType=true;
+            if(property.p() instanceof sgf.Move) { hasAMoveType=true; }
+            if((property.p().equals(P.W)||property.p().equals(P.B))) hasAMove=true;
+        }
+    }
+    boolean checkFlags() {
+        boolean ok=true;
+        if(hasAMoveType&&hasASetupType) {
+            parserLogger.severe("node has move and setup type properties!");
+            System.out.println("node has move and setup type properties!");
+            if(!ignoreMoveAndSetupFlags) { IO.stackTrace(10); System.exit(1); }
+            ok=false;
+        }
+        return ok;
+    }
     public SgfNode toBinaryTree() {
         SgfNode left=null,tail=null;
         for(int i=0;i<children.size();++i) {
@@ -37,9 +56,9 @@ public class MNode {
         else throw new RuntimeException("gradparent is null!");
         parent.properties.addAll(node.properties);
         if(node!=null) {
-            node.setIsAMoveFlags();
-            //
-            if(bad) System.out.println("node has move and setup type properties!");
+            node.setFlags();
+            boolean ok=node.checkFlags();
+            if(!ok) System.out.println("node has move and setup type properties!");
         }
         if(node.left!=null) { @SuppressWarnings("unused") MNode child=toGeneralTree(node.left,parent); }
         if(node.right!=null) {
@@ -200,5 +219,6 @@ public class MNode {
     boolean hasAMove,hasAMoveType,hasASetupType;
     public final List<SgfProperty> properties=new ArrayList<>();
     // maybe these could be/should immutable?
+    public static boolean ignoreMoveAndSetupFlags=true; // was false
     public static int ids;
 }

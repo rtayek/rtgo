@@ -4,6 +4,7 @@ import static io.Logging.parserLogger;
 import static sgf.Parser.*;
 import java.io.*;
 import java.util.*;
+import java.util.function.*;
 import io.*;
 import model.Move;
 import tree.*;
@@ -87,9 +88,11 @@ public class SgfNode {
         this.right=right;
         this.properties=new ArrayList<>();
         if(properties!=null) this.properties.addAll(properties);
-        setIsAMoveFlags();
+        setFlags();
+        boolean ok=checkFlags();
+        if(!ok) System.out.println("node has move and setup type properties!");
     }
-    void setFlags() {
+    public void setFlags() {
         // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
         for(SgfProperty property:properties) {
             if(property.p() instanceof Setup) hasASetupType=true;
@@ -97,7 +100,7 @@ public class SgfNode {
             if((property.p().equals(P.W)||property.p().equals(P.B))) hasAMove=true;
         }
     }
-    private boolean checkFlags() {
+    boolean checkFlags() {
         boolean ok=true;
         if(hasAMoveType&&hasASetupType) {
             parserLogger.severe("node has move and setup type properties!");
@@ -107,16 +110,48 @@ public class SgfNode {
         }
         return ok;
     }
-    public void setIsAMoveFlags() { setFlags(); boolean ok=checkFlags(); System.out.println(ok); }
-    public void preorderCheck() {
-        setIsAMoveFlags();
-        if(left!=null) left.preorderCheck();
-        if(right!=null) { right.preorderCheck(); }
+    public void preorder(Consumer<SgfNode> consumer) {
+        if(consumer!=null) consumer.accept(this);
+        if(left!=null) left.preorder(consumer);
+        if(right!=null) right.preorder(consumer);
+    }
+    public void preorder(Predicate<SgfNode> predicate) {
+        if(predicate!=null) if(predicate.test(this)) return;
+        if(left!=null) left.preorder(predicate);
+        if(right!=null) right.preorder(predicate);
+    }
+    static class CountingConsumer implements Consumer<SgfNode> {
+        @Override public void accept(SgfNode node) { if(node!=null) ++n; }
+        int n;
+    }
+    static class SearhingFunction implements Predicate<SgfNode> {
+        @Override public boolean test(SgfNode t) {
+            if(!done) { t.setFlags(); boolean ok=t.checkFlags(); if(!ok) { target=t; done=true; } }
+            return done;
+        }
+        boolean done;
+        SgfNode target;
+    }
+    void preorderCheckFlags() {
+        SearhingFunction searhingFunction=new SearhingFunction();
+        preorder(searhingFunction);
+        if(searhingFunction.done) {
+            System.out.println(searhingFunction.target+" is bad");
+        }
+    }
+    void oldPreorderCheckFlags() {
+        setFlags();
+        boolean ok=checkFlags();
+        if(!ok) System.out.println("node has move and setup type properties!");
+        if(left!=null) left.oldPreorderCheckFlags();
+        if(right!=null) { right.oldPreorderCheckFlags(); }
     }
     void add(SgfProperty property) {
         if(properties==null) properties=new ArrayList<>();
         properties.add(property);
-        setIsAMoveFlags();
+        setFlags();
+        boolean ok=checkFlags();
+        if(!ok) System.out.println("node has move and setup type properties!");
     }
     private SgfNode lastSibling_(Holder<Integer> h) {
         SgfNode node=null,last=this;

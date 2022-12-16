@@ -49,7 +49,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         //if(ok) return;
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
-    @Test public void testSPreordergfRoundTrip() throws Exception {
+    @Ignore @Test public void testSPreordergfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
         if(expectedSgf.equals("")) return;
         expectedSgf=SgfNode.options.prepareSgf(expectedSgf);

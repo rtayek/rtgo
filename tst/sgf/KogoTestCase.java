@@ -5,7 +5,7 @@ import java.io.*;
 import org.junit.*;
 import io.IO;
 import utilities.MyTestWatcher;
-public class KogoTestCase {
+@Ignore public class KogoTestCase {
     @Before public void setUp() throws Exception {
         old=SgfNode.ignoreMoveAndSetupFlags;
         SgfNode.ignoreMoveAndSetupFlags=true;
