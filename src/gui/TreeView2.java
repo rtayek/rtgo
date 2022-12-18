@@ -37,9 +37,9 @@ import utilities.MyJApplet;
         myTreeView.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         model.addObserver(myTreeView);
         //model.restore(IO.toReader(new File("sgf/ff4.sgf")));
-        StringReader stringReader=new StringReader("(;)");
+        StringReader stringReader=new StringReader("(;C[frog])");
         model.restore(stringReader);
-        
+
         return myTreeView;
     }
     public static void main(String[] args) { TreeView myTreeView=TreeView2.simple2(); }

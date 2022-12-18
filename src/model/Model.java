@@ -757,11 +757,14 @@ public class Model extends Observable { // model of a go game or problem forrest
         } else Logging.mainLogger.warning(name+" "+"p2 is null!");
     }
     @Override public String toString() {
-        if(hasABoard()) return board().toString();
-        else if(currentNode()!=null) return "current node: "+currentNode().toString();
+        if(hasABoard()) {
+            String s=board().toString();
+            if(currentNode()!=null) s+="current node: "+currentNode().toString();
+            return s;
+        } else if(currentNode()!=null) return "current node: "+currentNode().toString();
         else return "no board and no current node!";
     }
-    public void goToMNode(MNode target) {
+    public boolean goToMNode(MNode target) {
         // looks like some of this old code
         // never worked with variations at top level?
         // so maybe never say the top level mnode that we now have?
@@ -775,8 +778,10 @@ public class Model extends Observable { // model of a go game or problem forrest
             while(currentNode()!=ancester) {
                 if(!Navigate.up.canDo(this)) { System.out.println("can't do up!"); }
                 if(Navigate.up.canDo(this)) up();
-                if(!Navigate.up.canDo(this))
-                    throw new RuntimeException(currentNode()+" can not go up tp ancestor: "+ancester);
+                if(!Navigate.up.canDo(this)) {
+                    System.out.println(currentNode()+" can not go up tp ancestor: "+ancester);
+                    return false;
+                }
             }
             // equals here is ==.
             // maybe i need a real equals bases on id?
@@ -785,15 +790,22 @@ public class Model extends Observable { // model of a go game or problem forrest
                 ancester=list.get(i);
                 int index=currentNode().children.indexOf(ancester);
                 if(index>=0) down(index);
-                else Logging.mainLogger.warning(name+" "+"at "+currentNode()+", can not find ancester "+ancester
-                        +" in children: "+currentNode().children);
+                else {
+                    Logging.mainLogger.warning(name+" "+"at "+currentNode()+", can not find ancester "+ancester
+                            +" in children: "+currentNode().children);
+                    return false;
+                }
             }
             else Logging.mainLogger.fine("at target, no need to go down");
-            if(currentNode().equals(target));
-            else Logging.mainLogger.severe(name+" "+"failed, ended up at "+currentNode());
+            if(currentNode().equals(target)) return true;
+            else {
+                Logging.mainLogger.severe(name+" "+"failed, ended up at "+currentNode());
+                return false;
+            }
         } else {
             System.out.println("list is null");
             Logging.mainLogger.warning(name+" "+"list is null!");
+            return false;
         }
     }
     public static String getExtension(File file) {

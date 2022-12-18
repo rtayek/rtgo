@@ -37,8 +37,9 @@ public enum Navigate { // move more code here?
                 }
                 break;
             default:
-                Logging.mainLogger.config(""+" "+"unhandled case: "+navigate);
+                Logging.mainLogger.config("unhandled case: "+navigate);
         }
+        else Logging.mainLogger.config("no current node!");
         return false;
     }
     public synchronized boolean do_(Model model) {

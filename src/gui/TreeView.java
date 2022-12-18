@@ -25,7 +25,7 @@ class Node2 extends MNode { // why did i make this?
     final DefaultMutableTreeNode treeNode;
 }
 @SuppressWarnings("serial") public class TreeView extends MainGui
-        implements Observer,TreeSelectionListener,ActionListener {
+implements Observer,TreeSelectionListener,ActionListener {
     public TreeView(MyJApplet applet,Model model) {
         super(applet);
         Logging.mainLogger.info(model.name+" "+"constructed");
@@ -120,6 +120,9 @@ class Node2 extends MNode { // why did i make this?
         addChildren(top,newRoot);
         // Create a tree that allows one selection at a time.
         JTree tree=new JTree(top);
+        final Font currentFont=tree.getFont();
+        final Font bigFont=new Font(currentFont.getName(),currentFont.getStyle(),currentFont.getSize()+10);
+        tree.setFont(bigFont);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         // Listen for when the selection changes.
         tree.addTreeSelectionListener(this);
@@ -162,13 +165,16 @@ class Node2 extends MNode { // why did i make this?
         menuItem.addActionListener(this);
         frame.setJMenuBar(menuBar);
     }
-    public static void main(String[] args) { TreeView myTreeView=TreeView2.simple2(); }
+    public static void main(String[] args) {
+        //TreeView myTreeView=TreeView2.simple2();
+        TreeView myTreeView=TreeView2.simple();
+    }
     public static TreeView simple() {
         Model model=new Model();
         TreeView myTreeView=new TreeView(null,model);
         myTreeView.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         model.addObserver(myTreeView);
-        model.restore(IO.toReader(new File("sgf/ff4.sgf")));
+        model.restore(IO.toReader(new File("sgf/ff4_ex.sgf")));
         return myTreeView;
     }
     public final Model model;

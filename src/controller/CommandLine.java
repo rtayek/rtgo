@@ -15,6 +15,7 @@ public class CommandLine {
     private static void usage() {
         System.out.println("usage:");
         System.out.println("CommandLine.main() -role black, white, obseever, anything");
+        System.out.println("h - help");
         System.out.println("m x y - move at (x,y)");
         System.out.println("M - unmove");
         System.out.println("u - up");
@@ -92,12 +93,25 @@ public class CommandLine {
                 print();
                 break;
             case 'q':
+                if(true)
+                    throw new RuntimeException("got a q!");
                 print();
                 break;
             case 't':
+                if(myTreeView==null) {
+                    myTreeView=new TreeView(null,model);
+                    model.addObserver(myTreeView);
+                } else {
+                    model.deleteObserver(myTreeView);
+                    myTreeView.frame.dispose();
+                    myTreeView=null;
+                }
+                // try to fix unselected root
+                model.setChangedAndNotify(Event.newTree);
+                
                 TreeView2 treeView2=TreeView2.simple2();
                 // gui code uses the old view?
-                model.setRoot(treeView2.model.root());
+                //model.setRoot(treeView2.model.root());
                 break;
             default:
                 System.out.println("huh?");
@@ -105,7 +119,9 @@ public class CommandLine {
         }
         System.out.println("exit process()");
     }
-    private void print() { System.out.println(model); }
+    private void print() {
+        System.out.println(model);
+    }
     void run() throws IOException {
         BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(System.in));
         String string=null;
@@ -126,4 +142,5 @@ public class CommandLine {
     }
     public static void main(String[] arguments) throws IOException { new CommandLine().run(); }
     Model model=new Model("command line");
+    TreeView myTreeView;
 }
