@@ -25,6 +25,8 @@ public enum P2 { // looks like the only thing i need this for is so i can switch
         else throw new RuntimeException("unknown type for "+p);
     }
     public static void main(String[] arguments) {
+        // time left BL and WL() and tesugi (TE) are move types!
+        // i added these custom types.
         System.out.println(P2.valueOf("RT"));
         System.out.println(P2.valueOf("ZB"));
         System.out.println(P2.valueOf("ZW"));
