@@ -415,7 +415,7 @@ public class Parser {
         sgfData.put("smartgo4",smartgo4);
         sgfData.put("smartgo42",smartgo42);
         sgfData.put("smartgo43",smartgo43);
-        System.out.println(sgfData.keySet());
+        //System.out.println(sgfData.keySet());
         //System.out.println(sgfData.size()+" sgf strings in parser map.");
     }
     static {

@@ -499,9 +499,10 @@ maybe not, seems like the sgf round trip works with multiple games.
 lots of duplication in sgf tests. let's try to consolidate.
 12/15/22 added code to set move and setup flags in an sgf node.
 12/17/22 thinking abut root, new game etc.
-text view restores sgf/ff4.sgf which is missing.
-text view 2 restores (;)
-seems like they should use the model root?
+tree view restores sgf/ff4.sgf which is missing. fixed.
+tree view 2 restores (;)
+seems like they should use the model root? yes
+
 
 
 

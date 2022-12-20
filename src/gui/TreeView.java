@@ -101,8 +101,11 @@ implements Observer,TreeSelectionListener,ActionListener {
     // this is what i should do if the user clicks on a move we already have.
     @Override public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node=(DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-        if(node!=null) model.goToMNode((MNode)node.getUserObject());
-        else Logging.mainLogger.warning("node null for: "+e);
+        if(node!=null) {
+            boolean ok=model.goToMNode((MNode)node.getUserObject());
+            if(!ok) System.out.println("go to node fails!");
+            else ; //System.out.println("go to node succeds.");
+        } else Logging.mainLogger.warning("node null for: "+e);
     }
     @Override public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Open ...")) {

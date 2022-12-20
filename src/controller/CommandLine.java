@@ -1,10 +1,10 @@
 package controller;
 import java.io.*;
-import java.util.Arrays;
+import java.util.*;
 import equipment.Board.*;
 import equipment.Point;
 import gui.*;
-import io.IO;
+import io.*;
 import model.*;
 import model.Model.MoveResult;
 import model.Move.MoveImpl;
@@ -14,20 +14,21 @@ public class CommandLine {
     // and we need the commands for the command line.
     private static void usage() {
         System.out.println("usage:");
-        System.out.println("CommandLine.main() -role black, white, obseever, anything");
-        System.out.println("h - help");
-        System.out.println("m x y - move at (x,y)");
-        System.out.println("M - unmove");
-        System.out.println("u - up");
-        System.out.println("d - down");
-        System.out.println("r - right");
-        System.out.println("l - left");
+        //System.out.println("CommandLine.main() -role black, white, obseever, anything.");
+        System.out.println("h - help.");
+        System.out.println("c - add a new command line view.");
+        System.out.println("m x y - move at (x,y).");
+        System.out.println("M - unmove.");
+        System.out.println("u - up.");
+        System.out.println("d - down.");
+        System.out.println("r - right.");
+        System.out.println("l - left.");
         System.out.println("o file - open file (no spaces allowed!");
-        System.out.println("n - new game");
-        System.out.println("g - new gui for model");
-        System.out.println("p - print view");
-        System.out.println("q - quit");
-        System.out.println("t - treeview of sample sgf file.");
+        System.out.println("n - new game.");
+        System.out.println("g - new gui for model.");
+        System.out.println("p - print view.");
+        System.out.println("q - quit.");
+        System.out.println("t - toggle treeview.");
     }
     private String[] splitNext(String command,int i) {
         while(command.charAt(i)==' ') i++;
@@ -42,9 +43,8 @@ public class CommandLine {
             case 'h':
                 usage();
                 break;
-            case 'o':
-                tokens=splitNext(command,1);
-                if(tokens!=null&&tokens.length>=1) { model.restore(IO.toReader(new File(tokens[0]))); }
+            case 'c':
+                model.addObserver(new CommandLIneView(model));
                 break;
             case 'u':
                 model.up();
@@ -77,8 +77,10 @@ public class CommandLine {
                 if(!model.hasABoard()) { System.out.println("start a game first."); usage(); break; }
                 model.delete();
                 break;
-            case 'c':
-                model.addObserver(new CommandLIneView(model));
+            case 'o':
+                tokens=splitNext(command,1);
+                System.out.println(Arrays.asList(tokens));
+                if(tokens!=null&&tokens.length>=1) { model.restore(IO.toReader(new File(tokens[0]))); }
                 break;
             case 'g':
                 new Main(null,model,null);
@@ -90,12 +92,10 @@ public class CommandLine {
                 model.setRoot(9,9,Topology.normal,Shape.normal);
                 break;
             case 'p':
-                print();
+                print(model);
                 break;
             case 'q':
-                if(true)
-                    throw new RuntimeException("got a q!");
-                print();
+                if(true) throw new RuntimeException("got a q!");
                 break;
             case 't':
                 if(myTreeView==null) {
@@ -108,8 +108,7 @@ public class CommandLine {
                 }
                 // try to fix unselected root
                 model.setChangedAndNotify(Event.newTree);
-                
-                TreeView2 treeView2=TreeView2.simple2();
+                //TreeView2 treeView2=TreeView2.simple2();
                 // gui code uses the old view?
                 //model.setRoot(treeView2.model.root());
                 break;
@@ -119,20 +118,20 @@ public class CommandLine {
         }
         System.out.println("exit process()");
     }
-    private void print() {
-        System.out.println(model);
-    }
+    public static void print(Model model) { System.out.println("model: "+model.name+"\n"+model); }
     void run() throws IOException {
         BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(System.in));
         String string=null;
         usage();
-        print();
+        print(model);
         System.out.println("type a command");
         while((string=bufferedReader.readLine())!=null) {
             if(string.equals("q")) break;
             try {
                 process(string);
-                print();
+                System.out.println("((((((");
+                print(model);
+                System.out.println("))))))");
             } catch(Exception e) {
                 System.out.println("run() "+this+" caught: "+e+" "+this);
             }
@@ -140,7 +139,18 @@ public class CommandLine {
         }
         System.out.println("exiting run()");
     }
-    public static void main(String[] arguments) throws IOException { new CommandLine().run(); }
+    void startup() { for(String command:startup) process(command); }
+    public static void main(String[] arguments) throws IOException {
+        System.out.println(Init.first);
+        //Logging.setLevels(Level.INFO);
+        System.out.println("Level: "+Logging.mainLogger.getLevel());
+        CommandLine commandLine=new CommandLine();
+        commandLine.startup();
+        commandLine.run();
+    }
+    List<String> startup=Arrays.asList(new String[] { //
+            "o sgf/ff4_ex.sgf", //
+    "t,"});
     Model model=new Model("command line");
     TreeView myTreeView;
 }

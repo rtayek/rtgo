@@ -76,6 +76,10 @@ public class Model extends Observable { // model of a go game or problem forrest
         return stringWriter.toString();
     }
     public void restore(Reader reader) {
+        if(reader==null) {
+            System.out.println("restoring model from null reader!");
+            //Logging.mainLogger.config("restoring model from null reader!");
+        }
         MNode games=MNode.restore(reader);
         if(false&&addNewRoot) games=games.children.get(0);
         // need to check if game was stored with the flag on.
@@ -527,9 +531,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         state.node=node;
         try {
             if(node!=null) {//
-                if(node.properties.size()>1); //System.out.println("do_: "+node.properties.size()+" properties: "+node.properties);
                 for(int i=0;i<node.properties.size();i++) {
-                    //System.out.println("properties: "+node.properties.get(i));
                     processProperty(node.properties.get(i));
                 }
             } else Logging.mainLogger.warning(name+" "+"do with null!");
@@ -772,6 +774,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         // maybe move this to MNode? yes, but:
         // this uses navigate. since we have a parent instance variable,
         // we should be able to do this without using navigate.
+        // 12/19/22 seems to work with command line
+        // but command line view seems broken?
         List<MNode> list=root().lca(currentNode(),target);
         if(list!=null) {
             MNode ancester=list.get(0);

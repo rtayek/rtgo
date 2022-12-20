@@ -130,7 +130,8 @@ public class GamePanel extends JPanel {
             MNode found=isAlreadyInTree(closest);
             if(found!=null) {
                 Logging.mainLogger.info(mediator.model.name+" "+"found child node, goig to it.");
-                mediator.model.goToMNode(found);
+                boolean ok=mediator.model.goToMNode(found);
+                if(!ok) System.out.println("go to node fails!");
             } else {
                 //String move=Coordinates.toGtpCoordinateSystem(closest,
                 //        board.depth());

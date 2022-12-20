@@ -270,13 +270,15 @@ public class OldModelTestCase {
                 System.out.println("testGoToNode() <<<<<<<<<<<<<");
                 System.out.println("node1: "+node1);
                 System.out.println("node2: "+node2);
-                model.goToMNode(node1);
+                boolean ok=model.goToMNode(node1);
+                if(!ok) System.out.println("go to node fails!");
                 System.out.println("at node 1 "+node1);
                 assertEquals(node1,model.currentNode());
                 boolean theOtherWay=true;
                 if(theOtherWay) {
                     System.out.println("try to go to node 2: "+node2);
-                    model.goToMNode(node2);
+                    boolean ok2=model.goToMNode(node2);
+                    if(!ok2) System.out.println("go to node fails!");
                     System.out.println("at node 2 "+node2);
                     assertEquals(node2,model.currentNode());
                 }
