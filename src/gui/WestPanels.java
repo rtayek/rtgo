@@ -1,15 +1,12 @@
 package gui;
-import static io.IO.connect;
 import java.awt.LayoutManager;
 import java.awt.event.*;
-import java.net.*;
+import java.net.InetAddress;
 import javax.swing.*;
-import controller.GTPBackEnd;
 import gui.ButtonsABC.ButtonWithEnum;
-import io.*;
-import io.IO.End;
+import io.Logging;
+import model.Model;
 import model.Model.Role;
-import server.NamedThreadGroup.NamedThread;
 public class WestPanels {
     public static enum MyEnums { connect, disconnect }
     static public class NewWestPanel extends JPanel {
@@ -17,7 +14,7 @@ public class WestPanels {
             // rename to just buttons.
             // but do it later when the dust settles.
             @Override public void enableAll(Mediator mediator) {
-                boolean enable=mediator.gtp==null;
+                boolean enable=mediator.model.gtp==null;
                 // since we only one type of enum:
                 for(MyEnums e:MyEnums.values()) switch(e) {
                     // this one is pretty simple.
@@ -78,34 +75,14 @@ public class WestPanels {
                     ButtonWithEnum b=buttons.get(e2);
                     if(name!=null&&e2!=null&&b!=null) if(e2 instanceof WestPanels.MyEnums) {
                         WestPanels.MyEnums e21=(WestPanels.MyEnums)e2;
+                        Model model=mediator.model;
                         switch(e21) {
                             case connect: // copy of left action so far
-                                if(mediator.gtp==null) {
-                                    Socket socket=new Socket();
-                                    boolean ok=connect(IO.host,IO.defaultPort,1000,socket);
-                                    if(ok) {
-                                        End socketEnd=new End(socket);
-                                        mediator.gtp=new GTPBackEnd(socketEnd,mediator.model);
-                                        NamedThread thread=mediator.gtp.startGTP(0);
-                                        if(thread==null) {
-                                            Logging.mainLogger.severe("3 startGTP returns null!");
-                                            throw new RuntimeException("3 can not run backend!");
-                                        }
-                                        mediator.model.strict=true;
-                                        buttons.enableAll(mediator);
-                                    } else Logging.mainLogger.warning(mediator.model.name+" "+"connection failed!");
-                                    if(mediator.gtp==null) JOptionPane.showMessageDialog(null,"did not connect!");
-                                } else Logging.mainLogger.warning(mediator.model.name+" "+"connection failed!");
+                                Model.connectToServer(model);
+                                buttons.enableAll(mediator);
                                 break;
                             case disconnect:
-                                if(mediator.gtp!=null) {
-                                    mediator.gtp.stop();
-                                    mediator.gtp=null;
-                                    mediator.model.setRole(Role.anything);
-                                    mediator.model.strict=false; // or deafult value
-                                } else {
-                                    Logging.mainLogger.severe(mediator.model.name+" "+"disconnect when not connected!");
-                                }
+                                Model.disconnectFromServer(model);
                                 buttons.enableAll(mediator);
                             default:
                                 Logging.mainLogger.info(mediator.model.name+" button for"+e21+"  was not handled!");
@@ -136,7 +113,7 @@ public class WestPanels {
             public static void enableAll(Mediator mediator) {
                 // the new one will be different
                 // the new one may not need to be static or may not wish to.
-                boolean enable=mediator.gtp==null;
+                boolean enable=mediator.model.gtp==null;
                 // make this one button.
                 // maybe later.
                 for(ConnectButtons button:values()) switch(button) {
@@ -186,36 +163,16 @@ public class WestPanels {
                     String name=abstractButton.getName();
                     if(name!=null&&ConnectButtons.valueOf(name)!=null) {
                         ConnectButtons button=ConnectButtons.valueOf(name);
+                        Model model=mediator.model;
                         switch(button) {
                             case connect:
-                                if(mediator.gtp==null) {
-                                    Socket socket=new Socket();
-                                    boolean ok=connect(IO.host,IO.defaultPort,1000,socket);
-                                    if(ok) {
-                                        End socketEnd=new End(socket);
-                                        mediator.gtp=new GTPBackEnd(socketEnd,mediator.model);
-                                        NamedThread thread=mediator.gtp.startGTP(0);
-                                        if(thread==null) {
-                                            Logging.mainLogger.severe("3 startGTP returns null!");
-                                            throw new RuntimeException("3 can not run backend!");
-                                        }
-                                        mediator.model.strict=true;
-                                        WestPanel.ConnectButtons.enableAll(mediator);
-                                        // add some more constants?
-                                    } else Logging.mainLogger.warning(mediator.model.name+" "+"connection failed!");
-                                    if(mediator.gtp==null) JOptionPane.showMessageDialog(null,"did not connect!");
-                                } else Logging.mainLogger.warning(mediator.model.name+" "+"connection failed!");
+                                Model.connectToServer(model);
+                                WestPanel.ConnectButtons.enableAll(mediator);
                                 break;
                             case disconnect:
-                                if(mediator.gtp!=null) {
-                                    mediator.gtp.stop();
-                                    mediator.gtp=null;
-                                    mediator.model.setRole(Role.anything);
-                                    mediator.model.strict=false; // or deafult value
-                                } else {
-                                    Logging.mainLogger.severe(mediator.model.name+" "+"disconnect when not connected!");
-                                }
+                                Model.disconnectFromServer(model);
                                 WestPanel.ConnectButtons.enableAll(mediator);
+                                break; // was not here?
                             default:
                                 Logging.mainLogger.info(mediator.model.name+" "+button+" was not handled!");
                         }

@@ -28,6 +28,8 @@ public class CommandLine {
         System.out.println("g - new gui for model.");
         System.out.println("p - print view.");
         System.out.println("q - quit.");
+        System.out.println("s - connect to server");
+        System.out.println("S - disconnect from server");
         System.out.println("t - toggle treeview.");
     }
     private String[] splitNext(String command,int i) {
@@ -96,6 +98,10 @@ public class CommandLine {
                 break;
             case 'q':
                 if(true) throw new RuntimeException("got a q!");
+                break;
+            case 's':
+                break;
+            case 'S':
                 break;
             case 't':
                 if(myTreeView==null) {

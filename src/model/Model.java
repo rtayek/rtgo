@@ -1,18 +1,21 @@
 package model;
-import static io.IO.noIndent;
+import static io.IO.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.restoreSgf;
 import java.awt.geom.Point2D;
 import java.io.*;
+import java.net.Socket;
 import java.util.*;
+import javax.swing.JOptionPane;
 import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
 import equipment.*;
 import equipment.Board.*;
 import io.*;
-import io.IO.Stopable;
+import io.IO.*;
 import model.Move.*;
+import server.NamedThreadGroup.NamedThread;
 import sgf.*;
 import utilities.*;
 public class Model extends Observable { // model of a go game or problem forrest
@@ -531,9 +534,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         state.node=node;
         try {
             if(node!=null) {//
-                for(int i=0;i<node.properties.size();i++) {
-                    processProperty(node.properties.get(i));
-                }
+                for(int i=0;i<node.properties.size();i++) { processProperty(node.properties.get(i)); }
             } else Logging.mainLogger.warning(name+" "+"do with null!");
             setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
         } catch(Exception e) {
@@ -1025,6 +1026,32 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return mNodes;
     }
+    public static void disconnectFromServer(Model model) {
+        if(model.gtp!=null) {
+            model.gtp.stop();
+            model.gtp=null;
+            model.setRole(Role.anything);
+            model.strict=false; // or deafult value
+        } else Logging.mainLogger.severe(model.name+" "+"disconnect when not connected!");
+    }
+    public static void connectToServer(Model model) {
+        if(model.gtp==null) {
+            Socket socket=new Socket();
+            boolean ok=connect(IO.host,IO.defaultPort,1000,socket);
+            if(ok) {
+                End socketEnd=new End(socket);
+                model.gtp=new GTPBackEnd(socketEnd,model);
+                NamedThread thread=model.gtp.startGTP(0);
+                if(thread==null) {
+                    Logging.mainLogger.severe("3 startGTP returns null!");
+                    throw new RuntimeException("3 can not run backend!");
+                }
+                model.strict=true;
+                // add some more constants?
+            } else Logging.mainLogger.warning(model.name+" "+"connection failed!");
+            if(model.gtp==null) JOptionPane.showMessageDialog(null,"did not connect!");
+        } else Logging.mainLogger.warning(model.name+" "+"connection failed!");
+    }
     static class State implements Cloneable { // needs an equals or isEqual method.
         private State() {}
         @Override public State clone() throws CloneNotSupportedException { return (State)super.clone(); }
@@ -1203,10 +1230,11 @@ public class Model extends Observable { // model of a go game or problem forrest
     private int xOffset,yOffset; // maybe should be in state as it is only used
     // by the view?
     // it does belong to the view, but where else can it go
+    public GTPBackEnd gtp; // moved from mediator for command line.
     private State state=new State();
     private Stack<State> stack=new Stack<>();
     public final String name;
-    private boolean isWaitingForMoveCompleteOnBoard;
+    private boolean isWaitingForMoveCompleteOnBoard; // investigate!
     private transient boolean checkingForLegalMove;
     public boolean addNewRoot=false; // probably was a bas idea
     // sometimes, but maybe not always

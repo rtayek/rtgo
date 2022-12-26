@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import audio.Audio;
 import audio.Audio.Sound;
-import controller.GTPBackEnd;
 import equipment.Board;
 import gui.ButtonsABC.ButtonWithEnum;
 import gui.EastPanels.*;
@@ -413,8 +412,6 @@ class Mediator implements Observer,ActionListener {
     }
     final Main main;
     final Model model;
-    //Connector connector;
-    GTPBackEnd gtp;
     TreeView myTreeView;
     final TextView textView;
     GamePanel gamePanel;

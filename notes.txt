@@ -502,6 +502,22 @@ lots of duplication in sgf tests. let's try to consolidate.
 tree view restores sgf/ff4.sgf which is missing. fixed.
 tree view 2 restores (;)
 seems like they should use the model root? yes
+12/20/22
+server gui list of games on  console?
+try server with 2 command line controllers?
+12/26/22
+working on command line controller, noticed:
+    static boolean useSpinnerOptions=true;
+    static boolean useNewSpinners=true;
+    static boolean useNewTopPanel=true;
+    static boolean useNewSouthPanel=true;
+    static boolean useNewWestPanel=true;
+    static boolean useNwwEastPanel=true;
+so maybe can remove all of the old code? 
+mediator has: GTPBackEnd gtp;
+command line has no knowledge of the mediator.
+so maybe the back end belongs in the model?
+make connect and disconnect to and from server return a boolean?
 
 
 
