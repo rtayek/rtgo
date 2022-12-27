@@ -1,6 +1,5 @@
 package sgf;
 import java.util.*;
-
 public class HexAscii {
     static char encode(byte nybble) {
         if(0<=nybble&&nybble<16) return ascii[nybble];
@@ -11,7 +10,10 @@ public class HexAscii {
         else if('a'<=c&&c<='f') return (byte)(c-'a'+10);
         else {
             if(c=='\n') throw new RuntimeException("it's a line feed!");
-            else throw new RuntimeException(Integer.valueOf(c)+" it's not a line feed!");
+            else {
+                System.out.println("it's a : "+c);
+                throw new RuntimeException(Integer.valueOf(c)+" it's not a line feed!");
+            }
             //throw new RuntimeException("'"+c+"' is not in [0-9a-f]");
         }
     }
@@ -26,8 +28,7 @@ public class HexAscii {
             char c1=encode((byte)(bite>>4&0x0f));
             char c2=encode((byte)(bite&0x0f));
             String twoCharacters=""+c1+c2;
-            if(twoCharacters.contains("\n"))
-                System.out.println("encoded a line feed!");
+            if(twoCharacters.contains("\n")) System.out.println("encoded a line feed!");
             if(!legalSet.contains(twoCharacters)) throw new RuntimeException();
             stringBuffer.append(twoCharacters);
         }

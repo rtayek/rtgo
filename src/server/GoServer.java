@@ -10,6 +10,7 @@ import io.IO.*;
 import io.IO.End.Holder;
 import model.Model;
 import server.NamedThreadGroup.NamedThread;
+import sgf.HexAscii;
 public class GoServer implements Runnable,Stopable {
     private GoServer(ServerSocket serverSocket) {
         //deleteServerSGFFiles(); // call from tests instead
@@ -32,6 +33,23 @@ public class GoServer implements Runnable,Stopable {
         Holder whiteHolder=Holder.frontEnd(whiteFrontEnd);
         GameFixture game=new GameFixture(recorder);
         game.setupServerSide(blackHolder.front,whiteHolder.front);
+        if(true) {
+            File file=new File("serverGames/game1.sgf");
+            if(!file.exists())
+                Logging.mainLogger.warning(file+" does not exist!");
+            recorder.restore(IO.toReader(file));
+            recorder.bottom(); // go to the last move!
+            StringWriter stringWriter=new StringWriter();
+            recorder.save(stringWriter);
+            String sgf=stringWriter.toString();
+            System.out.println("sgf: "+sgf);
+            if(true) sgf=HexAscii.encode(sgf.getBytes());
+            String fromCommand=Command.tgo_receive_sgf.name()+" "+sgf;
+            Response response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
+            if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+            response=game.whiteFixture.frontEnd.sendAndReceive(fromCommand);
+            if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+        }
         game.startGame();
         synchronized(connections) {
             games.add(game);
@@ -70,10 +88,6 @@ public class GoServer implements Runnable,Stopable {
                 if(!once) {
                     //System.out.println("wait for connection)");
                     once=true;
-                }
-                if(false) if(connections.size()>1) {
-                    // restore a game
-                    // and  shove it
                 }
                 if(connections.size()>=2) {
                     //System.out.println(connections()+" connections.");
@@ -249,13 +263,16 @@ public class GoServer implements Runnable,Stopable {
     }
     public static void main(String[] arguments) throws Exception,InterruptedException {
         System.out.println(Init.first);
-        Logging.setLevels(Level.INFO);
+        Logging.setLevels(Level.WARNING);
         System.out.println("Level: "+Logging.mainLogger.getLevel());
         int n=arguments==null?0:arguments.length;
         if(true) {
             try {
                 File dir=new File(GameFixture.directory);
-                if(!dir.exists()) dir.mkdir();
+                if(!dir.exists()) {
+                    dir.mkdir();
+                    if(!dir.exists()) throw new RuntimeException("can not create folder: "+dir);
+                }
                 GoServer goServer=GoServer.startServer(IO.defaultPort);
             } catch(IOException e) {
                 e.printStackTrace();

@@ -521,6 +521,8 @@ make connect and disconnect to and from server return a boolean? done
 consider a restoreGame in the server when one connections is made.
 then restore a game and shove it to the client.
 command lines connect to the server and allow the players to make moves.
+shove game1 seems to work, but seems like only one node gets to the clients.
+
 
 
 

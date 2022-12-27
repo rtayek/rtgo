@@ -161,16 +161,16 @@ public class CommandLine {
     void startup() { for(String command:startup) process(command); }
     public static void main(String[] arguments) throws IOException {
         System.out.println(Init.first);
-        Logging.setLevels(Level.INFO);
+        Logging.setLevels(Level.WARNING);
         System.out.println("Level: "+Logging.mainLogger.getLevel());
         CommandLine commandLine=new CommandLine();
         commandLine.startup();
         commandLine.run();
     }
     List<String> startup=Arrays.asList(new String[] { //
-            "o sgf/ff4_ex.sgf", //
-            "t,"
-            //"c","s",
+            //"o sgf/ff4_ex.sgf", //
+            //"t,"
+            "c","s",
     });
     Model model=new Model("command line");
     TreeView myTreeView;

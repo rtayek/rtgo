@@ -124,6 +124,8 @@ public class GameFixture implements Runnable,Stopable {
             if(doInit) { // turning this on made stuff work?
                 // maybe this init login should be outside the this run method?
                 response=recorderFixture.frontEnd.sendAndReceive(Command.tgo_anything.name());
+                // board is still null in recorder
+                // but recorder may have a long game in it!
                 int width=recorderFixture.backEnd.model.board().width();
                 if(!initializeBoard(recorderFixture,width)) throw new RuntimeException("init recorder oops");
                 response=blackFixture.frontEnd.sendAndReceive(Command.tgo_black.name());

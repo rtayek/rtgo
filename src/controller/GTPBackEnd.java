@@ -366,9 +366,9 @@ public class GTPBackEnd implements Runnable,Stopable {
                 break;
             case tgo_receive_sgf:
                 String sgfString=message.arguments[1];
-                Logging.mainLogger.info("receive sgf: "+sgfString);
+                Logging.mainLogger.warning("receive sgf: "+sgfString);
                 if(useHexAscii) sgfString=decodeToString(sgfString);
-                Logging.mainLogger.info("receive decoded sgf: "+sgfString);
+                Logging.mainLogger.warning("receive decoded sgf: "+sgfString);
                 model.restore(new StringReader(sgfString));
                 send(okCharacter,message.id,"");
                 //send(badCharacter,message.id,"can not restore model! "+message.command);
@@ -600,7 +600,7 @@ public class GTPBackEnd implements Runnable,Stopable {
     // there are two cases:
     // 1) generateMove is true -> generate a (silly in my case) move.
     // 2) generateMove is false -> wait for someone else to make a move.
-    boolean useHexAscii=false;
+    boolean useHexAscii=true;
     public static final boolean throwOnstartGTPFailure=true;
     // 1 works for controller tests.
     // not any more, 20 is failing a lot now.

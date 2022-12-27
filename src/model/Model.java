@@ -80,7 +80,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void restore(Reader reader) {
         if(reader==null) {
             System.out.println("restoring model from null reader!");
-            //Logging.mainLogger.config("restoring model from null reader!");
+            Logging.mainLogger.config("restoring model from null reader!");
         }
         MNode games=MNode.restore(reader);
         if(false&&addNewRoot) games=games.children.get(0);
@@ -761,7 +761,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     @Override public String toString() {
         if(hasABoard()) {
             String s=board().toString();
-            if(currentNode()!=null) s+="current node: "+currentNode().toString();
+            if(currentNode()!=null) { s+="current node: "+currentNode().toString(); s+=currentNode().children; }
             return s;
         } else if(currentNode()!=null) return "current node: "+currentNode().toString();
         else return "no board and no current node!";
