@@ -76,13 +76,15 @@ public class WestPanels {
                     if(name!=null&&e2!=null&&b!=null) if(e2 instanceof WestPanels.MyEnums) {
                         WestPanels.MyEnums e21=(WestPanels.MyEnums)e2;
                         Model model=mediator.model;
+                        boolean ok=false;
                         switch(e21) {
                             case connect: // copy of left action so far
-                                Model.connectToServer(model);
+                                ok=Model.connectToServer(model);
+                                if(model.gtp==null) JOptionPane.showMessageDialog(null,"did not connect!");
                                 buttons.enableAll(mediator);
                                 break;
                             case disconnect:
-                                Model.disconnectFromServer(model);
+                                ok=Model.disconnectFromServer(model);
                                 buttons.enableAll(mediator);
                             default:
                                 Logging.mainLogger.info(mediator.model.name+" button for"+e21+"  was not handled!");

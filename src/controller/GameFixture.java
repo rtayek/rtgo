@@ -163,17 +163,24 @@ public class GameFixture implements Runnable,Stopable {
                 gameLogger.info("recorded move #"+recorderFixture.backEnd.model.moves()+"@"
                         +recorderFixture.backEnd.model.lastMoveGTP());
                 if(saveGameAfterMove) {
+                    System.out.println("saving game.");
                     try {
-                        Writer writer=IO.toWriter(new File(directory,"game"+fileId+".sgf"));
+                        File file=new File(directory,"game"+fileId+".sgf");
+                        System.out.println(file);
+                        Writer writer=IO.toWriter(file);
                         boolean wasSaved=recorderFixture.backEnd.model.save(writer);
                         writer.close();
-                        if(!wasSaved) gameLogger.warning("save game failed!");
+                        if(!wasSaved) {
+                            gameLogger.warning("save game failed!");
+                            System.out.println("game save failed!.");
+                        } else System.out.println("game saved.");
                     } catch(Exception e) {
                         Logging.mainLogger.info("save game caught: "+e);
                     }
                 }
                 // maybe. if this were a correspondence game, we should be able to restore from this point.
                 // yes, how to restore from here?
+                // write a test for the above
                 // shove will probably work.
                 switch(recorderFixture.backEnd.model.turn()) { // send move to the other player
                     // these are different, they need to be the same!

@@ -517,7 +517,13 @@ so maybe can remove all of the old code?
 mediator has: GTPBackEnd gtp;
 command line has no knowledge of the mediator.
 so maybe the back end belongs in the model?
-make connect and disconnect to and from server return a boolean?
+make connect and disconnect to and from server return a boolean? done
+consider a restoreGame in the server when one connections is made.
+then restore a game and shove it to the client.
+command lines connect to the server and allow the players to make moves.
+
+
+
 
 
 

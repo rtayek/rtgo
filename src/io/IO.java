@@ -343,6 +343,7 @@ public class IO {
         for(int i=0;i<10;++i) {
             String string=connect_(timeout,socket,inetSocketAddress);
             if(string.equals("")) return true;
+            System.out.println("string: "+string);
             System.out.println("connect "+host+":"+port+" fails on try: "+i);
             //IO.stackTrace(10);
             GTPBackEnd.sleep2(1);

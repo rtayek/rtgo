@@ -1,8 +1,9 @@
 package server;
 import static io.Logging.serverLogger;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
 import controller.*;
 import io.*;
 import io.IO.*;
@@ -69,6 +70,10 @@ public class GoServer implements Runnable,Stopable {
                 if(!once) {
                     //System.out.println("wait for connection)");
                     once=true;
+                }
+                if(false) if(connections.size()>1) {
+                    // restore a game
+                    // and  shove it
                 }
                 if(connections.size()>=2) {
                     //System.out.println(connections()+" connections.");
@@ -243,9 +248,14 @@ public class GoServer implements Runnable,Stopable {
         return serverIsRunning;
     }
     public static void main(String[] arguments) throws Exception,InterruptedException {
+        System.out.println(Init.first);
+        Logging.setLevels(Level.INFO);
+        System.out.println("Level: "+Logging.mainLogger.getLevel());
         int n=arguments==null?0:arguments.length;
         if(true) {
             try {
+                File dir=new File(GameFixture.directory);
+                if(!dir.exists()) dir.mkdir();
                 GoServer goServer=GoServer.startServer(IO.defaultPort);
             } catch(IOException e) {
                 e.printStackTrace();

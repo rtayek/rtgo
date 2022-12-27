@@ -113,11 +113,13 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
     public boolean sendAndReceive(List<String> strings) {
         for(String string:strings) {
             Response response=sendAndReceive(string);
-            if(false) if(response==null) {
-                Logging.mainLogger.warning("sar new behavior");
-                return false; // new behavior
-            }
-            if(!response.isOk()) return false;
+            if(response!=null) {
+                if(false) if(response==null) {
+                    Logging.mainLogger.warning("sar new behavior");
+                    return false; // new behavior
+                }
+                if(!response.isOk()) return false;
+            } else return true;
         }
         return true;
     }

@@ -1,6 +1,7 @@
 package controller;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 import equipment.Board.*;
 import equipment.Point;
 import gui.*;
@@ -40,7 +41,9 @@ public class CommandLine {
     private void process(String command) {
         if(command.length()==0) return;
         System.out.println("got a: "+command.charAt(0));
+        System.out.println("gtp: "+model.gtp);
         String[] tokens=null;
+        boolean ok=false;
         switch(command.charAt(0)) {
             case 'h':
                 usage();
@@ -100,8 +103,18 @@ public class CommandLine {
                 if(true) throw new RuntimeException("got a q!");
                 break;
             case 's':
+                if(model.gtp==null) {
+                    ok=Model.connectToServer(model);
+                    if(ok) System.out.println("conecred.");
+                    else System.out.println("connect fails!");
+                } else System.out.println("already conected!");
                 break;
             case 'S':
+                if(model.gtp!=null) {
+                    ok=Model.disconnectFromServer(model);
+                    if(ok) System.out.println("disconecred.");
+                    else System.out.println("disconnect fails!");
+                } else System.out.println("already disconected!");
                 break;
             case 't':
                 if(myTreeView==null) {
@@ -148,7 +161,7 @@ public class CommandLine {
     void startup() { for(String command:startup) process(command); }
     public static void main(String[] arguments) throws IOException {
         System.out.println(Init.first);
-        //Logging.setLevels(Level.INFO);
+        Logging.setLevels(Level.INFO);
         System.out.println("Level: "+Logging.mainLogger.getLevel());
         CommandLine commandLine=new CommandLine();
         commandLine.startup();
@@ -156,7 +169,9 @@ public class CommandLine {
     }
     List<String> startup=Arrays.asList(new String[] { //
             "o sgf/ff4_ex.sgf", //
-    "t,"});
+            "t,"
+            //"c","s",
+    });
     Model model=new Model("command line");
     TreeView myTreeView;
 }

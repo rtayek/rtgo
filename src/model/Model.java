@@ -6,7 +6,6 @@ import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
-import javax.swing.JOptionPane;
 import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
@@ -1026,15 +1025,17 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return mNodes;
     }
-    public static void disconnectFromServer(Model model) {
+    public static boolean disconnectFromServer(Model model) {
         if(model.gtp!=null) {
             model.gtp.stop();
             model.gtp=null;
             model.setRole(Role.anything);
             model.strict=false; // or deafult value
+            return true;
         } else Logging.mainLogger.severe(model.name+" "+"disconnect when not connected!");
+        return false;
     }
-    public static void connectToServer(Model model) {
+    public static boolean connectToServer(Model model) {
         if(model.gtp==null) {
             Socket socket=new Socket();
             boolean ok=connect(IO.host,IO.defaultPort,1000,socket);
@@ -1048,9 +1049,10 @@ public class Model extends Observable { // model of a go game or problem forrest
                 }
                 model.strict=true;
                 // add some more constants?
+                return true;
             } else Logging.mainLogger.warning(model.name+" "+"connection failed!");
-            if(model.gtp==null) JOptionPane.showMessageDialog(null,"did not connect!");
         } else Logging.mainLogger.warning(model.name+" "+"connection failed!");
+        return false;
     }
     static class State implements Cloneable { // needs an equals or isEqual method.
         private State() {}
