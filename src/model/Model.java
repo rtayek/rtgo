@@ -119,8 +119,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(state.root==null) Logging.mainLogger.warning("root() is returning null!");
         return state.root;
     }
-    public void setRoot(MNode root) {
-        //System.out.println("setRoot: "+root);
+    public void setRoot(MNode root) { // this always gets called.
         if(root==null) { Logging.mainLogger.severe("root is null!: "); return; }
         // return root so Model m=new Model().setRoot(root)?
         // looks like we keep the whole tree (forrest?)
@@ -188,7 +187,8 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void setRoot(int width,int depth) { setRoot(width,depth,Board.Topology.normal,Shape.normal); }
     public void setRoot(int width,int depth,Board.Topology topology,Board.Shape shape) {
         // where is the board constructed?
-        Logging.mainLogger.config("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
+        Logging.mainLogger.warning("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
+        IO.stackTrace(10);
         MNode newRoot=new MNode(null);
         addProperty(newRoot,P.FF,"4");
         addProperty(newRoot,P.GM,"1");
@@ -198,7 +198,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(!shape.equals(Shape.normal)) addProperty(newRoot,P.C,sgfBoardShape+shape);
         String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
         if(width==depth) string=Integer.valueOf(width).toString();
-        boolean alwaysSetBoardSize=true; // was true
+        boolean alwaysSetBoardSize=true;// was true
         if(alwaysSetBoardSize) addProperty(newRoot,P.SZ,string);
         // work needed here!
         if(topology.equals(Topology.torus)) addProperty(newRoot,P.KM,"4.5");
@@ -759,12 +759,11 @@ public class Model extends Observable { // model of a go game or problem forrest
         } else Logging.mainLogger.warning(name+" "+"p2 is null!");
     }
     @Override public String toString() {
-        if(hasABoard()) {
-            String s=board().toString();
-            if(currentNode()!=null) { s+="current node: "+currentNode().toString(); s+=currentNode().children; }
-            return s;
-        } else if(currentNode()!=null) return "current node: "+currentNode().toString();
-        else return "no board and no current node!";
+        String s="";
+        if(hasABoard()) { s=board().toString(); }
+        s+="current node: "+currentNode().toString();
+        s+=" "+currentNode().children;
+        return s;
     }
     public boolean goToMNode(MNode target) {
         // looks like some of this old code

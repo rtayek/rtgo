@@ -40,8 +40,7 @@ public class CommandLine {
     }
     private void process(String command) {
         if(command.length()==0) return;
-        System.out.println("got a: "+command.charAt(0));
-        System.out.println("gtp: "+model.gtp);
+        System.out.println("process got a command: "+command.charAt(0));
         String[] tokens=null;
         boolean ok=false;
         switch(command.charAt(0)) {
@@ -105,14 +104,14 @@ public class CommandLine {
             case 's':
                 if(model.gtp==null) {
                     ok=Model.connectToServer(model);
-                    if(ok) System.out.println("conecred.");
+                    if(ok) System.out.println("conected.");
                     else System.out.println("connect fails!");
                 } else System.out.println("already conected!");
                 break;
             case 'S':
                 if(model.gtp!=null) {
                     ok=Model.disconnectFromServer(model);
-                    if(ok) System.out.println("disconecred.");
+                    if(ok) System.out.println("disconected.");
                     else System.out.println("disconnect fails!");
                 } else System.out.println("already disconected!");
                 break;
@@ -172,6 +171,6 @@ public class CommandLine {
             //"t,"
             "c","s",
     });
-    Model model=new Model("command line");
+    Model model=new Model("cl model");
     TreeView myTreeView;
 }

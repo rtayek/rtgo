@@ -28,7 +28,7 @@ public class SgfFiles {
             if(games.hasAMoveType) s+='m';
             if(games.hasAMove) s+='M';
             if(s.equals("")) s="0";
-            if(!s.equals("0")) { System.out.println("key: "+key); System.out.println(s+" "+games); }
+            if(true||!s.equals("0")) { System.out.println("key: "+key); System.out.println(s+" "+games); }
         }
     }
 }

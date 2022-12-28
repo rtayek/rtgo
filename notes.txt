@@ -522,6 +522,24 @@ consider a restoreGame in the server when one connections is made.
 then restore a game and shove it to the client.
 command lines connect to the server and allow the players to make moves.
 shove game1 seems to work, but seems like only one node gets to the clients.
+12/27/22
+sgf is received ok. but a call to set root is replacing it.
+do init in the game fixture run method is doing a board size.
+on the recorder and the black and white boards!
+backed receives a genmove and board is null, so he does a set root.
+so we need a board in there. but our saved game does not have one.
+there was one in the root node, but we discarded it.
+turning off ignoreMoveAndSetupFlags makes some errors.
+turned alwaysSetBoardSize off and got 30 errors and 7 failures in tst/model.
+some of these may be due to not initializing games when we shove a restored game.
+noticed that there are several calls to setRoot.
+turned alwaysSetBoardSize back on, so no errors.
+maybe we have always do this and allow it to change.
+need to move it down into a node that is saved.
+
+ 
+
+                                                                             
 
 
 

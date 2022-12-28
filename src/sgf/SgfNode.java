@@ -215,6 +215,9 @@ public class SgfNode {
     private void saveSgf_(Writer writer,Indent indent) throws IOException {
         indent.in();
         writer.write(this.toString());
+        setFlags();
+        if(!checkFlags())
+            System.out.println("");
         if(left!=null) {
             if(left.right!=null) writer.write(indent.indent()+'(');
             left.saveSgf_(writer,indent);

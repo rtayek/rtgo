@@ -1,13 +1,13 @@
 package controller;
-import static org.junit.Assert.assertEquals;
-import static sgf.Parser.getSgfData;
+import static org.junit.Assert.*;
+import static sgf.Parser.*;
 import java.io.StringReader;
-import java.util.Collection;
+import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import model.Model;
+import model.*;
 import sgf.*;
 import utilities.*;
 // this may belong in the sgf package.
@@ -18,10 +18,13 @@ import utilities.*;
         expectedSgf=getSgfData(key);
         expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
     }
-    public GTPDirectSendReceiveSgfTestCase(String key) { this.key=key; }
+    public GTPDirectSendReceiveSgfTestCase(Object key) { this.key=key; }
     @After public void tearDown() throws Exception {}
     @Parameters public static Collection<Object[]> data() {
-        return ParameterArray.parameterize(Parser.sgfDataKeySet());
+        Set<Object> objects=new LinkedHashSet<>();
+        objects.addAll(sgfDataKeySet());
+        objects.addAll(sgfFiles());
+        return ParameterArray.parameterize(objects);
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();
@@ -32,8 +35,7 @@ import utilities.*;
         String string=gtpBackEnd.runCommands(true);
         Response response=Response.response(string);
         String actualSgf=response.response;
-        if(actualSgf.endsWith("\n\n"))
-            actualSgf=actualSgf.substring(0,actualSgf.length()-2);
+        if(actualSgf.endsWith("\n\n")) actualSgf=actualSgf.substring(0,actualSgf.length()-2);
         if(useHexAscii) try {
             //Parser.printDifferences(expectedSgf,actualSgf);
             actualSgf=HexAscii.decodeToString(actualSgf);
@@ -48,8 +50,7 @@ import utilities.*;
         //Parser.printDifferences(expectedSgf,actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
-    String sendSgfToModel(String expectedSgf) {
-        Model model=new Model();
+    String sendSgfToModel(String expectedSgf,Model model) {
         if(useHexAscii) expectedSgf=HexAscii.encode(expectedSgf.getBytes());
         String fromCommand=Command.tgo_receive_sgf.name()+" "+expectedSgf;
         GTPBackEnd gtpBackEnd=new GTPBackEnd(fromCommand,model);
@@ -70,12 +71,16 @@ import utilities.*;
         return actualSgf;
     }
     @Test public void testSendSgfToModel() throws Exception {
-        String actualSgf=sendSgfToModel(expectedSgf);
+        Model model=new Model();
+        String actualSgf=sendSgfToModel(expectedSgf,model);
+        assertTrue(model.currentNode().children.size()>0);
+        assertTrue(Navigate.down.canDo(model));
+        //System.out.println(model);
         actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString().toString(),expectedSgf,actualSgf);
     }
     boolean useHexAscii=true;
-    final String key;
+    final Object key;
     String expectedSgf;
     Model original;
 }

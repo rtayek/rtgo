@@ -33,22 +33,27 @@ public class GoServer implements Runnable,Stopable {
         Holder whiteHolder=Holder.frontEnd(whiteFrontEnd);
         GameFixture game=new GameFixture(recorder);
         game.setupServerSide(blackHolder.front,whiteHolder.front);
-        if(true) {
+        // we may always want everything except the board size?
+        Response initializeResponse=game.initializeGame();
+        if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
+        if(true) { // load existing game
             File file=new File("serverGames/game1.sgf");
-            if(!file.exists())
-                Logging.mainLogger.warning(file+" does not exist!");
+            if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
             recorder.restore(IO.toReader(file));
             recorder.bottom(); // go to the last move!
             StringWriter stringWriter=new StringWriter();
             recorder.save(stringWriter);
             String sgf=stringWriter.toString();
-            System.out.println("sgf: "+sgf);
+            System.out.println("sending sgf: "+sgf);
             if(true) sgf=HexAscii.encode(sgf.getBytes());
             String fromCommand=Command.tgo_receive_sgf.name()+" "+sgf;
             Response response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
             if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+            System.out.println("sent sgf to black: "+sgf);
             response=game.whiteFixture.frontEnd.sendAndReceive(fromCommand);
             if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+            System.out.println("sent sgf to white: "+sgf);
+            // go to the end of the main line!
         }
         game.startGame();
         synchronized(connections) {

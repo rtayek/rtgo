@@ -151,6 +151,7 @@ public class GTPBackEnd implements Runnable,Stopable {
             // check for quit command just in case?
             return true;
         }
+        boolean ok;
         if(message.command!=null) switch(message.command) {
             case protocol_version:
                 send(okCharacter,message.id,protocolVersionString);
@@ -242,6 +243,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 // how to wait for this response to be sent?
                 return false;
             case boardsize:
+                System.out.println(model.name+" boardsize command.");
                 if(message.arguments.length>1) {
                     int n=-1;
                     try {
@@ -321,7 +323,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 // replace above with syntax error?
                 break;
             case genmove:
-                Logging.mainLogger.info(model.name+" got genmove for move #"+(model.moves()+1)+" at "+first.et);
+                Logging.mainLogger.warning(model.name+" got genmove for move #"+(model.moves()+1)+" at "+first.et);
                 // maybe use this just to keep track of whose move it is?
                 // maybe not.
                 if(message.arguments.length>1) {
@@ -366,12 +368,11 @@ public class GTPBackEnd implements Runnable,Stopable {
                 break;
             case tgo_receive_sgf:
                 String sgfString=message.arguments[1];
-                Logging.mainLogger.warning("receive sgf: "+sgfString);
+                Logging.mainLogger.warning("received encoded sgf: "+sgfString);
                 if(useHexAscii) sgfString=decodeToString(sgfString);
-                Logging.mainLogger.warning("receive decoded sgf: "+sgfString);
+                Logging.mainLogger.warning("decoded sgf: "+sgfString);
                 model.restore(new StringReader(sgfString));
-                send(okCharacter,message.id,"");
-                //send(badCharacter,message.id,"can not restore model! "+message.command);
+                ok=send(okCharacter,message.id,"");
                 break;
             case tgo_send_sgf:
                 sgfString=model.save();
@@ -600,7 +601,7 @@ public class GTPBackEnd implements Runnable,Stopable {
     // there are two cases:
     // 1) generateMove is true -> generate a (silly in my case) move.
     // 2) generateMove is false -> wait for someone else to make a move.
-    boolean useHexAscii=true;
+    boolean useHexAscii=true; // needs to be always on!
     public static final boolean throwOnstartGTPFailure=true;
     // 1 works for controller tests.
     // not any more, 20 is failing a lot now.

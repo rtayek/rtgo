@@ -30,7 +30,7 @@ public class IllegalMoveTestCase {
         assertTrue(model.checkParity());
     }
     @Test public void testIsLegalMoveOnOccupoedPoint() {
-        model.setRoot();
+        //model.setRoot();
         Point a1=new Point(0,0);
         Move move=new MoveImpl(model.turn(),a1);
         MoveResult actual=model.isLegalMove(move);
@@ -45,7 +45,7 @@ public class IllegalMoveTestCase {
     @Test public void testBlackA1WhiteA1() {
         // lower level test than testIsLegalMoveOnOccupoedPoint()
         // maybe that is where out of turn stuff is handled?
-        model.setRoot();
+        //model.setRoot();
         Point a1=new Point(0,0);
         Move move=new MoveImpl(model.turn(),a1);
         MoveResult ok=model.addMoveNodeAndExecute(move);
@@ -58,7 +58,7 @@ public class IllegalMoveTestCase {
         // but sgf and gtp seem to handle it fine.
         // how is this happening?
         // maybe gto changes the color somehow?
-        model.setRoot();
+        // model.setRoot();
         Point a1=new Point();
         // maybe just do the add move node and execute?
         Move move=new MoveImpl(model.turn(),a1);

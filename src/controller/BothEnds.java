@@ -131,7 +131,7 @@ public class BothEnds { // has both a front end and a back end.
     }
     private static void runBoth0(Holder holder) throws Exception {
         Model model=new Model("model");
-        model.setBoard(Board.factory.create());
+        model.setBoard(Board.factory.create()); // try and remove this
         BothEnds both=new BothEnds();
         both.setupBoth(holder,model.name,model);
         @SuppressWarnings("unused") NamedThread back=both.backEnd.startGTP(0);

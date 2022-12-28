@@ -116,16 +116,16 @@ public class GameFixture implements Runnable,Stopable {
         strings.add(Command.clear_board.name());
         return both.frontEnd.sendAndReceive(strings);
     }
-    @Override public void run() {
-        try {
-            Response response=null;
-            boolean doInit=true; // was false.
-            // turning on to test some server stuff.
-            if(doInit) { // turning this on made stuff work?
-                // maybe this init login should be outside the this run method?
-                response=recorderFixture.frontEnd.sendAndReceive(Command.tgo_anything.name());
-                // board is still null in recorder
-                // but recorder may have a long game in it!
+    public Response initializeGame() {
+        Response response=null;
+        boolean doInit=true; // was false.
+        // turning on to test some server stuff.
+        if(doInit) { // turning this on made stuff work?
+            // maybe this init login should be outside the this run method?
+            response=recorderFixture.frontEnd.sendAndReceive(Command.tgo_anything.name());
+            // board is still null in recorder
+            // but recorder may have a long game in it!
+            if(recorderFixture.backEnd.model.board()!=null) {
                 int width=recorderFixture.backEnd.model.board().width();
                 if(!initializeBoard(recorderFixture,width)) throw new RuntimeException("init recorder oops");
                 response=blackFixture.frontEnd.sendAndReceive(Command.tgo_black.name());
@@ -133,6 +133,12 @@ public class GameFixture implements Runnable,Stopable {
                 response=whiteFixture.frontEnd.sendAndReceive(Command.tgo_white.name());
                 if(!initializeBoard(whiteFixture,width)) throw new RuntimeException("init white oops");
             }
+        }
+        return response;
+    }
+    @Override public void run() {
+        try {
+            Response response=null;
             Logging.mainLogger.info("enter game main loop");
             while(!isStopping) {
                 if(namedThread!=null&&namedThread.isInterrupted()) {
