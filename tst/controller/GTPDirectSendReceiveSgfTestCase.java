@@ -65,7 +65,7 @@ import utilities.*;
             //actualSgf=options.remove(actualSgf);
         } else {
             // reinitialize expected
-            if(false) throw new RuntimeException("?");
+            if(true) throw new RuntimeException("?");
             //expectedSgf=options.remove(expectedSgf);
         }
         return actualSgf;

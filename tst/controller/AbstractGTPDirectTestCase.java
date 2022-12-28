@@ -10,6 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import equipment.*;
 import io.*;
 import model.*;
+import sgf.HexAscii;
 import utilities.MyTestWatcher;
 //@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public abstract class AbstractGTPDirectTestCase {
@@ -336,16 +337,22 @@ public abstract class AbstractGTPDirectTestCase {
     }
     // some of these from commands do not check the data!
     @Test public void testFromSGFCommand() throws Exception {
-        String response=new GTPBackEnd(Command.tgo_receive_sgf.name()+" (;)",directModel).runCommands(directJustRun);
+        String sgf="(;)";
+        if(useHexAscii) sgf=HexAscii.encode(sgf);
+        String response=new GTPBackEnd(Command.tgo_receive_sgf.name()+' '+sgf,directModel).runCommands(directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testFromSGFCommand2() throws Exception {
-        String response=new GTPBackEnd(Command.tgo_receive_sgf.name()+" (;)(;)",directModel).runCommands(directJustRun);
+        String sgf="(;)(;)";
+        if(useHexAscii) sgf=HexAscii.encode(sgf);
+        String response=new GTPBackEnd(Command.tgo_receive_sgf.name()+' '+sgf,directModel).runCommands(directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testFromSGFCommandFoo() throws Exception {
+        // need to encode sgf into hex ascii if backend expects it.
+        // like: if(useHexAscii) { sgfString=encode(sgfString);
         String response=new GTPBackEnd(Command.tgo_receive_sgf.name()+" not sgf",directModel)
                 .runCommands(directJustRun);
         Response actual=Response.response(response);
@@ -361,6 +368,7 @@ public abstract class AbstractGTPDirectTestCase {
     Set<Thread> initialThreads;
     int ids;
     final Model directModel=new Model("model");
+    boolean useHexAscii=true;
     static EnumSet<Command> skipped=EnumSet.of(Command.genmove);
     // genmove hangs. figure out a workaround!
 }

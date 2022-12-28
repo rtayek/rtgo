@@ -536,6 +536,22 @@ noticed that there are several calls to setRoot.
 turned alwaysSetBoardSize back on, so no errors.
 maybe we have always do this and allow it to change.
 need to move it down into a node that is saved.
+12/28/22
+some tests started to fail or hang.
+was adding child node to root in setRoot(MNode root)
+removed edits and still have failures.
+discovered boardsize command does a setRoot!
+maybe he should just do a set board ?
+doing so now.
+some failures were cause buy the tests not using hex ascii when the bacend was.
+server test are failing with:
+00054  server-17~)    FINE                             = 
+
+ in controller.Response.checkForTwoLineFeeds()
+server-17~)    FINE          recorder-1 received: =  in controller.GTPFrontEnd.sendAndReceive()
+server-17~)    FINE       black-1 sending: tgo_black in controller.GTPFrontEnd.sendAndReceive()
+Server-17~)    INFO FE 'black-1' waiting to receive. in controller.GTPFrontEnd.receive()
+
 
  
 

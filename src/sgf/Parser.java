@@ -282,6 +282,7 @@ public class Parser {
             if(games!=null) if(games.right!=null) System.out.println(key+" right: "+games.right);
             //System.out.println(games);
         }
+        System.out.println(objects);
     }
     Indent indent=new Indent("  ");
     PushbackReader reader;

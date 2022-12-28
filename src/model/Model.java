@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.logging.Level;
 import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
@@ -88,6 +89,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // maybe we can put in a comment and look for it.
         // something like that.
         setRoot(games); // does this really trash everything correctly?
+        // it looks like it does.
     }
     public Model(Model model,String name) { // copy constructor
         this.name=name;
@@ -139,6 +141,9 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(root.children.size()>1) Logging.mainLogger.info("more than one game!");
         if(root!=null) checkForLittleGolem(root);
         Logging.mainLogger.config(name+" "+"doing root: "+root);
+        System.out.println(name+" doing root: "+root);
+        Logging.setLevels(Level.ALL);
+        Logging.parserLogger.setLevel(Level.INFO);
         do_(root);
         long t0=System.nanoTime();
         Logging.mainLogger.fine(name+" "+"doing notify @"+t0+" , "+root);
@@ -188,7 +193,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void setRoot(int width,int depth,Board.Topology topology,Board.Shape shape) {
         // where is the board constructed?
         Logging.mainLogger.warning("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
-        IO.stackTrace(10);
+        //IO.stackTrace(10);
         MNode newRoot=new MNode(null);
         addProperty(newRoot,P.FF,"4");
         addProperty(newRoot,P.GM,"1");

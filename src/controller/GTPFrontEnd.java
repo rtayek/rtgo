@@ -102,7 +102,7 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
     }
     public Response sendAndReceive(String string) {
         // consolidate this with the gtp dorect test case send and receive!
-        Logging.mainLogger.fine(name+" sendimg: "+string);
+        Logging.mainLogger.fine(name+" sending: "+string);
         sendString(string);
         Response response=receive();
         Logging.mainLogger.fine(name+" received: "+response);

@@ -252,7 +252,13 @@ public class GTPBackEnd implements Runnable,Stopable {
                         send(badCharacter,message.id,Failure.syntax_error);
                     }
                     if(1<=n&&n<=Model.maxN) {
-                        model.setRoot(n,n,model.boardTopology(),model.boardShape());
+                        // maybe model should not be doing a set root here?
+                        // maybe just a set board?
+                        if(true) {
+                            Board board=Board.factory.create(n,n,model.boardTopology(),model.boardShape());
+                            model.setBoard(board);
+                        }
+                        else model.setRoot(n,n,model.boardTopology(),model.boardShape());
                         // shape and type above come from parameters through model?
                         send(okCharacter,message.id,"");
                     } else send(badCharacter,message.id,Failure.unacceptable_size);
