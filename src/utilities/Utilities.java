@@ -325,7 +325,7 @@ public class Utilities {
                     ps.print(i+" "+(ok?c:" ")+" "+(!ok?bytes[i]:""));
                     boolean ok2=!Character.isISOControl(c2);
                     ps.print(", "+(ok2?c2:" ")+" "+(!ok2?bytes2[i]:""));
-                    if(c!=c2) ps.println(" not equal!");
+                    if(c!=c2) ps.println(" not equal in print differences!");
                     ps.println();
                 }
             }

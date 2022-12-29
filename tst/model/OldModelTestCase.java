@@ -190,8 +190,6 @@ public class OldModelTestCase {
         ok=copy.save(stringWriter);
         assertTrue("second save fails",ok);
         String actual=stringWriter.toString();
-        System.out.println("ex: "+expected);
-        System.out.println("ac: "+actual);
         assertEquals(expected,actual);
     }
     @Test public void testCopyConstructorWithVariationOfAVariation() {

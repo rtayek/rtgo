@@ -380,8 +380,6 @@ public class SgfNode {
         String actual=writer.toString();
         if(!actual.equals(expected)) {
             parserLogger.severe(actual+"!="+original);
-            //System.out.println("ex: "+expected);
-            //System.out.println("ac: "+actual);
             return false;
         } else return true;
     }
@@ -390,15 +388,15 @@ public class SgfNode {
     (;C[d];C[e]))
     (;C[f](;C[g];C[h];C[i])
     (;C[j])))
-    
+
     (;FF[4]C[root];C[a];C[b];C[c]
             ;C[d];C[e]
                     ;C[f];C[g];C[h];C[i]
                             ;C[j])
-    
+
     (;FF[4]C[root];C[a](;C[b];C[c];C[d];C[e];C[f];C[g](;C[h];C[i];C[j])))
-    
-    
+
+
     acdfgj
      */
     public static String preorderRouundTrip(String expectedSgf) throws IOException {

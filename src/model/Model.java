@@ -140,18 +140,13 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(root.children.size()>1) Logging.mainLogger.info("more than one game!");
         if(root!=null) checkForLittleGolem(root);
         Logging.mainLogger.config(name+" "+"doing root: "+root);
-        System.out.println(name+" doing root: "+root);
-        //Logging.setLevels(Level.ALL);
-        //Logging.parserLogger.setLevel(Level.INFO);
         do_(root);
-        System.out.println(name+" end of doing root: "+root);
         long t0=System.nanoTime();
         Logging.mainLogger.fine(name+" "+"doing notify @"+t0+" , "+root);
         // we are doing a notify here!
         setChangedAndNotify(new Event.Hint(Event.newTree,""+t0)); // ??
         // node change will select
         setChangedAndNotify(new Event.Hint(Event.nodeChanged,""+t0)); // ??
-        System.out.println("exit setRoot().");
     }
     public boolean isFromLittleGolem() { return state.isFromLittleGolem; }
     public static void addProperty(MNode node,P p,String string) { addProperty(node,p,new String[] {string}); }
@@ -457,7 +452,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                 wasLegal=addMoveNodeAndExecute(move);
                 if(wasLegal!=MoveResult.legal)
                     Logging.mainLogger.info(name+" not legal because: "+wasLegal+" "+turn()+" at move #"+moves()
-                            +" illegal move: can not move "+move.color()+" at point: "+point+", "+isPoint(point));
+                    +" illegal move: can not move "+move.color()+" at point: "+point+", "+isPoint(point));
                 // bad message above fix!
                 rc=wasLegal;
             } catch(Exception e) {
@@ -695,7 +690,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     break;
                 case RG:
                     if(state.application.equals(sgfApplicationName)) Logging.mainLogger
-                            .warning(state.board.topology()+", "+state.shape+", region: "+property.list());
+                    .warning(state.board.topology()+", "+state.shape+", region: "+property.list());
                     // above we have diamond, hole1, region [jj]
                     // using state.board above does not seem quite right.
                     // yes, diamond needs another region or a bigger region.

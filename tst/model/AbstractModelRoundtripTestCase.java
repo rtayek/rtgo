@@ -34,9 +34,6 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         String actualSgf2=stringWriter.toString();
         actualSgf2=SgfNode.options.removeUnwanted(actualSgf2);
         //Utilities.printDifferences(System.out,expectedSgf,actualSgf);
-        //System.out.println("ex: "+expectedSgf);
-        //System.out.println("ac0: "+actualSgf);
-        //System.out.println("ac: "+actualSgf2);
         assertEquals(key.toString(),expectedSgf,actualSgf2);
     }
     @Test public void testLongRoundTrip() throws Exception {

@@ -38,8 +38,6 @@ public class TopologyAndShapeTTestCase {
         stringWriter=new StringWriter();
         m.save(stringWriter);
         final String actual=stringWriter.toString();
-        System.out.println("ex: "+expected);
-        System.out.println("ac: "+actual);
         assertEquals(expected,actual);
     }
     @Test public void testsetRoot() {
@@ -50,7 +48,6 @@ public class TopologyAndShapeTTestCase {
         assertEquals(expectedTopology,model.boardTopology());
         assertEquals(expectedShape,model.boardShape());
         Board b=model.board();
-        //System.out.println("initial\n"+model.board());
         assertEquals(Stone.vacant,b.at(b.center()));
         model.move(Move.blackMoveAtA1);
         // failing because we added a new root in save

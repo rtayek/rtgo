@@ -3,7 +3,6 @@ import static io.Logging.serverLogger;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.logging.Level;
 import controller.*;
 import io.*;
 import io.IO.*;
@@ -286,7 +285,6 @@ public class GoServer implements Runnable,Stopable {
     }
     public static void main(String[] arguments) throws Exception,InterruptedException {
         System.out.println(Init.first);
-        Logging.setLevels(Level.WARNING);
         System.out.println("Level: "+Logging.mainLogger.getLevel());
         int n=arguments==null?0:arguments.length;
         if(false) {

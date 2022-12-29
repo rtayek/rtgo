@@ -273,7 +273,6 @@ public class GameFixture implements Runnable,Stopable {
         }
         if(!lastMove.equals(opponentModel.lastMoveGTP())) throw new RuntimeException("1 last move oops");
         if(!areBoardsEqual()) throw new RuntimeException("boards are not equal!");
-        System.out.println("exit play one move and wait.");
         return moves; // off ny one. apparently not used.
     }
     public static void playSillyGame(GameFixture gameFixture,int m) throws InterruptedException {

@@ -124,10 +124,10 @@ public class GTPBackEnd implements Runnable,Stopable {
         // allow model to move
         Logging.mainLogger.fine(model.name+" after set waiting for move to true, old value was: "+previous);
         Logging.mainLogger
-                .fine(model.name+" "+"gtp: waiting for move to complete on board "+(model.moves()+1)+" to complete.");
+        .fine(model.name+" "+"gtp: waiting for move to complete on board "+(model.moves()+1)+" to complete.");
         model.waitForMoveCompleteOnBoard(old);
         Logging.mainLogger
-                .fine(model.name+" "+first.et+" before set waiting for move to false "+model.moves()+" to false.");
+        .fine(model.name+" "+first.et+" before set waiting for move to false "+model.moves()+" to false.");
         previous=isWaitingForMove;
         // prevent model from moving
         isWaitingForMove=false;
@@ -165,8 +165,8 @@ public class GTPBackEnd implements Runnable,Stopable {
                 model.setBoardTopology(Board.Topology.torus);
                 send(okCharacter,message.id,"");
                 break;
-            // maybe these next 4 should be tgo_role with a role argument?
-            // maybe
+                // maybe these next 4 should be tgo_role with a role argument?
+                // maybe
             case tgo_black:
                 System.out.println("got: "+message.command);
                 model.setRole(Model.Role.playBlack);
@@ -282,7 +282,6 @@ public class GTPBackEnd implements Runnable,Stopable {
                 //model.setRoot();
                 model.board().setAll(Stone.vacant);
                 send(okCharacter,message.id,"");
-                System.out.println("end of clear board");
                 break;
             case komi:
                 if(message.arguments.length>1) {

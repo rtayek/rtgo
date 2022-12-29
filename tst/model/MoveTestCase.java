@@ -43,9 +43,9 @@ public class MoveTestCase {
         Model model=new Model();
         model.strict=true;
         MoveResult ok=model.move(Stone.white,new Point());
-        System.out.println(model);
-        System.out.println(model.strict);
-        System.out.println(ok);
+        //System.out.println(model);
+        //System.out.println(model.strict);
+        //System.out.println(ok);
         assertNotEquals(MoveResult.legal,ok);
     }
     @Test public void testMovesToCurrentState0() throws Exception {

@@ -4,7 +4,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 import javax.swing.*;
 import javax.swing.Timer;
 import io.*;
@@ -191,7 +190,6 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         // add a panel somewhere to control logging
         // add a bunch of frames to control everything.
         Init.first.twice();
-        Logging.setLevels(Level.ALL);
         System.out.println("1 Main.main()");
         Map<String,Object> map=MainGetOpt.processArguments(args);
         System.out.println(map);

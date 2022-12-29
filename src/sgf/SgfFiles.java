@@ -2,12 +2,10 @@ package sgf;
 import static sgf.Parser.*;
 import java.io.StringReader;
 import java.util.*;
-import java.util.logging.Level;
-import io.*;
+import io.Init;
 public class SgfFiles {
     public static void main(String[] arguments) {
         System.out.println(Init.first);
-        Logging.setLevels(Level.OFF);
         int n=0;
         Set<Object> objects=new LinkedHashSet<>();
         objects.addAll(sgfDataKeySet());

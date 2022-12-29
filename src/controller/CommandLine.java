@@ -1,7 +1,6 @@
 package controller;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
 import equipment.Board.*;
 import equipment.Point;
 import gui.*;
@@ -160,8 +159,6 @@ public class CommandLine {
     void startup() { for(String command:startup) process(command); }
     public static void main(String[] arguments) throws IOException {
         System.out.println(Init.first);
-        Logging.setLevels(Level.WARNING);
-        System.out.println("Level: "+Logging.mainLogger.getLevel());
         CommandLine commandLine=new CommandLine();
         commandLine.startup();
         commandLine.run();

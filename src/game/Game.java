@@ -1,5 +1,4 @@
 package game;
-import java.util.logging.Level;
 import controller.GameFixture;
 import io.*;
 import server.*;
@@ -14,7 +13,6 @@ public class Game {
     }
     public static void main(String[] args) throws Exception {
         System.out.println(Init.first);
-        Logging.setLevels(Level.SEVERE);
         for(int i=0;i<1;++i) { //
             for(int port:IO.ports) try {
                 run(port);
