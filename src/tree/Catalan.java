@@ -40,8 +40,7 @@ public class Catalan {
             int i=0;
             for(Node<Long> node:trees) {
                 if(node!=null)
-                    if(RedBean.encoded.equals(node.encoded))
-                        System.out.println("node: "+nodes+", tree: "+i+": "+node);
+                    if(RedBean.encoded.equals(node.encoded)) System.out.println("node: "+nodes+", tree: "+i+": "+node);
                 ++i;
             }
             //System.out.println("|||||||");

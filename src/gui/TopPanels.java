@@ -79,8 +79,7 @@ public class TopPanels {
             // looks like loadropertiesFromCurrentValues()?
             // yes. but this is for spinner with an enum?
             // and not the old parameter
-            for(SpinnerWithAnEnum b:spinners.buttons())
-                properties.put(b.t.name(),b.currentValue.toString());
+            for(SpinnerWithAnEnum b:spinners.buttons()) properties.put(b.t.name(),b.currentValue.toString());
             //Logging.mainLogger.config("writing new properties to: "+propertiesFilename+": "+properties);
             writePropertiesFile(properties,Parameters.propertiesFilename);
         }

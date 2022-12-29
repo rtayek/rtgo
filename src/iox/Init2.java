@@ -3,9 +3,7 @@ package iox;
 // https://stackoverflow.com/questions/48471245/when-should-i-use-lazy-singletons-over-normal-singletons
 // https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom
 class Singleton {
-    private Singleton() {
-        System.out.println("3 ctor");
-    }
+    private Singleton() { System.out.println("3 ctor"); }
     private static final class LazyHolder {
         static {
             System.out.println("2 lazy holder");
@@ -29,9 +27,7 @@ public class Init2 { // this looks incorrect now
         System.out.println("static init Init2");
     }
 }
-class Other { void other() {
-    System.out.println("?");
-} }
+class Other { void other() { System.out.println("?"); } }
 class Main {
     public static void main(String[] args) { //
         System.out.println("1 main");

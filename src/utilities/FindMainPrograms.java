@@ -77,7 +77,7 @@ public class FindMainPrograms {
                     Pair<String,String> pair=getClassName(line);
                     String name=pair.second;
                     if(name!=null&&Utilities.isValidName(name))
-                        //&&Utilities.isValidJavaIdentifier(name))
+                    //&&Utilities.isValidJavaIdentifier(name))
                     {
                         lastClass=line;
                         //System.out.println("valid: "+name);

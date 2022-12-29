@@ -5,7 +5,6 @@ import java.io.*;
 import java.util.logging.LogManager;
 import org.junit.*;
 import utilities.MyTestWatcher;
-
 public class TeeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // https://stackoverflow.com/questions/27825682/flushing-streamhandlers-during-debugging-using-java-util-logging-autoflush
@@ -14,10 +13,7 @@ public class TeeTestCase {
         byteArrayOutputStream.reset();
         LogManager.getLogManager().reset(); // can i really get rid of this?
     }
-    @After public void tearDown() throws Exception {
-        System.setOut(sysout);
-        System.setErr(syserr);
-    }
+    @After public void tearDown() throws Exception { System.setOut(sysout); System.setErr(syserr); }
     @Test public void testTeesPrintStream() {
         Tee tee=new Tee(byteArrayOutputStream);
         String string="tees print stream";

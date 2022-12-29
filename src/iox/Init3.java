@@ -4,7 +4,7 @@ public enum Init3 {
     first;
     Init3() { //
         System.out.println(et);
-        if(!once){
+        if(!once) {
             try {
                 // initializ hear
                 once=true;

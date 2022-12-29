@@ -5,9 +5,7 @@ public class AnsiColor {
     public static void main(String[] args) {
         System.out.println("\\033[XXm");
         //print "\033[%dm%d\t\t\033[%dm%d" % (i,i,i+60,i+60);
-        for(int i=20;i<37+1;++i) {
-            System.out.println("\033["+i+"m"+i+"\t\t\033["+(i+60)+"m"+(i+60));
-        }
+        for(int i=20;i<37+1;++i) { System.out.println("\033["+i+"m"+i+"\t\t\033["+(i+60)+"m"+(i+60)); }
         System.out.println("\033[39m\\033[49m - Reset colour");
         System.out.println("\\033[2K - Clear Line");
         System.out.println("\\033[<L>;<C>H OR \\033[<L>;<C>f puts the cursor at line L and column C.");

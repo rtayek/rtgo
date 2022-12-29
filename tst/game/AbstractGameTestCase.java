@@ -44,9 +44,7 @@ public abstract class AbstractGameTestCase { // these test cases require a runni
         game=GoServer.setUpStandaloneGame(serverPort);
         game.startPlayerBackends();
     }
-    @After public void tearDown() throws Exception {
-        game.stop();
-    }
+    @After public void tearDown() throws Exception { game.stop(); }
     // these guys need a game running.
     @Test() public void testPlayOneMove() throws Exception {
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));

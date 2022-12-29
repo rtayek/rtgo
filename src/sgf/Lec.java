@@ -81,10 +81,11 @@ public class Lec {
         moves.clear();
         Traverser traverser=new Traverser(new SgfAcceptorImpl() {
             @Override public void accept(SgfNode node) {
-                for(SgfProperty property:node.properties) if(i<max&&(property.p().equals(P.W)||property.p().equals(P.B))) {
-                    moves.add(property.toString());
-                    i++;
-                }
+                for(SgfProperty property:node.properties)
+                    if(i<max&&(property.p().equals(P.W)||property.p().equals(P.B))) {
+                        moves.add(property.toString());
+                        i++;
+                    }
             }
             int i;
         });

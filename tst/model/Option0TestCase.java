@@ -24,12 +24,8 @@ public class Option0TestCase { // tests for one option.
         assertEquals(expected,option.currentValue());
     }
     @Test public void testCurrentValue() { assertEquals(option.defaultValue,option.currentValue()); }
-    @Test public void testToString() {
-        String ecxpected="fred=42(42)";
-        assertEquals(ecxpected,option.toString());
-    }
+    @Test public void testToString() { String ecxpected="fred=42(42)"; assertEquals(ecxpected,option.toString()); }
     Options0 options=new Options0();
     final Frog fred=Frog.fred;
     final Option<Frog,Integer> option=options.get(fred);
-
 }

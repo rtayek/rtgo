@@ -77,6 +77,5 @@ public class SgfNodeTestCase {
         }
         SgfNode sgfNode=mRoot.toBinaryTree();
         System.out.println(sgfNode);
-
     }
 }

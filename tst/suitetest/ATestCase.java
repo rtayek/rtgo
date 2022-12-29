@@ -12,7 +12,7 @@ public class ATestCase {
     public interface I {}
     static class Hide {
         @RunWith(Suite.class) @SuiteClasses({ATestCase.class,BTestCase.class,
-            CTestCase.class}) public static class AllTests2Suite implements I {
+                CTestCase.class}) public static class AllTests2Suite implements I {
             @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
             {
                 System.out.println("suite");
@@ -20,8 +20,6 @@ public class ATestCase {
         }
     }
     // [{ExactMatcher:fDisplayName=main(java.lang.String[])], {LeadingIdentifierMatcher:fClassName=suitetest.ATestCase,fLeadingIdentifier=main]] from org.junit.internal.requests.ClassRequest@574caa3f
-
-
     @Test public void test() {}
     public static void main(String[] args) {
         System.out.println(Init.first);

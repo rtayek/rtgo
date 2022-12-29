@@ -21,11 +21,13 @@ import utilities.*;
     public AGoServerTestCase(Integer i) { this.i=i; }
     // these usually pass except for a few timeouts
     @Before public void setUp() throws Exception {
+        System.out.println("enter setup");
         //watchdog=Watchdog.watchdog(Thread.currentThread());
         // check for duplicate code in other tests.
         goServer=GoServer.startServer(i%2==0?IO.anyPort:IO.noPort);
         assertNotNull("no go server!",goServer);
         final int port=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IO.noPort;
+        System.out.println("setup game on server");
         game=goServer.setUpGameOnServerAndWaitForAGame(port);
         assertNotNull("no game from server!",game);
         GTPBackEnd.sleep2(2); // try to find out why this is necessary.
@@ -42,7 +44,6 @@ import utilities.*;
     }
     @Test() public void testPlayZeroMoves() throws Exception {
         game.blackFixture.backEnd.waitUntilItIsTmeToMove();
-        // do i need the above?
         printStuff(game);
     }
     @Test() public void testPlayOneMove() throws Exception {

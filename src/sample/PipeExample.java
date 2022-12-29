@@ -1,5 +1,2 @@
 package sample;
-
-public class PipeExample {
-
-}
+public class PipeExample {}

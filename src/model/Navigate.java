@@ -15,7 +15,7 @@ public enum Navigate { // move more code here?
                 boolean hasAParent=model.currentNode().parent!=null;
                 boolean parentIsRT=hasAParent&&model.currentNode().parent.properties.get(0).p().equals(P.RT);
                 return hasAParent; //&&!parentIsRT;
-                // breaks gui, no up!
+            // breaks gui, no up!
             case bottom:
             case down:
                 return model.currentNode().children.size()>0;

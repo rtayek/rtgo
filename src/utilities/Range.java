@@ -6,7 +6,6 @@ public class Range<T> {
         // how about not?
         // allow -max int x, and c max int?
         private static final long serialVersionUID=1L;
-        
     }
     static class NumberComparator<T extends Number> implements Comparator<T> {
         @Override public int compare(T a,T b) {

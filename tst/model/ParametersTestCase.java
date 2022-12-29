@@ -40,7 +40,7 @@ public class ParametersTestCase {
         // maybe we need to reset all the parameters before each test.
         // probably a good idea/
     }
-    @Ignore  @Test public void testWhyDenyIsMissing() { fail("nyi"); }
+    @Ignore @Test public void testWhyDenyIsMissing() { fail("nyi"); }
     @Ignore @Test public void testnewGameFromParameters() {
         // this is potentially a lot of tests
         fail("nyi");

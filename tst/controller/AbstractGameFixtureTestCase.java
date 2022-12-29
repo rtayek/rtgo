@@ -57,7 +57,7 @@ public abstract class AbstractGameFixtureTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     }
     @RunWith(Suite.class) @SuiteClasses({DuplexTestCase.ParameterizedTestCase.class,
-        SocketTestCase.ParameterizedTestCase.class}) public static class ParameterizedTestSuite {
+            SocketTestCase.ParameterizedTestCase.class}) public static class ParameterizedTestSuite {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         // also should have been found by grep - add my test watcher !
     }

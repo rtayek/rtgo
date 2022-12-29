@@ -169,8 +169,7 @@ public class CommandLine {
     List<String> startup=Arrays.asList(new String[] { //
             //"o sgf/ff4_ex.sgf", //
             //"t,"
-            "c","s",
-    });
+            "c","s",});
     Model model=new Model("cl model");
     TreeView myTreeView;
 }

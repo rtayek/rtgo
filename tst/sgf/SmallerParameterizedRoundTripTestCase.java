@@ -7,7 +7,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import utilities.*;
 // https://stackoverflow.com/questions/14082004/create-multiple-parameter-sets-in-one-parameterized-class-junit
-@Ignore @RunWith(Parameterized.class) public class SmallerParameterizedRoundTripTestCase extends AbstractSgfRoundTripTestCase {
+@Ignore @RunWith(Parameterized.class) public class SmallerParameterizedRoundTripTestCase
+        extends AbstractSgfRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public static File[] someFiles(String dir) {
         String[] filenames=new String[] { //
@@ -41,7 +42,10 @@ import utilities.*;
             File[] files=someFiles(dir); // some files in dir. not recursive.
             System.out.println("adding: "+Arrays.asList((Object[])(files))+" files.");
             List<Object> fileList=new ArrayList<>(Arrays.asList((Object[])(files)));
-            for(File file:files) if(!file.exists()) { System.out.println(file+" does not exist!"); fileList.remove(file); }
+            for(File file:files) if(!file.exists()) {
+                System.out.println(file+" does not exist!");
+                fileList.remove(file);
+            }
             objects.addAll(fileList);
         }
         if(false) {
@@ -53,8 +57,5 @@ import utilities.*;
         System.out.println(objects.size()+" keys");
         return ParameterArray.parameterize(objects);
     }
-    public SmallerParameterizedRoundTripTestCase(Object key) {
-        this.key=key;
-        watcher.key=key;
-    }
+    public SmallerParameterizedRoundTripTestCase(Object key) { this.key=key; watcher.key=key; }
 }

@@ -39,9 +39,7 @@ public class Exec {
             try {
                 br=new BufferedReader(new InputStreamReader(inputStream));
                 String line=null;
-                while((line=br.readLine())!=null) {
-                    System.out.println((name!=null?name+": ":"")+line);
-                }
+                while((line=br.readLine())!=null) { System.out.println((name!=null?name+": ":"")+line); }
             } catch(IOException e) {
                 e.printStackTrace();
             } finally {

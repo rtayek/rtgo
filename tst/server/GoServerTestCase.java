@@ -9,10 +9,7 @@ public class GoServerTestCase extends AbstractGoServerTestCase {
     // some tests time out when other jvms are running!
     // still sorta fragile
     // some of this may go away now that we have two flavours of abstract go server test case
-    @Override @Before public void setUp() throws Exception {
-        serverPort=IO.anyPort;
-        super.setUp();
-    }
+    @Override @Before public void setUp() throws Exception { serverPort=IO.anyPort; super.setUp(); }
     @Override @After public void tearDown() throws Exception { super.tearDown(); }
     @Test() public void testPlayTwoMoves() throws Exception {
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));

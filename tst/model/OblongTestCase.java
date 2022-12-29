@@ -1,10 +1,8 @@
 package model;
 import static sgf.Parser.getSgfData;
 import java.io.*;
-import java.util.logging.Level;
 import org.junit.*;
 import equipment.Board;
-import io.Logging;
 import sgf.*;
 public class OblongTestCase {
     @Before public void setUp() throws Exception {
@@ -13,8 +11,6 @@ public class OblongTestCase {
     }
     @After public void tearDown() throws Exception {}
     @Test public void test() {
-        Logging.setLevels(Level.WARNING);
-        //System.out.println(expectedSgf);
         StringReader stringReader=new StringReader(expectedSgf);
         MNode games=MNode.restore(stringReader);
         //System.out.println("root: "+games);

@@ -83,9 +83,7 @@ public class MainGetOpt {
             System.out.println("Non option argv element: "+argv[i]+"\n");
         return map;
     }
-    public static void main(String[] arguments) {
-        processArguments(arguments);
-    }
+    public static void main(String[] arguments) { processArguments(arguments); }
     static Boolean verbose=false;
     static File directory;
 }

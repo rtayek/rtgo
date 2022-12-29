@@ -61,10 +61,8 @@ public class Response { // message has the same member variables!
     public static Response response(String string) {
         boolean ok=checkForTwoLineFeeds(string);
         // get rid of the two linefieeds
-        if(string.endsWith("\n"))
-            string=string.substring(0,string.length()-1);
-        if(string.endsWith("\n"))
-            string=string.substring(0,string.length()-1);
+        if(string.endsWith("\n")) string=string.substring(0,string.length()-1);
+        if(string.endsWith("\n")) string=string.substring(0,string.length()-1);
         return new Response(string);
     }
     // maybe get rid of the above and just use the below?

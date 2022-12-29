@@ -129,8 +129,8 @@ public abstract class P {
     public static final P1 ZB=new Move("ZB","1234","black resign","move","none");
     public static final P1 ZW=new Move("ZW","1234","White resign","move","none");
     private static final P[] ps= {AB,AE,AN,AP,AR,AS,AW,B,BL,BM,BR,BS,BT,C,CA,CH,CP,CR,DD,DM,DO,DT,EL,EV,EX,FF,FG,GB,GC,
-            GM,GN,GW,HA,HO,ID,IP,IT,IY,KM,KO,L,LB,LN,LT,LZ,M,MA,MN,N,OB,OM,ON,OP,OT,OV,OW,PB,PC,PL,PM,PW,RE,RG,RO,RR,RT,RU,
-            SC,SE,SE2,SI,SL,SO,SQ,ST,SU,SZ,TB,TC,TE,TM,TR,TW,UC,US,V,VW,W,WL,WR,WS,WT,ZB,ZW};
+            GM,GN,GW,HA,HO,ID,IP,IT,IY,KM,KO,L,LB,LN,LT,LZ,M,MA,MN,N,OB,OM,ON,OP,OT,OV,OW,PB,PC,PL,PM,PW,RE,RG,RO,RR,RT,
+            RU,SC,SE,SE2,SI,SL,SO,SQ,ST,SU,SZ,TB,TC,TE,TM,TR,TW,UC,US,V,VW,W,WL,WR,WS,WT,ZB,ZW};
     public static SortedMap<String,P> idToP=new TreeMap<>();
     static {
         for(P p:ps) idToP.put(p.id,p);

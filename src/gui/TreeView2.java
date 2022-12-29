@@ -18,8 +18,8 @@ import utilities.MyJApplet;
     }
     else Logging.logger.info(model.name+" "+"node is null in add children!");
     }
-
-
+    
+    
      */
     @Override void addChildren(DefaultMutableTreeNode treeNode,MNode node) {
         if(node!=null) for(MNode child:node.children) {
@@ -28,8 +28,7 @@ import utilities.MyJApplet;
             treeNode.add(childTreeNode);
             addChildren(childTreeNode,child);
         }
-        else Logging.mainLogger
-        .info(model.name+" "+"node is null in add children!");
+        else Logging.mainLogger.info(model.name+" "+"node is null in add children!");
     }
     public static TreeView2 simple2() {
         Model model=new Model();
@@ -39,7 +38,6 @@ import utilities.MyJApplet;
         //model.restore(IO.toReader(new File("sgf/ff4.sgf")));
         StringReader stringReader=new StringReader("(;C[frog])");
         model.restore(stringReader);
-
         return myTreeView;
     }
     public static void main(String[] args) { TreeView myTreeView=TreeView2.simple2(); }

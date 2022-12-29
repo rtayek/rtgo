@@ -24,9 +24,15 @@ public enum Command { // should implement some interface? (probably)
     private static String genmove(Stone color) { return genmove.name()+" "+color; }
     private Command() { this(false,0,EnumSet.noneOf(Failure.class),null); }
     private Command(boolean hasOutput) { this(hasOutput,0,EnumSet.noneOf(Failure.class),null); }
-    private Command(int arguments,String sampleAguments) { this(false,arguments,EnumSet.noneOf(Failure.class),sampleAguments); }
-    private Command(int arguments,EnumSet<Failure> failures,String sampleArguments) { this(false,arguments,failures,sampleArguments); }
-    private Command(boolean hasOutput,int arguments,String sampleArguements) { this(hasOutput,arguments,EnumSet.noneOf(Failure.class),sampleArguements); }
+    private Command(int arguments,String sampleAguments) {
+        this(false,arguments,EnumSet.noneOf(Failure.class),sampleAguments);
+    }
+    private Command(int arguments,EnumSet<Failure> failures,String sampleArguments) {
+        this(false,arguments,failures,sampleArguments);
+    }
+    private Command(boolean hasOutput,int arguments,String sampleArguements) {
+        this(hasOutput,arguments,EnumSet.noneOf(Failure.class),sampleArguements);
+    }
     private Command(EnumSet<Failure> fails) { this(false,0,fails,null); }
     private Command(boolean hasOutput,int arguments,EnumSet<Failure> failures,String sampleArguments) {
         this.hasOutput=hasOutput;

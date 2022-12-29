@@ -133,7 +133,8 @@ public class SouthPanels {
                     boolean isTorus=model.board().topology().equals(Board.Topology.torus);
                     scroll.abstractButton.enable(isTorus);
                     boolean isSelected=scroll.abstractButton.isSelected();
-                    for(Buttons button:values()) if(!button.equals(scroll)) button.abstractButton.enable(isSelected&&isTorus);
+                    for(Buttons button:values())
+                        if(!button.equals(scroll)) button.abstractButton.enable(isSelected&&isTorus);
                 }
             }
             public final String tooltipText;

@@ -33,10 +33,13 @@ public class GoServer implements Runnable,Stopable {
         Holder whiteHolder=Holder.frontEnd(whiteFrontEnd);
         GameFixture game=new GameFixture(recorder);
         game.setupServerSide(blackHolder.front,whiteHolder.front);
+        System.out.println("after setup server side.");
         // we may always want everything except the board size?
-        Response initializeResponse=game.initializeGame();
-        if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-        if(true) { // load existing game
+        if(game.doInit) { // turning this on made stuff work?
+            Response initializeResponse=game.initializeGame();
+            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
+        }
+        if(false) { // load existing game
             File file=new File("serverGames/game1.sgf");
             if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
             recorder.restore(IO.toReader(file));
@@ -55,8 +58,9 @@ public class GoServer implements Runnable,Stopable {
             System.out.println("sent sgf to white: "+sgf);
             // go to the end of the main line!
         }
+        System.out.println("start game: "+game);
         game.startGame();
-        synchronized(connections) {
+        synchronized(games) {
             games.add(game);
         }
     }
@@ -83,7 +87,12 @@ public class GoServer implements Runnable,Stopable {
     // so maybe 2 acceptors:
     //      1. model connects and sends commands like list games,
     //      2. maybe we can just pass the socket to a process that?q
-    public void addConnection(End end) { Logging.mainLogger.info("added connection: "+end); connections.add(end); }
+    public void addConnection(End end) {
+        Logging.mainLogger.info("added connection: "+end);
+        synchronized(connections) {
+            connections.add(end);
+        }
+    }
     @Override public void run() {
         final int port=serverSocket!=null?serverSocket.getLocalPort():IO.noPort;
         serverLogger.info("go server is running on port: "+port);
@@ -94,10 +103,12 @@ public class GoServer implements Runnable,Stopable {
                     //System.out.println("wait for connection)");
                     once=true;
                 }
-                if(connections.size()>=2) {
-                    //System.out.println(connections()+" connections.");
-                    Model recorder=new Model("recorder");
-                    createGame(recorder);
+                synchronized(connections) {
+                    if(connections.size()>=2) {
+                        //System.out.println(connections()+" connections.");
+                        Model recorder=new Model("recorder");
+                        createGame(recorder);
+                    }
                 }
             } else {
                 try {
@@ -190,12 +201,16 @@ public class GoServer implements Runnable,Stopable {
         return game;
     }
     GameFixture setUpGameOnServerAndWaitForAGame(int port) {
+        System.out.println(connections.size()+" connections. port: "+port);
         Holder blackHolder=Holder.create(port);
         if(port==IO.noPort) addConnection(blackHolder.front); // dfuplex
+        System.out.println(connections.size()+" connections.");
         Holder whiteHolder=Holder.create(port);
         if(port==IO.noPort) addConnection(whiteHolder.front); // dfuplex
+        System.out.println(connections.size()+" connections.");
+        if(connections.size()<2) System.out.println("1 waiting for a game");
         GameFixture game=waitForAGame();
-        //
+        System.out.println("1 end of waiting for a game");
         game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
         game.startPlayerBackends();
@@ -221,8 +236,11 @@ public class GoServer implements Runnable,Stopable {
         GameFixture game=new GameFixture(recorder);
         game.setupServerSide(blackHolder.front,whiteHolder.front);
         game.startGame();
+        // normally the back ends may be started first?
         game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
+        System.out.println("black thread: "+IO.toString(game.blackFixture.backEnd.namedThread));
+        System.out.println("white thread: "+IO.toString(game.whiteFixture.backEnd.namedThread));
         return game;
     }
     public static GameFixture setupGameForShove(Model recorder) {
@@ -271,7 +289,7 @@ public class GoServer implements Runnable,Stopable {
         Logging.setLevels(Level.WARNING);
         System.out.println("Level: "+Logging.mainLogger.getLevel());
         int n=arguments==null?0:arguments.length;
-        if(true) {
+        if(false) {
             try {
                 File dir=new File(GameFixture.directory);
                 if(!dir.exists()) {
@@ -291,6 +309,9 @@ public class GoServer implements Runnable,Stopable {
             Logging.mainLogger.warning("sample game: "+i);
             // make this into a test!
             for(int port:IO.ports) serverDtrt(port);
+            //serverDtrt(IO.noPort);
+            //serverDtrt(IO.anyPort);
+            //serverDtrt(IO.defaultPort);
         }
         NamedThreadGroup.printThraedsAtEnd();
         Logging.mainLogger.info("exit main");

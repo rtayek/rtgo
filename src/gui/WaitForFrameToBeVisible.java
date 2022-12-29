@@ -11,7 +11,7 @@ public class WaitForFrameToBeVisible {
         frame.pack();
         frame.setVisible(true);
     }
-    void run() throws InterruptedException  {
+    void run() throws InterruptedException {
         System.out.println("waiting for frame to be displayable");
         long t0=System.nanoTime();
         javax.swing.SwingUtilities.invokeLater(new Runnable() { @Override public void run() { createAndShowGUI(); } });
@@ -19,7 +19,5 @@ public class WaitForFrameToBeVisible {
         long dt=System.nanoTime()-t0;
         System.out.println("waited "+dt/1_000_000+" ms. for frame to be displayable");
     }
-    public static void main(String[] args) throws Exception {
-        new WaitForFrameToBeVisible().run();
-    }
+    public static void main(String[] args) throws Exception { new WaitForFrameToBeVisible().run(); }
 }

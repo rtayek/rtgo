@@ -59,8 +59,7 @@ class Verifier extends SgfAcceptorImpl {
         String string=getSgfData(key);
         //File file=new File(Parser.map.get(key));
         games=restoreSgf(new StringReader(string));
-        if(games!=null)
-            verify(games);
+        if(games!=null) verify(games);
     }
     SgfNode games;
     boolean old=false;

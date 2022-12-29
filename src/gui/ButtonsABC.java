@@ -44,8 +44,7 @@ public abstract class ButtonsABC {
     public Set<Enum> enums() { return map.keySet(); }
     public Collection<ButtonWithEnum> buttons() { return map.values(); }
     public void enableAll(Mediator mediator) { // default behavious is to enable all of the buttons.
-        for(ButtonWithEnum button:buttons())
-            button.abstractButton.setEnabled(true);
+        for(ButtonWithEnum button:buttons()) button.abstractButton.setEnabled(true);
     }
     public Enum valueOf(String name) { for(Enum e:enums()) if(e.name().equals(name)) return e; return null; }
     public void add(Class<?> clazz) {

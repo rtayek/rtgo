@@ -19,8 +19,7 @@ public class Jitter {
     }
     int xJitter(int index) { return xJitters[index]; }
     int yJitter(int index) { return yJitters[index]; }
-    public static void main(String[] args) {
-    }
+    public static void main(String[] args) {}
     final int[] xJitters,yJitters;
     static Map<Point,Jitter> jitters=new LinkedHashMap<>();
     {}

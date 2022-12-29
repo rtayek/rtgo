@@ -24,8 +24,7 @@ import io.Logging;
             JLabel label=new JLabel(name);
             box.add(label);
             java.util.List<String> list=new ArrayList<>();
-            for(Level level:Logging.levels)
-                list.add(level+"");
+            for(Level level:Logging.levels) list.add(level+"");
             SpinnerListModel model=new SpinnerListModel(list);
             JSpinner spinner=new JSpinner(model);
             box.add(spinner);

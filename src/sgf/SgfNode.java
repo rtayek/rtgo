@@ -135,9 +135,7 @@ public class SgfNode {
     void preorderCheckFlags() {
         SearhingFunction searhingFunction=new SearhingFunction();
         preorder(searhingFunction);
-        if(searhingFunction.done) {
-            System.out.println(searhingFunction.target+" is bad");
-        }
+        if(searhingFunction.done) { System.out.println(searhingFunction.target+" is bad"); }
     }
     void oldPreorderCheckFlags() {
         setFlags();
@@ -216,8 +214,7 @@ public class SgfNode {
         indent.in();
         writer.write(this.toString());
         setFlags();
-        if(!checkFlags())
-            System.out.println("");
+        if(!checkFlags()) System.out.println("");
         if(left!=null) {
             if(left.right!=null) writer.write(indent.indent()+'(');
             left.saveSgf_(writer,indent);
@@ -393,15 +390,15 @@ public class SgfNode {
     (;C[d];C[e]))
     (;C[f](;C[g];C[h];C[i])
     (;C[j])))
-
+    
     (;FF[4]C[root];C[a];C[b];C[c]
             ;C[d];C[e]
                     ;C[f];C[g];C[h];C[i]
                             ;C[j])
-
+    
     (;FF[4]C[root];C[a](;C[b];C[c];C[d];C[e];C[f];C[g](;C[h];C[i];C[j])))
-
-
+    
+    
     acdfgj
      */
     public static String preorderRouundTrip(String expectedSgf) throws IOException {

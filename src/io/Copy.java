@@ -60,7 +60,7 @@ public class Copy implements Runnable {
             while(!done) {
                 String string=in.readLine(); // xyzzy
                 if(string==null) { done=true; break; }
-
+            
                 out.write(string+'\n');
                 out.flush();
             }

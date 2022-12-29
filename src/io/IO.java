@@ -171,7 +171,7 @@ public class IO {
         }
         return thread==null?null
                 :"thread: name: "+thread.getName()+", state: "+thread.getState()+", is alive: "+thread.isAlive()
-                +", is interrupted:  "+thread.isInterrupted();
+                        +", is interrupted:  "+thread.isInterrupted();
     }
     public static ServerSocket getServerSocket(int port) {
         ServerSocket serverSocket=null;

@@ -10,13 +10,9 @@ import utilities.MyTestWatcher;
 // lets test all the strange cases here
 @RunWith(Parameterized.class) public class ParameterizedBoardShapeAndTopologyTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Before public void setUp() throws Exception {
-    }
+    @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
-    public ParameterizedBoardShapeAndTopologyTestCase(Board board) {
-        assertNotNull(board);
-        this.board=board;
-    }
+    public ParameterizedBoardShapeAndTopologyTestCase(Board board) { assertNotNull(board); this.board=board; }
     //static int[] sizes=new int[] {3,9,13,19,21,4,};
     static int[] sizes=new int[] {19};
     public static List<Object[]> standardBoards(Board.Topology type) {

@@ -30,7 +30,7 @@ public abstract class AbstractBothTestCase {
         @Override @After public void tearDown() throws Exception { super.tearDown(); }
     }
     @RunWith(Suite.class) @SuiteClasses({SocketTestCase.class,
-        DuplexTestCase.class,}) public static class BothTestSuite {
+            DuplexTestCase.class,}) public static class BothTestSuite {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @BeforeClass public static void setUpClass() {
             System.out.println(Init.first);

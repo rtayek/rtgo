@@ -2,8 +2,7 @@ package io;
 import java.io.IOException;
 import java.net.ServerSocket;
 public class Extra { // unused stuff thay may be useful later
-    public static void main(String[] args) {
-    }
+    public static void main(String[] args) {}
     static void closeServer(ServerSocket serverSocket,Thread thread) {
         // this was in request listener.
         // maybe we can use some of the code.

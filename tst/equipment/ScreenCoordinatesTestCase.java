@@ -7,7 +7,7 @@ import model.Model;
 import utilities.MyTestWatcher;
 public class ScreenCoordinatesTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-   @Test public void testSize() {
+    @Test public void testSize() {
         for(int n=1;n<=Model.maxN;n++) {
             Board board=new BoardImpl(n,0);
             assertEquals(n,board.width());

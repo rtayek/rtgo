@@ -379,7 +379,7 @@ class Mediator implements Observer,ActionListener {
             Logging.mainLogger.fine(model.name+" "+b.id());
             int id=model.board().id();
             Logging.mainLogger
-            .info(model.name+" "+"re initializing game panel with board "+id+" "+model.board().topology());
+                    .info(model.name+" "+"re initializing game panel with board "+id+" "+model.board().topology());
             if(true) SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
                     gamePanel.initialize(boardHeightInPixels);

@@ -40,7 +40,6 @@ import io.Tee;
         tee2.setErr();
     }
     void teardownTees() { tee.restoreOut(); tee2.restoreErr(); }
-    
     private void printStuuff() {
         //System.out.println("System.out");
         tee.printStream.println("tee ps");

@@ -24,7 +24,6 @@ public class TeeExperiment extends FilterOutputStream {
         }
     }
     public synchronized void addOutputStream(OutputStream out) { streams.addElement(out); }
-    
     public static void main(String[] args) throws IOException {
         // make a bunch of print streams
         // and put a prefix out in front so we can tell where they are coming from
@@ -50,7 +49,6 @@ public class TeeExperiment extends FilterOutputStream {
         tee.write('j');
         System.out.println("'"+byteArrayOutputStream+"'");
         System.out.println(byteArrayOutputStream.size());
-        
         tee.printStream.println("foo");
         System.out.println("'"+byteArrayOutputStream+"'");
         System.out.println(byteArrayOutputStream.size());

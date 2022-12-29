@@ -10,13 +10,12 @@ public class WierdSgfFiles {
             File file=new File(line);
             if(file.exists()) {
                 long n=file.length();
-                if(!line.contains("SGF_DEFECT+WEIRD_FILES"))
-                    if(n<100) {
-                        System.out.println(n+" "+file+" ");
-                        StringBuffer stringBuffer=new StringBuffer();
-                        fromFile(stringBuffer,file);
-                        System.out.println("'"+stringBuffer+"'");
-                    }
+                if(!line.contains("SGF_DEFECT+WEIRD_FILES")) if(n<100) {
+                    System.out.println(n+" "+file+" ");
+                    StringBuffer stringBuffer=new StringBuffer();
+                    fromFile(stringBuffer,file);
+                    System.out.println("'"+stringBuffer+"'");
+                }
             }
         }
         bufferedReader.close();

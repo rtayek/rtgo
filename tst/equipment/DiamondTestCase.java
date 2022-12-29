@@ -9,8 +9,7 @@ public class DiamondTestCase {
     @After public void tearDown() throws Exception {}
     @Test public void test() {
         List<Point> points=Board.getPointsForDiamondRegion(board.width(),board.depth());
-        for(Point point:points)
-            board.setAt(point,Stone.edge);
+        for(Point point:points) board.setAt(point,Stone.edge);
         System.out.println(board);
         System.out.println("----------------");
         System.out.println(points);

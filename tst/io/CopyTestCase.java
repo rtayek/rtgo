@@ -4,7 +4,6 @@ import java.io.Writer;
 import org.junit.*;
 import org.junit.rules.TestRule;
 import utilities.MyTestWatcher;
-
 public class CopyTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}

@@ -20,7 +20,7 @@ public class Dispatcher {
             System.out.println(x+" "+entryPoints.get(x).second.getSimpleName()+" ("+entryPoints.get(x).first+")");
     }
     public void runDispatcher() throws IllegalAccessException,IllegalArgumentException,InvocationTargetException,
-    NoSuchMethodException,SecurityException,IOException {
+            NoSuchMethodException,SecurityException,IOException {
         BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
         loop:while(true) {
             menu();

@@ -38,7 +38,6 @@ import utilities.*;
         GTPBackEnd.sleep2(10);
         assertEquals("watchdog is not alive",false,watchdog.isAlive());
         assertEquals("watchdog is terminated.",State.TERMINATED,watchdog.getState());
-
     }
     // maybe give a lambda to the watchdog that will call fail?
     @Test(timeout=watchdogTimeoutTime) public void testThatThisTimesOutWithATimeout() {

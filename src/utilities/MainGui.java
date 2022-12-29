@@ -7,7 +7,7 @@ public class MainGui extends JPanel {
         this.applet=applet;
         if(!isApplet()) {
             frame=new JFrame();
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE );
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setTitle(title());
         } else frame=null;
         // setLayout(new BorderLayout()); // let's see what happens

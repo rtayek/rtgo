@@ -6,10 +6,7 @@ import utilities.MyTestWatcher;
 // tries to runb a test programmatically from main();
 public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Override @Before public void setUp() throws Exception {
-        serverPort=IO.anyPort;
-        super.setUp();
-    }
+    @Override @Before public void setUp() throws Exception { serverPort=IO.anyPort; super.setUp(); }
     @Override @After public void tearDown() throws Exception { super.tearDown(); }
     public static void main(String[] args) throws Exception {
         JUnitCore junit=new JUnitCore();
@@ -39,5 +36,4 @@ public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
         System.out.println("exit");
         NamedThreadGroup.printThraedsAtEnd();
     }
-    
 }

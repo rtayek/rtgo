@@ -312,7 +312,7 @@ public class NamedThreadGroup { // one set of named threads.
                 n+=threads.size();
                 if(print) {
                     System.out
-                    .println("group id: "+id+" has "+threads.size()+" threads, threadsAndRunnables: "+threads);
+                            .println("group id: "+id+" has "+threads.size()+" threads, threadsAndRunnables: "+threads);
                 }
                 printNamedThreads(id,"group id: "+id,print);
             }

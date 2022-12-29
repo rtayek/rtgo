@@ -6,7 +6,6 @@ import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
-import java.util.logging.Level;
 import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
@@ -142,15 +141,17 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(root!=null) checkForLittleGolem(root);
         Logging.mainLogger.config(name+" "+"doing root: "+root);
         System.out.println(name+" doing root: "+root);
-        Logging.setLevels(Level.ALL);
-        Logging.parserLogger.setLevel(Level.INFO);
+        //Logging.setLevels(Level.ALL);
+        //Logging.parserLogger.setLevel(Level.INFO);
         do_(root);
+        System.out.println(name+" end of doing root: "+root);
         long t0=System.nanoTime();
         Logging.mainLogger.fine(name+" "+"doing notify @"+t0+" , "+root);
         // we are doing a notify here!
         setChangedAndNotify(new Event.Hint(Event.newTree,""+t0)); // ??
         // node change will select
         setChangedAndNotify(new Event.Hint(Event.nodeChanged,""+t0)); // ??
+        System.out.println("exit setRoot().");
     }
     public boolean isFromLittleGolem() { return state.isFromLittleGolem; }
     public static void addProperty(MNode node,P p,String string) { addProperty(node,p,new String[] {string}); }
@@ -456,7 +457,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                 wasLegal=addMoveNodeAndExecute(move);
                 if(wasLegal!=MoveResult.legal)
                     Logging.mainLogger.info(name+" not legal because: "+wasLegal+" "+turn()+" at move #"+moves()
-                    +" illegal move: can not move "+move.color()+" at point: "+point+", "+isPoint(point));
+                            +" illegal move: can not move "+move.color()+" at point: "+point+", "+isPoint(point));
                 // bad message above fix!
                 rc=wasLegal;
             } catch(Exception e) {
@@ -694,7 +695,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     break;
                 case RG:
                     if(state.application.equals(sgfApplicationName)) Logging.mainLogger
-                    .warning(state.board.topology()+", "+state.shape+", region: "+property.list());
+                            .warning(state.board.topology()+", "+state.shape+", region: "+property.list());
                     // above we have diamond, hole1, region [jj]
                     // using state.board above does not seem quite right.
                     // yes, diamond needs another region or a bigger region.
@@ -858,6 +859,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // maybe check this when he tries to move.
     }
     public Role role() { return role; }
+    public State state() { return state; }
     public boolean inAtari() { return state.inAtari; }
     // waits
     // 1) here: waitForMoveCompleteOnBoard
@@ -1058,7 +1060,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         } else Logging.mainLogger.warning(model.name+" "+"connection failed!");
         return false;
     }
-    static class State implements Cloneable { // needs an equals or isEqual method.
+    public static class State implements Cloneable { // needs an equals or isEqual method.
         private State() {}
         @Override public State clone() throws CloneNotSupportedException { return (State)super.clone(); }
         static void removeCapturedStones(Board board,List<Block> blocks) {
@@ -1208,8 +1210,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         private Integer gameType=sgfGoGame;
         private String application;
         private String sgfVersion=defaultSgfVersion;
-        private Integer widthFromSgf=Board.standard;
-        private Integer depthFromSgf=Board.standard;
+        public Integer widthFromSgf=Board.standard;
+        public Integer depthFromSgf=Board.standard;
     }
     public static void main(String[] args) {
         Model model=new Model();

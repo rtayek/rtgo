@@ -25,7 +25,7 @@ class Node2 extends MNode { // why did i make this?
     final DefaultMutableTreeNode treeNode;
 }
 @SuppressWarnings("serial") public class TreeView extends MainGui
-implements Observer,TreeSelectionListener,ActionListener {
+        implements Observer,TreeSelectionListener,ActionListener {
     public TreeView(MyJApplet applet,Model model) {
         super(applet);
         Logging.mainLogger.info(model.name+" "+"constructed");
@@ -104,7 +104,7 @@ implements Observer,TreeSelectionListener,ActionListener {
         if(node!=null) {
             boolean ok=model.goToMNode((MNode)node.getUserObject());
             if(!ok) System.out.println("go to node fails!");
-            else ; //System.out.println("go to node succeds.");
+            else; //System.out.println("go to node succeds.");
         } else Logging.mainLogger.warning("node null for: "+e);
     }
     @Override public void actionPerformed(ActionEvent e) {

@@ -48,6 +48,7 @@ public class GTPBackEnd implements Runnable,Stopable {
             return null;
         } else {
             (namedThread=NamedThreadGroup.createNamedThread(id,this,model.name)).start();
+            System.out.println("start gtp thread: "+namedThread);
             Logging.mainLogger.info("start gtp thread: "+namedThread);
             return namedThread;
         }
@@ -97,10 +98,14 @@ public class GTPBackEnd implements Runnable,Stopable {
     public boolean isWaitingForMove() { return isWaitingForMove; }
     public void waitUntilItIsTmeToMove() {
         // return boolean instead of throwing?
+        boolean once=false;
         while(!isWaitingForMove()) {
+            if(!once) System.out.println("waiting for a move.");
             if(Thread.currentThread().isInterrupted()) throw new RuntimeException();
             GTPBackEnd.sleep2(GTPBackEnd.yield);
+            once=true;
         }
+        System.out.println("end of waiting for a move.");
     }
     private void waitForAMove(Message message) { // generate a move
         // this only gets called from genmove
@@ -119,10 +124,10 @@ public class GTPBackEnd implements Runnable,Stopable {
         // allow model to move
         Logging.mainLogger.fine(model.name+" after set waiting for move to true, old value was: "+previous);
         Logging.mainLogger
-        .fine(model.name+" "+"gtp: waiting for move to complete on board "+(model.moves()+1)+" to complete.");
+                .fine(model.name+" "+"gtp: waiting for move to complete on board "+(model.moves()+1)+" to complete.");
         model.waitForMoveCompleteOnBoard(old);
         Logging.mainLogger
-        .fine(model.name+" "+first.et+" before set waiting for move to false "+model.moves()+" to false.");
+                .fine(model.name+" "+first.et+" before set waiting for move to false "+model.moves()+" to false.");
         previous=isWaitingForMove;
         // prevent model from moving
         isWaitingForMove=false;
@@ -139,7 +144,7 @@ public class GTPBackEnd implements Runnable,Stopable {
         Logging.mainLogger.info(model.name+" exit genmove() at "+first.et);
     }
     private boolean processCommand(String string) {
-        Logging.mainLogger.info("1: "+string);
+        Logging.mainLogger.severe("1: "+string);
         if(isWaitingForMove()) Logging.mainLogger.severe(model.name+" waiting for move!.");
         String stripped=Message.strip(string);
         if(stripped==null||stripped.isEmpty()) return true;
@@ -160,9 +165,10 @@ public class GTPBackEnd implements Runnable,Stopable {
                 model.setBoardTopology(Board.Topology.torus);
                 send(okCharacter,message.id,"");
                 break;
-                // maybe these next 4 should be tgo_role with a role argument?
-                // maybe
+            // maybe these next 4 should be tgo_role with a role argument?
+            // maybe
             case tgo_black:
+                System.out.println("got: "+message.command);
                 model.setRole(Model.Role.playBlack);
                 send(okCharacter,message.id,"");
                 break;
@@ -257,8 +263,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                         if(true) {
                             Board board=Board.factory.create(n,n,model.boardTopology(),model.boardShape());
                             model.setBoard(board);
-                        }
-                        else model.setRoot(n,n,model.boardTopology(),model.boardShape());
+                        } else model.setRoot(n,n,model.boardTopology(),model.boardShape());
                         // shape and type above come from parameters through model?
                         send(okCharacter,message.id,"");
                     } else send(badCharacter,message.id,Failure.unacceptable_size);
@@ -267,9 +272,17 @@ public class GTPBackEnd implements Runnable,Stopable {
                 // probably not.
                 break;
             case clear_board:
-                if(model.board()==null) model.setRoot();
+                if(model.board()==null) {
+                    System.out.println("board is null in clear board");
+                    int width=model.state().widthFromSgf;
+                    int depth=model.state().depthFromSgf;
+                    Board board=Board.factory.create(width,depth,model.boardTopology(),model.boardShape());
+                    model.setBoard(board);
+                }
+                //model.setRoot();
                 model.board().setAll(Stone.vacant);
                 send(okCharacter,message.id,"");
+                System.out.println("end of clear board");
                 break;
             case komi:
                 if(message.arguments.length>1) {

@@ -75,10 +75,7 @@ public class Logging {
             }
         }
     }
-    public static void setLevels(Level level) {
-        for(String name:loggerNames)
-            Logger.getLogger(name).setLevel(level);
-    }
+    public static void setLevels(Level level) { for(String name:loggerNames) Logger.getLogger(name).setLevel(level); }
     public static void setUpLogging() {
         // Logger global=Logger.getGlobal();
         // Logging.setupLogger(global,new ASimpleFormatter());

@@ -9,7 +9,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import sgf.SgfNode;
 import utilities.MyTestWatcher;
-@RunWith(Parameterized.class) public class ParameterizedCombineTestCase {
+@Ignore @RunWith(Parameterized.class) public class ParameterizedCombineTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> data() {
         // consoldate this!

@@ -49,9 +49,7 @@ public class Options0TestCase {
         options.loadCurrentValuesFromPropertiesFile(propertiesFilename);
         assertEquals(expected,option.currentValue());
     }
-    @Test public void testInitializeParameters() {
-        options.initializeParameters(propertiesFilename);
-    }
+    @Test public void testInitializeParameters() { options.initializeParameters(propertiesFilename); }
     @Test public void testToString() { String expected="{Frog.fred=42}"; assertEquals(expected,options.toString()); }
     enum E { e } // just for test from string
     @Test public void testFromString() {

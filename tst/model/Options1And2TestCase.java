@@ -21,7 +21,6 @@ public class Options1And2TestCase {
         System.out.println(options.toLongString());
         // more work needed here
         // maybe test properties here?
-        
     }
     public static void main(String argv[]) {
         Options0 options0=new Options0();

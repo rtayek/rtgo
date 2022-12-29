@@ -11,9 +11,7 @@ public class GTPDirectNavigationTestCase {
     // maybe add tests that fail if trying to navigate somewhere that does not exist.
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
-    @Test public void testBottomWithNoBoard() throws Exception {
-        assertNotNull(model.board());
-    }
+    @Test public void testBottomWithNoBoard() throws Exception { assertNotNull(model.board()); }
     @Test public void testUp() throws Exception {
         ArrayList<String> strings=new ArrayList<>(startGameAndPlayOneMoveAtA1);
         strings.add(Command.tgo_up.name().toString());
@@ -44,7 +42,7 @@ public class GTPDirectNavigationTestCase {
         ArrayList<String> strings=new ArrayList<>(startGameAndPlayOneMoveAtA1);
         strings.add(Command.tgo_up.name().toString());
         strings.add(Command.play.name().toString()+" black A2");
-        strings.add(Command.tgo_left.name().toString());  // back to main line
+        strings.add(Command.tgo_left.name().toString()); // back to main line
         strings.add(Command.tgo_right.name().toString()); // variation
         Response[] responses=GTPBackEnd.runCommands(strings,model,true);
         for(int i=0;i<responses.length;i++) assertTrue(responses[i].isOk());

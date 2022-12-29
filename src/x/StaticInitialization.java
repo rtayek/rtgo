@@ -9,9 +9,7 @@ class A implements Runnable {
     static {
         ids=0;
     }
-    @Override public void run() {
-        System.out.println(sgfData);
-    }
+    @Override public void run() { System.out.println(sgfData); }
     private static Map<String,String> sgfData=new LinkedHashMap<>();
     private static void initializeMap() { sgfData.put("sgfExamleFromRedBean",""); }
     static {

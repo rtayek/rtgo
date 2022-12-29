@@ -11,5 +11,8 @@ public class AudioTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
-    @Test public void testGetResourceAsStream() { InputStream x=Audio.getResourceAsStream("gochlng.wav"); assertNotNull(x); }
+    @Test public void testGetResourceAsStream() {
+        InputStream x=Audio.getResourceAsStream("gochlng.wav");
+        assertNotNull(x);
+    }
 }

@@ -99,16 +99,16 @@ public class GamePanel extends JPanel {
         for(MNode child:node.children) for(SgfProperty property:child.properties)
             if(mediator.model.turn().equals(Stone.black)&&property.p().equals(P.B)
                     ||mediator.model.turn().equals(Stone.white)&&property.p().equals(P.W)) {
-                System.out.println("found child move property: "+property);
-                if(property.list().get(0).equals(target)) { // assume
-                    // first
-                    // and
-                    // only?
-                    System.out.println("found move! "+property);
-                    found=child;
-                    break;
-                }
-            }
+                        System.out.println("found child move property: "+property);
+                        if(property.list().get(0).equals(target)) { // assume
+                            // first
+                            // and
+                            // only?
+                            System.out.println("found move! "+property);
+                            found=child;
+                            break;
+                        }
+                    }
         return found;
     }
     void processClick(MouseEvent e) {
@@ -263,7 +263,7 @@ public class GamePanel extends JPanel {
                 break;
             default:
                 throw new RuntimeException("bad ropology");
-                //break;
+            //break;
         }
         black=blackStone(dx,dy,getBackground());
         white=whiteStone(dx,dy,getBackground());

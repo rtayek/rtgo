@@ -102,7 +102,6 @@ public class RedBean {
         System.out.println(G2.pPrint(bRoot));
         // looks like the print out the same!
         // r(a(b(c()(d(e))))(f(g(h(i))(j)))) is correct.
-
     }
     public static final String encoded="11110110000111100010000";
 }

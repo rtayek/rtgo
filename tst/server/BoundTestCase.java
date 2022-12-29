@@ -5,7 +5,7 @@ import io.IO;
 import utilities.MyTestWatcher;
 public class BoundTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Test public void testLogicForAlreadyBoundSocket() throws Exception{
+    @Test public void testLogicForAlreadyBoundSocket() throws Exception {
         GoServer goServer=GoServer.startServer(IO.testPort);
         assertTrue(goServer.serverSocket.isBound());
         int x=goServer.serverSocket.getLocalPort();

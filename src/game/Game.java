@@ -20,8 +20,7 @@ public class Game {
                 run(port);
             } catch(Exception e) {
                 e.printStackTrace();
-                if(port==IO.defaultPort)
-                    System.out.println("default port, probably ok.");
+                if(port==IO.defaultPort) System.out.println("default port, probably ok.");
             }
         }
         NamedThreadGroup.printThraedsAtEnd();

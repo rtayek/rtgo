@@ -33,8 +33,7 @@ public enum Parameters { // properties
         // looks like loadPropertiesFromCurrentValues
         // looks like setPropertiesFromCurrentValues
         Properties properties=new Properties();
-        for(Parameters p:Parameters.values())
-            properties.put(p.name(),p.currentValue().toString());
+        for(Parameters p:Parameters.values()) properties.put(p.name(),p.currentValue().toString());
         //Logging.mainLogger.config("writing new properties to: "+propertiesFilename+": "+properties);
         writePropertiesFile(properties,propertiesFilename);
     }

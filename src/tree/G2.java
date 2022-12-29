@@ -26,7 +26,7 @@ public class G2 {
     Given a general tree with ordered but not indexed children,
     encode the first child as the left child of its parent,
     and each other node as a right child of its (former) sibling.
-
+    
     The reverse is: Given a binary tree with distinguished left
     and right children, read the left child of a node as its
     first child and the right child as its next sibling.                // is this throwing if there is a variation on the first move in the game?

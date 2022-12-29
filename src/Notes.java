@@ -3,9 +3,7 @@
 /** http://senseis.xmp.net/?ProgrammersGoban **/
 // http://littlegolem.net/jsp/info/player.jsp?plid=36309 - sig's games
 //https://discuss.gradle.org/t/gradle-wrapper-to-clone-from-github-and-build/6291/5
-public class Notes {
-    StringBuilder s;
-}
+public class Notes { StringBuilder s; }
 // summary
 // keylisteners do not seem to work!
 // no, they do not: http://stackoverflow.com/questions/286727/java-keylistener-for-jframe-is-being-unresponsive

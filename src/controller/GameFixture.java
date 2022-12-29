@@ -43,6 +43,7 @@ public class GameFixture implements Runnable,Stopable {
         @SuppressWarnings("unused") Thread recorder=recorderFixture.backEnd.startGTP(id);
     }
     public void startGame() {
+        System.out.println("start game");
         if(namedThread!=null) throw new RuntimeException("game thread alreasy exists!");
         Logging.mainLogger.info("starting game: "+id+" "+blackFixture+" "+whiteFixture);
         (namedThread=NamedThreadGroup.createNamedThread(id,this,"game")).start();
@@ -118,21 +119,18 @@ public class GameFixture implements Runnable,Stopable {
     }
     public Response initializeGame() {
         Response response=null;
-        boolean doInit=true; // was false.
         // turning on to test some server stuff.
-        if(doInit) { // turning this on made stuff work?
-            // maybe this init login should be outside the this run method?
-            response=recorderFixture.frontEnd.sendAndReceive(Command.tgo_anything.name());
-            // board is still null in recorder
-            // but recorder may have a long game in it!
-            if(recorderFixture.backEnd.model.board()!=null) {
-                int width=recorderFixture.backEnd.model.board().width();
-                if(!initializeBoard(recorderFixture,width)) throw new RuntimeException("init recorder oops");
-                response=blackFixture.frontEnd.sendAndReceive(Command.tgo_black.name());
-                if(!initializeBoard(blackFixture,width)) throw new RuntimeException("init black oops");
-                response=whiteFixture.frontEnd.sendAndReceive(Command.tgo_white.name());
-                if(!initializeBoard(whiteFixture,width)) throw new RuntimeException("init white oops");
-            }
+        // maybe this init login should be outside the this run method?
+        response=recorderFixture.frontEnd.sendAndReceive(Command.tgo_anything.name());
+        // board is still null in recorder
+        // but recorder may have a long game in it!
+        if(recorderFixture.backEnd.model.board()!=null) {
+            int width=recorderFixture.backEnd.model.board().width();
+            if(!initializeBoard(recorderFixture,width)) throw new RuntimeException("init recorder oops");
+            response=blackFixture.frontEnd.sendAndReceive(Command.tgo_black.name());
+            if(!initializeBoard(blackFixture,width)) throw new RuntimeException("init black oops");
+            response=whiteFixture.frontEnd.sendAndReceive(Command.tgo_white.name());
+            if(!initializeBoard(whiteFixture,width)) throw new RuntimeException("init white oops");
         }
         return response;
     }
@@ -357,6 +355,7 @@ public class GameFixture implements Runnable,Stopable {
     public final long fileId=++fileIds; // external id
     public final long id=++ids;
     public boolean isStopping;
+    public boolean doInit=false; // was false.
     boolean saveGameAfterMove=true;
     Et et=new Et();
     Histogram waitBefore=new Histogram(5,0,5);

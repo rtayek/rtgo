@@ -7,7 +7,6 @@ public class ModelRoundYtipTestCase extends AbstractModelRoundtripTestCase {
     @Override @Before public void setUp() throws Exception {
         key=Parser.empty;
         key="sgfExamleFromRedBean";
-        
         super.setUp();
     }
 }

@@ -123,6 +123,5 @@ public class BlockTestCase {
         Block block=Block.find(model.board(),point);
         assertEquals(2,block.liberties());
     }
-
     Board board=Board.factory.create(5,Topology.normal);
 }
