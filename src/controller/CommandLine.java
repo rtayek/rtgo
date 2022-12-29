@@ -23,6 +23,9 @@ public class CommandLine {
         System.out.println("d - down.");
         System.out.println("r - right.");
         System.out.println("l - left.");
+        System.out.println("t - top.");
+        System.out.println("b - bottom.");
+        System.out.println("D - delete.");
         System.out.println("o file - open file (no spaces allowed!");
         System.out.println("n - new game.");
         System.out.println("g - new gui for model.");
@@ -30,7 +33,7 @@ public class CommandLine {
         System.out.println("q - quit.");
         System.out.println("s - connect to server");
         System.out.println("S - disconnect from server");
-        System.out.println("t - toggle treeview.");
+        System.out.println("T - toggle treeview.");
     }
     private String[] splitNext(String command,int i) {
         while(command.charAt(i)==' ') i++;
@@ -55,11 +58,20 @@ public class CommandLine {
             case 'd':
                 model.down(0);
                 break;
+            case 'D':
+                model.delete();
+                break;
             case 'r':
                 model.right();
                 break;
             case 'l':
                 model.left();
+                break;
+            case 't':
+                model.top();
+                break;
+            case 'b':
+                model.bottom();
                 break;
             case 'm':
                 if(model.hasABoard()) {
@@ -114,7 +126,7 @@ public class CommandLine {
                     else System.out.println("disconnect fails!");
                 } else System.out.println("already disconected!");
                 break;
-            case 't':
+            case 'T':
                 if(myTreeView==null) {
                     myTreeView=new TreeView(null,model);
                     model.addObserver(myTreeView);

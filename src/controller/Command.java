@@ -11,6 +11,7 @@ public enum Command { // should implement some interface? (probably)
     //looks like black, white, observe, anything are roles?
     tgo_stop,tgo_torus,tgo_black,tgo_white,tgo_observe, //
     tgo_anything,tgo_up,tgo_down,tgo_left,tgo_right, //
+    tgo_top,tgo_bottom,tgo_delete, //
     protocol_version(true),name(true),version(true), //
     known_command(true,1,name.name()),list_commands(true),quit, //
     boardsize(1,Failure.set1,"19"),clear_board, //

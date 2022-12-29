@@ -3,6 +3,7 @@ import static io.Logging.serverLogger;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
 import controller.*;
 import io.*;
 import io.IO.*;
@@ -38,7 +39,7 @@ public class GoServer implements Runnable,Stopable {
             Response initializeResponse=game.initializeGame();
             if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
         }
-        if(false) { // load existing game
+        if(true) { // load existing game
             File file=new File("serverGames/game1.sgf");
             if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
             recorder.restore(IO.toReader(file));
@@ -56,6 +57,16 @@ public class GoServer implements Runnable,Stopable {
             if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
             System.out.println("sent sgf to white: "+sgf);
             // go to the end of the main line!
+            Logging.setLevels(Level.INFO);
+            String bottomCommand=Command.tgo_bottom.name();
+            response=game.recorderFixture.frontEnd.sendAndReceive(bottomCommand);
+            if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+            response=game.blackFixture.frontEnd.sendAndReceive(bottomCommand);
+            if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+            response=game.whiteFixture.frontEnd.sendAndReceive(bottomCommand);
+            if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+            // hod do we let one person drive this?
+            
         }
         System.out.println("start game: "+game);
         game.startGame();
@@ -287,7 +298,7 @@ public class GoServer implements Runnable,Stopable {
         System.out.println(Init.first);
         System.out.println("Level: "+Logging.mainLogger.getLevel());
         int n=arguments==null?0:arguments.length;
-        if(false) {
+        if(true) {
             try {
                 File dir=new File(GameFixture.directory);
                 if(!dir.exists()) {

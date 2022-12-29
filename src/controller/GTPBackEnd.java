@@ -208,17 +208,37 @@ public class GTPBackEnd implements Runnable,Stopable {
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
                 break;
-            case tgo_stop: // stop everything
-                // interrupt thread here?
-                // do we need to wait?
-                send(okCharacter,message.id,"true");
-                done=true;
+            case tgo_top:
+                if(Navigate.up.canDo(model)) {
+                    model.top();
+                    send(okCharacter,message.id,"true");
+                } else send(okCharacter,message.id,"false");
                 break;
+            case tgo_bottom:
+                if(Navigate.down.canDo(model)) {
+                    model.bottom();
+                    send(okCharacter,message.id,"true");
+                } else send(okCharacter,message.id,"false");
+                break;
+            case tgo_delete:
+                if(Model.canDelete(model)) {
+                    model.delete();
+                    send(okCharacter,message.id,"true");
+                } else send(okCharacter,message.id,"false");
+                break;
+                // these two are very similar.
+                // are they the same?
             case undo:
                 if(Model.canDelete(model)) {
                     model.delete();
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
+                break;
+            case tgo_stop: // stop everything
+                // interrupt thread here?
+                // do we need to wait?
+                send(okCharacter,message.id,"true");
+                done=true;
                 break;
             case version:
                 send(okCharacter,message.id,Model.version);

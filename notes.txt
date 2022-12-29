@@ -559,6 +559,11 @@ all seems to be working now. not sure what fixed (or broke) everything.
 sync'ed connections. replaced some set roots with set board.
 using sgf width and depth in state.
 reformatted all of the source files, so there will be lots of meaningless diff;s.
+added top and bottom commands. bottom works in server.
+how to let someone review a game?
+need go to node
+need move
+maybe a special version of game that has only one player and many observers?
 
 
 
