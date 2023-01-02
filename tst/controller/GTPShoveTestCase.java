@@ -97,7 +97,7 @@ public class GTPShoveTestCase {
     }
     @Test public void testPushInGameDuplex() throws Exception { //1 asffadfpadsd[qsdk,q'sdq[
         // consolidate this!
-        game=GoServer.setupGameForShove(expected);
+        game=GoServer.setupLocalGameForShove(expected);
         //
         Model black=game.blackFixture.backEnd.model;
         Model white=game.whiteFixture.backEnd.model;

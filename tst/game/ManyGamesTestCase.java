@@ -27,7 +27,7 @@ public class ManyGamesTestCase {
     }
     @Before public void setUp() throws Exception { //
         for(int i=0;i<n;i++) {
-            game=GoServer.setUpStandaloneGame(IO.anyPort);
+            game=GoServer.setUpStandaloneLocalGame(IO.anyPort);
             game.startPlayerBackends();
             games.add(game);
         }

@@ -15,8 +15,8 @@ import utilities.*;
     public PlayGameOnServerTestCase(int i) { this.i=i; }
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
     @Test(/*timeout=GTPBackEnd.timeoutTime*/) public void testPlaySillyGame() throws Exception {
-        GameFixture.playSillyGame(game,1);
+        GameFixture.playSillyGame(game,i);
     }
     final int i;
-    static final int n=2;
+    static final int n=5;
 }

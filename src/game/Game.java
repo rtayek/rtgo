@@ -4,7 +4,7 @@ import io.*;
 import server.*;
 public class Game {
     public static void run(int port) throws Exception {
-        GameFixture game=GoServer.setUpStandaloneGame(port);
+        GameFixture game=GoServer.setUpStandaloneLocalGame(port);
         game.startPlayerBackends(); // assuming they are local
         GameFixture.playSillyGame(game,1);
         game.stop();

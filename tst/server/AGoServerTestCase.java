@@ -2,6 +2,7 @@ package server;
 import static controller.GameFixture.printStuff;
 import static org.junit.Assert.*;
 import java.util.Collection;
+import java.util.logging.Level;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -21,7 +22,8 @@ import utilities.*;
     public AGoServerTestCase(Integer i) { this.i=i; }
     // these usually pass except for a few timeouts
     @Before public void setUp() throws Exception {
-        System.out.println("enter setup");
+        System.out.println(Init.first+"enter setup");
+        Logging.setLevels(Level.CONFIG);
         //watchdog=Watchdog.watchdog(Thread.currentThread());
         // check for duplicate code in other tests.
         goServer=GoServer.startServer(i%2==0?IO.anyPort:IO.noPort);
@@ -35,6 +37,8 @@ import utilities.*;
         assertNotNull("black board",game.recorderFixture.backEnd.model.board());
         width=game.recorderFixture.backEnd.model.board().width();
         depth=game.recorderFixture.backEnd.model.board().depth();
+        System.out.println("exit setup");
+        
     }
     @After public void tearDown() throws Exception {
         if(goServer!=null) goServer.stop();

@@ -27,7 +27,7 @@ public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
         String method2="testPlayOneMove";
         Request request2=Request.method(clazz2,method2);
         Result result2=junit.run(request2);
-        System.out.println(result2.wasSuccessful());
+        System.out.println(method2+" "+result2.wasSuccessful());
         NamedThreadGroup.stopAllStopables();
         System.out.println(NamedThreadGroup.printNamedThreadGroups(true));
         Thread.sleep(100);

@@ -41,7 +41,7 @@ public abstract class AbstractGameTestCase { // these test cases require a runni
         }
     }
     @Before public void setUp() throws Exception {
-        game=GoServer.setUpStandaloneGame(serverPort);
+        game=GoServer.setUpStandaloneLocalGame(serverPort);
         game.startPlayerBackends();
     }
     @After public void tearDown() throws Exception { game.stop(); }

@@ -12,7 +12,7 @@ import utilities.*;
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
     public BasicGameTestCase(int i) { this.i=i; }
-    @Before public void setUp() throws Exception { game=GoServer.setUpStandaloneGame(IO.anyPort); }
+    @Before public void setUp() throws Exception { game=GoServer.setUpStandaloneLocalGame(IO.anyPort); }
     @After public void tearDown() throws Exception {
         if(IO.currentThreadIsTimeLimited()) {
             System.out.println("not main! "+"'"+Thread.currentThread().getName());

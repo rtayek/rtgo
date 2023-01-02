@@ -21,7 +21,35 @@ public class GoServer implements Runnable,Stopable {
     int connections() { return connections.size(); }
     @Override public boolean isStopping() { return isStopping; }
     @Override public boolean setIsStopping() { boolean rc=isStopping; isStopping=true; return rc; }
-    private void createGame(Model recorder) { // recorder needs to force all of these models to be the same.
+    void loadExistinGame(Model recorder,GameFixture game) {
+        File file=new File("serverGames/game1.sgf");
+        if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
+        recorder.restore(IO.toReader(file));
+        recorder.bottom(); // go to the last move!
+        StringWriter stringWriter=new StringWriter();
+        recorder.save(stringWriter);
+        String sgf=stringWriter.toString();
+        System.out.println("sending sgf: "+sgf);
+        if(true) sgf=HexAscii.encode(sgf.getBytes());
+        String fromCommand=Command.tgo_receive_sgf.name()+" "+sgf;
+        Response response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+        System.out.println("sent sgf to black: "+sgf);
+        response=game.whiteFixture.frontEnd.sendAndReceive(fromCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+        System.out.println("sent sgf to white: "+sgf);
+        // go to the end of the main line!
+        Logging.setLevels(Level.INFO);
+        String bottomCommand=Command.tgo_bottom.name();
+        response=game.recorderFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        response=game.blackFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        response=game.whiteFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        // hod do we let one person drive this?
+    }
+    void setupRemoteGame(Model recorder) { // recorder needs to force all of these models to be the same.
         // yes. that will be done by some kind of shove (tgo send dgf).
         // between the next two socket connections - hack
         End blackFrontEnd,whiteFrontEnd;
@@ -32,46 +60,17 @@ public class GoServer implements Runnable,Stopable {
         Holder blackHolder=Holder.frontEnd(blackFrontEnd);
         Holder whiteHolder=Holder.frontEnd(whiteFrontEnd);
         GameFixture game=new GameFixture(recorder);
+        synchronized(games) {
+            games.add(game);
+        }
         game.setupServerSide(blackHolder.front,whiteHolder.front);
         System.out.println("after setup server side.");
         // we may always want everything except the board size?
+        System.out.println("start game: "+game);
+        game.startGame();
         if(game.doInit) { // turning this on made stuff work?
             Response initializeResponse=game.initializeGame();
             if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-        }
-        if(true) { // load existing game
-            File file=new File("serverGames/game1.sgf");
-            if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
-            recorder.restore(IO.toReader(file));
-            recorder.bottom(); // go to the last move!
-            StringWriter stringWriter=new StringWriter();
-            recorder.save(stringWriter);
-            String sgf=stringWriter.toString();
-            System.out.println("sending sgf: "+sgf);
-            if(true) sgf=HexAscii.encode(sgf.getBytes());
-            String fromCommand=Command.tgo_receive_sgf.name()+" "+sgf;
-            Response response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
-            if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
-            System.out.println("sent sgf to black: "+sgf);
-            response=game.whiteFixture.frontEnd.sendAndReceive(fromCommand);
-            if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
-            System.out.println("sent sgf to white: "+sgf);
-            // go to the end of the main line!
-            Logging.setLevels(Level.INFO);
-            String bottomCommand=Command.tgo_bottom.name();
-            response=game.recorderFixture.frontEnd.sendAndReceive(bottomCommand);
-            if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
-            response=game.blackFixture.frontEnd.sendAndReceive(bottomCommand);
-            if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
-            response=game.whiteFixture.frontEnd.sendAndReceive(bottomCommand);
-            if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
-            // hod do we let one person drive this?
-            
-        }
-        System.out.println("start game: "+game);
-        game.startGame();
-        synchronized(games) {
-            games.add(game);
         }
     }
     // now send a what command
@@ -117,7 +116,7 @@ public class GoServer implements Runnable,Stopable {
                     if(connections.size()>=2) {
                         //System.out.println(connections()+" connections.");
                         Model recorder=new Model("recorder");
-                        createGame(recorder);
+                        setupRemoteGame(recorder);
                     }
                 }
             } else {
@@ -131,7 +130,7 @@ public class GoServer implements Runnable,Stopable {
                     synchronized(connections) {
                         serverLogger.info("connection from: "+socket);
                         addConnection(new End(socket));
-                        if(connections.size()>=2) { Model recorder=new Model("recorder"); createGame(recorder); }
+                        if(connections.size()>=2) { Model recorder=new Model("recorder"); setupRemoteGame(recorder); }
                     }
                 } catch(IOException e) {
                     if(isStopping()) serverLogger.info(this+" stopping caught: "+e);
@@ -224,10 +223,10 @@ public class GoServer implements Runnable,Stopable {
         game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
         game.startPlayerBackends();
-        if(game.namedThread==null) game.startGame(); // don't start twice!
+        if(game.namedThread==null) throw new RuntimeException("game was not started!");
         return game;
     }
-    public static GameFixture setUpStandaloneGame(int port) {
+    public static GameFixture setUpStandaloneLocalGame(int port) {
         Holder blackHolder=null;
         Holder whiteHolder=null;
         if(port==IO.noPort) {
@@ -253,7 +252,7 @@ public class GoServer implements Runnable,Stopable {
         System.out.println("white thread: "+IO.toString(game.whiteFixture.backEnd.namedThread));
         return game;
     }
-    public static GameFixture setupGameForShove(Model recorder) {
+    public static GameFixture setupLocalGameForShove(Model recorder) {
         Holder blackHolder=null;
         Holder whiteHolder=null;
         blackHolder=Holder.trick(IO.anyPort);
@@ -262,7 +261,9 @@ public class GoServer implements Runnable,Stopable {
         game.setupServerSide(blackHolder.front,whiteHolder.front);
         // game thread is not started!
         // let's try starting it. not a good idea.
-        //||||||
+        // 12/29/22 let's try again ... server tests are hanging.
+        // try again later
+        //game.startGame();
         game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
         game.startPlayerBackends();

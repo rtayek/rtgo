@@ -19,8 +19,18 @@ import sgf.*;
 import utilities.*;
 public class Model extends Observable { // model of a go game or problem forrest
     // more like game tree or forest of such.
+    public enum Who { commandLine, gui, gtp }
+    public enum Action { move, navigate, delete }
+    // observer can only navigate.
+    // black/white can play if it's his turn.
+    // anything can do anything. maybe should be review?
+    // gtp?
+    // if anything moves, navigate or deletes, how to tell observers?
     public enum Role { // both, neither, one, other; // client only
         anything,observer,playBlack,playWhite;
+        Role(Stone stone) { this.stone=stone; }
+        Role() { this(Stone.vacant); }
+        final Stone stone;
     }
     public enum Where { // generalize to not turn or not playing this color?
         onVacant,occupied,hole,notCloseEnough,notInBand,onBoard,offBoard;
@@ -434,7 +444,15 @@ public class Model extends Observable { // model of a go game or problem forrest
             down(currentNode().children.size()-1);
         } else Logging.mainLogger.severe(name+" "+"no current node for resign!");
     }
+    public boolean check(Role role,Action action) {
+        if(role.equals(Role.anything)) return true;
+        if(role.equals(Role.observer)&&action.equals(Action.navigate)) return true;
+        if(action.equals(Action.move)&&turn().equals(role.stone)) return true;
+        return false;
+    }
     public MoveResult move(Move move) {
+        if(!check(role(),Action.move))
+            return MoveResult.badRole;
         // move the moves++ code here so we can get rid of the sleeps!
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
         if(!checkParity()) throw new RuntimeException("parity");

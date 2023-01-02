@@ -564,6 +564,22 @@ how to let someone review a game?
 need go to node
 need move
 maybe a special version of game that has only one player and many observers?
+12/29/22
+seems like it's time to enforce roles.
+maybe allow anything if it comes from gtp
+but enforce roles on command line or gui input?
+seems like the server tests are hanging again just like above!
+not loading a game and shoving to clients make the server tests run.
+01/01/23
+tst/server has too many similar tests (like some others).
+loading an existing game and the trying to play a silly game fails.
+probably need a stand alone test for loading an existing game.
+cleaned up some of the server tests. more work to do there.
+
+
+  
+
+
 
 
 

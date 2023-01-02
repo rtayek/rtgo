@@ -13,5 +13,5 @@ import utilities.*;
     @Override @After public void tearDown() throws Exception { super.tearDown(); }
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
     final Integer i;
-    static int n=2; // fails sometimes with bigger n.
+    static int n=20; // fails sometimes with bigger n.
 }
