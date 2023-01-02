@@ -7,8 +7,6 @@ import io.*;
 import model.Move;
 import utilities.MyTestWatcher;
 public abstract class AbstractGoServerTestCase {
-    // sets up a server, sets up a game, and plays one move
-    // maybe just parameterize with [server socket,i,]?
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public static class GoServerRealSocketTestCase extends AbstractGoServerTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -43,9 +41,7 @@ public abstract class AbstractGoServerTestCase {
         GoServer.stop(goServer,game);
         if(watchdog!=null) watchdog.done=true;
     }
-    @Test() public void testZeroeMovse() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
-    }
+    @Test() public void testZeroeMovse() throws Exception {}
     @Test() public void testPlayOneMove() throws Exception {
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
     }

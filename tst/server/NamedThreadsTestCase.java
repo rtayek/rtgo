@@ -8,10 +8,6 @@ import server.NamedThreadGroup.NamedThread;
 import utilities.MyTestWatcher;
 public class NamedThreadsTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @BeforeClass public static void setUpBeforeClass() throws Exception {}
-    @AfterClass public static void tearDownAfterClass() throws Exception {}
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
     static class R implements Runnable,Stopable {
         @Override public void run() {
             try {

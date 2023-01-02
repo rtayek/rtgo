@@ -38,7 +38,6 @@ import utilities.*;
         width=game.recorderFixture.backEnd.model.board().width();
         depth=game.recorderFixture.backEnd.model.board().depth();
         System.out.println("exit setup");
-        
     }
     @After public void tearDown() throws Exception {
         if(goServer!=null) goServer.stop();

@@ -6,9 +6,14 @@ import utilities.MyTestWatcher;
 // tries to runb a test programmatically from main();
 public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Override @Before public void setUp() throws Exception { serverPort=IO.anyPort; super.setUp(); }
-    @Override @After public void tearDown() throws Exception { super.tearDown(); }
+    @Override @Before public void setUp() throws Exception {
+        System.out.println("setup");
+        serverPort=IO.anyPort;
+        super.setUp();
+    }
+    @Override @After public void tearDown() throws Exception { System.out.println("teardown"); super.tearDown(); }
     public static void main(String[] args) throws Exception {
+        // run a few test methods
         JUnitCore junit=new JUnitCore();
         Class<ConcreteGoServerTestCase> clazz=ConcreteGoServerTestCase.class;
         String method="test";
@@ -19,10 +24,9 @@ public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
         System.out.println("get request");
         Request request3=Request.method(clazz,method3);
         System.out.println(request3);
-        //if(true) return;
         Result result=junit.run(request);
-        System.out.println(result);
-        System.out.println(result.wasSuccessful());
+        System.out.println("result: "+result);
+        System.out.println("was successful: "+result.wasSuccessful());
         Class<ConcreteGoServerTestCase> clazz2=ConcreteGoServerTestCase.class;
         String method2="testPlayOneMove";
         Request request2=Request.method(clazz2,method2);

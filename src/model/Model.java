@@ -1239,6 +1239,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         //randomeMovesUsingParameters(model);
         System.out.println(model);
         Model.doTGOSend("manyFacesTwoMovesAtA1AndR16");
+        System.out.println(model);
     }
     public int verbosity;
     // move stuff like type, shape, and band to parameter

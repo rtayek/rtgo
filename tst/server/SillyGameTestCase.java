@@ -3,7 +3,7 @@ import org.junit.*;
 import controller.GameFixture;
 import io.*;
 import utilities.MyTestWatcher;
-public class OneTestCase extends AbstractGoServerTestCase {
+public class SillyGameTestCase extends AbstractGoServerTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Override @Before public void setUp() throws Exception {
         Logging.mainLogger.info(this+" starting setup.");
@@ -15,9 +15,9 @@ public class OneTestCase extends AbstractGoServerTestCase {
     @Test() public void testPlaySillyGame() throws Exception {
         // torus would make make a good test case
         // this has a timeout
-        int m=width*depth-1;
-        m/=10;
-        GameFixture.playSillyGame(game,m);
+        int moves=width*depth-1;
+        moves/=10;
+        GameFixture.playSillyGame(game,moves);
     }
     Thread target;
 }
