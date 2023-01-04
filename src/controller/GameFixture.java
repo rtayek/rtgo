@@ -117,7 +117,7 @@ public class GameFixture implements Runnable,Stopable {
         strings.add(Command.clear_board.name());
         return both.frontEnd.sendAndReceive(strings);
     }
-    public Response initializeGame() {
+    public Response initializeGame() { // requires back end threads to be running
         Response response=null;
         // turning on to test some server stuff.
         // maybe this init login should be outside the this run method?
@@ -130,7 +130,8 @@ public class GameFixture implements Runnable,Stopable {
             response=blackFixture.frontEnd.sendAndReceive(Command.tgo_black.name());
             if(!initializeBoard(blackFixture,width)) throw new RuntimeException("init black oops");
             response=whiteFixture.frontEnd.sendAndReceive(Command.tgo_white.name());
-            if(!initializeBoard(whiteFixture,width)) throw new RuntimeException("init white oops");
+            if(!initializeBoard(whiteFixture,width))
+                throw new RuntimeException("init white oops");
         }
         return response;
     }
@@ -354,7 +355,7 @@ public class GameFixture implements Runnable,Stopable {
     public final long fileId=++fileIds; // external id
     public final long id=++ids;
     public boolean isStopping;
-    public boolean doInit=false; // was false.
+    public boolean doInit=true; // was false.
     boolean saveGameAfterMove=true;
     Et et=new Et();
     Histogram waitBefore=new Histogram(5,0,5);

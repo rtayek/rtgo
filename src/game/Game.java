@@ -1,9 +1,11 @@
 package game;
-import controller.GameFixture;
+import java.io.*;
+import controller.*;
 import io.*;
 import io.IO.End.Holder;
 import model.Model;
 import server.NamedThreadGroup;
+import sgf.HexAscii;
 public class Game {
     public static GameFixture setUpStandaloneLocalGame(int port) {
         Holder blackHolder=null;
@@ -23,7 +25,6 @@ public class Game {
         Model recorder=new Model("recorder");
         GameFixture game=new GameFixture(recorder);
         game.setupServerSide(blackHolder.front,whiteHolder.front);
-        game.startGame();
         // normally the back ends may be started first?
         game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
@@ -48,9 +49,40 @@ public class Game {
         game.startPlayerBackends();
         return game;
     }
+    public static void loadExistinGame(Model recorder,GameFixture game) {
+        File file=new File("serverGames/game1.sgf");
+        if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
+        recorder.restore(IO.toReader(file));
+        StringWriter stringWriter=new StringWriter();
+        recorder.save(stringWriter);
+        String sgf=stringWriter.toString();
+        System.out.println("sending sgf: "+sgf);
+        if(true) sgf=HexAscii.encode(sgf.getBytes());
+        String fromCommand=Command.tgo_receive_sgf.name()+" "+sgf;
+        Response response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+        System.out.println("sent sgf to black: "+sgf);
+        response=game.whiteFixture.frontEnd.sendAndReceive(fromCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+        System.out.println("sent sgf to white: "+sgf);
+        // go to the end of the main line!
+        String bottomCommand=Command.tgo_bottom.name();
+        response=game.recorderFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        response=game.blackFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        response=game.whiteFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        // how do we let one person drive this?
+    }
     public static void run(int port) throws Exception {
         GameFixture game=Game.setUpStandaloneLocalGame(port);
         game.startPlayerBackends(); // assuming they are local
+        if(game.doInit) { // turning this on made stuff work?
+            Response initializeResponse=game.initializeGame();
+            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
+        }
+        game.startGame();
         GameFixture.playSillyGame(game,1);
         game.stop();
         //GTPBackEnd.sleep2(GTPBackEnd.yield);

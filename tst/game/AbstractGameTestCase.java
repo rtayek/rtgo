@@ -4,9 +4,9 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import controller.GameFixture;
+import controller.*;
 import equipment.*;
-import io.IO;
+import io.*;
 import model.Move;
 import utilities.*;
 public abstract class AbstractGameTestCase { // these test cases require a running game.
@@ -42,9 +42,15 @@ public abstract class AbstractGameTestCase { // these test cases require a runni
     @Before public void setUp() throws Exception {
         game=Game.setUpStandaloneLocalGame(serverPort);
         game.startPlayerBackends();
+        if(game.doInit) { // turning this on made stuff work?
+            Response initializeResponse=game.initializeGame();
+            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
+        }
+        game.startGame();
     }
     @After public void tearDown() throws Exception { game.stop(); }
     // these guys need a game running.
+    @Test() public void testPlayZeroMoves() throws Exception {}
     @Test() public void testPlayOneMove() throws Exception {
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
     }

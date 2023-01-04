@@ -579,7 +579,27 @@ cleaned up some of the server tests. more work to do there.
 this could be the name of a game to resume or have some other function.
 maybe there should be some dialog here.
 or do we need another tcp connection?
+01/03/2
 add a separate test case for loading an existing game.
+refactoring game setup stuff.
+look like we want to delay staring the game.
+seems like we should do some shoves first if we are restoring a game.
+looks like doing init before starting the back ends hangs.
+look like a bug in role:
+00128  game-20 (~)    INFO FE 'white-1' waiting to receive. in controller.GTPFrontEnd.receive()
+00129  white-1-1~)  SEVERE                 1: play black A1 in controller.GTPBackEnd.processCommand()
+00130  game-20 (~)    INFO FE 'white-1' received: '? illegal move'. in controller.GTPFrontEnd.receive()
+00131  game-20 (~)    INFO FE 'white-1' waiting to receive. in controller.GTPFrontEnd.receive()
+probably a bad role.
+looks like we need to ignore the role when the move comes from gtp.
+maybe have gtp use make move and play sound.
+and add a parameter to make move and play sound to allow the move even if it is a bad role.
+or set role to whoever's move it is, make the move.then set it back.
+either way seems ugly.
+
+
+
+
 
 
   

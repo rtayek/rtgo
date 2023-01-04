@@ -359,6 +359,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public Stone turn() { return state.turn; }
     public MoveResult moveAndPlaySound(Stone color,String GtpCoordinates,int width) {
         // maybe this should use code in the move class?
+        // only called in 2 plces in the color bug test case!
         Point point=Coordinates.fromGtpCoordinateSystem(GtpCoordinates,width);
         return moveAndPlaySound(color,point);
     }
@@ -452,14 +453,13 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public MoveResult move(Move move) {
         if(!check(role(),Action.move)) return MoveResult.badRole;
-        // move the moves++ code here so we can get rid of the sleeps!
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
         if(!checkParity()) throw new RuntimeException("parity");
         MoveResult rc=MoveResult.legal;
         if(move instanceof Pass) //
             pass();
         else if(move instanceof Resign) //
-            resign(); // generates RE!
+            resign(); // generates RE and Z[BW]
         else /*if(move instanceof MoveImpl)*/ {
             Point point=move.point();
             if(point==null) { Logging.mainLogger.severe("point is null: "+move); throw new RuntimeException(); }
