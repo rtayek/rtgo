@@ -8,7 +8,6 @@ import controller.GameFixture;
 import equipment.*;
 import io.IO;
 import model.Move;
-import server.GoServer;
 import utilities.*;
 public abstract class AbstractGameTestCase { // these test cases require a running game.
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -41,7 +40,7 @@ public abstract class AbstractGameTestCase { // these test cases require a runni
         }
     }
     @Before public void setUp() throws Exception {
-        game=GoServer.setUpStandaloneLocalGame(serverPort);
+        game=Game.setUpStandaloneLocalGame(serverPort);
         game.startPlayerBackends();
     }
     @After public void tearDown() throws Exception { game.stop(); }

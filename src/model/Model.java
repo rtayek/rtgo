@@ -27,7 +27,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     // gtp?
     // if anything moves, navigate or deletes, how to tell observers?
     public enum Role { // both, neither, one, other; // client only
-        anything,observer,playBlack,playWhite;
+        anything,observer,playBlack(Stone.black),playWhite(Stone.white);
         Role(Stone stone) { this.stone=stone; }
         Role() { this(Stone.vacant); }
         final Stone stone;
@@ -365,8 +365,8 @@ public class Model extends Observable { // model of a go game or problem forrest
     public MoveResult moveAndPlaySound(Stone color,Point point) {
         // maybe this should use code in the move class also?
         // 8/22/22 investigate this
-        if(role().equals(Role.anything)||turn().equals(Stone.black)&&role().equals(Role.playBlack)
-                ||turn().equals(Stone.white)&&role().equals(Role.playWhite)) {
+        boolean ok=check(role(),Action.move);
+        if(ok) {
             Move move=new MoveImpl(color,point);
             MoveResult wasLegal=move(move);
             if(wasLegal==MoveResult.legal) {
@@ -451,8 +451,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         return false;
     }
     public MoveResult move(Move move) {
-        if(!check(role(),Action.move))
-            return MoveResult.badRole;
+        if(!check(role(),Action.move)) return MoveResult.badRole;
         // move the moves++ code here so we can get rid of the sleeps!
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
         if(!checkParity()) throw new RuntimeException("parity");

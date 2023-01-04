@@ -10,6 +10,7 @@ public class RoleTestCase {
     @After public void tearDown() throws Exception {}
     // many more cases here.
     // also gtp is supposed to be able to handle consecutive moves by the same player
+    // this tests moveAndPlaySound().
     @Test public void testPlayBlackWhenRoleIsPlayBlack() {
         model.setRole(Role.playBlack);
         MoveResult ok=model.moveAndPlaySound(Stone.black,new Point());

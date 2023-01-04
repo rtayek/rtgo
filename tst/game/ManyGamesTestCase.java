@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import org.junit.*;
 import controller.*;
 import io.*;
-import server.*;
+import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 import utilities.MyTestWatcher;
 public class ManyGamesTestCase {
@@ -27,7 +27,7 @@ public class ManyGamesTestCase {
     }
     @Before public void setUp() throws Exception { //
         for(int i=0;i<n;i++) {
-            game=GoServer.setUpStandaloneLocalGame(IO.anyPort);
+            game=Game.setUpStandaloneLocalGame(IO.anyPort);
             game.startPlayerBackends();
             games.add(game);
         }

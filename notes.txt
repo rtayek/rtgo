@@ -575,6 +575,11 @@ tst/server has too many similar tests (like some others).
 loading an existing game and the trying to play a silly game fails.
 probably need a stand alone test for loading an existing game.
 cleaned up some of the server tests. more work to do there.
+01/02/34 idea: maybe have the client send one request after it connects.
+this could be the name of a game to resume or have some other function.
+maybe there should be some dialog here.
+or do we need another tcp connection?
+add a separate test case for loading an existing game.
 
 
   

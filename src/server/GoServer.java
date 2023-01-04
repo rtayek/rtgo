@@ -3,7 +3,6 @@ import static io.Logging.serverLogger;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.logging.Level;
 import controller.*;
 import io.*;
 import io.IO.*;
@@ -39,7 +38,6 @@ public class GoServer implements Runnable,Stopable {
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
         System.out.println("sent sgf to white: "+sgf);
         // go to the end of the main line!
-        Logging.setLevels(Level.INFO);
         String bottomCommand=Command.tgo_bottom.name();
         response=game.recorderFixture.frontEnd.sendAndReceive(bottomCommand);
         if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
@@ -196,7 +194,7 @@ public class GoServer implements Runnable,Stopable {
         }
     }
     boolean anyInterruptions() { return Thread.currentThread().isInterrupted()||namedThread.isInterrupted(); }
-    private GameFixture waitForAGame() {
+    GameFixture waitForAGame() {
         //System.out.println("waiting for a game at: "+first.et);
         GameFixture game=null;
         while(games.size()<1&&!anyInterruptions()) Thread.yield();
@@ -224,49 +222,6 @@ public class GoServer implements Runnable,Stopable {
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
         game.startPlayerBackends();
         if(game.namedThread==null) throw new RuntimeException("game was not started!");
-        return game;
-    }
-    public static GameFixture setUpStandaloneLocalGame(int port) {
-        Holder blackHolder=null;
-        Holder whiteHolder=null;
-        if(port==IO.noPort) {
-            blackHolder=Holder.duplex();
-            whiteHolder=Holder.duplex();
-        } else if(port==IO.anyPort) {
-            blackHolder=Holder.trick(port);
-            whiteHolder=Holder.trick(port);
-        } else { // a real port, might be in use
-            // if server is running maybe do not use trick?
-            // this may help us consolidate.
-            blackHolder=Holder.trick(port);
-            whiteHolder=Holder.trick(port);
-        }
-        Model recorder=new Model("recorder");
-        GameFixture game=new GameFixture(recorder);
-        game.setupServerSide(blackHolder.front,whiteHolder.front);
-        game.startGame();
-        // normally the back ends may be started first?
-        game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
-        game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
-        System.out.println("black thread: "+IO.toString(game.blackFixture.backEnd.namedThread));
-        System.out.println("white thread: "+IO.toString(game.whiteFixture.backEnd.namedThread));
-        return game;
-    }
-    public static GameFixture setupLocalGameForShove(Model recorder) {
-        Holder blackHolder=null;
-        Holder whiteHolder=null;
-        blackHolder=Holder.trick(IO.anyPort);
-        whiteHolder=Holder.trick(IO.anyPort);
-        GameFixture game=new GameFixture(recorder);
-        game.setupServerSide(blackHolder.front,whiteHolder.front);
-        // game thread is not started!
-        // let's try starting it. not a good idea.
-        // 12/29/22 let's try again ... server tests are hanging.
-        // try again later
-        //game.startGame();
-        game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
-        game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
-        game.startPlayerBackends();
         return game;
     }
     public static void serverDtrt(int port) throws Exception {

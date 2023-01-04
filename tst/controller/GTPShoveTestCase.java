@@ -9,8 +9,8 @@ import java.io.StringReader;
 import java.util.List;
 import org.junit.*;
 import equipment.*;
+import game.Game;
 import model.*;
-import server.GoServer;
 import utilities.MyTestWatcher;
 public class GTPShoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -97,7 +97,7 @@ public class GTPShoveTestCase {
     }
     @Test public void testPushInGameDuplex() throws Exception { //1 asffadfpadsd[qsdk,q'sdq[
         // consolidate this!
-        game=GoServer.setupLocalGameForShove(expected);
+        game=Game.setupLocalGameForShove(expected);
         //
         Model black=game.blackFixture.backEnd.model;
         Model white=game.whiteFixture.backEnd.model;
