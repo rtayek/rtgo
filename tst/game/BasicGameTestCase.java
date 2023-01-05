@@ -30,7 +30,7 @@ import utilities.*;
             Response initializeResponse=game.initializeGame();
             if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
         }
-        game.startGame();
+        game.startGameThread();
         et.reset();
         GameFixture.playSillyGame(game,m);
     }

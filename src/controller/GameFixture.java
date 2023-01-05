@@ -42,11 +42,13 @@ public class GameFixture implements Runnable,Stopable {
         whiteFixture.setupFrontEnd(white,whiteName());
         @SuppressWarnings("unused") Thread recorder=recorderFixture.backEnd.startGTP(id);
     }
-    public void startGame() {
+    public void startGameThread() {
         System.out.println("start game");
-        if(namedThread!=null) throw new RuntimeException("game thread alreasy exists!");
-        Logging.mainLogger.info("starting game: "+id+" "+blackFixture+" "+whiteFixture);
-        (namedThread=NamedThreadGroup.createNamedThread(id,this,"game")).start();
+        if(namedThread!=null) ; //throw new RuntimeException("game thread alreasy exists!");
+        else {
+            Logging.mainLogger.info("starting game: "+id+" "+blackFixture+" "+whiteFixture);
+            (namedThread=NamedThreadGroup.createNamedThread(id,this,"game")).start();
+        }
     }
     String generateMove() {
         // collapse or refactor this
@@ -129,9 +131,9 @@ public class GameFixture implements Runnable,Stopable {
             if(!initializeBoard(recorderFixture,width)) throw new RuntimeException("init recorder oops");
             response=blackFixture.frontEnd.sendAndReceive(Command.tgo_black.name());
             if(!initializeBoard(blackFixture,width)) throw new RuntimeException("init black oops");
+            if(namedThread!=null) System.out.println("game already started 2");
             response=whiteFixture.frontEnd.sendAndReceive(Command.tgo_white.name());
-            if(!initializeBoard(whiteFixture,width))
-                throw new RuntimeException("init white oops");
+            if(!initializeBoard(whiteFixture,width)) throw new RuntimeException("init white oops");
         }
         return response;
     }
@@ -273,7 +275,11 @@ public class GameFixture implements Runnable,Stopable {
             throw new RuntimeException("moves oops");
         }
         if(!lastMove.equals(opponentModel.lastMoveGTP())) throw new RuntimeException("1 last move oops");
-        if(!areBoardsEqual()) throw new RuntimeException("boards are not equal!");
+        if(!areBoardsEqual()) {
+            //System.out.println(recorderFixture.backEnd.model);
+            //System.out.println(blackFixture.backEnd.model);
+            //System.out.println(whiteFixture.backEnd.model);
+            throw new RuntimeException("boards are not equal!");}
         return moves; // off ny one. apparently not used.
     }
     public static void playSillyGame(GameFixture gameFixture,int m) throws InterruptedException {

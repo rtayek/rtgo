@@ -46,7 +46,7 @@ public abstract class AbstractGameTestCase { // these test cases require a runni
             Response initializeResponse=game.initializeGame();
             if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
         }
-        game.startGame();
+        game.startGameThread();
     }
     @After public void tearDown() throws Exception { game.stop(); }
     // these guys need a game running.

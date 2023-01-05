@@ -82,7 +82,7 @@ public class Game {
             Response initializeResponse=game.initializeGame();
             if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
         }
-        game.startGame();
+        game.startGameThread();
         GameFixture.playSillyGame(game,1);
         game.stop();
         //GTPBackEnd.sleep2(GTPBackEnd.yield);

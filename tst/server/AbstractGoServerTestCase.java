@@ -29,7 +29,7 @@ public abstract class AbstractGoServerTestCase {
         goServer=GoServer.startServer(serverPort);
         assertNotNull("no go server!",goServer);
         final int port=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IO.noPort;
-        game=goServer.setUpGameOnServerAndWaitForAGame(port); // and this waits for a game
+        game=goServer.connectAndSetupGame(port); // and this waits for a game
         assertNotNull("no game from server!",game);
         GTPBackEnd.sleep2(1); // try to find out why this is necessary.
         System.out.println("waiting: "+game.recorderFixture.backEnd.isWaitingForMove());

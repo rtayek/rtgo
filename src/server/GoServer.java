@@ -87,7 +87,7 @@ public class GoServer implements Runnable,Stopable {
                             Response initializeResponse=game.initializeGame();
                             if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
                         }
-                        game.startGame(); // last chance.
+                        game.startGameThread(); // last chance.
                     }
                 }
             } else {
@@ -109,7 +109,7 @@ public class GoServer implements Runnable,Stopable {
                                 Response initializeResponse=game.initializeGame();
                                 if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
                             }
-                            game.startGame();
+                            game.startGameThread();
                         }
                     }
                 } catch(IOException e) {
@@ -191,26 +191,27 @@ public class GoServer implements Runnable,Stopable {
         //System.out.println("got a game at: "+first.et);
         return game;
     }
-    GameFixture setUpGameOnServerAndWaitForAGame(int port) {
-        System.out.println(connections.size()+" connections. port: "+port);
+    GameFixture connectAndSetupGame(int port) {
         Holder blackHolder=Holder.create(port);
-        if(port==IO.noPort) addConnection(blackHolder.front); // dfuplex
-        System.out.println(connections.size()+" connections.");
         Holder whiteHolder=Holder.create(port);
+        if(port==IO.noPort) addConnection(blackHolder.front); // dfuplex
         if(port==IO.noPort) addConnection(whiteHolder.front); // dfuplex
-        System.out.println(connections.size()+" connections.");
         if(connections.size()<2) System.out.println("1 waiting for a game");
+        // let server eat the connections and create a game.
         GameFixture game=waitForAGame();
         System.out.println("1 end of waiting for a game");
-        // can't do this if we are the server
         game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
         game.startPlayerBackends();
+        // can't do this if we are the server
+        if(game.doInit) { // turning this on made stuff work?
+            Response initializeResponse=game.initializeGame();
+            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
+        }
         if(game.namedThread==null) {
             System.out.println("game was not started!");
-            game.startGame();
-        }
-        else System.out.println("game was already started!");
+            game.startGameThread();
+        } else System.out.println("game was already started!");
         //throw new RuntimeException("game was already started!");
         // why is the above not throwing?
         return game;
@@ -219,7 +220,7 @@ public class GoServer implements Runnable,Stopable {
         GoServer goServer=GoServer.startServer(port);
         // this will always connect to the server socket's local port
         final int serverPort=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IO.noPort;
-        GameFixture game=goServer.setUpGameOnServerAndWaitForAGame(serverPort);
+        GameFixture game=goServer.connectAndSetupGame(serverPort);
         Model blackModel=game.blackFixture.backEnd.model;
         // use recorder fixture instead of black's?
         int width=blackModel.board().width(),depth=blackModel.board().depth();

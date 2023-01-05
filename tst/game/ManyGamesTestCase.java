@@ -33,7 +33,7 @@ public class ManyGamesTestCase {
                 Response initializeResponse=game.initializeGame();
                 if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
             }
-            game.startGame();
+            game.startGameThread();
             games.add(game);
         }
     }

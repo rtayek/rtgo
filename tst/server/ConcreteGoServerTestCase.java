@@ -34,7 +34,7 @@ public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
         System.out.println(method2+" "+result2.wasSuccessful());
         NamedThreadGroup.stopAllStopables();
         System.out.println(NamedThreadGroup.printNamedThreadGroups(true));
-        Thread.sleep(100);
+        Thread.sleep(10);
         System.out.println("|||");
         System.out.println(NamedThreadGroup.printNamedThreadGroups(true));
         System.out.println("exit");

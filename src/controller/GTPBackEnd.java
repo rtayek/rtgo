@@ -11,7 +11,7 @@ import gui.*;
 import io.*;
 import io.IO.*;
 import model.*;
-import model.Model.MoveResult;
+import model.Model.*;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 // https://www.gnu.org/software/gnugo/gnugo_19.html
@@ -329,7 +329,10 @@ public class GTPBackEnd implements Runnable,Stopable {
                         if(!model.strict||who.equals(model.turn())) { // may not be needed?
                             String moveString=message.arguments[2];
                             Move move=Move.fromGTP(who,moveString,model.board().width(),model.board().depth());
+                            Role old=model.role();
+                            model.setRole(Role.anything);
                             MoveResult moveResult=model.move(move);
+                            model.setRole(old);
                             switch(moveResult) {
                                 case legal:
                                     send(okCharacter,message.id,"");

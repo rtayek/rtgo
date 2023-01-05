@@ -596,6 +596,25 @@ maybe have gtp use make move and play sound.
 and add a parameter to make move and play sound to allow the move even if it is a bad role.
 or set role to whoever's move it is, make the move.then set it back.
 either way seems ugly.
+maybe only move and play sound should check this?
+what if move is coming from sgf? gui, cli, gtp, sgf
+move() called from gui, cli, gtp, and many places in model and tst/
+we may need to sync on game when making a move or ?
+this seems to work:
+        game.startPlayerBackends(); // assuming they are local
+        if(game.doInit) { // turning this on made stuff work?
+            Response initializeResponse=game.initializeGame();
+            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
+        }
+        game.startGameThread();
+silly and parameterized test cases in tst/server seem to work.
+A and concrete go server test cases are dailing.
+A is standaalone
+concrete is wierd - runs junu from main.
+let's fix A.
+6-8 errors
+game is being started before init is done!
+ 
 
 
 
