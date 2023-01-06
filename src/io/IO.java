@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import controller.GTPBackEnd;
 import server.NamedThreadGroup.NamedThread;
+import utilities.Pair;
 // move more io methods here
 // maybe move pipe and duplex classes here
 public class IO {
@@ -107,7 +108,7 @@ public class IO {
                 }
                 return holder;
             }
-            public static Holder trick(int port) { // local connection
+            public static Holder trick(int port) { // local connection (maybe not?)
                 End front=null,back=null;
                 try(ServerSocket serverSocket=new ServerSocket(port);) {
                     Socket frontEnd=new Socket();
@@ -148,6 +149,30 @@ public class IO {
             }
             public final End front,back;
         }
+        public static class Holders extends Pair<Holder,Holder> {
+            public Holders(Holder first,Holder second) { super(first,second); }
+            public static Holders create(int port) { return new Holders(Holder.create(port),Holder.create(port)); }
+            public static Holders holders(int port) {
+                Holder blackHolder=null;
+                Holder whiteHolder=null;
+                if(port==IO.noPort) {
+                    blackHolder=Holder.duplex();
+                    whiteHolder=Holder.duplex();
+                } else if(port==IO.anyPort) {
+                    blackHolder=Holder.trick(port);
+                    whiteHolder=Holder.trick(port);
+                } else { // a real port, might be in use
+                    // if server is running maybe do not use trick?
+                    // this may help us consolidate.
+                    // why does this differ from  create?
+                    // why do we need this?
+                    blackHolder=Holder.trick(port);
+                    whiteHolder=Holder.trick(port);
+                }
+                Holders holders=new Holders(blackHolder,whiteHolder);
+                return holders;
+            }
+        }
     }
     public static class Duplex {
         public Duplex() {
@@ -171,7 +196,7 @@ public class IO {
         }
         return thread==null?null
                 :"thread: name: "+thread.getName()+", state: "+thread.getState()+", is alive: "+thread.isAlive()
-                        +", is interrupted:  "+thread.isInterrupted();
+                +", is interrupted:  "+thread.isInterrupted();
     }
     public static ServerSocket getServerSocket(int port) {
         ServerSocket serverSocket=null;

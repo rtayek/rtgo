@@ -37,7 +37,7 @@ public class GameFixture implements Runnable,Stopable {
         if(!blackFixture.backEnd.model.board().isEqual(recorderFixture.backEnd.model.board())) return false;
         return true;
     }
-    public void setupServerSide(End black,End white) {
+    public void setupFrontEnds(End black,End white) {
         blackFixture.setupFrontEnd(black,blackName());
         whiteFixture.setupFrontEnd(white,whiteName());
         @SuppressWarnings("unused") Thread recorder=recorderFixture.backEnd.startGTP(id);

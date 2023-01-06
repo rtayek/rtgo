@@ -6,7 +6,7 @@ import java.util.*;
 import controller.*;
 import io.*;
 import io.IO.*;
-import io.IO.End.Holder;
+import io.IO.End.Holders;
 import model.Model;
 import server.NamedThreadGroup.NamedThread;
 public class GoServer implements Runnable,Stopable {
@@ -19,21 +19,11 @@ public class GoServer implements Runnable,Stopable {
     int connections() { return connections.size(); }
     @Override public boolean isStopping() { return isStopping; }
     @Override public boolean setIsStopping() { boolean rc=isStopping; isStopping=true; return rc; }
-    GameFixture setupRemoteGame(Model recorder) { // recorder needs to force all of these models to be the same.
+    GameFixture setupRemoteGameFrontEnds(Model recorder,End blackFrontEnd,End whiteFrontEnd) { // recorder needs to force all of these models to be the same.
         // yes. that will be done by some kind of shove (tgo send sgf).
         // between the next two socket connections - hack
-        End blackFrontEnd,whiteFrontEnd;
-        synchronized(connections) {
-            blackFrontEnd=connections.remove();
-            whiteFrontEnd=connections.remove();
-        }
-        Holder blackHolder=Holder.frontEnd(blackFrontEnd);
-        Holder whiteHolder=Holder.frontEnd(whiteFrontEnd);
         GameFixture game=new GameFixture(recorder);
-        synchronized(games) {
-            games.add(game);
-        }
-        game.setupServerSide(blackHolder.front,whiteHolder.front);
+        game.setupFrontEnds(blackFrontEnd,whiteFrontEnd);
         System.out.println("after setup server side.");
         // we may always want everything except the board size?
         return game;
@@ -67,6 +57,30 @@ public class GoServer implements Runnable,Stopable {
             connections.add(end);
         }
     }
+    void startRemoteGame() {
+        Model recorder=new Model("recorder");
+        End blackFrontEnd,whiteFrontEnd;
+        synchronized(connections) {
+            blackFrontEnd=connections.remove();
+            whiteFrontEnd=connections.remove();
+        }
+        GameFixture game=setupRemoteGameFrontEnds(recorder,blackFrontEnd,whiteFrontEnd);
+        game.startGameThread();
+        synchronized(games) {
+            games.add(game);
+        }
+    }
+    GameFixture setupRemoteGameBackEnds(int port) {
+        Holders holders=Holders.create(port);
+        if(port==IO.noPort) addConnection(holders.first.front); // duplex
+        if(port==IO.noPort) addConnection(holders.second.front); // duplex
+        if(connections.size()<2) System.out.println("1 waiting for a game");
+        GameFixture game=waitForAGame(); // let server consume the connections and create a game.
+        game.blackFixture.setupBackEnd(holders.first.back,game.blackName(),game.id);
+        game.whiteFixture.setupBackEnd(holders.second.back,game.whiteName(),game.id);
+        game.startPlayerBackends(); // server does not know about these.
+        return game;
+    }
     @Override public void run() {
         final int port=serverSocket!=null?serverSocket.getLocalPort():IO.noPort;
         serverLogger.info("go server is running on port: "+port);
@@ -78,12 +92,7 @@ public class GoServer implements Runnable,Stopable {
                     once=true;
                 }
                 synchronized(connections) {
-                    if(connections.size()>=2) {
-                        //System.out.println(connections()+" connections.");
-                        Model recorder=new Model("recorder");
-                        GameFixture game=setupRemoteGame(recorder);
-                        game.startGameThread(); // last chance.
-                    }
+                    if(connections.size()>=2) { startRemoteGame(); }
                 }
             } else {
                 try {
@@ -96,11 +105,7 @@ public class GoServer implements Runnable,Stopable {
                     synchronized(connections) {
                         serverLogger.info("connection from: "+socket);
                         addConnection(new End(socket));
-                        if(connections.size()>=2) {
-                            Model recorder=new Model("recorder");
-                            GameFixture game=setupRemoteGame(recorder);
-                            game.startGameThread();
-                        }
+                        if(connections.size()>=2) { startRemoteGame(); }
                     }
                 } catch(IOException e) {
                     if(isStopping()) serverLogger.info(this+" stopping caught: "+e);
@@ -181,34 +186,11 @@ public class GoServer implements Runnable,Stopable {
         //System.out.println("got a game at: "+first.et);
         return game;
     }
-    GameFixture connectAndSetupGame(int port) {
-        Holder blackHolder=Holder.create(port);
-        Holder whiteHolder=Holder.create(port);
-        if(port==IO.noPort) addConnection(blackHolder.front); // dfuplex
-        if(port==IO.noPort) addConnection(whiteHolder.front); // dfuplex
-        if(connections.size()<2) System.out.println("1 waiting for a game");
-        // let server eat the connections and create a game.
-        GameFixture game=waitForAGame();
-        game.printStatus();
-        System.out.println("1 end of waiting for a game");
-        game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
-        game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
-        game.startPlayerBackends(); // server does not know about these.
-        /*
-        if(game.namedThread==null) {
-            System.out.println("game was not started!");
-            game.startGameThread();
-        } else System.out.println("game was already started!");
-        throw new RuntimeException("game was already started!");
-         */
-        // why is the above not throwing?
-        return game;
-    }
-    public static void serverDtrt(int port) throws Exception {
+    public static void playSillyGame(int port) throws Exception {
         GoServer goServer=GoServer.startServer(port);
         // this will always connect to the server socket's local port
         final int serverPort=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IO.noPort;
-        GameFixture game=goServer.connectAndSetupGame(serverPort);
+        GameFixture game=goServer.setupRemoteGameBackEnds(serverPort);
         Model blackModel=game.blackFixture.backEnd.model;
         // use recorder fixture instead of black's?
         int width=blackModel.board().width(),depth=blackModel.board().depth();
@@ -253,7 +235,7 @@ public class GoServer implements Runnable,Stopable {
         for(int i=0;i<m;++i) {
             Logging.mainLogger.warning("sample game: "+i);
             // make this into a test!
-            for(int port:IO.ports) serverDtrt(port);
+            for(int port:IO.ports) playSillyGame(port);
             //serverDtrt(IO.noPort);
             //serverDtrt(IO.anyPort);
             //serverDtrt(IO.defaultPort);

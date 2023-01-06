@@ -1,6 +1,5 @@
 package game;
 import java.util.Collection;
-import java.util.logging.Level;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -13,9 +12,8 @@ import utilities.*;
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
     public BasicGameTestCase(int i) { this.i=i; }
     @Before public void setUp() throws Exception {
-        System.out.println(Init.first);
-        Logging.setLevels(Level.CONFIG);
         game=Game.setUpStandaloneLocalGame(IO.anyPort);
+        game.startGameThread();
     }
     @After public void tearDown() throws Exception {
         if(IO.currentThreadIsTimeLimited()) {
@@ -25,7 +23,6 @@ import utilities.*;
         game.stop();
     }
     @Test() public void testillyGame() throws Exception {
-        game.startGameThread();
         et.reset();
         GameFixture.playSillyGame(game,m);
     }

@@ -2,45 +2,29 @@ package game;
 import java.io.*;
 import controller.*;
 import io.*;
-import io.IO.End.Holder;
+import io.IO.End.Holders;
 import model.Model;
 import server.NamedThreadGroup;
 import sgf.HexAscii;
 public class Game {
     public static GameFixture setUpStandaloneLocalGame(int port) {
-        Holder blackHolder=null;
-        Holder whiteHolder=null;
-        if(port==IO.noPort) {
-            blackHolder=Holder.duplex();
-            whiteHolder=Holder.duplex();
-        } else if(port==IO.anyPort) {
-            blackHolder=Holder.trick(port);
-            whiteHolder=Holder.trick(port);
-        } else { // a real port, might be in use
-            // if server is running maybe do not use trick?
-            // this may help us consolidate.
-            blackHolder=Holder.trick(port);
-            whiteHolder=Holder.trick(port);
-        }
+        Holders holders=Holders.holders(port);
         Model recorder=new Model("recorder");
         GameFixture game=new GameFixture(recorder);
-        game.setupServerSide(blackHolder.front,whiteHolder.front);
+        game.setupFrontEnds(holders.first.front,holders.second.front);
         // normally the back ends may be started first?
-        game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
-        game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
+        game.blackFixture.setupBackEnd(holders.first.back,game.blackName(),game.id);
+        game.whiteFixture.setupBackEnd(holders.second.back,game.whiteName(),game.id);
         System.out.println("black thread: "+IO.toString(game.blackFixture.backEnd.namedThread));
         System.out.println("white thread: "+IO.toString(game.whiteFixture.backEnd.namedThread));
         return game;
     }
     public static GameFixture setupLocalGameForShove(Model recorder) {
-        Holder blackHolder=null;
-        Holder whiteHolder=null;
-        blackHolder=Holder.trick(IO.anyPort);
-        whiteHolder=Holder.trick(IO.anyPort);
+        Holders holders=Holders.holders(IO.anyPort);
         GameFixture game=new GameFixture(recorder);
-        game.setupServerSide(blackHolder.front,whiteHolder.front);
-        game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
-        game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
+        game.setupFrontEnds(holders.first.front,holders.second.front);
+        game.blackFixture.setupBackEnd(holders.first.back,game.blackName(),game.id);
+        game.whiteFixture.setupBackEnd(holders.second.back,game.whiteName(),game.id);
         return game;
     }
     public static void loadExistinGame(Model recorder,GameFixture game) {

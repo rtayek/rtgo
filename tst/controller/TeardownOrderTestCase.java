@@ -41,7 +41,7 @@ public /*abstract*/ class TeardownOrderTestCase {
         }
         Runner recorderRunner=new Runner(recorder);
         (recorderRunner.thread=NamedThreadGroup.createNamedThread(NamedThreadGroup.groupZero,recorderRunner,"recorder"))
-                .start();
+        .start();
         back=black.backEnd.startGTP(0);
         if(back==null) {
             Logging.mainLogger.severe("test 12 startGTP returns null!");
