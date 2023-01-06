@@ -46,6 +46,9 @@ public class GameFixture implements Runnable,Stopable {
         //IO.stackTrace(10);
         if(!backends) { System.out.println("starting backends."); startPlayerBackends(); }
         if(!initialized) { System.out.println("initializing game."); Response initializeResponse=initializeGame(); }
+        // look like we need to do any shoving here.
+        // so we can test this in conteoller/
+        // instead of game?
         if(namedThread!=null) throw new RuntimeException("game thread alreasy exists!");
         else {
             System.out.println("starting gam.e");
@@ -116,13 +119,13 @@ public class GameFixture implements Runnable,Stopable {
         GTPBackEnd.sleep2(GTPBackEnd.yield);
     }
     public void startPlayerBackends() {
-        backends=true;
+        backends=true; // just means that this was calle once.
         if(blackFixture.backEnd!=null) if(blackFixture.backEnd.namedThread==null) {
             @SuppressWarnings("unused") Thread black=blackFixture.backEnd.startGTP(id);
-        } else throw new RuntimeException("black  fixture back end.");
+        } ; //else throw new RuntimeException("black  fixture back end.");
         if(whiteFixture.backEnd!=null) if(whiteFixture.backEnd.namedThread==null) {
             @SuppressWarnings("unused") Thread white=whiteFixture.backEnd.startGTP(id);
-        } else throw new RuntimeException("white  fixture back end.");
+        } ; //else throw new RuntimeException("white  fixture back end.");
     }
     public static boolean initializeBoard(BothEnds both,int width) {
         ArrayList<String> strings=new ArrayList<>();

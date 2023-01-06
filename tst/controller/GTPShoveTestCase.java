@@ -95,10 +95,13 @@ public class GTPShoveTestCase {
         Model actual=Move.pushGTPMovesToCurrentStateBoth(expected,true);
         assertTrue(actual.board().isEqual(expected.board()));
     }
-    @Ignore  @Test public void testPushInGameDuplex() throws Exception { //1 asffadfpadsd[qsdk,q'sdq[
+    @Test public void testPushInGameDuplex() throws Exception { //1 asffadfpadsd[qsdk,q'sdq[
         // consolidate this!
         game=Game.setupLocalGameForShove(expected);
-        //
+        // 1/6/23
+        // this is the only test that uses game
+        // try to remove the dependency
+        // and put a copy of this in tst/game
         Model black=game.blackFixture.backEnd.model;
         Model white=game.whiteFixture.backEnd.model;
         if(expected.board()!=null) { // normally no access to both of these at the same time
@@ -106,6 +109,9 @@ public class GTPShoveTestCase {
             white.setRoot(expected.board().width(),expected.board().depth());
             // probably need to set other stuff like shape etc.
         }
+        game.printStatus();
+        assertTrue(game.namedThread==null);
+        game.startPlayerBackends();
         getMovesAndPush(game.blackFixture.frontEnd,expected,true); // maybe all at once?
         getMovesAndPush(game.whiteFixture.frontEnd,expected,true);
         // GTPBackEnd.sleep(100); ???
