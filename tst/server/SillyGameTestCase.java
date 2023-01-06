@@ -17,6 +17,7 @@ public class SillyGameTestCase extends AbstractGoServerTestCase {
         // this has a timeout
         int moves=width*depth-1;
         moves/=10;
+        check();
         GameFixture.playSillyGame(game,moves);
     }
     Thread target;

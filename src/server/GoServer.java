@@ -82,11 +82,6 @@ public class GoServer implements Runnable,Stopable {
                         //System.out.println(connections()+" connections.");
                         Model recorder=new Model("recorder");
                         GameFixture game=setupRemoteGame(recorder);
-                        System.out.println("start game: "+game);
-                        if(game.doInit) { // turning this on made stuff work?
-                            Response initializeResponse=game.initializeGame();
-                            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-                        }
                         game.startGameThread(); // last chance.
                     }
                 }
@@ -104,11 +99,6 @@ public class GoServer implements Runnable,Stopable {
                         if(connections.size()>=2) {
                             Model recorder=new Model("recorder");
                             GameFixture game=setupRemoteGame(recorder);
-                            System.out.println("start game: "+game);
-                            if(game.doInit) { // turning this on made stuff work?
-                                Response initializeResponse=game.initializeGame();
-                                if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-                            }
                             game.startGameThread();
                         }
                     }
@@ -199,20 +189,18 @@ public class GoServer implements Runnable,Stopable {
         if(connections.size()<2) System.out.println("1 waiting for a game");
         // let server eat the connections and create a game.
         GameFixture game=waitForAGame();
+        game.printStatus();
         System.out.println("1 end of waiting for a game");
         game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
-        game.startPlayerBackends();
-        // can't do this if we are the server
-        if(game.doInit) { // turning this on made stuff work?
-            Response initializeResponse=game.initializeGame();
-            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-        }
+        game.startPlayerBackends(); // server does not know about these.
+        /*
         if(game.namedThread==null) {
             System.out.println("game was not started!");
             game.startGameThread();
         } else System.out.println("game was already started!");
-        //throw new RuntimeException("game was already started!");
+        throw new RuntimeException("game was already started!");
+         */
         // why is the above not throwing?
         return game;
     }
@@ -246,7 +234,7 @@ public class GoServer implements Runnable,Stopable {
         System.out.println(Init.first);
         System.out.println("Level: "+Logging.mainLogger.getLevel());
         int n=arguments==null?0:arguments.length;
-        if(true) {
+        if(false) {
             try {
                 File dir=new File(GameFixture.directory);
                 if(!dir.exists()) {

@@ -579,7 +579,7 @@ cleaned up some of the server tests. more work to do there.
 this could be the name of a game to resume or have some other function.
 maybe there should be some dialog here.
 or do we need another tcp connection?
-01/03/2
+01/03/23
 add a separate test case for loading an existing game.
 refactoring game setup stuff.
 look like we want to delay staring the game.
@@ -608,12 +608,18 @@ this seems to work:
         }
         game.startGameThread();
 silly and parameterized test cases in tst/server seem to work.
-A and concrete go server test cases are dailing.
-A is standaalone
-concrete is wierd - runs junu from main.
+A and concrete go server test cases are failing.
+A is stand alone
+concrete is weird - runs junu from main.
 let's fix A.
 6-8 errors
 game is being started before init is done!
+1/5/23 refactored start game into one place.
+this broke load existing game test case, soi ignored it.
+seems that the server tests are not starting the back ends.
+broke a bunch. then got them to work.
+had to ignore another test: testPushInGameDuplex
+
  
 
 

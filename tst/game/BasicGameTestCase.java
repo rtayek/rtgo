@@ -5,7 +5,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import controller.*;
+import controller.GameFixture;
 import io.*;
 import utilities.*;
 @RunWith(Parameterized.class) public class BasicGameTestCase {
@@ -25,11 +25,6 @@ import utilities.*;
         game.stop();
     }
     @Test() public void testillyGame() throws Exception {
-        game.startPlayerBackends();
-        if(game.doInit) { // turning this on made stuff work?
-            Response initializeResponse=game.initializeGame();
-            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-        }
         game.startGameThread();
         et.reset();
         GameFixture.playSillyGame(game,m);

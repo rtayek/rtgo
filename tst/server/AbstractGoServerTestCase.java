@@ -1,5 +1,6 @@
 package server;
 import static org.junit.Assert.assertNotNull;
+import java.util.logging.Level;
 import org.junit.*;
 import controller.*;
 import equipment.*;
@@ -25,8 +26,16 @@ public abstract class AbstractGoServerTestCase {
         @Override @After public void tearDown() throws Exception { if(game!=null) game.stop(); super.tearDown(); }
     }
     @Before public void setUp() throws Exception {
+        System.out.println(Init.first);
+        Logging.setLevels(Level.CONFIG);
         //watchdog=watchdog(Thread.currentThread());
         goServer=GoServer.startServer(serverPort);
+    }
+    @After public void tearDown() throws Exception {
+        GoServer.stop(goServer,game);
+        if(watchdog!=null) watchdog.done=true;
+    }
+    void check() {
         assertNotNull("no go server!",goServer);
         final int port=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IO.noPort;
         game=goServer.connectAndSetupGame(port); // and this waits for a game
@@ -37,31 +46,33 @@ public abstract class AbstractGoServerTestCase {
         width=game.recorderFixture.backEnd.model.board().width();
         depth=game.recorderFixture.backEnd.model.board().depth();
     }
-    @After public void tearDown() throws Exception {
-        GoServer.stop(goServer,game);
-        if(watchdog!=null) watchdog.done=true;
-    }
-    @Test() public void testZeroeMovse() throws Exception {}
+    @Test() public void testZeroeMovse() throws Exception { check(); }
     @Test() public void testPlayOneMove() throws Exception {
+        check();
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
     }
     @Test() public void testPlayTwoMoves() throws Exception {
+        check();
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
         game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move.MoveImpl(Stone.white,new Point(1,0)));
     }
     @Test() public void testPlayThreeMoves() throws Exception {
+        check();
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
         game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move.MoveImpl(Stone.white,new Point(1,0)));
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point(2,0)));
     }
     @Test() public void testPassOnce() throws Exception {
+        check();
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move.blackPass);
     }
     @Test() public void testPassTwice() throws Exception {
+        check();
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move.blackPass);
         game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,Move.whitePass);
     }
     @Test() public void testResign() throws Exception {
+        check();
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move.blackResign);
     }
     GoServer goServer;

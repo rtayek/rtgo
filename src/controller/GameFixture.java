@@ -43,12 +43,18 @@ public class GameFixture implements Runnable,Stopable {
         @SuppressWarnings("unused") Thread recorder=recorderFixture.backEnd.startGTP(id);
     }
     public void startGameThread() {
-        System.out.println("start game");
-        if(namedThread!=null) ; //throw new RuntimeException("game thread alreasy exists!");
+        //IO.stackTrace(10);
+        if(!backends) { System.out.println("starting backends."); startPlayerBackends(); }
+        if(!initialized) { System.out.println("initializing game."); Response initializeResponse=initializeGame(); }
+        if(namedThread!=null) throw new RuntimeException("game thread alreasy exists!");
         else {
+            System.out.println("starting gam.e");
             Logging.mainLogger.info("starting game: "+id+" "+blackFixture+" "+whiteFixture);
             (namedThread=NamedThreadGroup.createNamedThread(id,this,"game")).start();
+            started=true;
         }
+        checkStatus();
+        printStatus();
     }
     String generateMove() {
         // collapse or refactor this
@@ -96,7 +102,7 @@ public class GameFixture implements Runnable,Stopable {
         System.out.println("before: "+waitBefore);
         System.out.println("after: "+waitAfter);
     }
-    @Override public void stop() { // change name to stop backends
+    @Override public void stop() { // change name to stop back ends
         isStopping=true;
         if(recorderFixture!=null) { recorderFixture.stop(); GTPBackEnd.sleep2(longSleepTime); }
         if(blackFixture!=null) { blackFixture.stop(); GTPBackEnd.sleep2(longSleepTime); }
@@ -110,8 +116,13 @@ public class GameFixture implements Runnable,Stopable {
         GTPBackEnd.sleep2(GTPBackEnd.yield);
     }
     public void startPlayerBackends() {
-        @SuppressWarnings("unused") Thread white=whiteFixture.backEnd.startGTP(id);
-        @SuppressWarnings("unused") Thread black=blackFixture.backEnd.startGTP(id);
+        backends=true;
+        if(blackFixture.backEnd!=null) if(blackFixture.backEnd.namedThread==null) {
+            @SuppressWarnings("unused") Thread black=blackFixture.backEnd.startGTP(id);
+        } else throw new RuntimeException("black  fixture back end.");
+        if(whiteFixture.backEnd!=null) if(whiteFixture.backEnd.namedThread==null) {
+            @SuppressWarnings("unused") Thread white=whiteFixture.backEnd.startGTP(id);
+        } else throw new RuntimeException("white  fixture back end.");
     }
     public static boolean initializeBoard(BothEnds both,int width) {
         ArrayList<String> strings=new ArrayList<>();
@@ -120,21 +131,40 @@ public class GameFixture implements Runnable,Stopable {
         return both.frontEnd.sendAndReceive(strings);
     }
     public Response initializeGame() { // requires back end threads to be running
+        initialized=true;
+        if(namedThread!=null) { System.out.println("game already started 2"); System.exit(0); }
         Response response=null;
+        if(!doInit) return response;
         // turning on to test some server stuff.
         // maybe this init login should be outside the this run method?
+        if(recorderFixture.backEnd.namedThread==null) { System.out.println("recorder mot started!"); System.exit(0); }
         response=recorderFixture.frontEnd.sendAndReceive(Command.tgo_anything.name());
         // board is still null in recorder
         // but recorder may have a long game in it!
         if(recorderFixture.backEnd.model.board()!=null) {
             int width=recorderFixture.backEnd.model.board().width();
-            if(!initializeBoard(recorderFixture,width)) throw new RuntimeException("init recorder oops");
+            System.out.print("initialize game: ");
+            printStatus();
+            if(!initializeBoard(recorderFixture,width)) {
+                System.exit(0);
+                ;
+                throw new RuntimeException("init recorder oops");
+            }
+            if(blackFixture.backEnd.namedThread==null) {
+                System.out.println("black backend not started!");
+                System.exit(0);
+            }
             response=blackFixture.frontEnd.sendAndReceive(Command.tgo_black.name());
             if(!initializeBoard(blackFixture,width)) throw new RuntimeException("init black oops");
-            if(namedThread!=null) System.out.println("game already started 2");
+            if(whiteFixture.backEnd.namedThread==null) {
+                System.out.println("white backend not started!");
+                System.exit(0);
+            }
             response=whiteFixture.frontEnd.sendAndReceive(Command.tgo_white.name());
             if(!initializeBoard(whiteFixture,width)) throw new RuntimeException("init white oops");
         }
+        if(!response.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
+        sleep2(200);
         return response;
     }
     @Override public void run() {
@@ -245,12 +275,27 @@ public class GameFixture implements Runnable,Stopable {
     }
     public void playOneMove(BothEnds player,Move move) { // does not wait for opponent's board.
         double t0=et.etms();
+        System.out.println("call wait");
         player.backEnd.waitUntilItIsTmeToMove();
+        System.out.println("end of wait");
         waitBefore.add(et.etms()-t0);
         player.backEnd.model.playOneMove(move);
     }
+    public void printStatus() {
+        System.out.println("backends: "+backends+", initialized: "+initialized+", started: "+started);
+    }
+    public void checkStatus() {
+        if(!backends||!initialized||!started) {
+            printStatus();
+            System.out.println("&&&&&&&&&&&&&&&&&&");
+            //IO.stackTrace(10);
+            //System.exit(1);
+            throw new RuntimeException("game status.");
+        }
+    }
     public int playOneMoveAndWait(BothEnds player,BothEnds opponent,Move move) {
-        // needs a game to be running and we need both backends.
+        //checkStatus();
+        // needs a game to be running and we need both back ends.
         // makes one move and waits for it to show up on opponents board.
         // this uses both ends.
         if(namedThread==null) throw new RuntimeException();
@@ -279,7 +324,8 @@ public class GameFixture implements Runnable,Stopable {
             //System.out.println(recorderFixture.backEnd.model);
             //System.out.println(blackFixture.backEnd.model);
             //System.out.println(whiteFixture.backEnd.model);
-            throw new RuntimeException("boards are not equal!");}
+            throw new RuntimeException("boards are not equal!");
+        }
         return moves; // off ny one. apparently not used.
     }
     public static void playSillyGame(GameFixture gameFixture,int m) throws InterruptedException {
@@ -353,6 +399,7 @@ public class GameFixture implements Runnable,Stopable {
         System.out.println("3 waitstates: "+blackMoves+" black moves "+isBlackWaitingForAMove+", "+whiteMoves
                 +" white moves "+isWhiteWaitingForAMove);
     }
+    boolean backends,initialized,started;
     public final BothEnds recorderFixture=new BothEnds();
     // maybe pass one of these around to start a game?
     public final BothEnds blackFixture=new BothEnds();
@@ -361,7 +408,7 @@ public class GameFixture implements Runnable,Stopable {
     public final long fileId=++fileIds; // external id
     public final long id=++ids;
     public boolean isStopping;
-    public boolean doInit=true; // was false.
+    public boolean doInit=false; // was false.
     boolean saveGameAfterMove=true;
     Et et=new Et();
     Histogram waitBefore=new Histogram(5,0,5);

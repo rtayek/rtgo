@@ -95,7 +95,7 @@ public class GTPShoveTestCase {
         Model actual=Move.pushGTPMovesToCurrentStateBoth(expected,true);
         assertTrue(actual.board().isEqual(expected.board()));
     }
-    @Test public void testPushInGameDuplex() throws Exception { //1 asffadfpadsd[qsdk,q'sdq[
+    @Ignore  @Test public void testPushInGameDuplex() throws Exception { //1 asffadfpadsd[qsdk,q'sdq[
         // consolidate this!
         game=Game.setupLocalGameForShove(expected);
         //

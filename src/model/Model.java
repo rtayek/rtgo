@@ -393,6 +393,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         Logging.mainLogger.info("play one move: "+move);
         if(move.equals(Move.nullMove)) throw new RuntimeException(move+" 1 "+lastMoveGTP()+" "+lastMove()+" move oops");
         int moves=moves();
+        System.out.println("make move: "+move);
         Model.MoveResult ok=move(move);
         // maybe use was legal here?
         switch(ok) {

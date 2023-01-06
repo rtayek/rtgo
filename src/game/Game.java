@@ -39,14 +39,8 @@ public class Game {
         whiteHolder=Holder.trick(IO.anyPort);
         GameFixture game=new GameFixture(recorder);
         game.setupServerSide(blackHolder.front,whiteHolder.front);
-        // game thread is not started!
-        // let's try starting it. not a good idea.
-        // 12/29/22 let's try again ... server tests are hanging.
-        // try again later
-        //game.startGame();
         game.blackFixture.setupBackEnd(blackHolder.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(whiteHolder.back,game.whiteName(),game.id);
-        game.startPlayerBackends();
         return game;
     }
     public static void loadExistinGame(Model recorder,GameFixture game) {
@@ -77,11 +71,6 @@ public class Game {
     }
     public static void run(int port) throws Exception {
         GameFixture game=Game.setUpStandaloneLocalGame(port);
-        game.startPlayerBackends(); // assuming they are local
-        if(game.doInit) { // turning this on made stuff work?
-            Response initializeResponse=game.initializeGame();
-            if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-        }
         game.startGameThread();
         GameFixture.playSillyGame(game,1);
         game.stop();

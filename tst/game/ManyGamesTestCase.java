@@ -28,11 +28,6 @@ public class ManyGamesTestCase {
     @Before public void setUp() throws Exception { //
         for(int i=0;i<n;i++) {
             game=Game.setUpStandaloneLocalGame(IO.anyPort);
-            game.startPlayerBackends();
-            if(game.doInit) { // turning this on made stuff work?
-                Response initializeResponse=game.initializeGame();
-                if(!initializeResponse.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-            }
             game.startGameThread();
             games.add(game);
         }

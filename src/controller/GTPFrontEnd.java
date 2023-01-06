@@ -93,8 +93,8 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
             // what was the above for?
         }
         if(!s.startsWith(okString)) {
-            //GTPBackEnd.sleep2(10);
-            //System.out.println("received: '"+s+"'");
+            GTPBackEnd.sleep2(10);
+            System.out.println("received: '"+s+"'");
             Logging.mainLogger.severe(name+" receive problem! '"+s+"'");
         }
         Response response=Response.response(s);
