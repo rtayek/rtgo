@@ -7,7 +7,6 @@ import utilities.MyTestWatcher;
 public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Override @Before public void setUp() throws Exception {
-        System.out.println("setup");
         serverPort=IO.anyPort;
         super.setUp();
     }

@@ -184,7 +184,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(topology==Topology.diamond) points=Board.getPointsForDiamondRegion(width,depth);
         else points=Shape.getPointsForRegion(width,depth,shape);
         addSgfRegion_(depth,newRoot,points);
-        //System.out.println("added points: "+points);
     }
     public void setRootFromParameters() {
         System.out.println("set root from parameters");
@@ -393,7 +392,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         Logging.mainLogger.info("play one move: "+move);
         if(move.equals(Move.nullMove)) throw new RuntimeException(move+" 1 "+lastMoveGTP()+" "+lastMove()+" move oops");
         int moves=moves();
-        System.out.println("make move: "+move);
         Model.MoveResult ok=move(move);
         // maybe use was legal here?
         switch(ok) {
@@ -605,9 +603,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(Navigate.down.canDo(this)) {
             push();
             do_(currentNode().children.get(indexOfChild));
-            //MNode mNode=currentNode().children.get(indexOfChild);
-            //System.out.println("node: "+mNode.toString());
-            //System.out.println("do_: "+currentNode().children.get(indexOfChild));
         } else Logging.mainLogger.warning(name+" "+"down - can not do this!");
     }
     public void right() { // will become a pop(); do();
@@ -801,7 +796,6 @@ public class Model extends Observable { // model of a go game or problem forrest
                 if(!Navigate.up.canDo(this)) { System.out.println("can't do up!"); }
                 if(Navigate.up.canDo(this)) up();
                 if(!Navigate.up.canDo(this)) {
-                    System.out.println(currentNode()+" can not go up tp ancestor: "+ancester);
                     return false;
                 }
             }

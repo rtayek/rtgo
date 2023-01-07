@@ -15,8 +15,6 @@ public class Game {
         // normally the back ends may be started first?
         game.blackFixture.setupBackEnd(holders.first.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(holders.second.back,game.whiteName(),game.id);
-        System.out.println("black thread: "+IO.toString(game.blackFixture.backEnd.namedThread));
-        System.out.println("white thread: "+IO.toString(game.whiteFixture.backEnd.namedThread));
         return game;
     }
     public static GameFixture setupLocalGameForShove(Model recorder) {
@@ -51,6 +49,7 @@ public class Game {
         if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
         response=game.whiteFixture.frontEnd.sendAndReceive(bottomCommand);
         if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        // how do we go to a particular position?
         // how do we let one person drive this?
     }
     public static void run(int port) throws Exception {

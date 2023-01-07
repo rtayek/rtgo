@@ -49,6 +49,9 @@ public class GameFixture implements Runnable,Stopable {
         // look like we need to do any shoving here.
         // so we can test this in conteoller/
         // instead of game?
+        // 1/6/23
+        // maybe do load existing game instead of initializing?
+        // or do both
         if(namedThread!=null) throw new RuntimeException("game thread alreasy exists!");
         else {
             System.out.println("starting gam.e");
@@ -278,9 +281,7 @@ public class GameFixture implements Runnable,Stopable {
     }
     public void playOneMove(BothEnds player,Move move) { // does not wait for opponent's board.
         double t0=et.etms();
-        System.out.println("call wait");
         player.backEnd.waitUntilItIsTmeToMove();
-        System.out.println("end of wait");
         waitBefore.add(et.etms()-t0);
         player.backEnd.model.playOneMove(move);
     }
@@ -290,9 +291,6 @@ public class GameFixture implements Runnable,Stopable {
     public void checkStatus() {
         if(!backends||!initialized||!started) {
             printStatus();
-            System.out.println("&&&&&&&&&&&&&&&&&&");
-            //IO.stackTrace(10);
-            //System.exit(1);
             throw new RuntimeException("game status.");
         }
     }

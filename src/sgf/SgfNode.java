@@ -40,24 +40,18 @@ public class SgfNode {
         public String removeUnwanted(String string) {
             if(removeCarriageReturn) {
                 //how to do leading and trailing spaces
-                //System.out.println("0 "+string);
                 while(string.contains(" \r")) string=string.replaceAll(" \r","\r");
                 while(string.contains("\r ")) string=string.replaceAll("\r ","\r");
-                //System.out.println("1 "+string);
                 string=string.replaceAll("\r","");
                 if(string.contains("\r")) { System.out.println(string); System.exit(1); ; }
-                //System.out.println("2 "+string);
             }
             if(removeLineFeed) {
                 while(string.contains(" \n")) string=string.replaceAll(" \n","\n");
                 while(string.contains("\n ")) string=string.replaceAll("\n ","\n");
-                //System.out.println("3 "+string);
                 string=string.replaceAll("\n","");
                 if(string.contains("\n")) { System.out.println(string); System.exit(1); ; }
-                //System.out.println("4 "+string);
             }
             if(removeTrailingLineFeed) if(string.endsWith("\n")) string=string.substring(0,string.length()-1);
-            //System.out.println("5 "+string);
             return string;
         }
         public static boolean containsQuotedControlCharacters(Object key,String string) {
