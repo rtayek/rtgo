@@ -4,6 +4,7 @@ import static tree.Node.*;
 import java.util.*;
 import org.junit.*;
 import tree.G2.Generator;
+import utilities.Iterators.Longs;
 import utilities.MyTestWatcher;
 public class G2TestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -140,7 +141,7 @@ public class G2TestCase {
     G2 g2;
     boolean verbose;
     Generator<Long> generator=new Generator<>(false);
-    Iterator<Long> iterator=new G2.Longs();
+    Iterator<Long> iterator=new Longs();
     ArrayList<Node<Long>> trees;
     //ArrayList<ArrayList<Node<Long>>> all;
 }

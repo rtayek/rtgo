@@ -4,29 +4,13 @@ import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
 import utilities.Et;
+import utilities.Iterators.Longs;
 public class G2 {
-    public static class Longs implements Iterator<Long> {
-        @Override public boolean hasNext() { return n<Long.MAX_VALUE; }
-        @Override public Long next() { return n++; }
-        Long n=1l; // -1?
-    }
-    public static class Characters implements Iterator<Character> {
-        Characters(char first) { character=first; }
-        Characters() { this((char)('a'-1)); }
-        @Override public boolean hasNext() { return character<Character.MAX_VALUE; }
-        @Override public Character next() { return character++; }
-        Character character='a'-1;
-    }
-    public static class Strings implements Iterator<String> {
-        @Override public boolean hasNext() { return n<Long.MAX_VALUE; }
-        @Override public String next() { return (++n).toString(); }
-        Long n=0l; // starts at 1.
-    }
     /*
     Given a general tree with ordered but not indexed children,
     encode the first child as the left child of its parent,
     and each other node as a right child of its (former) sibling.
-    
+
     The reverse is: Given a binary tree with distinguished left
     and right children, read the left child of a node as its
     first child and the right child as its next sibling.                // is this throwing if there is a variation on the first move in the game?
@@ -191,7 +175,7 @@ public class G2 {
         }
         public static ArrayList<ArrayList<Node<Long>>> all(int nodes) {
             ArrayList<ArrayList<Node<Long>>> all=new ArrayList<>();
-            Iterator<Long> iterator=new G2.Longs();
+            Iterator<Long> iterator=new Longs();
             for(int i=0;i<=nodes;++i) {
                 ArrayList<Node<Long>> trees=Generator.one(i,iterator,false);
                 all.add(trees);

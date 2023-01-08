@@ -789,6 +789,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         // we should be able to do this without using navigate.
         // 12/19/22 seems to work with command line
         // but command line view seems broken?
+        // 1/7/23
+        //
         List<MNode> list=root().lca(currentNode(),target);
         if(list!=null) {
             MNode ancester=list.get(0);

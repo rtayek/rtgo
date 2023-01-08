@@ -93,6 +93,7 @@ public class MNode {
         MNode lca=null;
         for(int i=0;i<n;i++)
             if(finder.ancestors.get(i).equals(targetFinder.ancestors.get(i))) lca=targetFinder.ancestors.get(i);
+        // see if the above is really just using ==.
         if(lca!=null) {
             int index=targetFinder.ancestors.indexOf(lca);
             return targetFinder.ancestors.subList(index,targetFinder.ancestors.size());
@@ -198,9 +199,18 @@ public class MNode {
             }
         return stringWriter.toString();
     }
+    public static void label(MNode node,final Iterator<Long> i) { // traverse and set labels
+        node.label=i.next();
+        for(MNode n:node.children) label(n,i);
+    }
     public static void main(String[] args) throws IOException {
         System.out.println(Init.first);
-        if(true) { MNode mNode=restoreRedBean(); saveDirectly(mNode); return; }
+        if(true) {
+            MNode mNode=restoreRedBean();
+            String saved=saveDirectly(mNode);
+            System.out.println("saved directly: "+saved);
+            return;
+        }
         //lookAtRoot();
         String oneGame="(;GM[1];B[as];B[at])";
         System.out.println(oneGame);
@@ -211,6 +221,7 @@ public class MNode {
         root=MNode.restore(new StringReader(expected));
         ok=MNode.save(new PrintWriter(System.out),root,standardIndent);
     }
+    public Long label;
     public Integer data;
     public Integer id=++ids;
     public final MNode parent;

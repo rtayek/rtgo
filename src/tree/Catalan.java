@@ -1,6 +1,7 @@
 package tree;
 import java.util.*;
 import tree.G2.Generator;
+import utilities.Iterators.Longs;
 public class Catalan {
     public static final long c(final int n,final int r) { // binomial coefficient
         long i,p;
@@ -28,7 +29,7 @@ public class Catalan {
             System.gc();
             System.out.println("nodes: "+nodes);
             Node.ids=0;
-            Iterator<Long> iterator=new G2.Longs();
+            Iterator<Long> iterator=new Longs();
             List<Node<Long>> trees=Generator.one(nodes,iterator,true);
             //System.out.println("trees: "+trees);
             //System.out.println("trees2: "+trees2);

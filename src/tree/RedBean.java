@@ -1,7 +1,8 @@
 package tree;
 import static tree.MNode.print;
 import java.util.*;
-import tree.G2.*;
+import tree.G2.Generator;
+import utilities.Iterators.*;
 public class RedBean {
     public static Node<Character> binary() {
         // this may not be coded up correctly
@@ -84,7 +85,7 @@ public class RedBean {
     public static Node<String> readBean() {
         // node: 11, tree: 50256: Node
         int nodes=11,tree=50256;
-        Iterator<String> iterator=new G2.Strings();
+        Iterator<String> iterator=new Strings();
         ArrayList<Node<String>> trees=Generator.one(nodes,iterator,false);
         return trees.get(tree);
     }

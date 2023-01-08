@@ -9,6 +9,7 @@ import io.*;
 import model.Move;
 import tree.*;
 import utilities.Holder;
+import utilities.Iterators.Strings;
 public class SgfNode {
     // maybe put a bunch of this stuff into interface Sgf?
     // looks like we can add a children() method.
@@ -412,11 +413,12 @@ public class SgfNode {
             //objects.addAll(sgfFiles());
             for(Object key:objects) {
                 if(true) {
+                    System.out.println("key: "+key+" <<<<<<");
                     Node<Character> redBean=RedBean.binary();
                     System.out.println("hand coded binary has "+Node.count(redBean)+" nodes.");
                     System.out.println(G2.pPrint(redBean));
                     //System.out.println("r(a(b(c()(d(e))))(f(g(h(i))(j))))");
-                    Iterator<String> i=new G2.Strings();
+                    Iterator<String> i=new Strings();
                     String ex=getSgfData(key);
                     ex=SgfNode.options.prepareSgf(ex);
                     System.out.println("expected sgf "+ex);
@@ -438,9 +440,11 @@ public class SgfNode {
                     Node<String> relabelled=Node.decode(encoded,newLabels);
                     relabelled.data=";FF[4]C[root]";
                     System.out.println("relabelled:   "+G2.pPrint(relabelled));
-                    String expected=getSgfData(key);
+                    // relabeled sorta looks like ogs files. check this out!
+                    String expected=getSgfData(key); // same as ex above?
                     expected=SgfNode.options.prepareSgf(expected);
                     //System.out.println("expected:\n"+expected);
+                    System.out.println("end of key: "+key+">>>>>>");
                 }
                 String expectedSgf=getSgfData(key);
                 expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
@@ -458,8 +462,8 @@ public class SgfNode {
                     games.preorderSaveSgf(stringWriter,noIndent);
                     preorderSsgf=stringWriter.toString();
                 }
-                System.out.println("preordered   "+preorderSsgf);
                 System.out.println("expeced sgf  "+expectedSgf);
+                System.out.println("preordered   "+preorderSsgf);
                 boolean ok=expectedSgf.equals(preorderSsgf);
                 if(!ok) System.out.println(" "+ok);
                 if(true) break;
@@ -484,6 +488,7 @@ public class SgfNode {
     // add an equal method and see what happens
     // maybe these could be immutable?
     public SgfNode left,right;
+    public Integer label;
     boolean hasAMove,hasAMoveType,hasASetupType;
     Holder<Integer> siblings=new Holder<>(0),descendants=new Holder<Integer>(0);
     public static transient int moves;

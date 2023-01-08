@@ -1,5 +1,6 @@
 package model;
 import java.util.*;
+import java.util.function.BiPredicate;
 import io.Logging;
 import sgf.*;
 interface Acceptor<T extends Enumeration<T>> {
@@ -26,7 +27,7 @@ interface Acceptor<T extends Enumeration<T>> {
     }
     class GenericPrintAcceptor<T extends Enumeration<T>> implements Acceptor<T> {
         // aparently not used.
-        //renamed because of a name collision.
+        // renamed because of a name collision.
         @Override public void accept(T t,Traverser<T> traverser) {
             Logging.mainLogger.info(t.toString());
             // maybe if enumeration just goes over children?
@@ -73,24 +74,35 @@ public interface MNodeAcceptor {
     }
     public static class MNodeFinder implements MNodeAcceptor {
         // seems like this is only used for least common ancestor
+        MNodeFinder(MNode target,BiPredicate<MNode,MNode> predicate) { this.target=target; this.predicate=predicate; }
         MNodeFinder(MNode target) { this.target=target; }
         @Override public void accept(MNode node,Traverser traverser) {
             if(node!=null) {
-                if(node.equals(target)) if(found==null) { //just the first one
+                //if(node.equals(target)) // use a predicate?
+                if(predicate.test(node,target)) if(found==null) { //just the first one
                     found=node;
                     ancestors.addAll(traverser.stack);
                     // ancestors.add(node); // add in the target!
+                    // why aren't we adding in the target
                 } else Logging.mainLogger.warning(""+" "+"found another: "+found+" "+node);
             } else System.out.println("in accept node is null!");
         }
-        public static MNodeFinder find(MNode target,MNode games) {
-            MNodeFinder finder=new MNodeFinder(target);
+        static MNodeFinder find(MNode target,MNode games,MNodeFinder finder) {
             Traverser traverser=new Traverser(finder);
             traverser.visit(games);
             if(!finder.ancestors.contains(target))
                 Logging.mainLogger.warning(""+" "+"ancesters does not contain target!");
             return finder;
         }
+        public static MNodeFinder find(MNode target,MNode games,BiPredicate<MNode,MNode> predicate) {
+            MNodeFinder finder=new MNodeFinder(target,predicate);
+            return find(target,games,finder);
+        }
+        public static MNodeFinder find(MNode target,MNode games) {
+            MNodeFinder finder=new MNodeFinder(target);
+            return find(target,games,finder);
+        }
+        BiPredicate<MNode,MNode> predicate=(x,y)->x.equals(y);
         final MNode target;
         public final List<MNode> ancestors=new ArrayList<>();
         MNode found;

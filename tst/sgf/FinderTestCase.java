@@ -22,7 +22,7 @@ class Verifier extends SgfAcceptorImpl {
 }
 @RunWith(Parameterized.class) public class FinderTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    public FinderTestCase(Object key) { this.key=key; }
+    public FinderTestCase(Object key) { this.key=key; watcher.key=key; }
     @Parameters public static Collection<Object[]> data() {
         Set<Object> objects=new LinkedHashSet<>();
         objects.addAll(sgfDataKeySet());

@@ -4,13 +4,14 @@ import static tree.RedBean.binary;
 import java.util.*;
 import org.junit.*;
 import tree.G2.Generator;
+import utilities.Iterators.Longs;
 import utilities.MyTestWatcher;
 public class RoundTripTestCase extends AbstractRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     //ArrayList<Node<Character>> trees=new ArrayList<>();
     @Override @Before public void setUp() throws Exception {}
     @Override @After public void tearDown() throws Exception {}
-    Iterator<Long> iterator=new G2.Longs();
+    Iterator<Long> iterator=new Longs();
     ArrayList<Node<Long>> trees=Generator.one(10,iterator,false);
     {
         // bRoot=trees.get(0);
@@ -18,7 +19,7 @@ public class RoundTripTestCase extends AbstractRoundTripTestCase {
         //bRoot=trees.get(8420);
         key="red bean sample";
         Node<Character> binary=binary();
-        Iterator<Long> i=new G2.Longs();
+        Iterator<Long> i=new Longs();
         bRoot=reLabelCopy(binary,i);
         System.out.println("relabeled bRoot:");
         //G2.print(bRoot,"");

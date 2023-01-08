@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import tree.G2.Generator;
+import utilities.Iterators.*;
 import utilities.MyTestWatcher;
 @RunWith(Parameterized.class) public class CatalanTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -56,12 +57,12 @@ import utilities.MyTestWatcher;
         ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
         for(Node<Long> expected:trees) {
             System.out.println("ex: "+G2.pPrint(expected));
-            Iterator<Character> j=new G2.Characters();
+            Iterator<Character> j=new Characters();
             Node<Character> actual=reLabelCopy(expected,j);
             System.out.println("ac:"+G2.pPrint(actual));
-            Iterator<Long> i=new G2.Longs();
+            Iterator<Long> i=new Longs();
             Node<Long> actual2=reLabelCopy(expected,i);
-            Iterator<Character> k=new G2.Characters();
+            Iterator<Character> k=new Characters();
             Node<Character> actual3=reLabelCopy(actual2,k);
             System.out.println("a3:"+G2.pPrint(actual3));
             assertTrue(structureDeepEquals(actual,actual3));
@@ -104,6 +105,6 @@ import utilities.MyTestWatcher;
         assertEquals(catalan2(nodes),trees.size());
     }
     int nodes;
-    Iterator<Long> iterator=new G2.Longs();
+    Iterator<Long> iterator=new Longs();
     public static final int max=7; // 11
 }

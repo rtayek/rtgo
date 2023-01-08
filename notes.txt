@@ -624,6 +624,27 @@ LoadExistinGameTestCase and testPushInGameDuplex() are still failing.
 they both hang.
 fixed. one needed to start the back ends, the other
 down to 1 error and 3 failures.
+how to label nodes so we can go to the right place?
+how do the main gui and treeview do this?
+treeview uses model.goToMNode((MNode)node.getUserObject());'
+and the nodes are not generic. i.e. the mnode is the sgf as opposed to just having a label.
+we will want to find the position in the teee regardless of what it's data is.
+just in case they could have the same label.
+go to node uses == which will not work across processes.
+so we do need to label the nodes.
+in sgf node main() relabeled looks like ogs files. verify this if true.
+so maybe a standard recursive relabel is indicated?
+treeview does a: TreePath treePath=find(current,root);
+java 8 introduce a holder. we could use Holder<Pair<End,End>> instead of our  own.
+made: label(MNode node,final Iterator<Integer> i)
+both mnode has a finder and sgf accepter has a finder.
+how to used label to find and go to a node on the remote client?
+maybe modify finder to use BiPredicate<T,U>?
+
+
+
+
+
 
 
 

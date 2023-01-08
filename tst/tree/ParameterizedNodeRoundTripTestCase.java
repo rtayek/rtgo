@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import utilities.*;
+import utilities.Iterators.Longs;
 @RunWith(Parameterized.class) public class ParameterizedNodeRoundTripTestCase extends AbstractRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Override @Before public void setUp() throws Exception {}
@@ -26,7 +27,7 @@ import utilities.*;
         nodes=x[0];
         int tree=x[1];
         watcher.key=key="node: "+nodes+", tree: "+tree;
-        Iterator<Long> iterator=new G2.Longs();
+        Iterator<Long> iterator=new Longs();
         boolean useMap=false;
         ArrayList<Node<Long>> trees=G2.Generator.one(nodes,iterator,useMap);
         bRoot=trees.get(tree);
