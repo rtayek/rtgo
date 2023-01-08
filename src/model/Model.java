@@ -790,7 +790,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // 12/19/22 seems to work with command line
         // but command line view seems broken?
         // 1/7/23
-        //
+        // seems t work, but the test are real slow.
         List<MNode> list=root().lca(currentNode(),target);
         if(list!=null) {
             MNode ancester=list.get(0);

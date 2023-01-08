@@ -259,6 +259,7 @@ public class OldModelTestCase {
         System.out.println(list1);
         list1.remove(0); // get rid of private property RT
         list2.remove(0); // get rid of private property RT
+        // maybe we should not always remove?
         System.out.println(list1);
         System.out.println(list1);
         for(MNode node1:list1) {

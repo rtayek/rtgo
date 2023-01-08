@@ -105,6 +105,6 @@ public interface MNodeAcceptor {
         BiPredicate<MNode,MNode> predicate=(x,y)->x.equals(y);
         final MNode target;
         public final List<MNode> ancestors=new ArrayList<>();
-        MNode found;
+        public MNode found;
     }
 }

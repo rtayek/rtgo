@@ -640,6 +640,10 @@ made: label(MNode node,final Iterator<Integer> i)
 both mnode has a finder and sgf accepter has a finder.
 how to used label to find and go to a node on the remote client?
 maybe modify finder to use BiPredicate<T,U>?
+new finder works with labels.
+ancestor list does not contain the target.
+remote client can find target by label and get a path of moves to that label
+client can just make these moves as they will be found.
 
 
 
