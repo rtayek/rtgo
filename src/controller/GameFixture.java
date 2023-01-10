@@ -62,6 +62,16 @@ public class GameFixture implements Runnable,Stopable {
         checkStatus();
         printStatus();
     }
+    public void bottom() {
+        String bottomCommand=Command.tgo_bottom.name();
+        Response response=recorderFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        response=blackFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+        response=whiteFixture.frontEnd.sendAndReceive(bottomCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
+    }
+
     String generateMove() {
         // collapse or refactor this
         Response response;
