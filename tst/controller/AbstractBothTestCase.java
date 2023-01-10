@@ -30,7 +30,7 @@ public abstract class AbstractBothTestCase {
         @Override @After public void tearDown() throws Exception { super.tearDown(); }
     }
     @RunWith(Suite.class) @SuiteClasses({SocketTestCase.class,
-            DuplexTestCase.class,}) public static class BothTestSuite {
+        DuplexTestCase.class,}) public static class BothTestSuite {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @BeforeClass public static void setUpClass() {
             System.out.println(Init.first);
@@ -80,7 +80,7 @@ public abstract class AbstractBothTestCase {
             Logging.mainLogger.severe("test 6.5 startGTP returns null!");
             if(GTPBackEnd.throwOnstartGTPFailure) throw new RuntimeException("6.5 can not run backend!");
         }
-        both.frontEnd.sendString("xxx");
+        both.frontEnd.sendString("notACommand");
         Response response=both.frontEnd.receive();
         assertNotNull(response);
         assertTrue(!response.isOk());
@@ -100,6 +100,7 @@ public abstract class AbstractBothTestCase {
     }
     // make all of these a final variable!
     @Test() public void testBothConnectedGenmoveTrue() throws Exception {
+        // there are two if these. refactor!
         Logging.mainLogger.info("enter test at "+first.et);
         @SuppressWarnings("unused") Thread back=both.backEnd.startGTP(0);
         if(back==null) {
@@ -158,6 +159,7 @@ public abstract class AbstractBothTestCase {
         Response response=both.frontEnd.receive();
         assertTrue(response.isOk());
         assertTrue(response.response.startsWith("true"));
+        // how do we know that it did anything?
     }
     BothEnds both;
     Integer serverPort;

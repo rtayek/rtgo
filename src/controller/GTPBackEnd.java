@@ -169,7 +169,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 send(okCharacter,message.id,"");
                 break;
                 // maybe these next 4 should be tgo_role with a role argument?
-                // maybe
+                // maybe.
             case tgo_black:
                 System.out.println("got: "+message.command);
                 model.setRole(Model.Role.playBlack);
@@ -240,6 +240,8 @@ public class GTPBackEnd implements Runnable,Stopable {
             case tgo_stop: // stop everything
                 // interrupt thread here?
                 // do we need to wait?
+                Logging.mainLogger.severe("got tgo_stop, what should we do?");
+                // stop(); // maybe call stop?
                 send(okCharacter,message.id,"true");
                 done=true;
                 break;
@@ -553,7 +555,7 @@ public class GTPBackEnd implements Runnable,Stopable {
         // may not be needed now.
         // but it might be a bit cleaner than send and receive static?
         // maybe
-        public Writer sendAndReceive(String string,Model model,boolean justRun) throws IOException {
+        private Writer sendAndReceive(String string,Model model,boolean justRun) throws IOException {
             GTPBackEnd backEnd=new GTPBackEnd(string,model);
             if(justRun) backEnd.run(); // just run, do not start the thread.
             else { // fails right now
@@ -650,6 +652,7 @@ public class GTPBackEnd implements Runnable,Stopable {
         // the gui has no idea that the model is in a gtp
         // undo the tee?
         // close resources?
+        // 1/9/23 maybe use runBackend() here?
     }
     public static void main(String[] args) throws FileNotFoundException { typeGTPCommandsAtTheConsole(); }
     public boolean done;

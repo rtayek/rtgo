@@ -38,8 +38,8 @@ public class LoadExistinGameTestCase {
         System.out.println("after: "+whiteModel.role());
         game.startGameThread(); // now it's ok to start game
         Point point=new Point(4,4);
-        // seems to allow duplocate move!
-        Move move=new model.Move.MoveImpl(Stone.white,point);
+        // seems to allow duplicate move!
+        Move move=new model.Move.MoveImpl(Stone.black,point);
         MoveResult moveResult=whiteModel.move(move);
         assertEquals(moveResult,MoveResult.legal);
         System.out.println(blackModel);

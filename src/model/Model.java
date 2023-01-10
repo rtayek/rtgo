@@ -445,6 +445,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         } else Logging.mainLogger.severe(name+" "+"no current node for resign!");
     }
     public boolean check(Role role,Action action) {
+        // dpes this need a "who is asking" boolean?
         if(role.equals(Role.anything)) return true;
         if(role.equals(Role.observer)&&action.equals(Action.navigate)) return true;
         if(action.equals(Action.move)&&turn().equals(role.stone)) return true;
@@ -965,13 +966,13 @@ public class Model extends Observable { // model of a go game or problem forrest
         response=backend.out.toString();
         System.out.println("1 "+response);
         // why am i doing this twice?
-        backend=new GTPBackEnd(command,original);
+        backend=new GTPBackEnd(command,original); // this is a new one?
+        // yes, because unBackend() is a one-shot.
         String response2=backend.runCommands(true);
         System.out.println("2 "+response);
         if(!response.equals(response2)) System.out.println("fail!");
     }
     private static void lookAtRoot() {
-        String s="";
         Model model=new Model();
         model.move(new MoveImpl(Stone.black,new Point()));
         System.out.println("root: "+model.root());

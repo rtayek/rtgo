@@ -20,7 +20,7 @@ public abstract class AbstractGTPDirectTestCase {
     // the commands get run by  the runCommands method.
     // either by just calling run() or starting a thread.
     // in either case. it then waits for done.
-    public static class RunTestCase extends AbstractGTPDirectTestCase {
+    public static class DirectTestCase extends AbstractGTPDirectTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @Override @Before public void setUp() throws Exception { super.setUp(); directJustRun=true; }
         @Override @After public void tearDown() throws Exception { super.tearDown(); }
@@ -30,7 +30,7 @@ public abstract class AbstractGTPDirectTestCase {
         @Override @Before public void setUp() throws Exception { super.setUp(); directJustRun=false; }
         @Override @After public void tearDown() throws Exception { super.tearDown(); }
     }
-    @RunWith(Suite.class) @SuiteClasses({RunTestCase.class,ThreadTestCase.class}) public class GTPDirectTestSuite {
+    @RunWith(Suite.class) @SuiteClasses({DirectTestCase.class,ThreadTestCase.class}) public class GTPDirectTestSuite {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         // eclipse can't find this!
         // this should have been found by grep!
@@ -271,22 +271,47 @@ public abstract class AbstractGTPDirectTestCase {
         return responses;
     }
     // these tests are confusing. fix!
-    @Test public void testPlayTwoMovesDirect() throws Exception {
+    @Test public void testPlayTwoMovesOnTheSamePointDirect() throws Exception {
+        directModel.strict=true; // should fail
         Response[] responses=playTwoMovesOnTheSamePoint(directJustRun);
         assertTrue(responses[0].isOk());
         assertTrue(responses[1].isBad());
         assertTrue(responses[1].response.contains(Failure.illegal_move.toString2()));
     }
+    public static Response[] send(String[] commands,boolean directJustRun,boolean strict) {
+        final Model directModel=new Model("model");
+        directModel.strict=strict;
+        StringBuffer stringBuffer=new StringBuffer();
+        for(String string:commands) stringBuffer.append(string).append('\n');
+        String actual=new GTPBackEnd(stringBuffer.toString(),directModel).runCommands(directJustRun);
+        Response[] responses=Response.responses(actual);
+        return responses;
+    }
     @Test public void testBlackPlayTwoMovesInARowDirectStrict() throws Exception {
         // this should be allowed?
+        // make some like this with combinations of role and strict
+        // seems we need a send 2 commands and check status routine
+        // then make a bunch of tests 4 roles X 2 stricts = 8 tests.
         directModel.strict=true;
-        String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
-        String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
-        Response[] responses=Response.responses(actual);
-        Logging.mainLogger.info(responses.length+" responses.");
-        Logging.mainLogger.info(""+responses);
-        assertTrue(responses[0].isOk());
-        assertTrue(responses[1].isBad());
+        if(true) {
+            String[] commands=new String[] {Command.play.name()+" Black "+"A1"+'\n',
+                    Command.play.name()+" Black A2"+'\n'};
+            Response[] responses=send(commands,directJustRun, directModel.strict);
+            Logging.mainLogger.info(responses.length+" responses.");
+            Logging.mainLogger.info(""+responses);
+            System.out.println(responses[0]);
+            System.out.println(responses[1]);
+            assertTrue(responses[0].isOk());
+            assertTrue(responses[1].isBad());
+        } else {
+            String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
+            String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
+            Response[] responses=Response.responses(actual);
+            Logging.mainLogger.info(responses.length+" responses.");
+            Logging.mainLogger.info(""+responses);
+            assertTrue(responses[0].isOk());
+            assertTrue(responses[1].isBad());
+        }
     }
     @Test public void testBlackPlayTwoMovesInARowDiect() throws Exception {
         // this should be allowed?

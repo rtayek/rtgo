@@ -655,16 +655,16 @@ so in start game:
 	send sgf to client.
 	find the last move on the main line.
 	send a go to node to the client (with the label of the mode).
-in the ckent
-	gets a go to node ans ...
-	does a find ad gets list of ancessters
+in the client
+	gets a go to node and ...
+	does a find ad gets list of ancestors
 	makes each move (the moves will be found and executed
 1/9/23
 working on load existing game file and shove to clients.
 some problems with roles and and allowing some moves like ...
-
- 
-
-
-
-
+maybe have start gtp turn on strict.
+we need a role test case with gtp.
+check for timeouts in test cases. noticed one in testBothGenmoveTrue().
+noticed that there are 2 versions of testBothConnectedGenmoveTrue().
+role test case uses make move and play sound.
+gtp play command currently sets role:=anything before trying to play.

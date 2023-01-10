@@ -11,6 +11,12 @@ public class RoleTestCase {
     // many more cases here.
     // also gtp is supposed to be able to handle consecutive moves by the same player
     // this tests moveAndPlaySound().
+    // 1/9/23 we need different tests for when this comes from gtp
+    // play a legal move when it is your turn
+    // play a legal move when it's not your turn
+    // play on occupied point
+    // play twice in a row
+    // time 4 roles=16 tests?
     @Test public void testPlayBlackWhenRoleIsPlayBlack() {
         model.setRole(Role.playBlack);
         MoveResult ok=model.moveAndPlaySound(Stone.black,new Point());
