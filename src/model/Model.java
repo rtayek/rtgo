@@ -522,7 +522,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                         return MoveResult.notYourTurn;
                     }
                 } else {
-                    Logging.mainLogger.info(name+" "+where+" "+MoveResult.occupied);
+                    Logging.mainLogger.severe(name+" "+where+" "+MoveResult.occupied);
                     return MoveResult.occupied;
                 }
             } else Logging.mainLogger.severe(name+" "+"no current node!");
