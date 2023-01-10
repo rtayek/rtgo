@@ -1,5 +1,6 @@
 package controller;
 import static io.Init.first;
+import static model.MNodeAcceptor.MNodeFinder.labelPredicate;
 import static sgf.HexAscii.*;
 //import static sgf.Parser.getSgfData; // get rid of this!
 import static utilities.Utilities.cat;
@@ -11,9 +12,11 @@ import gui.*;
 import io.*;
 import io.IO.*;
 import model.*;
+import model.MNodeAcceptor.MNodeFinder;
 import model.Model.*;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
+import sgf.MNode;
 // https://www.gnu.org/software/gnugo/gnugo_19.html
 //how to stick into gogui:
 //"C:\Program Files\Java\jdk1.8.0_40\bin\java.exe" -cp bin controller.GTP
@@ -402,8 +405,36 @@ public class GTPBackEnd implements Runnable,Stopable {
                 send(okCharacter,message.id,/* get past the '='*/'\n'+model.toString());
                 break;
             case tgo_goto_node:
-                // go to the specified node
-                // what kind of id or property set do we need?
+                if(message.arguments.length>2) {
+                    Long label=null;
+                    String argument=message.arguments[1];
+                    try {
+                        label=Long.valueOf(argument);
+                    } catch(NumberFormatException e) {
+                        System.out.println(argument+" threw "+e);
+                    }
+                    if(label!=null) {
+                        // go to the specified node
+                        MNode remote=new MNode(null);
+                        remote.label=label;
+                        MNode root=model.root();
+                        MNodeFinder finder=MNodeFinder.find(remote,root,labelPredicate);
+                        System.out.println(finder.ancestors);
+                        System.out.println(finder.found);
+                        if(finder.found!=null) {
+                            model.top(); // go to the root
+                            //List<MNode> x=finder.ancestors;
+                            //x.add(finder.found);
+                            //convert to a list of moves
+                            // may not haave all of the properties
+                            ok=model.goToMNode(finder.found);
+                            if(ok) {
+                                System.out.println("it worked!");
+                                send(okCharacter,message.id,"went to label: "+label);
+                            } else send(badCharacter,message.id,"go to move failed wth label: "+label);
+                        } else send(badCharacter,message.id,"can not find node with label: "+label);
+                    } else send(badCharacter,message.id,Failure.syntax_error);
+                } else send(badCharacter,message.id,"missing argumant(s) for: "+message.command);
                 Logging.mainLogger.severe(message.command+" is not implemented!");
                 send(okCharacter,message.id,"");
                 break;
@@ -421,7 +452,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 send(okCharacter,message.id,sgfString);
                 break;
             default:
-                send(badCharacter,message.id,"unimplemented command "+""); // change
+                send(badCharacter,message.id,"unimplemented command "+message.command); // change
                 // failure
                 break;
         }
