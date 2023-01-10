@@ -13,6 +13,10 @@ import model.MNodeAcceptor.MNodeFinder;
 // txt <- sgf <- mnode <- model
 public class MNode {
     public MNode(MNode parent) { this.parent=parent; hasAMove=hasAMoveType=false; }
+    public MNode(MNode parent,List<SgfProperty> properties) { // just for testing
+        this(parent);
+        this.properties.addAll(properties);
+    }
     public void setFlags() {
         // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
         for(SgfProperty property:properties) {
@@ -20,6 +24,17 @@ public class MNode {
             if(property.p() instanceof sgf.Move) { hasAMoveType=true; }
             if((property.p().equals(P.W)||property.p().equals(P.B))) hasAMove=true;
         }
+    }
+    @Override public int hashCode() {
+        return Objects.hash(properties);
+        // remember to fix this when we move to generics
+    }
+    @Override public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(obj==null) return false;
+        if(getClass()!=obj.getClass()) return false;
+        MNode other=(MNode)obj;
+        return Objects.equals(properties,other.properties);
     }
     boolean checkFlags() {
         boolean ok=true;
@@ -94,6 +109,7 @@ public class MNode {
         for(int i=0;i<n;i++)
             if(finder.ancestors.get(i).equals(targetFinder.ancestors.get(i))) lca=targetFinder.ancestors.get(i);
         // see if the above is really just using ==.
+        // it was, now it uses the properties in equals.
         if(lca!=null) {
             int index=targetFinder.ancestors.indexOf(lca);
             return targetFinder.ancestors.subList(index,targetFinder.ancestors.size());
