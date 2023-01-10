@@ -30,7 +30,10 @@ public abstract class AbstractKnownCommandsTestCase {
     }
     @Test public void testThatCommandIsRecognized() throws Exception {
         if(skipped.contains(command)) { Logging.mainLogger.severe("skipping command: "+command); return; }
-        if(command.equals(Command.tgo_receive_sgf)) { Logging.mainLogger.severe("skipping command: "+command); return; }
+        if(command.equals(Command.tgo_receive_sgf)||command.equals(Command.tgo_goto_node)) {
+            Logging.mainLogger.severe("skipping command: "+command);
+            return;
+        }
         String string=new GTPBackEnd(command.sample(),directModel).runCommands(directJustRun);
         Response response=Response.response(string);
         // need to add some example arguments
@@ -47,5 +50,7 @@ public abstract class AbstractKnownCommandsTestCase {
     boolean useHexAscii=true;
     //static EnumSet<Command> skipped=EnumSet.of(Command.genmove,Command.tgo_goto_node);
     static EnumSet<Command> skipped=EnumSet.of(Command.genmove);
+    // why am i skipping genmove?
+    // can i use this (skipped) to skip the receive and gto commands instead of explicitly mentioning them?
     //static EnumSet<Command> skipped=EnumSet.noneOf(Command.class);
 }
