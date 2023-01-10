@@ -644,36 +644,26 @@ new finder works with labels.
 ancestor list does not contain the target.
 remote client can find target by label and get a path of moves to that label
 client can just make these moves as they will be found.
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-  
-
-
-
-
+maybe use these instead of finder?
+just send a top and send moves to current state to sync client
+getMovesAndPush pushGTPMovesToCurrentStateBoth
+how to let someone drive a review?
+maybe have another socket accepting messages
+1/8/23
+maybe try connect to a game, play one move? like correspondence.
+so in start game:
+	send sgf to client.
+	find the last move on the main line.
+	send a go to node to the client (with the label of the mode).
+in the ckent
+	gets a go to node ans ...
+	does a find ad gets list of ancessters
+	makes each move (the moves will be found and executed
+1/9/23
+working on load existing game file and shove to clients.
+some problems with roles and and allowing some moves like ...
 
  
-
-                                                                             
-
-
-
-
-
-
 
 
 

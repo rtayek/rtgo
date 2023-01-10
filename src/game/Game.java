@@ -25,8 +25,7 @@ public class Game {
         game.whiteFixture.setupBackEnd(holders.second.back,game.whiteName(),game.id);
         return game;
     }
-    public static void loadExistinGame(Model recorder,GameFixture game) {
-        File file=new File("serverGames/game1.sgf");
+    public static void loadExistinGame(File file,Model recorder,GameFixture game) {
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
         recorder.restore(IO.toReader(file));
         StringWriter stringWriter=new StringWriter();
@@ -35,22 +34,15 @@ public class Game {
         System.out.println("sending sgf: "+sgf);
         if(true) sgf=HexAscii.encode(sgf.getBytes());
         String fromCommand=Command.tgo_receive_sgf.name()+" "+sgf;
-        Response response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
+        Response response=game.recorderFixture.frontEnd.sendAndReceive(fromCommand);
+        if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
+        System.out.println("sent sgf to black: "+sgf);
+        response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
         System.out.println("sent sgf to black: "+sgf);
         response=game.whiteFixture.frontEnd.sendAndReceive(fromCommand);
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
         System.out.println("sent sgf to white: "+sgf);
-        // go to the end of the main line!
-        String bottomCommand=Command.tgo_bottom.name();
-        response=game.recorderFixture.frontEnd.sendAndReceive(bottomCommand);
-        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
-        response=game.blackFixture.frontEnd.sendAndReceive(bottomCommand);
-        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
-        response=game.whiteFixture.frontEnd.sendAndReceive(bottomCommand);
-        if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
-        // how do we go to a particular position?
-        // how do we let one person drive this?
     }
     public static void run(int port) throws Exception {
         GameFixture game=Game.setUpStandaloneLocalGame(port);
