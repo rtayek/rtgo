@@ -75,16 +75,17 @@ public interface MNodeAcceptor {
     public static class MNodeFinder implements MNodeAcceptor {
         // seems like this is only used for least common ancestor
         MNodeFinder(MNode target,BiPredicate<MNode,MNode> predicate) { this.target=target; this.predicate=predicate; }
-        MNodeFinder(MNode target) { this.target=target; }
+        MNodeFinder(MNode target) { this(target,equalsPredicate); }
         @Override public void accept(MNode node,Traverser traverser) {
             if(node!=null) {
-                //if(node.equals(target)) // use a predicate?
-                if(predicate.test(node,target)) if(found==null) { //just the first one
-                    found=node;
-                    ancestors.addAll(traverser.stack);
-                    // ancestors.add(node); // add in the target!
-                    // why aren't we adding in the target
-                } else Logging.mainLogger.warning(""+" "+"found another: "+found+" "+node);
+                if(equalsPredicate.test(node,target))
+                    //if(labelPredicate.test(node,target))
+                    if(found==null) { //just the first one
+                        found=node;
+                        ancestors.addAll(traverser.stack);
+                        // ancestors.add(node); // add in the target!
+                        // why aren't we adding in the target
+                    } else Logging.mainLogger.warning(""+" "+"found another: "+found+" "+node);
             } else System.out.println("in accept node is null!");
         }
         static MNodeFinder find(MNode target,MNode games,MNodeFinder finder) {
@@ -102,9 +103,11 @@ public interface MNodeAcceptor {
             MNodeFinder finder=new MNodeFinder(target);
             return find(target,games,finder);
         }
-        BiPredicate<MNode,MNode> predicate=(x,y)->x.equals(y);
+        BiPredicate<MNode,MNode> predicate=equalsPredicate;
         final MNode target;
         public final List<MNode> ancestors=new ArrayList<>();
         public MNode found;
+        public static BiPredicate<MNode,MNode> equalsPredicate=(x,y)->x.equals(y);
+        public static BiPredicate<MNode,MNode> labelPredicate=(x,y)->x.label.equals(y.label);
     }
 }
