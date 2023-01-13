@@ -3,6 +3,7 @@ import static org.junit.Assert.assertEquals;
 import java.awt.geom.Point2D;
 import org.junit.*;
 import io.Logging;
+import model.Model;
 import utilities.MyTestWatcher;
 public class CoordinateSystemTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -116,12 +117,15 @@ public class CoordinateSystemTestCase {
         assertEquals(expected,actual);
     }
     @Test public void testBigBoard() {
-        int n=52;
+        int n=Model.LargestBoardSize;
         Board board=new BoardImpl(n,0);
-        Point expected=new Point(n-1,n-1);
-        String string=Coordinates.toSgfCoordinates(expected,board.depth());
-        Point actual=Coordinates.fromSgfCoordinates(string,board.depth());
-        assertEquals(expected,actual);
+        for(int i=0;i<n;++i)
+            for(int j=0;j<n;++j) {
+                Point expected=new Point(i,j);
+                String string=Coordinates.toSgfCoordinates(expected,board.depth());
+                Point actual=Coordinates.fromSgfCoordinates(string,board.depth());
+                assertEquals(expected,actual);
+            }
     }
     Board board=new BoardImpl(Board.standard,0);
     static double epsilon=1e-9;

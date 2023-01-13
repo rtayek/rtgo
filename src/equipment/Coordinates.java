@@ -44,15 +44,22 @@ public class Coordinates {
             throw new RuntimeException("number out of range: "+number);
         return new Point(letter-'a',number-1);
     }
-    public static String toSgfCoordinates(Point board,int depth) {
+    public static String toSgfCoordinates(Point point,int depth) {
         // allow "A-Z" and add test
         // this does not check to see if the coordinates are legit like to GTP
-        return ""+(char)('a'+board.x)+""+(char)('a'+depth-1-board.y);
+        char cx=(char)('a'+point.x);
+        if(cx>'z') cx+=factor;
+        char cy=(char)('a'+depth-1-point.y);
+        if(cy>'z') cy+=factor;
+        return ""+cx+""+cy;
+        // return ""+(char)('a'+board.x)+""+(char)('a'+depth-1-board.y);
     }
     public static Point fromSgfCoordinates(String string,int depth) {
         // allow "A-Z" and add test
         if(string.length()!=2) throw new RuntimeException();
         char x=string.charAt(0),y=string.charAt(1);
+        if(x<'a') x-=factor;
+        if(y<'a') y-=factor;
         Point point=new Point(x-'a','a'+depth-1-y);
         return point;
     }
@@ -77,4 +84,5 @@ public class Coordinates {
         System.out.println(
                 "so lower left corner is: "+point+" (board),  "+noI+" (gtp), "+sgf+" (sgf), "+screen+" (screen)");
     }
+    public static final byte factor='A'-'a'-26;
 }
