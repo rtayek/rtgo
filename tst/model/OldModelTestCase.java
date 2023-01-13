@@ -211,7 +211,7 @@ public class OldModelTestCase {
         assertEquals(expected,actual);
     }
     @Test public void testSquares() {
-        for(int width=3;width<=Model.maxN;width++) for(int depth=3;depth<=Model.maxN;depth++) {
+        for(int width=3;width<=Model.LargestBoardSize;width++) for(int depth=3;depth<=Model.LargestBoardSize;depth++) {
             Board board=Board.factory.create(width,depth,Topology.normal);
             List<Point> points=Board.squares(1,width,depth);
             for(Point point:points) assertTrue(board.isOnBoard(point));

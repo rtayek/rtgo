@@ -549,15 +549,18 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     void do_(MNode node) { // set node and execute the sgf
         state.node=node;
-        try {
-            if(node!=null) {//
-                for(int i=0;i<node.properties.size();i++) { processProperty(node.properties.get(i)); }
-            } else Logging.mainLogger.warning(name+" "+"do with null!");
-            setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
-        } catch(Exception e) {
-            Logging.mainLogger.severe(name+" caught: "+e);
-            setChangedAndNotify(new Event.Hint(Event.exception,"do"));
-        }
+        if(node!=null) {//
+            for(int i=0;i<node.properties.size();i++) {
+                try {
+                    processProperty(node.properties.get(i));
+                } catch(Exception e) {
+                    Logging.mainLogger.severe(name+"1 caught: "+e);
+                    IO.stackTrace(10);
+                    setChangedAndNotify(new Event.Hint(Event.exception,"do"));
+                }
+            }
+        } else Logging.mainLogger.warning(name+" "+"do with null!");
+        setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
     }
     void push() { // see if we can eliminate copying the board
         Board copy=board()!=null?board().copy():null;
@@ -798,9 +801,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             while(currentNode()!=ancester) {
                 if(!Navigate.up.canDo(this)) { System.out.println("can't do up!"); }
                 if(Navigate.up.canDo(this)) up();
-                if(!Navigate.up.canDo(this)) {
-                    return false;
-                }
+                if(!Navigate.up.canDo(this)) { return false; }
             }
             // equals here is ==.
             // maybe i need a real equals bases on id?
@@ -1065,6 +1066,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                 }
                 model.strict=true;
                 // add some more constants?
+                // we did under roles.
                 return true;
             } else Logging.mainLogger.warning(model.name+" "+"connection failed!");
         } else Logging.mainLogger.warning(model.name+" "+"connection failed!");
@@ -1266,15 +1268,15 @@ public class Model extends Observable { // model of a go game or problem forrest
     public static final String defaultSgfVersion="1";
     public static final String version="0.1"; // internal i guess
     public static final int sgfGoGame=1;
-    public static final int maxN=25;
+    public static final int LargestBoardSize=25;
     public static final double epsilon=Math.sqrt(2)*.49;
     public static final String black="black",white="white"; // use black.name()?
-    static final long[][] randomBlack=new long[maxN][maxN];
-    static final long[][] randomWhite=new long[maxN][maxN];
+    static final long[][] randomBlack=new long[LargestBoardSize][LargestBoardSize];
+    static final long[][] randomWhite=new long[LargestBoardSize][LargestBoardSize];
     Random random=new Random();
     static { // https://chessprogramming.wikispaces.com/Transposition+Table#KeyCollisions
         Random random=new Random();
-        for(int i=0;i<maxN;i++) for(int j=0;j<maxN;j++) {
+        for(int i=0;i<LargestBoardSize;i++) for(int j=0;j<LargestBoardSize;j++) {
             randomBlack[i][j]=random.nextLong();
             randomWhite[i][j]=random.nextLong();
         }

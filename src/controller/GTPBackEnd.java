@@ -282,7 +282,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                     } catch(NumberFormatException e) {
                         send(badCharacter,message.id,Failure.syntax_error);
                     }
-                    if(1<=n&&n<=Model.maxN) {
+                    if(1<=n&&n<=Model.LargestBoardSize) {
                         // maybe model should not be doing a set root here?
                         // maybe just a set board?
                         if(true) {

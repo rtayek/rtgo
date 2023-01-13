@@ -16,7 +16,7 @@ public class RoleTestCase {
     // play a legal move when it's not your turn
     // play on occupied point
     // play twice in a row
-    // time 4 roles=16 tests?
+    // times 4 roles=16 tests?
     @Test public void testPlayBlackWhenRoleIsPlayBlack() {
         model.setRole(Role.playBlack);
         MoveResult ok=model.moveAndPlaySound(Stone.black,new Point());

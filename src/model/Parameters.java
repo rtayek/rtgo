@@ -90,7 +90,7 @@ public enum Parameters { // properties
     public static final List<Integer> bands=Collections
             .unmodifiableList(Arrays.asList(new Integer[] {0,1,2,3,4,5,6,7}));
     public static final List<Integer> sizes=Collections
-            .unmodifiableList(Arrays.asList(new Integer[] {5,7,9,11,13,15,17,19,21,23,25,37}));
+            .unmodifiableList(Arrays.asList(new Integer[] {1,2,3,5,7,9,11,13,15,17,19,21,23,25,37,51}));
     public static final List<Topology> topologies=Collections.unmodifiableList(Arrays.asList(Topology.values()));
     public static final List<Shape> shapes=Collections.unmodifiableList(Arrays.asList(Shape.values()));
     public static final List<Role> roles=Collections.unmodifiableList(Arrays.asList(Role.values()));

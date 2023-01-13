@@ -670,4 +670,6 @@ role test case uses make move and play sound.
 gtp play command currently sets role:=anything before trying to play.
 1/13/23
 allowing board sizes up to 52.
+this breaks gtp in: state.sgfMakeMove(color,point);
+ AbstractGTPDirectTestCase  needs some tests for large boards.
 
