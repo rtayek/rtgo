@@ -384,8 +384,10 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
     }
     boolean checkParity() {
+        if(true) return true;
         // this is going break if we try to make consecutive moves by the same player.
         boolean ok=turn()==Stone.black&&moves()%2==0||turn()==Stone.white&&moves()%2==1;
+        // it also won't work if we have handicap stones?
         return ok;
     }
     public int playOneMove(Move move) {
@@ -502,15 +504,16 @@ public class Model extends Observable { // model of a go game or problem forrest
             if(currentNode()!=null) {
                 Where where=Where.isPoint(board(),band(),null,point);
                 if(where.equals(Model.Where.onVacant)) {
-                    if(!strict||color.equals(turn())) {
+                    if(color.equals(turn())||role.equals(Role.anything)) {
                         MNode child=new MNode(currentNode());
                         P p=color==Stone.black?P.B:P.W;
                         String sgfCoordinates=Coordinates.toSgfCoordinates(point,board().depth());
                         addChildWithOneProperty(child,p,sgfCoordinates);
                         down(currentNode().children.size()-1); // might be a variation
                         if(!isduplicateHash()) {
-                            if(!strict||!color.equals(turn())) return MoveResult.legal; // move was made so turn changed!
-                            else return MoveResult.notYourTurn;
+                            //if(/*!strict||!*/color.equals(turn())) return MoveResult.legal; // move was made so turn changed!
+                            //else return MoveResult.notYourTurn;
+                            return MoveResult.legal;
                         } else {
                             Logging.mainLogger.info(name+" "+"duplicate hash!");
                             delete();
@@ -1047,7 +1050,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             model.gtp.stop();
             model.gtp=null;
             model.setRole(Role.anything);
-            model.strict=false; // or deafult value
+            //model.strict=false; // or deafult value
             return true;
         } else Logging.mainLogger.severe(model.name+" "+"disconnect when not connected!");
         return false;
@@ -1064,7 +1067,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     Logging.mainLogger.severe("3 startGTP returns null!");
                     throw new RuntimeException("3 can not run backend!");
                 }
-                model.strict=true;
+                //model.strict=true;
                 // add some more constants?
                 // we did under roles.
                 return true;
@@ -1284,7 +1287,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     // what was: 76.171.113.153 as host?
     Et modelEt=new Et();
     public Histogram histogram=new Histogram(10,0,10);
-    public boolean strict=false;
+    //public boolean strict=false;
     public transient long gameId; // temporary
     public final long id=++ids;
     public boolean stopWaiting=false;

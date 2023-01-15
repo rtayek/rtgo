@@ -13,6 +13,8 @@ import model.*;
 import sgf.HexAscii;
 import utilities.MyTestWatcher;
 //@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+// some of these need to be done directly in the model.
+// as well as b the bac end when we have role=something!
 public abstract class AbstractGTPDirectTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // these create a back end with a buffered string reader passed to it.
@@ -215,6 +217,7 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testGtpPlayBlackA1() throws Exception {
         String response=new GTPBackEnd("play black A1",directModel).runCommands(directJustRun);
         Response actual=Response.response(response);
+        System.out.println(response);
         assertTrue(actual.isOk());
         assertEquals(Stone.black,directModel.board().at(0,0));
         // traverse model and shove from front end?
@@ -251,6 +254,7 @@ public abstract class AbstractGTPDirectTestCase {
         System.out.println("directJustRun: "+directJustRun);
         Point point=new Point(0,0);
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
+        System.out.println("noI: "+noI);
         String commands=Command.play.name()+" Black "+noI+'\n'+Command.play.name()+" White A1"+'\n';
         // this has 2 commands
         String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
@@ -272,7 +276,7 @@ public abstract class AbstractGTPDirectTestCase {
     }
     // these tests are confusing. fix!
     @Test public void testPlayTwoMovesOnTheSamePointDirect() throws Exception {
-        directModel.strict=true; // should fail
+        //directModel.strict=true; // should fail
         Response[] responses=playTwoMovesOnTheSamePoint(directJustRun);
         assertTrue(responses[0].isOk());
         assertTrue(responses[1].isBad());
@@ -280,7 +284,7 @@ public abstract class AbstractGTPDirectTestCase {
     }
     public static Response[] send(String[] commands,boolean directJustRun,boolean strict) {
         final Model directModel=new Model("model");
-        directModel.strict=strict;
+        //directModel.strict=strict;
         StringBuffer stringBuffer=new StringBuffer();
         for(String string:commands) stringBuffer.append(string).append('\n');
         String actual=new GTPBackEnd(stringBuffer.toString(),directModel).runCommands(directJustRun);
@@ -292,11 +296,11 @@ public abstract class AbstractGTPDirectTestCase {
         // make some like this with combinations of role and strict
         // seems we need a send 2 commands and check status routine
         // then make a bunch of tests 4 roles X 2 stricts = 8 tests.
-        directModel.strict=true;
+        //directModel.strict=true;
         if(true) {
             String[] commands=new String[] {Command.play.name()+" Black "+"A1"+'\n',
                     Command.play.name()+" Black A2"+'\n'};
-            Response[] responses=send(commands,directJustRun, directModel.strict);
+            Response[] responses=send(commands,directJustRun, false /*directModel.strict*/);
             Logging.mainLogger.info(responses.length+" responses.");
             Logging.mainLogger.info(""+responses);
             System.out.println(responses[0]);
@@ -306,6 +310,7 @@ public abstract class AbstractGTPDirectTestCase {
         } else {
             String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
             String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
+            // was there some reason i needed access to the model?
             Response[] responses=Response.responses(actual);
             Logging.mainLogger.info(responses.length+" responses.");
             Logging.mainLogger.info(""+responses);
@@ -315,14 +320,14 @@ public abstract class AbstractGTPDirectTestCase {
     }
     @Test public void testBlackPlayTwoMovesInARowDiect() throws Exception {
         // this should be allowed?
-        directModel.strict=false;
+        //directModel.strict=false;
         String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
         String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
         Response[] responses=Response.responses(actual);
         Logging.mainLogger.info(responses.length+" responses.");
         Logging.mainLogger.info(""+responses);
         assertTrue(responses[0].isOk());
-        assertTrue(responses[1].isOk());
+        assertFalse(responses[1].isOk());
     }
     @Test public void testUndo() throws Exception {
         Point point=new Point(0,0);

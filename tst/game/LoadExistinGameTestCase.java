@@ -28,7 +28,7 @@ public class LoadExistinGameTestCase {
         // how do we let one person drive this?
         assertTrue(game.areBoardsEqual());
         Logging.setLevels(Level.ALL);
-        blackModel.strict=true;
+        //blackModel.strict=true;
         Model whiteModel=game.whiteFixture.backEnd.model;
         System.out.println("before: "+whiteModel.role());
         String whiteCommand=Command.tgo_white.name();

@@ -4,7 +4,7 @@ import java.util.List;
 import org.junit.*;
 import equipment.*;
 import io.Logging;
-import model.Model.MoveResult;
+import model.Model.*;
 import utilities.MyTestWatcher;
 public class MoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -31,21 +31,15 @@ public class MoveTestCase {
     }
     @Test public void testThatWeCanMakeAWhiteMoveOnANewModel() { // ???
         Model model=new Model();
-        model.strict=false;
         MoveResult ok=model.move(Stone.white,new Point());
-        System.out.println(model);
-        System.out.println(model.strict);
-        System.out.println(ok);
+        model.role=Role.anything;
         assertEquals(MoveResult.legal,ok);
     }
     // these need to be tested with gtp also.
     @Test public void testThatWeCanNotMakeAWhiteMoveOnANewModel() { // ???
         Model model=new Model();
-        model.strict=true;
+        model.role=Role.playBlack;
         MoveResult ok=model.move(Stone.white,new Point());
-        //System.out.println(model);
-        //System.out.println(model.strict);
-        //System.out.println(ok);
         assertNotEquals(MoveResult.legal,ok);
     }
     @Test public void testMovesToCurrentState0() throws Exception {

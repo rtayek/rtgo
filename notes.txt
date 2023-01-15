@@ -671,5 +671,16 @@ gtp play command currently sets role:=anything before trying to play.
 1/13/23
 allowing board sizes up to 52.
 this breaks gtp in: state.sgfMakeMove(color,point);
- AbstractGTPDirectTestCase  needs some tests for large boards.
+AbstractGTPDirectTestCase  needs some tests for large boards.
+1/14/23
+think about a gui for katago? eigen without awx2
+maybe gtp should have it's own logger?
+removed strict. one or two tests failed.
+seems like we are better off having strict removed.
+mayb need a separate test case for role some move case.
+like move when it's not your turn. 
+are there any more?
+ 
+ 
+ 
 

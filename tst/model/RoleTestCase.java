@@ -33,15 +33,21 @@ public class RoleTestCase {
         MoveResult ok=model.moveAndPlaySound(Stone.white,new Point(1,1));
         assertEquals(MoveResult.legal,ok);
     }
-    @Test public void testPlayWhiteWhenRoleIsNotPlayWhite() {
+    @Test public void testPlayWhiteWhenRoleIsNotPlayBlack() {
         model.move(Stone.black,new Point());
         model.setRole(Role.playBlack);
         MoveResult ok=model.moveAndPlaySound(Stone.white,new Point(1,1));
         assertNotEquals(MoveResult.legal,ok);
     }
+    @Test public void testCanNotPlayBlackWhenRoleIsObserver() {
+        model.setRole(Role.observer);
+        MoveResult ok=model.moveAndPlaySound(Stone.black,new Point(1,1));
+        assertNotEquals(MoveResult.legal,ok);
+    }
     @Test public void testCanNotPlayWhiteWhenRoleIsObserver() {
         model.setRole(Role.observer);
         MoveResult ok=model.moveAndPlaySound(Stone.white,new Point(1,1));
+        // should fail because it's not white's turn.
         assertNotEquals(MoveResult.legal,ok);
     }
     final Model model=new Model(); // does this need a setRoot()?

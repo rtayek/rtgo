@@ -331,7 +331,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                     if(color.equalsIgnoreCase(Model.black)||color.equalsIgnoreCase("b")) who=Stone.black;
                     if(color.equalsIgnoreCase(Model.white)||color.equalsIgnoreCase("w")) who=Stone.white;
                     if(who!=null) {
-                        if(!model.strict||who.equals(model.turn())) { // may not be needed?
+                        if(/*!model.strict||*/who.equals(model.turn())) { // may not be needed?
                             String moveString=message.arguments[2];
                             Move move=Move.fromGTP(who,moveString,model.board().width(),model.board().depth());
                             Role old=model.role();
@@ -343,7 +343,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                                     send(okCharacter,message.id,"");
                                     break;
                                 case notYourTurn:
-                                    if(!model.strict) {
+                                    if(false/*!model.strict*/) {
                                         send(okCharacter,message.id,"");
                                     } else {
                                         send(badCharacter,message.id,Failure.illegal_move);
