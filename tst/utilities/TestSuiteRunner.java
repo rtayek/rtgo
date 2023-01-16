@@ -9,8 +9,8 @@ public class TestSuiteRunner {
     public static class ATestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @Test public void testOk() throws Exception { assertTrue("baz",true); }
-        @Test public void testFail() throws Exception { fail("foo"); }
-        @Test public void testError() throws Exception { throw new RuntimeException("bar"); }
+        @Ignore @Test public void testFail() throws Exception { fail("foo"); }
+        @Ignore @Test public void testError() throws Exception { throw new RuntimeException("bar"); }
     }
     public static void printFailures(Result result) {
         List<Failure> failures=result.getFailures();

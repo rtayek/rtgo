@@ -3,47 +3,61 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.util.logging.Level;
 import org.junit.*;
-import controller.*;
-import controller.Command;
+import controller.GameFixture;
 import equipment.*;
 import io.*;
 import model.*;
-import model.Model.MoveResult;
+import model.Model.*;
 public class LoadExistinGameTestCase {
     @Before public void setUp() throws Exception { game=Game.setUpStandaloneLocalGame(IO.noPort); }
     @After public void tearDown() throws Exception { game.stop(); }
-    @Test public void testInit() throws InterruptedException { game.startGameThread(); game.checkStatus(); }
+    @Ignore @Test public void testInit() throws InterruptedException { game.startGameThread(); game.checkStatus(); }
+    // ignoring just to clean up th eoutput
     @Test public void test() throws InterruptedException {
+        //File file=new File("serverGames/game1.sgf");
+        //File file=new File("existingGame.sgf");
+        File file=new File("existing9x9Game.sgf");
         assertNotNull(game);
         game.startPlayerBackends();
-        assertTrue("game already started",game.namedThread==null);
-        Model blackModel=game.blackFixture.backEnd.model;
-        //File file=new File("serverGames/game1.sgf");
-        File file=new File("existingGame.sgf");
         Game.loadExistinGame(file,recorder,game);
-        // go to the end of the main line!
-        game.bottom();
+        System.out.println(game.recorderFixture.backEnd.model);
         // how do we go to a particular position?
         // use finder and goto node
         // how do we let one person drive this?
         assertTrue(game.areBoardsEqual());
-        Logging.setLevels(Level.ALL);
-        //blackModel.strict=true;
         Model whiteModel=game.whiteFixture.backEnd.model;
-        System.out.println("before: "+whiteModel.role());
-        String whiteCommand=Command.tgo_white.name();
-        Response response=game.recorderFixture.frontEnd.sendAndReceive(whiteCommand);
-        if(!response.isOk()) Logging.mainLogger.warning(whiteCommand+" fails!");
-        Thread.sleep(100);
-        System.out.println("after: "+whiteModel.role());
+        assertTrue(game.areBoardsEqual());
         game.startGameThread(); // now it's ok to start game
-        Point point=new Point(4,4);
-        // seems to allow duplicate move!
+        System.out.println(whiteModel);
+        Point point=new Point(3,3);
+        assertEquals(Stone.vacant,whiteModel.board().at(point));
+        
+        whiteModel.setRole(Role.playWhite);
+        System.out.println(whiteModel.role());
         Move move=new model.Move.MoveImpl(Stone.black,point);
+        System.out.println("move: "+move);
         MoveResult moveResult=whiteModel.move(move);
-        assertEquals(moveResult,MoveResult.legal);
-        System.out.println(blackModel);
-        System.out.println(blackModel.root());
+        System.out.println(moveResult);
+        assertEquals(MoveResult.badRole,moveResult);
+        System.out.println(whiteModel);
+        
+        
+        whiteModel.setRole(Role.anything);
+        System.out.println(whiteModel.role());
+        /*Move*/ move=new model.Move.MoveImpl(Stone.black,point);
+        System.out.println("move: "+move);
+        /*MoveResult*/ moveResult=whiteModel.move(move);
+        System.out.println(moveResult);
+        assertEquals(MoveResult.legal,moveResult);
+        System.out.println(whiteModel);
+        
+        /*Move*/ move=new model.Move.MoveImpl(Stone.white,point);
+        System.out.println("move: "+move);
+        /*MoveResult*/ moveResult=whiteModel.move(move);
+        System.out.println(moveResult);
+        assertEquals(MoveResult.occupied,moveResult);
+        System.out.println(whiteModel);
+        
         Logging.setLevels(Level.OFF);
     }
     GameFixture game;

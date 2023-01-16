@@ -51,7 +51,6 @@ public class GTPBackEnd implements Runnable,Stopable {
             return null;
         } else {
             (namedThread=NamedThreadGroup.createNamedThread(id,this,model.name)).start();
-            System.out.println("start gtp thread: "+namedThread);
             Logging.mainLogger.info("start gtp thread: "+namedThread);
             return namedThread;
         }
@@ -147,7 +146,6 @@ public class GTPBackEnd implements Runnable,Stopable {
         Logging.mainLogger.info(model.name+" exit genmove() at "+first.et);
     }
     private boolean processCommand(String string) {
-        Logging.mainLogger.severe("1: "+string);
         if(isWaitingForMove()) Logging.mainLogger.severe(model.name+" waiting for move!.");
         String stripped=Message.strip(string);
         if(stripped==null||stripped.isEmpty()) return true;
@@ -298,7 +296,6 @@ public class GTPBackEnd implements Runnable,Stopable {
                 break;
             case clear_board:
                 if(model.board()==null) {
-                    System.out.println("board is null in clear board");
                     int width=model.state().widthFromSgf;
                     int depth=model.state().depthFromSgf;
                     Board board=Board.factory.create(width,depth,model.boardTopology(),model.boardShape());
@@ -442,9 +439,9 @@ public class GTPBackEnd implements Runnable,Stopable {
                 break;
             case tgo_receive_sgf:
                 String sgfString=message.arguments[1];
-                Logging.mainLogger.warning("received encoded sgf: "+sgfString);
+                Logging.mainLogger.config("received encoded sgf: "+sgfString);
                 if(useHexAscii) sgfString=decodeToString(sgfString);
-                Logging.mainLogger.warning("decoded sgf: "+sgfString);
+                Logging.mainLogger.config("decoded sgf: "+sgfString);
                 model.restore(new StringReader(sgfString));
                 ok=send(okCharacter,message.id,"");
                 break;

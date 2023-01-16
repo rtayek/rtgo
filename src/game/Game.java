@@ -26,28 +26,26 @@ public class Game {
         return game;
     }
     public static void loadExistinGame(File file,Model recorder,GameFixture game) {
+        if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
         recorder.restore(IO.toReader(file));
         StringWriter stringWriter=new StringWriter();
         recorder.save(stringWriter);
         String sgf=stringWriter.toString();
-        System.out.println("sending sgf: "+sgf);
         if(true) sgf=HexAscii.encode(sgf.getBytes());
         String fromCommand=Command.tgo_receive_sgf.name()+" "+sgf;
         Response response=game.recorderFixture.frontEnd.sendAndReceive(fromCommand);
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
-        System.out.println("sent sgf to black: "+sgf);
         response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
-        System.out.println("sent sgf to black: "+sgf);
         response=game.whiteFixture.frontEnd.sendAndReceive(fromCommand);
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
-        System.out.println("sent sgf to white: "+sgf);
+        game.bottom();
     }
     public static void run(int port) throws Exception {
         GameFixture game=Game.setUpStandaloneLocalGame(port);
         game.startGameThread();
-        GameFixture.playSillyGame(game,1);
+        GameFixture.playSillyGame(game,100);
         game.stop();
         //GTPBackEnd.sleep2(GTPBackEnd.yield);
         NamedThreadGroup.printThraedsAtEnd();

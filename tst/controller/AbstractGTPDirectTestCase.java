@@ -276,15 +276,13 @@ public abstract class AbstractGTPDirectTestCase {
     }
     // these tests are confusing. fix!
     @Test public void testPlayTwoMovesOnTheSamePointDirect() throws Exception {
-        //directModel.strict=true; // should fail
         Response[] responses=playTwoMovesOnTheSamePoint(directJustRun);
         assertTrue(responses[0].isOk());
         assertTrue(responses[1].isBad());
         assertTrue(responses[1].response.contains(Failure.illegal_move.toString2()));
     }
-    public static Response[] send(String[] commands,boolean directJustRun,boolean strict) {
+    public static Response[] send(String[] commands,boolean directJustRun) {
         final Model directModel=new Model("model");
-        //directModel.strict=strict;
         StringBuffer stringBuffer=new StringBuffer();
         for(String string:commands) stringBuffer.append(string).append('\n');
         String actual=new GTPBackEnd(stringBuffer.toString(),directModel).runCommands(directJustRun);
@@ -296,11 +294,10 @@ public abstract class AbstractGTPDirectTestCase {
         // make some like this with combinations of role and strict
         // seems we need a send 2 commands and check status routine
         // then make a bunch of tests 4 roles X 2 stricts = 8 tests.
-        //directModel.strict=true;
         if(true) {
             String[] commands=new String[] {Command.play.name()+" Black "+"A1"+'\n',
                     Command.play.name()+" Black A2"+'\n'};
-            Response[] responses=send(commands,directJustRun, false /*directModel.strict*/);
+            Response[] responses=send(commands,directJustRun);
             Logging.mainLogger.info(responses.length+" responses.");
             Logging.mainLogger.info(""+responses);
             System.out.println(responses[0]);
@@ -320,7 +317,6 @@ public abstract class AbstractGTPDirectTestCase {
     }
     @Test public void testBlackPlayTwoMovesInARowDiect() throws Exception {
         // this should be allowed?
-        //directModel.strict=false;
         String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
         String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
         Response[] responses=Response.responses(actual);

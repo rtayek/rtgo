@@ -13,7 +13,7 @@ public class EastPanels {
             // but do it later when the dust settles.
             @Override public void enableAll(Mediator mediator) {
                 Model model=mediator.model;
-                if(model.board()==null) Logging.mainLogger.severe("board is null!");
+                if(model.board()==null) Logging.mainLogger.config("board is null!");
                 else {
                     boolean isTorus=model.board().topology().equals(Board.Topology.torus);
                     scroll.enableButton(isTorus); // uses instance variable
@@ -100,7 +100,7 @@ public class EastPanels {
             public static void oldSouthPanelenableAll(Mediator mediator) {
                 // this code works in south panel
                 Model model=mediator.model;
-                if(model.board()==null) Logging.mainLogger.severe("board is null!");
+                if(model.board()==null) Logging.mainLogger.config("board is null!");
                 else {
                     boolean isTorus=model.board().topology().equals(Board.Topology.torus);
                     scroll.abstractButton.enable(isTorus);

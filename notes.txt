@@ -677,9 +677,14 @@ think about a gui for katago? eigen without awx2
 maybe gtp should have it's own logger?
 removed strict. one or two tests failed.
 seems like we are better off having strict removed.
-mayb need a separate test case for role some move case.
+maybe need a separate test case for role in some move cases.
 like move when it's not your turn. 
 are there any more?
+maybe take ko back or self capture?
+ignoring 2 tests in some suite so the only failing tests are the tee/logger tests.
+making black and white fixtures not public breaks a lot of code.
+maybe move game tests to game fixture?
+
  
  
  

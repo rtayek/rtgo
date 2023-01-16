@@ -99,16 +99,16 @@ public class GamePanel extends JPanel {
         for(MNode child:node.children) for(SgfProperty property:child.properties)
             if(mediator.model.turn().equals(Stone.black)&&property.p().equals(P.B)
                     ||mediator.model.turn().equals(Stone.white)&&property.p().equals(P.W)) {
-                        System.out.println("found child move property: "+property);
-                        if(property.list().get(0).equals(target)) { // assume
-                            // first
-                            // and
-                            // only?
-                            System.out.println("found move! "+property);
-                            found=child;
-                            break;
-                        }
-                    }
+                System.out.println("found child move property: "+property);
+                if(property.list().get(0).equals(target)) { // assume
+                    // first
+                    // and
+                    // only?
+                    System.out.println("found move! "+property);
+                    found=child;
+                    break;
+                }
+            }
         return found;
     }
     void processClick(MouseEvent e) {
@@ -207,7 +207,7 @@ public class GamePanel extends JPanel {
     void initialize(double boardHeightInPixels) {
         board=mediator.model.board(); // maybe the board should be a parameter?
         if(board==null) { Logging.mainLogger.warning("board is null!"); return; }
-        Logging.mainLogger.fine("board type is: "+board.topology()+", band: "+mediator.model.band());
+        Logging.mainLogger.config("board type is: "+board.topology()+", band: "+mediator.model.band());
         lines.clear();
         // fix this so it paints in a sane manner if the board is null!
         boardDepth=(int)Math.round(boardHeightInPixels);
@@ -263,7 +263,7 @@ public class GamePanel extends JPanel {
                 break;
             default:
                 throw new RuntimeException("bad ropology");
-            //break;
+                //break;
         }
         black=blackStone(dx,dy,getBackground());
         white=whiteStone(dx,dy,getBackground());

@@ -131,16 +131,21 @@ public class Model extends Observable { // model of a go game or problem forrest
         return state.root;
     }
     public void setRoot(MNode root) { // this always gets called.
-        if(root==null) { Logging.mainLogger.severe("root is null!: "); return; }
+        if(root==null) {
+            Logging.mainLogger.config("root is null!: ");
+            // should i do a set root here?
+            setRoot();
+            return;
+        }
         // return root so Model m=new Model().setRoot(root)?
         // looks like we keep the whole tree (forrest?)
         if(board()!=null) {
-            Logging.mainLogger.severe(name+" "+"1 board is not null in setRoot()!");
+            Logging.mainLogger.config(name+" "+"1 board is not null in setRoot()!");
             // Logging.logger.fine(name+" "+"setting board to null in
             // setRoot()");
             // setBoard(null); // maybe this is a good idea?
             // how to deal with null cases?
-        } else Logging.mainLogger.severe(name+" "+"2 board is null in setRoot()!");
+        } else Logging.mainLogger.config(name+" "+"2 board is null in setRoot()!");
         stack.clear();
         state=new State();
         state.root=root;
@@ -197,7 +202,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void setRoot(int width,int depth) { setRoot(width,depth,Board.Topology.normal,Shape.normal); }
     public void setRoot(int width,int depth,Board.Topology topology,Board.Shape shape) {
         // where is the board constructed?
-        Logging.mainLogger.warning("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
+        Logging.mainLogger.config("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
         //IO.stackTrace(10);
         MNode newRoot=new MNode(null);
         addProperty(newRoot,P.FF,"4");
@@ -221,7 +226,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public Board board() { return state.board; }
     public void setBoard(Board board) { // this is wierd! - do a notify or something!!!
         this.state.board=board;
-        if(board==null) Logging.mainLogger.severe("board is null!");
+        if(board==null) Logging.mainLogger.config("board is null!");
         else Logging.mainLogger.fine("setting board");
     }
     public Topology boardTopology() { return state.topology; }
@@ -511,8 +516,6 @@ public class Model extends Observable { // model of a go game or problem forrest
                         addChildWithOneProperty(child,p,sgfCoordinates);
                         down(currentNode().children.size()-1); // might be a variation
                         if(!isduplicateHash()) {
-                            //if(/*!strict||!*/color.equals(turn())) return MoveResult.legal; // move was made so turn changed!
-                            //else return MoveResult.notYourTurn;
                             return MoveResult.legal;
                         } else {
                             Logging.mainLogger.info(name+" "+"duplicate hash!");
@@ -1050,7 +1053,6 @@ public class Model extends Observable { // model of a go game or problem forrest
             model.gtp.stop();
             model.gtp=null;
             model.setRole(Role.anything);
-            //model.strict=false; // or deafult value
             return true;
         } else Logging.mainLogger.severe(model.name+" "+"disconnect when not connected!");
         return false;
@@ -1067,7 +1069,6 @@ public class Model extends Observable { // model of a go game or problem forrest
                     Logging.mainLogger.severe("3 startGTP returns null!");
                     throw new RuntimeException("3 can not run backend!");
                 }
-                //model.strict=true;
                 // add some more constants?
                 // we did under roles.
                 return true;
@@ -1287,7 +1288,6 @@ public class Model extends Observable { // model of a go game or problem forrest
     // what was: 76.171.113.153 as host?
     Et modelEt=new Et();
     public Histogram histogram=new Histogram(10,0,10);
-    //public boolean strict=false;
     public transient long gameId; // temporary
     public final long id=++ids;
     public boolean stopWaiting=false;
