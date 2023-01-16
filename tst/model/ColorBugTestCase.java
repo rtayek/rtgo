@@ -25,7 +25,6 @@ public class ColorBugTestCase {
         Navigate navigate=Navigate.values()[random.nextInt(directions)];
         for(;navigate.canDo(model);navigate=Navigate.values()[random.nextInt(directions)]) navigate.do_(model);
         // this looks broken. may not do anything
-        assertTrue(model.checkParity());
     }
     @Ignore @Test public void testRandom() throws IOException {
         for(int i=0;i<10;i++) {
@@ -48,24 +47,16 @@ public class ColorBugTestCase {
     @Test public void test1() {
         model.setRoot(3,3);
         model.moveAndPlaySound(model.turn(),"A1",model.board().width());
-        assertTrue(model.checkParity());
         Navigate.up.do_(model);
-        assertTrue(model.checkParity());
         model.moveAndPlaySound(model.turn(),"A2",model.board().width());
-        assertTrue(model.checkParity());
         Navigate.up.do_(model);
-        assertTrue(model.checkParity());
         Navigate.down.do_(model);
-        assertTrue(model.checkParity());
     }
     @Test public void testUpAndDown() {
         model.setRoot(3,3);
         model.moveAndPlaySound(model.turn(),"A1",model.board().width());
-        assertTrue(model.checkParity());
         Navigate.up.do_(model);
-        assertTrue(model.checkParity());
         Navigate.down.do_(model);
-        assertTrue(model.checkParity());
     }
     Model model=new Model();
     Board board=model.board();

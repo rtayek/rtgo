@@ -681,9 +681,12 @@ maybe need a separate test case for role in some move cases.
 like move when it's not your turn. 
 are there any more?
 maybe take ko back or self capture?
+1/16/23
 ignoring 2 tests in some suite so the only failing tests are the tee/logger tests.
 making black and white fixtures not public breaks a lot of code.
 maybe move game tests to game fixture?
+got rid of check parity.
+
 
  
  

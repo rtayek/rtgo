@@ -12,20 +12,28 @@ public class RoleTestCase {
     // also gtp is supposed to be able to handle consecutive moves by the same player
     // this tests moveAndPlaySound().
     // 1/9/23 we need different tests for when this comes from gtp
-    // play a legal move when it is your turn
-    // play a legal move when it's not your turn
-    // play on occupied point
-    // play twice in a row
-    // times 4 roles=16 tests?
+    // we do that by setting role=anything.
+    @Test public void testCheck() {
+        assertTrue(model.check(Role.anything,Action.move));
+        assertTrue(model.check(Role.playBlack,Action.move));
+        assertFalse(model.check(Role.playWhite,Action.move));
+        assertFalse(model.check(Role.observer,Action.move));
+        model.moveAndPlaySound(Stone.black,new Point());
+        assertTrue(model.check(Role.anything,Action.move));
+        assertFalse(model.check(Role.playBlack,Action.move));
+        assertTrue(model.check(Role.playWhite,Action.move));
+        assertFalse(model.check(Role.observer,Action.move));
+    }
     @Test public void testPlayBlackWhenRoleIsPlayBlack() {
         model.setRole(Role.playBlack);
         MoveResult ok=model.moveAndPlaySound(Stone.black,new Point());
         assertEquals(MoveResult.legal,ok);
     }
-    @Test public void testPlayBlackWhenRoleIsNotPlayBlack() {
+    @Test public void testPlayBlackWhenRoleIsPlayWhite() {
         model.setRole(Role.playWhite);
         MoveResult ok=model.moveAndPlaySound(Stone.black,new Point(1,1));
         assertNotEquals(MoveResult.legal,ok);
+        assertEquals(MoveResult.badRole,ok);
     }
     @Test public void testPlayWhiteWhenRoleIsPlayWhite() {
         model.move(Stone.black,new Point());
@@ -33,22 +41,24 @@ public class RoleTestCase {
         MoveResult ok=model.moveAndPlaySound(Stone.white,new Point(1,1));
         assertEquals(MoveResult.legal,ok);
     }
-    @Test public void testPlayWhiteWhenRoleIsNotPlayBlack() {
+    @Test public void testPlayWhiteWhenRoleIsPlayBlack() {
         model.move(Stone.black,new Point());
         model.setRole(Role.playBlack);
         MoveResult ok=model.moveAndPlaySound(Stone.white,new Point(1,1));
         assertNotEquals(MoveResult.legal,ok);
+        assertEquals(MoveResult.badRole,ok);
     }
     @Test public void testCanNotPlayBlackWhenRoleIsObserver() {
         model.setRole(Role.observer);
         MoveResult ok=model.moveAndPlaySound(Stone.black,new Point(1,1));
         assertNotEquals(MoveResult.legal,ok);
+        assertEquals(MoveResult.badRole,ok);
     }
     @Test public void testCanNotPlayWhiteWhenRoleIsObserver() {
         model.setRole(Role.observer);
         MoveResult ok=model.moveAndPlaySound(Stone.white,new Point(1,1));
-        // should fail because it's not white's turn.
         assertNotEquals(MoveResult.legal,ok);
+        assertEquals(MoveResult.badRole,ok);
     }
-    final Model model=new Model(); // does this need a setRoot()?
+    final Model model=new Model();
 }

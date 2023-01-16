@@ -30,7 +30,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         anything,observer,playBlack(Stone.black),playWhite(Stone.white);
         Role(Stone stone) { this.stone=stone; }
         Role() { this(Stone.vacant); }
-        final Stone stone;
+        public final Stone stone;
     }
     public enum Where { // generalize to not turn or not playing this color?
         onVacant,occupied,hole,notCloseEnough,notInBand,onBoard,offBoard;
@@ -287,7 +287,6 @@ public class Model extends Observable { // model of a go game or problem forrest
             if(move(move)==MoveResult.legal) break;
             else if(i>limit) { Logging.mainLogger.warning("break out "+i+" "+limit); point=null; break; }
         }
-        if(!checkParity()) throw new RuntimeException("check parity fails");
         return point;
     }
     public int movesToGenerate() { return board().width()*board().depth()*7/10; }
@@ -388,13 +387,6 @@ public class Model extends Observable { // model of a go game or problem forrest
             // maybe have a move result for a role violation
         }
     }
-    boolean checkParity() {
-        if(true) return true;
-        // this is going break if we try to make consecutive moves by the same player.
-        boolean ok=turn()==Stone.black&&moves()%2==0||turn()==Stone.white&&moves()%2==1;
-        // it also won't work if we have handicap stones?
-        return ok;
-    }
     public int playOneMove(Move move) {
         Logging.mainLogger.info("play one move: "+move);
         if(move.equals(Move.nullMove)) throw new RuntimeException(move+" 1 "+lastMoveGTP()+" "+lastMove()+" move oops");
@@ -452,16 +444,16 @@ public class Model extends Observable { // model of a go game or problem forrest
         } else Logging.mainLogger.severe(name+" "+"no current node for resign!");
     }
     public boolean check(Role role,Action action) {
-        // dpes this need a "who is asking" boolean?
+        // does this need a "who is asking" boolean?
         if(role.equals(Role.anything)) return true;
         if(role.equals(Role.observer)&&action.equals(Action.navigate)) return true;
+        System.out.println("turn: "+turn()+", role.stone: "+role.stone);
         if(action.equals(Action.move)&&turn().equals(role.stone)) return true;
         return false;
     }
     public MoveResult move(Move move) {
         if(!check(role(),Action.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
-        if(!checkParity()) throw new RuntimeException("parity");
         MoveResult rc=MoveResult.legal;
         if(move instanceof Pass) //
             pass();
@@ -603,9 +595,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void bottom() { while(Navigate.down.do_(this)); }
     public void up() {
         if(Navigate.up.canDo(this)) {
-            if(!checkParity()) Logging.mainLogger.warning("before up");
             pop();
-            if(!checkParity()) Logging.mainLogger.warning("after up");
             setChangedAndNotify(new Event.Hint(Event.nodeChanged,"up"));
         } else Logging.mainLogger.warning(name+" "+"up - can not do this!");
     }

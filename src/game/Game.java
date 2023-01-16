@@ -26,19 +26,20 @@ public class Game {
         return game;
     }
     public static void loadExistinGame(File file,Model recorder,GameFixture game) {
+        // no references to any back end stuff here.
         if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
         recorder.restore(IO.toReader(file));
         StringWriter stringWriter=new StringWriter();
         recorder.save(stringWriter);
         String sgf=stringWriter.toString();
-        if(true) sgf=HexAscii.encode(sgf.getBytes());
-        String fromCommand=Command.tgo_receive_sgf.name()+" "+sgf;
-        Response response=game.recorderFixture.frontEnd.sendAndReceive(fromCommand);
+        sgf=HexAscii.encode(sgf.getBytes());
+        String receiveCommand=Command.tgo_receive_sgf.name()+" "+sgf;
+        Response response=game.recorderFixture.frontEnd.sendAndReceive(receiveCommand);
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
-        response=game.blackFixture.frontEnd.sendAndReceive(fromCommand);
+        response=game.blackFixture.frontEnd.sendAndReceive(receiveCommand);
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
-        response=game.whiteFixture.frontEnd.sendAndReceive(fromCommand);
+        response=game.whiteFixture.frontEnd.sendAndReceive(receiveCommand);
         if(!response.isOk()) Logging.mainLogger.warning(Command.tgo_receive_sgf+" fails!");
         game.bottom();
     }
