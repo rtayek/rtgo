@@ -686,6 +686,9 @@ ignoring 2 tests in some suite so the only failing tests are the tee/logger test
 making black and white fixtures not public breaks a lot of code.
 maybe move game tests to game fixture?
 got rid of check parity.
+looking at some problems with role and model.check().
+1/17/23
+tests in load existing test case really belong in role test case.
 
 
  

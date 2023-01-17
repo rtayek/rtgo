@@ -30,6 +30,28 @@ public class Model extends Observable { // model of a go game or problem forrest
         anything,observer,playBlack(Stone.black),playWhite(Stone.white);
         Role(Stone stone) { this.stone=stone; }
         Role() { this(Stone.vacant); }
+        /*
+        public static Role fromCommand(Command command) {
+            Role rc=null;
+            switch(command) {
+                case tgo_anything:
+                    rc=anything;
+                    break;
+                case tgo_black:
+                    rc=playBlack;
+                    break;
+                case tgo_white:
+                    rc=playWhite;
+                    break;
+                case tgo_observe:
+                    rc=observer;
+                    break;
+                default:
+                    break;
+            }
+            return rc;
+        }
+         */
         public final Stone stone;
     }
     public enum Where { // generalize to not turn or not playing this color?
@@ -951,24 +973,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         // we should be able to get path from state stack in model!
         return path;
     }
-    public static void doTGOSend(String key) {
-        String expectedSgf=Parser.getSgfData(key);
-        Model original=new Model();
-        original.restore(new StringReader(expectedSgf));
-        original.bottom();
-        String command=Command.tgo_send_sgf.name();
-        String response=null;
-        GTPBackEnd backend=new GTPBackEnd(command,original);
-        backend.runBackend(true);
-        response=backend.out.toString();
-        System.out.println("1 "+response);
-        // why am i doing this twice?
-        backend=new GTPBackEnd(command,original); // this is a new one?
-        // yes, because unBackend() is a one-shot.
-        String response2=backend.runCommands(true);
-        System.out.println("2 "+response);
-        if(!response.equals(response2)) System.out.println("fail!");
-    }
     private static void lookAtRoot() {
         Model model=new Model();
         model.move(new MoveImpl(Stone.black,new Point()));
@@ -1231,7 +1235,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         Model.generateRandomMoves(model,n);
         //randomeMovesUsingParameters(model);
         System.out.println(model);
-        Model.doTGOSend("manyFacesTwoMovesAtA1AndR16");
+        Command.doTGOSend("manyFacesTwoMovesAtA1AndR16");
         System.out.println(model);
     }
     public int verbosity;

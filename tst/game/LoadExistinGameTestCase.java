@@ -26,6 +26,7 @@ public class LoadExistinGameTestCase {
         Game.loadExistinGame(file,recorder,game);
         assertTrue(game.areBoardsEqual());
         game.startGameThread();
+        System.out.println(recorder.role()+" "+black.role()+" "+white.role());
     }
     @Test public void testLoadGame() throws InterruptedException { restoreGame(); }
     @Test public void testMakeLegalBlackMove() throws InterruptedException {
