@@ -72,5 +72,44 @@ public class RoleTestCase {
         assertEquals(MoveResult.badRole,moveResult);
         assertTrue(ok==MoveResult.legal.equals(moveResult));
     }
+    // from load existing
+    // all models had role-anything.
+    @Test public void testMakeLegalBlackMove() throws InterruptedException {
+        model.setRole(Role.playBlack);
+        Move move=new model.Move.MoveImpl(Stone.black,point);
+        if(!model.check(model.role(),Action.move)) throw new RuntimeException("check fails!");
+        MoveResult moveResult=model.move(move);
+        assertEquals(model.board().at(point),Stone.black);
+        assertEquals(MoveResult.legal,moveResult);
+    }
+    @Test public void testMakeMoveOutOfTurn() throws InterruptedException {
+        Move move=new model.Move.MoveImpl(Stone.white,point);
+        model.setRole(Role.playBlack);
+        boolean ok=model.check(model.role(),Action.move);
+        System.out.println("ok: "+ok);
+        if(!ok) throw new RuntimeException("check fails!");
+        MoveResult moveResult=model.move(move);
+        assertEquals(MoveResult.notYourTurn,moveResult);
+    }
+    @Test public void testMakeMoveOutOfTurnAnything() throws InterruptedException {
+        Move move=new model.Move.MoveImpl(Stone.white,point);
+        model.setRole(Role.anything);
+        if(!model.check(model.role(),Action.move)) throw new RuntimeException("check fails!");
+        MoveResult moveResult=model.move(move);
+        assertEquals(MoveResult.legal,moveResult);
+        assertEquals(model.board().at(point),Stone.white);
+    }
+    @Test public void testMoveOnOccupiedPoint() throws InterruptedException {
+        model.setRole(Role.anything);
+        Move move=new model.Move.MoveImpl(Stone.black,point);
+        MoveResult moveResult=model.move(move);
+        assertEquals(model.board().at(point),Stone.black);
+        assertEquals(MoveResult.legal,moveResult);
+        move=new model.Move.MoveImpl(Stone.white,point);
+        moveResult=model.move(move);
+        assertEquals(MoveResult.occupied,moveResult);
+        // should this be allowed if role is anything?
+    }
     final Model model=new Model();
+    final Point point=new Point();
 }

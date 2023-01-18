@@ -29,49 +29,9 @@ public class LoadExistinGameTestCase {
         System.out.println(recorder.role()+" "+black.role()+" "+white.role());
     }
     @Test public void testLoadGame() throws InterruptedException { restoreGame(); }
-    @Test public void testMakeLegalBlackMove() throws InterruptedException {
-        restoreGame();
-        move=new model.Move.MoveImpl(Stone.black,point);
-        if(!black.check(black.role(),Action.move)) throw new RuntimeException("check fails!");
-        moveResult=black.move(move);
-        assertEquals(black.board().at(point),Stone.black);
-        assertEquals(MoveResult.legal,moveResult);
-    }
-    @Test public void testMakeMoveOutOfTurn() throws InterruptedException {
-        restoreGame();
-        move=new model.Move.MoveImpl(Stone.white,point);
-        black.setRole(Role.playBlack);
-        boolean ok=black.check(black.role(),Action.move);
-        System.out.println("ok: "+ok);
-        if(!ok) throw new RuntimeException("check fails!");
-        System.out.println(black.turn());
-        System.out.println(Role.playBlack.stone);
-        System.out.println(black.turn().equals(black.role().stone));
-        moveResult=black.move(move);
-        assertEquals(MoveResult.notYourTurn,moveResult);
-        // this returns not your turn
-        // why doesn't check fail?
-    }
-    @Test public void testMakeMoveOutOfTurnAnything() throws InterruptedException {
-        restoreGame();
-        move=new model.Move.MoveImpl(Stone.white,point);
-        if(!black.check(black.role(),Action.move)) throw new RuntimeException("check fails!");
-        moveResult=black.move(move);
-        assertEquals(MoveResult.legal,moveResult);
-        assertEquals(black.board().at(point),Stone.white);
-    }
-    @Test public void testMoveOnOccupiedPoint() throws InterruptedException {
-        restoreGame();
-        move=new model.Move.MoveImpl(Stone.black,point);
-        moveResult=black.move(move);
-        assertEquals(black.board().at(point),Stone.black);
-        assertEquals(MoveResult.legal,moveResult);
-        move=new model.Move.MoveImpl(Stone.white,point);
-        moveResult=black.move(move);
-        assertEquals(MoveResult.occupied,moveResult);
-    }
     @Test public void test() throws InterruptedException {
         restoreGame();
+        // the rest of these cases have been moved to role test case.
         System.out.println(white);
         assertEquals(Stone.vacant,white.board().at(point));
         white.setRole(Role.playWhite);
