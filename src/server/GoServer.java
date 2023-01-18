@@ -57,19 +57,6 @@ public class GoServer implements Runnable,Stopable {
             connections.add(end);
         }
     }
-    void startRemoteGame() {
-        Model recorder=new Model("recorder");
-        End blackFrontEnd,whiteFrontEnd;
-        synchronized(connections) {
-            blackFrontEnd=connections.remove();
-            whiteFrontEnd=connections.remove();
-        }
-        GameFixture game=setupRemoteGameFrontEnds(recorder,blackFrontEnd,whiteFrontEnd);
-        game.startGameThread();
-        synchronized(games) {
-            games.add(game);
-        }
-    }
     GameFixture setupRemoteGameBackEnds(int port) {
         Holders holders=Holders.create(port);
         if(port==IO.noPort) addConnection(holders.first.front); // duplex
@@ -84,28 +71,26 @@ public class GoServer implements Runnable,Stopable {
     @Override public void run() {
         final int port=serverSocket!=null?serverSocket.getLocalPort():IO.noPort;
         serverLogger.info("go server is running on port: "+port);
-        boolean once=false;
         while(!isStopping&&!namedThread.isInterrupted()) {
-            if(port==IO.noPort) {
-                if(!once) {
-                    //System.out.println("wait for connection)");
-                    once=true;
+            End blackFrontEnd=null,whiteFrontEnd=null;
+            synchronized(connections) {
+                if(connections.size()>=2) { blackFrontEnd=connections.remove(); whiteFrontEnd=connections.remove(); }
+            }
+            if(blackFrontEnd!=null) {
+                Model recorder=new Model("recorder");
+                GameFixture game=setupRemoteGameFrontEnds(recorder,blackFrontEnd,whiteFrontEnd);
+                synchronized(games) {
+                    games.add(game);
                 }
-                synchronized(connections) {
-                    if(connections.size()>=2) { startRemoteGame(); }
-                }
-            } else {
+                game.startGameThread();
+            }
+            if(port!=IO.noPort) {
                 try {
-                    if(!once) {
-                        //System.out.println("block on accept)");
-                        once=true;
-                    }
                     Socket socket=serverSocket.accept();
                     Logging.mainLogger.info(socket+" "+serverSocket);
                     synchronized(connections) {
                         serverLogger.info("connection from: "+socket);
                         addConnection(new End(socket));
-                        if(connections.size()>=2) { startRemoteGame(); }
                     }
                 } catch(IOException e) {
                     if(isStopping()) serverLogger.info(this+" stopping caught: "+e);
@@ -113,9 +98,9 @@ public class GoServer implements Runnable,Stopable {
                     break;
                 }
             }
-            GTPBackEnd.sleep2(2);
         }
         serverLogger.info("server is exiting");
+        GTPBackEnd.sleep2(1);
     }
     public static GoServer startServer(int port) throws IOException {
         // fix this later. there will be fewer choices.
@@ -216,7 +201,7 @@ public class GoServer implements Runnable,Stopable {
         System.out.println(Init.first);
         System.out.println("Level: "+Logging.mainLogger.getLevel());
         int n=arguments==null?0:arguments.length;
-        if(false) {
+        if(true) {
             try {
                 File dir=new File(GameFixture.directory);
                 if(!dir.exists()) {

@@ -148,7 +148,6 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         System.err.println("err foo");
         textView.tee2.printStream.println("printstream 2 foo");
         Model model=new Model();
-        boolean startWithFile=false;
         if(startWithFile) { File file=new File("sgf","ff4_ex.sgf"); model.restore(IO.toReader(file)); }
         main=new Main(null,model,useTextView?textView:null);
         main.moveToLocationFor(name);
@@ -202,8 +201,8 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         if(run3) {
             Main white=run("white");
             System.out.println("white: "+white.frame.getTitle());
-            Main observer=run("observer");
-            System.out.println("observer: "+observer.frame.getTitle());
+            //Main observer=run("observer");
+            //System.out.println("observer: "+observer.frame.getTitle());
         }
         for(Main main:mains) { System.out.println(main.frame.getTitle()); }
         System.out.println("exit Main.main() ---------------");
@@ -218,7 +217,8 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
     public static Boolean useTextView=true; // hack
     // useTextView reduces the copies from 4 to 2
     static boolean darkef=true;
-    static boolean run3=false;
+    static boolean run3=true;
+    static boolean startWithFile=false;
     private static final long serialVersionUID=1L;
     static final double darkFactor=.6;
     public static final Map<String,Point> nameToPosition=new TreeMap<>();

@@ -689,6 +689,7 @@ got rid of check parity.
 looking at some problems with role and model.check().
 1/17/23
 tests in load existing test case really belong in role test case.
+real game with server seems to allow black to play a black move and then play a white move.
 
 
  

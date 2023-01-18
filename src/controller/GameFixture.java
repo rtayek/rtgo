@@ -71,7 +71,7 @@ public class GameFixture implements Runnable,Stopable {
         response=whiteFixture.frontEnd.sendAndReceive(bottomCommand);
         if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
     }
-
+    
     String generateMove() {
         // collapse or refactor this
         Response response;
@@ -180,7 +180,7 @@ public class GameFixture implements Runnable,Stopable {
             if(!initializeBoard(whiteFixture,width)) throw new RuntimeException("init white oops");
         }
         if(!response.isOk()) Logging.mainLogger.warning("initialize game is not ok!");
-        sleep2(200);
+        sleep2(1);
         return response;
     }
     @Override public void run() {

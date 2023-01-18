@@ -474,6 +474,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         return false;
     }
     public MoveResult move(Move move) {
+        System.out.println(move+" "+role());
         if(!check(role(),Action.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
         MoveResult rc=MoveResult.legal;
