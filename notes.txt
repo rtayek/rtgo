@@ -690,6 +690,15 @@ looking at some problems with role and model.check().
 1/17/23
 tests in load existing test case really belong in role test case.
 real game with server seems to allow black to play a black move and then play a white move.
+1/18/23
+where to initialize clients with their roles?
+1/19/23
+added dialog box for bad move/role.
+navigation is still allowed! - how to fix?
+added toast class since tests hung with dialog boxes.
+added can do with and without a role check.
+added down_() for use internally to model.
+
 
 
  

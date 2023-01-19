@@ -109,37 +109,14 @@ public class TopPanels {
                     if(name!=null&&e2!=null&&b!=null) {
                         //Logging.mainLogger.info(mediator.model.name+" "+"click: "+name);
                         if(e2 instanceof Navigate) {
-                            Navigate e21=(Navigate)e2;
-                            switch(e21) {
-                                // http://senseis.xmp.net/diagrams/33/9a1c19ffc34010cbda05a82dcc5a1788.sgf
-                                // maybe use the fact that some of the enum_ names are the same.
-                                case top:
-                                    mediator.model.top();
-                                    break;
-                                case bottom:
-                                    mediator.model.bottom();
-                                    break;
-                                case up:
-                                    mediator.model.up();
-                                    break;
-                                case down:
-                                    mediator.model.down(0);
-                                    break;
-                                case left:
-                                    mediator.model.left();
-                                    break;
-                                case right:
-                                    mediator.model.right();
-                                    break;
-                                case delete:
-                                    mediator.model.delete();
-                                    break;
-                                default:
-                                    Logging.mainLogger.info(mediator.model.name+" "+name+" was not handled!");
-                            }
+                            Navigate navigate=(Navigate)e2;
+                            navigate(navigate);
                         } else Logging.mainLogger.info(mediator.model.name+" "+"unknown enum!n "+e);
                     } else Logging.mainLogger.info(mediator.model.name+" "+"unknown action "+e);
                 } else Logging.mainLogger.info(mediator.model.name+" "+"what is action performed in "+e.getSource());
+            }
+            void navigate(Navigate navigate) {
+                Model.navigate(mediator.model,navigate);
             }
         };
         ChangeListener changeListener=new ChangeListener() {

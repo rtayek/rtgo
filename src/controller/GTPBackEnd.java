@@ -186,42 +186,46 @@ public class GTPBackEnd implements Runnable,Stopable {
                 send(okCharacter,message.id,"");
                 break;
             case tgo_up:
-                if(Navigate.up.canDo(model)) {
+                // we will need to set the role to anything.
+                // maybe do this in process command?
+                // use can do without check
+                if(Navigate.up.canDoNoCheck(model)) {
                     model.up();
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
                 break;
             case tgo_down:
-                if(Navigate.down.canDo(model)) {
+                if(Navigate.down.canDoNoCheck(model)) {
                     model.down(0);
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
                 break;
             case tgo_right:
-                if(Navigate.right.canDo(model)) {
+                if(Navigate.right.canDoNoCheck(model)) {
                     model.right();
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
                 break;
             case tgo_left:
-                if(Navigate.left.canDo(model)) {
+                if(Navigate.left.canDoNoCheck(model)) {
                     model.left();
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
                 break;
             case tgo_top:
-                if(Navigate.up.canDo(model)) {
+                if(Navigate.up.canDoNoCheck(model)) {
                     model.top();
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
                 break;
             case tgo_bottom:
-                if(Navigate.down.canDo(model)) {
+                if(Navigate.down.canDoNoCheck(model)) {
                     model.bottom();
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
                 break;
             case tgo_delete:
+                // see where else can delete gets called
                 if(Model.canDelete(model)) {
                     model.delete();
                     send(okCharacter,message.id,"true");
@@ -230,6 +234,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 // these two are very similar.
                 // are they the same?
             case undo:
+                // see where else can delete gets called
                 if(Model.canDelete(model)) {
                     model.delete();
                     send(okCharacter,message.id,"true");

@@ -12,7 +12,7 @@ import equipment.Board.Topology;
 import equipment.Point;
 import io.Logging;
 import model.Model;
-import model.Model.MoveResult;
+import model.Model.*;
 import sgf.*;
 class Line {
     Line(Point p1,Point p2,double width) { this.p1=p1; this.p2=p2; this.width=width; }
@@ -83,7 +83,7 @@ public class GamePanel extends JPanel {
                         // Move move=mediator.model.unmove();
                         return true;
                     default:
-                        JOptionPane.showMessageDialog(null,"key is umimplemented: "+arg0);
+                        Toast.toast("key is umimplemented: "+arg0);
                         return true;
                 }
                 else return true;
@@ -136,6 +136,12 @@ public class GamePanel extends JPanel {
                 //String move=Coordinates.toGtpCoordinateSystem(closest,
                 //        board.depth());
                 //Model.Move move=new Model.MoveImpl(closest);
+                // need to check role and legality here!
+                boolean ok=mediator.model.check(role,What.move);
+                if(!ok) {
+                    System.out.println("not ok: "+role+" move");
+                    Toast.toast("Move is no ok!");
+                }
                 MoveResult wasLegal=mediator.model.moveAndPlaySound(mediator.model.turn(),closest);
                 if(wasLegal==MoveResult.legal&&mediator.model.inAtari()) Audio.play(Sound.atari);
             }
@@ -153,8 +159,8 @@ public class GamePanel extends JPanel {
                     Block block=Block.find(board,closest);
                     Logging.mainLogger.info(mediator.model.name+" "+"you clicked on: "+block);
                     if(stone.equals(Stone.black)||stone.equals(Stone.white))
-                        JOptionPane.showMessageDialog(null,"you clicked on: "+block);
-                    else JOptionPane.showMessageDialog(null,"you clicked on a vacant or non board square: "+closest);
+                        Toast.toast("you clicked on: "+block);
+                    else Toast.toast("you clicked on a vacant or non board square: "+closest);
                     // BlockImpl g=new BlockImpl(b,i,j,processed);
                 } else Logging.mainLogger.info(mediator.model.name+" "+"not close enough");
             } else Logging.mainLogger.info(mediator.model.name+" "+"off the board");

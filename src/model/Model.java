@@ -20,7 +20,7 @@ import utilities.*;
 public class Model extends Observable { // model of a go game or problem forrest
     // more like game tree or forest of such.
     public enum Who { commandLine, gui, gtp }
-    public enum Action { move, navigate, delete }
+    public enum What { move, navigate, delete }
     // observer can only navigate.
     // black/white can play if it's his turn.
     // anything can do anything. maybe should be review?
@@ -391,7 +391,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public MoveResult moveAndPlaySound(Stone color,Point point) {
         // maybe this should use code in the move class also?
         // 8/22/22 investigate this
-        boolean ok=check(role(),Action.move);
+        boolean ok=check(role(),What.move);
         if(ok) {
             Move move=new MoveImpl(color,point);
             MoveResult wasLegal=move(move);
@@ -448,7 +448,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             P p=turn()==Stone.black?P.B:P.W;
             String sgfCoordinates=""; // or tt?
             addChildWithOneProperty(child,p,sgfCoordinates);
-            down(currentNode().children.size()-1);
+            down_(currentNode().children.size()-1);
             // maybe still needs to move
         } else Logging.mainLogger.severe(name+" "+"no current node for pass!");
     }
@@ -462,20 +462,20 @@ public class Model extends Observable { // model of a go game or problem forrest
             Character winner=other.name().toUpperCase().charAt(0);
             SgfProperty property=new SgfProperty(P.RE,Arrays.asList(new String[] {winner+" Resign"}));
             child.properties.add(property);
-            down(currentNode().children.size()-1);
+            down_(currentNode().children.size()-1);
         } else Logging.mainLogger.severe(name+" "+"no current node for resign!");
     }
-    public boolean check(Role role,Action action) {
+    public boolean check(Role role,What action) {
         // does this need a "who is asking" boolean?
         if(role.equals(Role.anything)) return true;
-        if(role.equals(Role.observer)&&action.equals(Action.navigate)) return true;
+        if(role.equals(Role.observer)&&action.equals(What.navigate)) return true;
         System.out.println("turn: "+turn()+", role.stone: "+role.stone);
-        if(action.equals(Action.move)&&turn().equals(role.stone)) return true;
+        if(action.equals(What.move)&&turn().equals(role.stone)) return true;
         return false;
     }
     public MoveResult move(Move move) {
         System.out.println(move+" "+role());
-        if(!check(role(),Action.move)) return MoveResult.badRole;
+        if(!check(role(),What.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
         MoveResult rc=MoveResult.legal;
         if(move instanceof Pass) //
@@ -529,7 +529,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                         P p=color==Stone.black?P.B:P.W;
                         String sgfCoordinates=Coordinates.toSgfCoordinates(point,board().depth());
                         addChildWithOneProperty(child,p,sgfCoordinates);
-                        down(currentNode().children.size()-1); // might be a variation
+                        down_(currentNode().children.size()-1); // might be a variation
                         if(!isduplicateHash()) {
                             return MoveResult.legal;
                         } else {
@@ -622,6 +622,12 @@ public class Model extends Observable { // model of a go game or problem forrest
             setChangedAndNotify(new Event.Hint(Event.nodeChanged,"up"));
         } else Logging.mainLogger.warning(name+" "+"up - can not do this!");
     }
+    public void down_(Integer indexOfChild) {
+        if(Navigate.down.canDoNoCheck(this)) {
+            push();
+            do_(currentNode().children.get(indexOfChild));
+        } else Logging.mainLogger.warning(name+" "+"down - can not do this!");
+    }
     public void down(Integer indexOfChild) {
         if(Navigate.down.canDo(this)) {
             push();
@@ -647,6 +653,35 @@ public class Model extends Observable { // model of a go game or problem forrest
             push();
             do_(children.get(me-1));
         } else Logging.mainLogger.warning(name+" "+"left - can not do this!");
+    }
+    public static void navigate(Model model,Navigate navigate) {
+        switch(navigate) {
+            // http://senseis.xmp.net/diagrams/33/9a1c19ffc34010cbda05a82dcc5a1788.sgf
+            // maybe use the fact that some of the enum_ names are the same.
+            case top:
+                model.top();
+                break;
+            case bottom:
+                model.bottom();
+                break;
+            case up:
+                model.up();
+                break;
+            case down:
+                model.down(0);
+                break;
+            case left:
+                model.left();
+                break;
+            case right:
+                model.right();
+                break;
+            case delete:
+                model.delete();
+                break;
+            default:
+                throw new RuntimeException("default navigate!");
+        }
     }
     private void processProperty(SgfProperty property) {
         // need a way to convert this/these to gtp?

@@ -80,7 +80,7 @@ public class WestPanels {
                         switch(e21) {
                             case connect: // copy of left action so far
                                 ok=Model.connectToServer(model);
-                                if(model.gtp==null) JOptionPane.showMessageDialog(null,"did not connect!");
+                                if(model.gtp==null) Toast.toast("did not connect!");
                                 buttons.enableAll(mediator);
                                 break;
                             case disconnect:

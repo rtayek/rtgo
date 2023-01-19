@@ -45,13 +45,22 @@ public class GameFixture implements Runnable,Stopable {
     public void startGameThread() {
         //IO.stackTrace(10);
         if(!backends) { System.out.println("starting backends."); startPlayerBackends(); }
-        if(!initialized) { System.out.println("initializing game."); Response initializeResponse=initializeGame(); }
+        if(!initialized) {
+            System.out.println("initializing game.");
+            Response response=blackFixture.frontEnd.sendAndReceive(Command.tgo_black.name());
+            if(!response.isOk()) Logging.mainLogger.severe("bad response.");
+            response=whiteFixture.frontEnd.sendAndReceive(Command.tgo_white.name());
+            if(!response.isOk()) Logging.mainLogger.severe("bad response.");
+            Response initializeResponse=initializeGame();
+            if(initializeResponse!=null&&!initializeResponse.isOk()) Logging.mainLogger.severe("bad response.");
+        }
         // look like we need to do any shoving here.
         // so we can test this in conteoller/
         // instead of game?
         // 1/6/23
         // maybe do load existing game instead of initializing?
         // or do both
+        // we need to set roles and test them.
         if(namedThread!=null) throw new RuntimeException("game thread alreasy exists!");
         else {
             System.out.println("starting gam.e");
@@ -71,7 +80,6 @@ public class GameFixture implements Runnable,Stopable {
         response=whiteFixture.frontEnd.sendAndReceive(bottomCommand);
         if(!response.isOk()) Logging.mainLogger.warning(bottomCommand+" fails!");
     }
-    
     String generateMove() {
         // collapse or refactor this
         Response response;
@@ -83,13 +91,11 @@ public class GameFixture implements Runnable,Stopable {
                 response=blackFixture.frontEnd.sendAndReceive(Command.genmove.name()+" black");
                 if(response==null) { mainLogger.severe("genmove new behavior black"); return null; }
                 if(response.isBad()) mainLogger.severe("black  bad oops");
-                mainLogger.info("exit generate move at "+first.et);
                 return response.response;
             case white:
                 response=whiteFixture.frontEnd.sendAndReceive(Command.genmove.name()+" white");
                 if(response==null) { mainLogger.severe("genmove new behavior white"); return null; }
                 if(response.isBad()) { mainLogger.severe("white bad oops"); mainLogger.warning(response.toString()); }
-                mainLogger.info("exit generate move"+first.et);
                 return response.response;
             default:
                 throw new RuntimeException("color oops");
@@ -135,10 +141,10 @@ public class GameFixture implements Runnable,Stopable {
         backends=true; // just means that this was calle once.
         if(blackFixture.backEnd!=null) if(blackFixture.backEnd.namedThread==null) {
             @SuppressWarnings("unused") Thread black=blackFixture.backEnd.startGTP(id);
-        } ; //else throw new RuntimeException("black  fixture back end.");
+        } //else throw new RuntimeException("black  fixture back end.");
         if(whiteFixture.backEnd!=null) if(whiteFixture.backEnd.namedThread==null) {
             @SuppressWarnings("unused") Thread white=whiteFixture.backEnd.startGTP(id);
-        } ; //else throw new RuntimeException("white  fixture back end.");
+        } //else throw new RuntimeException("white  fixture back end.");
     }
     public static boolean initializeBoard(BothEnds both,int width) {
         ArrayList<String> strings=new ArrayList<>();
@@ -159,11 +165,9 @@ public class GameFixture implements Runnable,Stopable {
         // but recorder may have a long game in it!
         if(recorderFixture.backEnd.model.board()!=null) {
             int width=recorderFixture.backEnd.model.board().width();
-            System.out.print("initialize game: ");
             printStatus();
             if(!initializeBoard(recorderFixture,width)) {
                 System.exit(0);
-                ;
                 throw new RuntimeException("init recorder oops");
             }
             if(blackFixture.backEnd.namedThread==null) {
@@ -299,10 +303,7 @@ public class GameFixture implements Runnable,Stopable {
         System.out.println("backends: "+backends+", initialized: "+initialized+", started: "+started);
     }
     public void checkStatus() {
-        if(!backends||!initialized||!started) {
-            printStatus();
-            throw new RuntimeException("game status.");
-        }
+        if(!backends||!initialized||!started) { printStatus(); throw new RuntimeException("game status."); }
     }
     public int playOneMoveAndWait(BothEnds player,BothEnds opponent,Move move) {
         //checkStatus();

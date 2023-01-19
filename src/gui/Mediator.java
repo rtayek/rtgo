@@ -261,7 +261,7 @@ class Mediator implements Observer,ActionListener {
                 }
             } catch(Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null,ex);
+                Toast.toast(ex.toString());
             }
         } else if(e.getActionCommand().equals("Save ...")) {
             try {
@@ -277,7 +277,7 @@ class Mediator implements Observer,ActionListener {
                 }
             } catch(Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null,ex);
+                Toast.toast(ex.toString());
             }
         } else if(e.getActionCommand().equals("New Game")) {
             // get values from spinners
@@ -292,6 +292,8 @@ class Mediator implements Observer,ActionListener {
             Audio.play(Sound.challenge);
         } else if(e.getActionCommand().equals("Pass")) model.move(Move.blackPass);
         // maybe need to check turn here?
+        // yes, the are both for black.
+        // but pass() and resign() use turn().
         else if(e.getActionCommand().equals("Resign")) model.move(Move.blackResign);
         // and here also?
         else if(e.getActionCommand().equals("Tree view")) {
@@ -309,7 +311,7 @@ class Mediator implements Observer,ActionListener {
             model.setChangedAndNotify(Event.newTree);
         } else if(e.getActionCommand().equals("Console view")) {
             if(textView!=null) textView.frame.setVisible(!textView.frame.isVisible());
-        } else if(e.getActionCommand().equals("About")) JOptionPane.showMessageDialog(null,"Topological GO (alpha)");
+        } else if(e.getActionCommand().equals("About")) Toast.toast("Topological GO (alpha)");
     }
     @Override public void update(Observable observable,Object hint) {
         Logging.mainLogger.fine(model.name+" "+observable.getClass().getName()+", hint: "+hint);
@@ -379,7 +381,7 @@ class Mediator implements Observer,ActionListener {
             Logging.mainLogger.fine(model.name+" "+b.id());
             int id=model.board().id();
             Logging.mainLogger
-                    .info(model.name+" "+"re initializing game panel with board "+id+" "+model.board().topology());
+            .info(model.name+" "+"re initializing game panel with board "+id+" "+model.board().topology());
             if(true) SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
                     gamePanel.initialize(boardHeightInPixels);
