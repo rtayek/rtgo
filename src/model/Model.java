@@ -391,7 +391,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public MoveResult moveAndPlaySound(Stone color,Point point) {
         // maybe this should use code in the move class also?
         // 8/22/22 investigate this
-        boolean ok=check(role(),What.move);
+        boolean ok=checkAction(role(),What.move);
         if(ok) {
             Move move=new MoveImpl(color,point);
             MoveResult wasLegal=move(move);
@@ -465,7 +465,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             down_(currentNode().children.size()-1);
         } else Logging.mainLogger.severe(name+" "+"no current node for resign!");
     }
-    public boolean check(Role role,What action) {
+    public boolean checkAction(Role role,What action) {
         // does this need a "who is asking" boolean?
         if(role.equals(Role.anything)) return true;
         if(role.equals(Role.observer)&&action.equals(What.navigate)) return true;
@@ -475,7 +475,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public MoveResult move(Move move) {
         System.out.println(move+" "+role());
-        if(!check(role(),What.move)) return MoveResult.badRole;
+        if(!checkAction(role(),What.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
         MoveResult rc=MoveResult.legal;
         if(move instanceof Pass) //

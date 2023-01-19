@@ -46,7 +46,7 @@ public enum Navigate { // move more code here?
         return canDo(this,model);
     }
     public boolean canDo/*InRole*/(Model model) {
-        boolean ok=model.check(model.role(),Model.What.navigate);
+        boolean ok=model.checkAction(model.role(),Model.What.navigate);
         if(!ok) {
             System.out.println("not ok: "+model.role()+" navigate.");
             Toast.toast("navigate is not ok!");

@@ -137,7 +137,7 @@ public class GamePanel extends JPanel {
                 //        board.depth());
                 //Model.Move move=new Model.MoveImpl(closest);
                 // need to check role and legality here!
-                boolean ok=mediator.model.check(role,What.move);
+                boolean ok=mediator.model.checkAction(role,What.move);
                 if(!ok) {
                     System.out.println("not ok: "+role+" move");
                     Toast.toast("Move is no ok!");
