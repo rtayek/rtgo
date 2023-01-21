@@ -25,7 +25,7 @@ public class TopPanels {
                 for(ButtonWithEnum button:buttons.buttons()) {
                     Enum e=button.t;
                     if(e instanceof Navigate) {
-                        boolean canDo=((Navigate)e).canDo(model);
+                        boolean canDo=((Navigate)e).canDoNoCheck(model);
                         button.abstractButton.setEnabled(canDo);
                     } else throw new RuntimeException();
                 }

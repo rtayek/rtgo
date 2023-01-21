@@ -32,30 +32,19 @@ public class LoadExistinGameTestCase {
     @Test public void test() throws InterruptedException {
         restoreGame();
         // the rest of these cases have been moved to role test case.
-        System.out.println(white);
         assertEquals(Stone.vacant,white.board().at(point));
         white.setRole(Role.playWhite);
-        System.out.println(white.role());
         move=new model.Move.MoveImpl(Stone.black,point);
-        System.out.println("move: "+move);
         moveResult=white.move(move);
-        System.out.println(moveResult);
         assertEquals(MoveResult.badRole,moveResult);
-        System.out.println(white);
         white.setRole(Role.anything);
-        System.out.println(white.role());
         move=new model.Move.MoveImpl(Stone.black,point);
-        System.out.println("move: "+move);
         moveResult=white.move(move);
-        System.out.println(moveResult);
         assertEquals(MoveResult.legal,moveResult);
         System.out.println(white);
         move=new model.Move.MoveImpl(Stone.white,point);
-        System.out.println("move: "+move);
         moveResult=white.move(move);
-        System.out.println(moveResult);
         assertEquals(MoveResult.occupied,moveResult);
-        System.out.println(white);
         Logging.setLevels(Level.OFF);
     }
     Point point=new Point(3,3);

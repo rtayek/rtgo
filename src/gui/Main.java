@@ -180,7 +180,6 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
     }
     public Point moveToLocationFor(String name) {
         Point point=name!=null?nameToPosition.get(name):null;
-        if(point==null) point=nameToPosition.get("black");
         if(point!=null) frame().setLocation(point);
         else frame().setLocation(new Point());
         return point;
@@ -195,7 +194,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         // use arguments from map instead of below.
         String name=(String)map.get("name");
         Main maink=null;
-        if(!run3) maink=run(name);
+        if(!run3) maink=run("one");
         else maink=run("black");
         System.out.println("black: "+maink.frame.getTitle());
         if(run3) {
@@ -217,7 +216,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
     public static Boolean useTextView=true; // hack
     // useTextView reduces the copies from 4 to 2
     static boolean darkef=true;
-    static boolean run3=true;
+    static boolean run3=false;
     static boolean startWithFile=false;
     private static final long serialVersionUID=1L;
     static final double darkFactor=.6;
