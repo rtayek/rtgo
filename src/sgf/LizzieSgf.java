@@ -438,9 +438,9 @@ public class LizzieSgf {
 // B[qd]LZ[0.7.2 42.4 14
 class MyAcceptor extends SgfAcceptorImpl {
     @Override public void accept(SgfNode node) {
-        System.out.print(node+" "+node.properties.size()+" properties. ");
+        System.out.print(node+" "+node.sgfProperties.size()+" properties. ");
         boolean nodeHasLizzieProperty=false;
-        for(SgfProperty property:node.properties) {
+        for(SgfProperty property:node.sgfProperties) {
             if(property.p().id.equals(P2.LZ.name())) nodeHasLizzieProperty=true;
             System.out.print(property.p().getClass().getName()+" ");
         }

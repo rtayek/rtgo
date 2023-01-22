@@ -42,7 +42,7 @@ public class LabelMNodeTestCase {
     }
     @Test public void testFindNodeWithLabelPredicate() {
         for(MNode node1:list1) {
-            MNode remote=new MNode(null,node1.properties);
+            MNode remote=new MNode(null,node1.sgfProperties);
             remote.label=node1.label;
             MNodeFinder finder=MNodeFinder.find(remote,root2,labelPredicate);
             assertTrue(finder.ancestors.size()>0);

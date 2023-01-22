@@ -96,19 +96,19 @@ public class GamePanel extends JPanel {
         MNode found=null;
         MNode node=mediator.model.currentNode();
         String target=Coordinates.toSgfCoordinates(closest,board.depth());
-        for(MNode child:node.children) for(SgfProperty property:child.properties)
+        for(MNode child:node.children) for(SgfProperty property:child.sgfProperties)
             if(mediator.model.turn().equals(Stone.black)&&property.p().equals(P.B)
                     ||mediator.model.turn().equals(Stone.white)&&property.p().equals(P.W)) {
-                System.out.println("found child move property: "+property);
-                if(property.list().get(0).equals(target)) { // assume
-                    // first
-                    // and
-                    // only?
-                    System.out.println("found move! "+property);
-                    found=child;
-                    break;
-                }
-            }
+                        System.out.println("found child move property: "+property);
+                        if(property.list().get(0).equals(target)) { // assume
+                            // first
+                            // and
+                            // only?
+                            System.out.println("found move! "+property);
+                            found=child;
+                            break;
+                        }
+                    }
         return found;
     }
     void processClick(MouseEvent e) {
@@ -138,10 +138,7 @@ public class GamePanel extends JPanel {
                 //Model.Move move=new Model.MoveImpl(closest);
                 // need to check role and legality here!
                 boolean ok=mediator.model.checkAction(role,What.move);
-                if(!ok) {
-                    System.out.println("not ok: "+role+" move");
-                    Toast.toast("Move is no ok!");
-                }
+                if(!ok) { System.out.println("not ok: "+role+" move"); Toast.toast("Move is no ok!"); }
                 MoveResult wasLegal=mediator.model.moveAndPlaySound(mediator.model.turn(),closest);
                 if(wasLegal==MoveResult.legal&&mediator.model.inAtari()) Audio.play(Sound.atari);
             }
@@ -158,8 +155,7 @@ public class GamePanel extends JPanel {
                     Stone stone=board.at(closest.x,closest.y);
                     Block block=Block.find(board,closest);
                     Logging.mainLogger.info(mediator.model.name+" "+"you clicked on: "+block);
-                    if(stone.equals(Stone.black)||stone.equals(Stone.white))
-                        Toast.toast("you clicked on: "+block);
+                    if(stone.equals(Stone.black)||stone.equals(Stone.white)) Toast.toast("you clicked on: "+block);
                     else Toast.toast("you clicked on a vacant or non board square: "+closest);
                     // BlockImpl g=new BlockImpl(b,i,j,processed);
                 } else Logging.mainLogger.info(mediator.model.name+" "+"not close enough");
@@ -269,7 +265,7 @@ public class GamePanel extends JPanel {
                 break;
             default:
                 throw new RuntimeException("bad ropology");
-                //break;
+            //break;
         }
         black=blackStone(dx,dy,getBackground());
         white=whiteStone(dx,dy,getBackground());
@@ -450,7 +446,7 @@ public class GamePanel extends JPanel {
         super.paintComponent(g);
         if(board==null) {
             Logging.mainLogger.warning("board is null!");
-            g.drawString("some board",10,10);
+            g.drawString("no board",10,10);
         } else {
             Color color=g.getColor();
             for(Line line:lines) line.paint(g);
@@ -484,9 +480,12 @@ public class GamePanel extends JPanel {
                         +" komi"+", "+mediator.model.moves()+" moves.";
                 mediator.status.setText(string);
                 mediator.lastMove.setText("last move: "+mediator.model.lastMove()+"\\nfoo\\nbar");
-                String properties=mediator.model.currentNode().toString();
-                properties+="\nfoo\nbar";
-                mediator.sgfProperties.setText(properties);
+                MNode currentNode=mediator.model.currentNode();
+                if(currentNode!=null) {
+                    String properties=currentNode.toString();
+                    properties+="\nfoo\nbar";
+                    mediator.sgfProperties.setText(properties);
+                } else mediator.sgfProperties.setText("current node is null!");
             } else drawStatus(g,x,y);
         }
     }

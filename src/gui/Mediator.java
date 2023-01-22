@@ -255,7 +255,7 @@ class Mediator implements Observer,ActionListener {
                     MNode root=model.root();
                     List<String> list=Arrays.asList(new String[] {comment});
                     SgfProperty property=new SgfProperty(P.C,list);
-                    root.properties.add(0,property);
+                    root.sgfProperties.add(0,property);
                     lastLoadDirectory=file.getParentFile();
                     lastOpenFile=file;
                 }
@@ -270,7 +270,7 @@ class Mediator implements Observer,ActionListener {
                 // fileChoser.s
                 if(fileChoser.showSaveDialog(null)==JFileChooser.APPROVE_OPTION) {
                     File file=fileChoser.getSelectedFile();
-                    //file=Model.insureExtension(file,Model.desiredExtension);
+                    file=Model.insureExtension(file,Model.desiredExtension);
                     if(!model.save(IO.toWriter(file)))
                         Logging.mainLogger.warning(model.name+" "+"can not save to: "+file);
                     lastSaveDirectory=file.getParentFile();

@@ -10,15 +10,15 @@ public class Combine { // the purpose of this class is to combine two sgf files
         if(annotated==null) return null;
         System.err.println("walk old");
         SgfNode holder=new SgfNode();
-        holder.properties=new ArrayList<>(1);
+        holder.sgfProperties=new ArrayList<>(1);
         SgfNode.moves=0;
         annotated.lastMove(holder);
         if(holder.left==null) { System.err.println("no moves in first variation"); return null; }
-        if(holder.properties.isEmpty()) { System.err.println("no move property found"); return null; }
+        if(holder.sgfProperties.isEmpty()) { System.err.println("no move property found"); return null; }
         // holder.left has the node from the annotated game
         SgfNode old=holder.left;
-        SgfProperty move=holder.properties.get(0);
-        holder.properties.clear();
+        SgfProperty move=holder.sgfProperties.get(0);
+        holder.sgfProperties.clear();
         SgfNode.moves=0;
         boolean found=current.findMove(holder,move);
         if(found) System.err.println("found");

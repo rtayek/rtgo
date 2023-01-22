@@ -13,9 +13,14 @@ public enum Navigate { // move more code here?
             case up:
             case delete: // recently added
                 boolean hasAParent=model.currentNode().parent!=null;
-                boolean parentIsRT=hasAParent&&model.currentNode().parent.properties.get(0).p().equals(P.RT);
+                if(hasAParent) {
+                    List<SgfProperty> properties=model.currentNode().parent.sgfProperties;
+                    if(properties.size()>0) {
+                        boolean parentIsRT=hasAParent&&model.currentNode().parent.sgfProperties.get(0).p().equals(P.RT);
+                    }
+                }
                 return hasAParent; //&&!parentIsRT;
-                // breaks gui, no up!
+            // breaks gui, no up!
             case bottom:
             case down:
                 return model.currentNode().children.size()>0;
@@ -42,9 +47,7 @@ public enum Navigate { // move more code here?
         else Logging.mainLogger.config("no current node!");
         return false;
     }
-    public boolean canDoNoCheck(Model model) {
-        return canDo(this,model);
-    }
+    public boolean canDoNoCheck(Model model) { return canDo(this,model); }
     public boolean canDo/*InRole*/(Model model) {
         boolean ok=model.checkAction(model.role(),Model.What.navigate);
         if(!ok) {

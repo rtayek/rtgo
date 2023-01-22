@@ -13,7 +13,7 @@ public class SgfNodeTestCase {
         List<String> list=Arrays.asList(new String[] {"AB"}); // what is AB?
         SgfProperty property=new SgfProperty(P.B,list);
         expected.add(property);
-        String string=expected.properties.get(0).list().get(0);
+        String string=expected.sgfProperties.get(0).list().get(0);
         Point point=Coordinates.fromSgfCoordinates(string,Board.standard);
         String string2=Coordinates.toSgfCoordinates(point,Board.standard);
         SgfNode actual=new SgfNode();
@@ -65,12 +65,12 @@ public class SgfNodeTestCase {
         assertFalse(mNode.hasAMoveType);
         assertFalse(mNode.hasAMove);
     }
-    @Test public void testConstructor() { SgfNode sgfNode=new SgfNode(); sgfNode.properties=new ArrayList<>(); }
+    @Test public void testConstructor() { SgfNode sgfNode=new SgfNode(); sgfNode.sgfProperties=new ArrayList<>(); }
     @Test public void testRT() {
         MNode mRoot=new MNode(null);
         try {
             SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
-            mRoot.properties.add(property);
+            mRoot.sgfProperties.add(property);
         } catch(Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

@@ -13,20 +13,20 @@ import model.MNodeAcceptor.MNodeFinder;
 // txt <- sgf <- mnode <- model
 public class MNode {
     public MNode(MNode parent) { this.parent=parent; hasAMove=hasAMoveType=false; }
-    public MNode(MNode parent,List<SgfProperty> properties) { // just for testing
+    public MNode(MNode parent,List<SgfProperty> sgfProperties) { // just for testing
         this(parent);
-        this.properties.addAll(properties);
+        this.sgfProperties.addAll(sgfProperties);
     }
     public void setFlags() {
         // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
-        for(SgfProperty property:properties) {
-            if(property.p() instanceof Setup) hasASetupType=true;
-            if(property.p() instanceof sgf.Move) { hasAMoveType=true; }
-            if((property.p().equals(P.W)||property.p().equals(P.B))) hasAMove=true;
+        for(SgfProperty sgfProperty:sgfProperties) {
+            if(sgfProperty.p() instanceof Setup) hasASetupType=true;
+            if(sgfProperty.p() instanceof sgf.Move) { hasAMoveType=true; }
+            if((sgfProperty.p().equals(P.W)||sgfProperty.p().equals(P.B))) hasAMove=true;
         }
     }
     @Override public int hashCode() {
-        return Objects.hash(properties);
+        return Objects.hash(sgfProperties);
         // remember to fix this when we move to generics
     }
     @Override public boolean equals(Object obj) {
@@ -34,7 +34,7 @@ public class MNode {
         if(obj==null) return false;
         if(getClass()!=obj.getClass()) return false;
         MNode other=(MNode)obj;
-        return Objects.equals(properties,other.properties);
+        return Objects.equals(sgfProperties,other.sgfProperties);
     }
     boolean checkFlags() {
         boolean ok=true;
@@ -61,7 +61,7 @@ public class MNode {
                 tail=newRight;
             }
         }
-        SgfNode node=new SgfNode(properties,null,left); // first child
+        SgfNode node=new SgfNode(sgfProperties,null,left); // first child
         return node;
     }
     private static MNode toGeneralTree(SgfNode node,MNode grandParent) {
@@ -69,7 +69,7 @@ public class MNode {
         MNode parent=new MNode(grandParent);
         if(grandParent!=null) grandParent.children.add(parent);
         else throw new RuntimeException("gradparent is null!");
-        parent.properties.addAll(node.properties);
+        parent.sgfProperties.addAll(node.sgfProperties);
         if(node!=null) {
             node.setFlags();
             boolean ok=node.checkFlags();
@@ -90,7 +90,7 @@ public class MNode {
         MNode extraMNode=new MNode(null);
         try {
             SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
-            extraMNode.properties.add(property);
+            extraMNode.sgfProperties.add(property);
         } catch(Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -166,7 +166,7 @@ public class MNode {
     @Override public String toString() {
         StringBuffer stringBuffer=new StringBuffer(";");
         if(data!=null) stringBuffer.append("("+data+")");
-        for(Iterator<SgfProperty> i=properties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
+        for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
         return stringBuffer.toString();
     }
     public static Collection<SgfNode> findPathToNode(MNode target,SgfNode root) {
@@ -177,7 +177,7 @@ public class MNode {
     public static String toString(MNode mNode) {
         StringBuffer stringBuffer=new StringBuffer(";");
         //if(false) { stringBuffer.append("{id="+sgfId); stringBuffer.append("}"); }
-        for(Iterator<SgfProperty> i=mNode.properties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
+        for(Iterator<SgfProperty> i=mNode.sgfProperties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
         return stringBuffer.toString();
     }
     private static void saveDirectly_(Writer writer,MNode root,Indent indent) throws IOException {
@@ -244,7 +244,7 @@ public class MNode {
     public ArrayList<MNode> children=new ArrayList<>();
     //public /*final*/ boolean hasAMove,hasAMoveType;
     boolean hasAMove,hasAMoveType,hasASetupType;
-    public final List<SgfProperty> properties=new ArrayList<>();
+    public final List<SgfProperty> sgfProperties=new ArrayList<>();
     // maybe these could be/should immutable?
     public static boolean ignoreMoveAndSetupFlags=true; // was false
     public static int ids;

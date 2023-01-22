@@ -698,6 +698,11 @@ navigation is still allowed! - how to fix?
 added toast class since tests hung with dialog boxes.
 added can do with and without a role check.
 added down_() for use internally to model.
+1/20/23
+looking at saved games. setup info like shape and topology are not in the sgf file.
+seems like were not handling the AB or AW commands.
+rename properties field in nodes to avoid confusion.
+
 
 
 

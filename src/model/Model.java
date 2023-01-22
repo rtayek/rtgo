@@ -136,7 +136,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     void checkForLittleGolem(MNode node) {
         boolean isTorus=false;
-        for(SgfProperty property:node.properties) for(String string:property.list())
+        for(SgfProperty property:node.sgfProperties) for(String string:property.list())
             if(string.contains("Toroidal")||(state.isFromLittleGolem=string.contains("littlegolem.com"))) {
                 isTorus=true;
                 break;
@@ -161,6 +161,9 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         // return root so Model m=new Model().setRoot(root)?
         // looks like we keep the whole tree (forrest?)
+        // 1/21/23
+        // trying to fix new game
+        //if(root.)
         if(board()!=null) {
             Logging.mainLogger.config(name+" "+"1 board is not null in setRoot()!");
             // Logging.logger.fine(name+" "+"setting board to null in
@@ -193,7 +196,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     static void addProperty(MNode node,P p,List<String> strings) {
         SgfProperty property=new SgfProperty(p,strings);
-        node.properties.add(property);
+        node.sgfProperties.add(property);
     }
     private static void addSgfRegion_(int depth,MNode newRoot,List<Point> points) {
         if(points.size()>0) {
@@ -227,21 +230,22 @@ public class Model extends Observable { // model of a go game or problem forrest
         Logging.mainLogger.config("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
         //IO.stackTrace(10);
         MNode newRoot=new MNode(null);
-        addProperty(newRoot,P.FF,"4");
-        addProperty(newRoot,P.GM,"1");
-        addProperty(newRoot,P.AP,sgfApplicationName);
-        addProperty(newRoot,P.C,"root");
-        if(!topology.equals(Topology.normal)) addProperty(newRoot,P.C,sgfBoardTopology+topology);
-        if(!shape.equals(Shape.normal)) addProperty(newRoot,P.C,sgfBoardShape+shape);
+        MNode main=new MNode(newRoot);
+        addProperty(main,P.FF,"4");
+        addProperty(main,P.GM,"1");
+        addProperty(main,P.AP,sgfApplicationName);
+        addProperty(main,P.C,"root");
+        if(!topology.equals(Topology.normal)) addProperty(main,P.C,sgfBoardTopology+topology);
+        if(!shape.equals(Shape.normal)) addProperty(main,P.C,sgfBoardShape+shape);
         String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
         if(width==depth) string=Integer.valueOf(width).toString();
-        boolean alwaysSetBoardSize=true;// was true
-        if(alwaysSetBoardSize) addProperty(newRoot,P.SZ,string);
+        boolean alwaysSetBoardSize=false;// was true
+        if(alwaysSetBoardSize) addProperty(main,P.SZ,string);
         // work needed here!
-        if(topology.equals(Topology.torus)) addProperty(newRoot,P.KM,"4.5");
-        addRegion(width,depth,topology,shape,newRoot);
-        Logging.mainLogger.fine(name+" "+"new root is: "+newRoot);
-        setRoot(newRoot);
+        if(topology.equals(Topology.torus)) addProperty(main,P.KM,"4.5");
+        addRegion(width,depth,topology,shape,main);
+        Logging.mainLogger.fine(name+" "+"new root is: "+main);
+        setRoot(main);
         Logging.mainLogger.config("exit setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
     }
     public MNode currentNode() { return state.node; }
@@ -378,7 +382,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void setChangedAndNotify(Object object) { setChanged(); notifyObservers(object); }
     void addChildWithOneProperty(MNode child,P p,String string) {
         SgfProperty property=new SgfProperty(p,Arrays.asList(new String[] {string}));
-        child.properties.add(property);
+        child.sgfProperties.add(property);
         currentNode().children.add(child);
     }
     public Stone turn() { return state.turn; }
@@ -461,7 +465,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             Stone other=turn().otherColor();
             Character winner=other.name().toUpperCase().charAt(0);
             SgfProperty property=new SgfProperty(P.RE,Arrays.asList(new String[] {winner+" Resign"}));
-            child.properties.add(property);
+            child.sgfProperties.add(property);
             down_(currentNode().children.size()-1);
         } else Logging.mainLogger.severe(name+" "+"no current node for resign!");
     }
@@ -491,7 +495,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                 wasLegal=addMoveNodeAndExecute(move);
                 if(wasLegal!=MoveResult.legal)
                     Logging.mainLogger.info(name+" not legal because: "+wasLegal+" "+turn()+" at move #"+moves()
-                    +" illegal move: can not move "+move.color()+" at point: "+point+", "+isPoint(point));
+                            +" illegal move: can not move "+move.color()+" at point: "+point+", "+isPoint(point));
                 // bad message above fix!
                 rc=wasLegal;
             } catch(Exception e) {
@@ -571,9 +575,9 @@ public class Model extends Observable { // model of a go game or problem forrest
     void do_(MNode node) { // set node and execute the sgf
         state.node=node;
         if(node!=null) {//
-            for(int i=0;i<node.properties.size();i++) {
+            for(int i=0;i<node.sgfProperties.size();i++) {
                 try {
-                    processProperty(node.properties.get(i));
+                    processProperty(node.sgfProperties.get(i));
                 } catch(Exception e) {
                     Logging.mainLogger.severe(name+"1 caught: "+e);
                     IO.stackTrace(10);
@@ -618,6 +622,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void bottom() { while(Navigate.down.do_(this)); }
     public void up() {
         if(Navigate.up.canDo(this)) {
+            if(stack.empty()) throw new RuntimeException("stack is empty!");
             pop();
             setChangedAndNotify(new Event.Hint(Event.nodeChanged,"up"));
         } else Logging.mainLogger.warning(name+" "+"up - can not do this!");
@@ -639,6 +644,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             MNode parent=currentNode().parent;
             List<MNode> children=parent.children;
             int me=children.indexOf(currentNode());
+            if(stack.empty()) throw new RuntimeException("stack is empty!");
             pop();
             push();
             do_(children.get(me+1));
@@ -649,6 +655,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             MNode parent=currentNode().parent;
             List<MNode> children=parent.children;
             int me=children.indexOf(currentNode());
+            if(stack.empty()) throw new RuntimeException("stack is empty!");
             pop();
             push();
             do_(children.get(me-1));
@@ -691,12 +698,21 @@ public class Model extends Observable { // model of a go game or problem forrest
         P2 p2=P2.which(p.id);
         if(p2!=null) {
             switch(p2) {
+                // AB[dl][ld] list of stones
+                // vs list of points
+                // ;FF[4]GM[1]AP[RTGO] SZ[19:17]KM[4.5]RG[ij][jj][kj][ii][ji][ki][ih][jh][kh]
+                case AB:
+                case AW:
+                    for(String s:property.list()) {
+                        System.out.println("s: "+s);
+                        Point point=Coordinates.fromSgfCoordinates(s,board().depth());
+                        board().setAt(point,p2.equals(P2.AB)?Stone.black:Stone.white);
+                    }
+                    break;
                 case AP:
                     state.application=property.list().get(0);
                     if(state.application.startsWith(sgfApplicationName)); // mumble("it's
-                    // one
-                    // of
-                    // ours");
+                    // one of ours");
                     break;
                 case FF:
                     state.sgfVersion=property.list().get(0);
@@ -761,7 +777,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     break;
                 case RG:
                     if(state.application.equals(sgfApplicationName)) Logging.mainLogger
-                    .warning(state.board.topology()+", "+state.shape+", region: "+property.list());
+                            .warning(state.board.topology()+", "+state.shape+", region: "+property.list());
                     // above we have diamond, hole1, region [jj]
                     // using state.board above does not seem quite right.
                     // yes, diamond needs another region or a bigger region.

@@ -81,15 +81,15 @@ public class SgfNode {
         // find the inverse - work here!
         this.left=left;
         this.right=right;
-        this.properties=new ArrayList<>();
-        if(properties!=null) this.properties.addAll(properties);
+        this.sgfProperties=new ArrayList<>();
+        if(properties!=null) this.sgfProperties.addAll(properties);
         setFlags();
         boolean ok=checkFlags();
         if(!ok) System.out.println("node has move and setup type properties!");
     }
     public void setFlags() {
         // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
-        for(SgfProperty property:properties) {
+        for(SgfProperty property:sgfProperties) {
             if(property.p() instanceof Setup) hasASetupType=true;
             if(property.p() instanceof sgf.Move) { hasAMoveType=true; }
             if((property.p().equals(P.W)||property.p().equals(P.B))) hasAMove=true;
@@ -140,8 +140,8 @@ public class SgfNode {
         if(right!=null) { right.oldPreorderCheckFlags(); }
     }
     void add(SgfProperty property) {
-        if(properties==null) properties=new ArrayList<>();
-        properties.add(property);
+        if(sgfProperties==null) sgfProperties=new ArrayList<>();
+        sgfProperties.add(property);
         setFlags();
         boolean ok=checkFlags();
         if(!ok) System.out.println("node has move and setup type properties!");
@@ -202,7 +202,7 @@ public class SgfNode {
     @Override public String toString() {
         StringBuffer stringBuffer=new StringBuffer(";");
         if(false) { stringBuffer.append("{id="+sgfId); stringBuffer.append("}"); }
-        for(Iterator<SgfProperty> i=properties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
+        for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
         return stringBuffer.toString();
     }
     private void saveSgf_(Writer writer,Indent indent) throws IOException {
@@ -242,14 +242,14 @@ public class SgfNode {
         }
     }
     void lastMove_(SgfNode holder) {
-        for(Iterator<SgfProperty> i=properties.iterator();i.hasNext();) {
+        for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {
             SgfProperty property=i.next();
             P p=property.p();
             if(p instanceof Move&&(p==P.B||p==P.W)) {
                 moves++;
                 holder.left=this;
-                holder.properties.clear();
-                holder.properties.add(property);
+                holder.sgfProperties.clear();
+                holder.sgfProperties.add(property);
                 Logging.mainLogger.info("lastNode="+this+", lastMove="+property);
             } else parserLogger.severe(p+" is not a move!");
         }
@@ -267,15 +267,15 @@ public class SgfNode {
     }
     boolean findMove_(SgfNode holder,SgfProperty move) {
         Logging.mainLogger.info("examing: "+this);
-        for(Iterator<SgfProperty> i=properties.iterator();i.hasNext();) {
+        for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {
             SgfProperty property=i.next();
             P p=property.p();
             if(p instanceof Move&&(p==P.B||p==P.W)) {
                 moves++;
                 if(property.equals(move)) {
                     holder.left=this;
-                    holder.properties.clear();
-                    holder.properties.add(property);
+                    holder.sgfProperties.clear();
+                    holder.sgfProperties.add(property);
                     Logging.mainLogger.info("foundmove: "+this+", lastMove="+property);
                     return true;
                 }
@@ -303,7 +303,7 @@ public class SgfNode {
     @Override public int hashCode() {
         final int prime=31;
         int result=1;
-        result=prime*result+((properties==null)?0:properties.hashCode());
+        result=prime*result+((sgfProperties==null)?0:sgfProperties.hashCode());
         return result;
     }
     public boolean deepEquals(SgfNode other) {
@@ -325,9 +325,9 @@ public class SgfNode {
         else if(obj==null) return false;
         else if(getClass()!=obj.getClass()) return false;
         SgfNode other=(SgfNode)obj;
-        if(properties==null) {
-            if(other.properties!=null) return false;
-        } else if(!properties.equals(other.properties)) return false;
+        if(sgfProperties==null) {
+            if(other.sgfProperties!=null) return false;
+        } else if(!sgfProperties.equals(other.sgfProperties)) return false;
         return true;
     }
     private static SgfNode sgfRestoreAndSave(Reader reader,Writer writer) {
@@ -484,7 +484,7 @@ public class SgfNode {
             System.out.println("------------");
         }
     }
-    public ArrayList<SgfProperty> properties;
+    public ArrayList<SgfProperty> sgfProperties;
     // add an equal method and see what happens
     // maybe these could be immutable?
     public SgfNode left,right;

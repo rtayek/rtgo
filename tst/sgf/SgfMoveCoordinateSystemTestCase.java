@@ -18,11 +18,11 @@ public class SgfMoveCoordinateSystemTestCase {
         SgfNode move2=games.left.left;
         // a1 maps to as
         // r16 maps to qd
-        SgfProperty property1=move1.properties.get(0);
+        SgfProperty property1=move1.sgfProperties.get(0);
         //System.out.println("p="+property1.p());
         String m1=property1.list().get(0);
         //System.out.println("m1="+m1);
-        SgfProperty property2=move2.properties.get(0);
+        SgfProperty property2=move2.sgfProperties.get(0);
         String m2=property2.list().get(0);
         //System.out.println("m2="+m2);
         // no testing done, just finding out what the coordinate map is.

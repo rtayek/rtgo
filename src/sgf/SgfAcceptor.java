@@ -20,8 +20,8 @@ class SgfPrintAcceptor extends SgfAcceptorImpl {
         if(node==null) return;
         // this feels wrong. maybe visit() should do the work
         // maybe not, maybe the parameter should be the visitor.
-        System.out.print("accepting: "+node+" "+node.properties.size()+" properties. ");
-        for(SgfProperty property:node.properties) { System.out.print(property.p().getClass().getName()+" "); }
+        System.out.print("accepting: "+node+" "+node.sgfProperties.size()+" properties. ");
+        for(SgfProperty property:node.sgfProperties) { System.out.print(property.p().getClass().getName()+" "); }
         System.out.println();
     }
 }
@@ -30,7 +30,7 @@ class SgfMovesPath extends SgfAcceptorImpl {
     // this may work to find the move list?
     @Override public void accept(SgfNode sgfNode) {
         boolean isAMove=false;
-        for(SgfProperty property:sgfNode.properties) if((property.p().equals(P.W)||property.p().equals(P.B))) {
+        for(SgfProperty property:sgfNode.sgfProperties) if((property.p().equals(P.W)||property.p().equals(P.B))) {
             isAMove=true;
             moves.add(sgfNode);
             i++;

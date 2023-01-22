@@ -16,7 +16,7 @@ class Node2 extends MNode { // why did i make this?
     Node2(MNode parent,DefaultMutableTreeNode treeNode) {
         super(parent);
         this.treeNode=treeNode;
-        properties.addAll(parent.properties);
+        sgfProperties.addAll(parent.sgfProperties);
     }
     @Override public String toString() {
         String s=super.toString();
@@ -36,7 +36,7 @@ class Node2 extends MNode { // why did i make this?
         Enumeration<TreeNode/*DefaultMutableTreeNode*/> e=root.depthFirstEnumeration();
         while(e.hasMoreElements()) {
             TreeNode /*DefaultMutableTreeNode*/ node=e.nextElement();
-            if(object.equals(((DefaultMutableTreeNode)node).getUserObject()))
+            if(((DefaultMutableTreeNode)node).getUserObject().equals(object))
                 return new TreePath(((DefaultMutableTreeNode)node).getPath());
         }
         return null;

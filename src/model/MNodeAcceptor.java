@@ -67,8 +67,8 @@ public interface MNodeAcceptor {
     // http://www.csse.monash.edu.au/~lloyd/tildeProgLang/PL-Block/
     public static class PrintAcceptor implements MNodeAcceptor {
         @Override public void accept(MNode node,Traverser traverser) {
-            Logging.mainLogger.info(node+" "+node.properties.size()+" properties. ");
-            for(SgfProperty property:node.properties) Logging.mainLogger.info(property.p().getClass().getName()+" ");
+            Logging.mainLogger.info(node+" "+node.sgfProperties.size()+" properties. ");
+            for(SgfProperty property:node.sgfProperties) Logging.mainLogger.info(property.p().getClass().getName()+" ");
             Logging.mainLogger.info(""+" "+"");
         }
     }

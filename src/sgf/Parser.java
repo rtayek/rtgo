@@ -105,7 +105,7 @@ public class Parser {
             if(property!=null) node.add(property);
             else parserLogger.info(indent.indent()+"null property");
         }
-        if(node.properties==null) node.properties=new ArrayList<>(); /* maybe this is a mistake? */
+        if(node.sgfProperties==null) node.sgfProperties=new ArrayList<>(); /* maybe this is a mistake? */
         return(node);
     }
     private SgfNode sequence() throws IOException {
