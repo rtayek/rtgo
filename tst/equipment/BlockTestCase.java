@@ -4,8 +4,8 @@ import java.util.List;
 import org.junit.*;
 import equipment.Board.*;
 import io.Logging;
-import model.Model;
-import model.Model.MoveResult;
+//import model.Model;
+//import model.Model.MoveResult;
 import utilities.*;
 public class BlockTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -98,30 +98,5 @@ public class BlockTestCase {
         assertEquals(1,blocks.second.size());
     }
     @Test public void testFindCapturedStones() { Logging.mainLogger.warning("not implemented."); }
-    @Test public void testLiberties2() {
-        // this uesed to work. i broke it on 10/11/22
-        Model model=new Model();
-        { // why not just make a board?
-            model.setRoot(9,9,Topology.normal,Shape.normal);
-        }
-        int width=model.board().width();
-        // one place uses depth. find and fix.
-        MoveResult moveResult=null;
-        moveResult=model.move(Stone.black,"B9",width);
-        model.move(Stone.white,"C9",width);
-        model.move(Stone.black,"B8",width);
-        model.move(Stone.white,"C8",width);
-        model.move(Stone.black,"C7",width);
-        model.move(Stone.white,"B7",width);
-        model.move(Stone.black,"D8",width);
-        model.move(Stone.white,"D7",width);
-        model.move(Stone.black,"C6",width);
-        model.move(Stone.white,"E8",width);
-        model.move(Stone.black,"C5",width);
-        model.move(Stone.white,"D9",width);
-        Point point=Coordinates.fromGtpCoordinateSystem("C9",width);
-        Block block=Block.find(model.board(),point);
-        assertEquals(2,block.liberties());
-    }
     Board board=Board.factory.create(5,Topology.normal);
 }

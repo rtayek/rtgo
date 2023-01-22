@@ -255,6 +255,8 @@ class Mediator implements Observer,ActionListener {
                     MNode root=model.root();
                     List<String> list=Arrays.asList(new String[] {comment});
                     SgfProperty property=new SgfProperty(P.C,list);
+                    // comment may not be handled correctly.
+                    // doc says text, so why the list?
                     root.sgfProperties.add(0,property);
                     lastLoadDirectory=file.getParentFile();
                     lastOpenFile=file;

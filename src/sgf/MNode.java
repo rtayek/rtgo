@@ -88,8 +88,12 @@ public class MNode {
         SgfNode extra=new SgfNode();
         extra.left=node; // might be null
         MNode extraMNode=new MNode(null);
-        try {
+        // 1/21/23
+        // maybe we don't need and extra node if we already have one?
+        // maybe this can not happen?
+        try { // does this really need a try?
             SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
+            // add a property or comment indicating restored.
             extraMNode.sgfProperties.add(property);
         } catch(Exception e) {
             e.printStackTrace();

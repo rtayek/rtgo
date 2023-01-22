@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.logging.Level;
 import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
@@ -100,7 +101,15 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public boolean save(Writer writer) {
         MNode root=root();
-        if(addNewRoot) { root=new MNode(null); root.children.add(root()); }
+        // maybe add new root is we made this from scratch
+        // i.e we did not restore this from sgf.
+        if(addNewRoot) {
+            root=new MNode(null);
+            root.children.add(root());
+            }
+        // work here
+        if(root.sgfProperties.contains(P.RT)) System.out.println(root+" has RT");
+        else System.out.println(root+" does not have RT");
         boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
         return ok;
     }
@@ -115,6 +124,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             Logging.mainLogger.config("restoring model from null reader!");
         }
         MNode games=MNode.restore(reader);
+        System.out.println("restored: "+games);
         if(false&&addNewRoot) games=games.children.get(0);
         // need to check if game was stored with the flag on.
         // maybe we can put in a comment and look for it.
@@ -181,6 +191,9 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(root!=null) checkForLittleGolem(root);
         Logging.mainLogger.config(name+" "+"doing root: "+root);
         do_(root);
+        // maybe do a second do_() in some cases?
+        //if(root.children.size()>0)
+        //    do_(root.children.get(0));
         long t0=System.nanoTime();
         Logging.mainLogger.fine(name+" "+"doing notify @"+t0+" , "+root);
         // we are doing a notify here!
@@ -230,7 +243,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         Logging.mainLogger.config("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
         //IO.stackTrace(10);
         MNode newRoot=new MNode(null);
-        MNode main=new MNode(newRoot);
+        //MNode main=new MNode(newRoot);
+        MNode main=new MNode(null);
         addProperty(main,P.FF,"4");
         addProperty(main,P.GM,"1");
         addProperty(main,P.AP,sgfApplicationName);
@@ -239,7 +253,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(!shape.equals(Shape.normal)) addProperty(main,P.C,sgfBoardShape+shape);
         String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
         if(width==depth) string=Integer.valueOf(width).toString();
-        boolean alwaysSetBoardSize=false;// was true
+        boolean alwaysSetBoardSize=true;// was true
         if(alwaysSetBoardSize) addProperty(main,P.SZ,string);
         // work needed here!
         if(topology.equals(Topology.torus)) addProperty(main,P.KM,"4.5");

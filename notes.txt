@@ -702,6 +702,12 @@ added down_() for use internally to model.
 looking at saved games. setup info like shape and topology are not in the sgf file.
 seems like were not handling the AB or AW commands.
 rename properties field in nodes to avoid confusion.
+adding new root  in set root causes problems.
+do_ just does the new root!
+how to get it to do 2?
+should we go to the bottom?
+no, probably not.
+doing 2 do_()'s breaks 18 tests. not the ones one would expect though.
 
 
 

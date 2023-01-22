@@ -294,6 +294,8 @@ public abstract class AbstractGTPDirectTestCase {
         // make some like this with combinations of role and strict
         // seems we need a send 2 commands and check status routine
         // then make a bunch of tests 4 roles X 2 stricts = 8 tests.
+        //1/21/23
+        // no more strict now, check role
         if(true) {
             String[] commands=new String[] {Command.play.name()+" Black "+"A1"+'\n',
                     Command.play.name()+" Black A2"+'\n'};

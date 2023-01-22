@@ -13,6 +13,7 @@ public class SgfProperty {
         if(!(o instanceof SgfProperty)) return false;
         SgfProperty property=(SgfProperty)o;
         if(p!=property.p) return false; // is this correct?
+        // maybe use equals above?
         return list.equals(property.list);
     }
     public P p() { return p; }
