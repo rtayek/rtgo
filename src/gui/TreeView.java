@@ -13,6 +13,7 @@ import model.Model;
 import sgf.MNode;
 import utilities.*;
 class Node2 extends MNode { // why did i make this?
+    // maybe to make tree view easier?
     Node2(MNode parent,DefaultMutableTreeNode treeNode) {
         super(parent);
         this.treeNode=treeNode;

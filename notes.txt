@@ -708,6 +708,12 @@ how to get it to do 2?
 should we go to the bottom?
 no, probably not.
 doing 2 do_()'s breaks 18 tests. not the ones one would expect though.
+1/22/23
+equals in sgf property maybe wrong as it fails to find P.RT?
+only adding a new root when there is no RT seems to work.
+back to 2 failures in tst/
+add in an extra node when we did not restore sgf.
+
 
 
 

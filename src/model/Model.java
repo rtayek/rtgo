@@ -103,15 +103,17 @@ public class Model extends Observable { // model of a go game or problem forrest
         MNode root=root();
         // maybe add new root is we made this from scratch
         // i.e we did not restore this from sgf.
-        if(addNewRoot) {
-            root=new MNode(null);
-            root.children.add(root());
-            }
+        if(addNewRoot) { root=new MNode(null); root.children.add(root()); }
         // work here
-        if(root.sgfProperties.contains(P.RT)) System.out.println(root+" has RT");
-        else System.out.println(root+" does not have RT");
+        boolean found=hasRT(root);
+        if(!found) { root=new MNode(null); root.children.add(root()); }
         boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
         return ok;
+    }
+    public static boolean hasRT(MNode root) {
+        boolean found=false;
+        for(SgfProperty p:root.sgfProperties) { if(p.p().equals(P.RT)) { found=true; break; } }
+        return found;
     }
     public String save() {
         StringWriter stringWriter=new StringWriter();
@@ -124,13 +126,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             Logging.mainLogger.config("restoring model from null reader!");
         }
         MNode games=MNode.restore(reader);
-        System.out.println("restored: "+games);
-        if(false&&addNewRoot) games=games.children.get(0);
-        // need to check if game was stored with the flag on.
-        // maybe we can put in a comment and look for it.
-        // something like that.
-        setRoot(games); // does this really trash everything correctly?
-        // it looks like it does.
+        setRoot(games);
     }
     public Model(Model model,String name) { // copy constructor
         this.name=name;
@@ -487,12 +483,10 @@ public class Model extends Observable { // model of a go game or problem forrest
         // does this need a "who is asking" boolean?
         if(role.equals(Role.anything)) return true;
         if(role.equals(Role.observer)&&action.equals(What.navigate)) return true;
-        System.out.println("turn: "+turn()+", role.stone: "+role.stone);
         if(action.equals(What.move)&&turn().equals(role.stone)) return true;
         return false;
     }
     public MoveResult move(Move move) {
-        System.out.println(move+" "+role());
         if(!checkAction(role(),What.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
         MoveResult rc=MoveResult.legal;
@@ -718,7 +712,6 @@ public class Model extends Observable { // model of a go game or problem forrest
                 case AB:
                 case AW:
                     for(String s:property.list()) {
-                        System.out.println("s: "+s);
                         Point point=Coordinates.fromSgfCoordinates(s,board().depth());
                         board().setAt(point,p2.equals(P2.AB)?Stone.black:Stone.white);
                     }

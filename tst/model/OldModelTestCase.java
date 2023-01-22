@@ -7,7 +7,8 @@ import org.junit.*;
 import equipment.*;
 import equipment.Board.Topology;
 import io.IO;
-import model.Model.MoveResult;
+import model.Model.*;
+import static model.Model.*;
 import model.Move.MoveImpl;
 import sgf.*;
 import utilities.MyTestWatcher;
@@ -262,21 +263,30 @@ public class OldModelTestCase {
     }
     @Test public void testRTWithNoMoves() {
         Model model=new Model();
+        boolean hasRT=hasRT(model.root());
+        assertFalse("should not have a P.RT.",hasRT);
         StringWriter stringWriter=new StringWriter();
         boolean ok=model.save(stringWriter);
         assertTrue(ok);
         String sgfString=stringWriter.toString();
-        assertEquals("RT root node is removed","",sgfString);
-        System.out.println("sgf from new model: '"+sgfString+"'");
+        model=new Model();
+        model.restore(new StringReader(sgfString));
+        hasRT=hasRT(model.root());
+        assertTrue("should have a P.RT.",hasRT);
     }
     @Test public void testRT() {
         Model model=new Model();
         model.move(Stone.black,new Point());
+        boolean hasRT=hasRT(model.root());
+        assertFalse("should not have a P.RT.",hasRT);
         StringWriter stringWriter=new StringWriter();
         boolean ok=model.save(stringWriter);
         assertTrue(ok);
         String sgfString=stringWriter.toString();
-        assertEquals("RT root node is removed","(;B[as])",sgfString);
+        model=new Model();
+        model.restore(new StringReader(sgfString));
+        hasRT=hasRT(model.root());
+        assertTrue("should have a P.RT.",hasRT);
     }
     /*@Test*/ public void testSgfFileFromLittleGolem() {
         // Node root=quietLoad(new File("url.sgf"));
