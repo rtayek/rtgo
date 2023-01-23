@@ -721,14 +721,13 @@ maybe subclass the print stream and add thread local variables?
 the 2 failures  in TeeAndLoggingTestCase work fine when run by themselves.
 using plaf: javax.swing.UIManager$LookAndFeelInfo[CDE/Motif com.sun.java.swing.plaf.motif.MotifLookAndFeel]
 because it is faster.
-
-
-
-
-
-
-
- 
- 
- 
-
+work on displaying a blank board when restoring a game.
+work on delaying board creation as long as possible.
+maybe come up with a blank screen?
+how to handle new root if we add one?
+maybe don't do this and just come up with a standard board?
+or come up doing a new game.
+1/22/23 let's try multiple games;
+let's work on display for no or multiple games etc.
+set root always initializes board to null
+then do_ may or may not actually create a board

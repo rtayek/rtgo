@@ -112,6 +112,7 @@ public class ThreadTestCase {
         Thread.sleep(0);
         thread.interrupt();
         thread.join();
+        // 1/22/23 failed  once
         assertEquals(old,Thread.activeCount());
     }
     public static void print(Thread thread) {

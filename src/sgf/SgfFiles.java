@@ -2,6 +2,7 @@ package sgf;
 import static sgf.Parser.*;
 import java.io.StringReader;
 import java.util.*;
+import javax.sound.midi.Sequence;
 import io.Init;
 public class SgfFiles {
     public static void main(String[] arguments) {
@@ -25,8 +26,11 @@ public class SgfFiles {
             if(games.hasASetupType) s+='S';
             if(games.hasAMoveType) s+='m';
             if(games.hasAMove) s+='M';
-            if(s.equals("")) s="0";
-            if(true||!s.equals("0")) { System.out.println("key: "+key); System.out.println(s+" "+games); }
+            //if(!s.equals("")) { System.out.println("key: "+key); System.out.println(s+" "+games); }
+            if(games.right!=null) {
+                System.out.println("key: "+key);
+                System.out.println(s+" "+games); 
+                }
         }
     }
 }

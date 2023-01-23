@@ -101,11 +101,8 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public boolean save(Writer writer) {
         MNode root=root();
-        // maybe add new root is we made this from scratch
-        // i.e we did not restore this from sgf.
-        if(addNewRoot) { root=new MNode(null); root.children.add(root()); }
-        // work here
         boolean found=hasRT(root);
+        // add new root if we don't already have one.
         if(!found) { root=new MNode(null); root.children.add(root()); }
         boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
         return ok;
@@ -159,24 +156,14 @@ public class Model extends Observable { // model of a go game or problem forrest
         return state.root;
     }
     public void setRoot(MNode root) { // this always gets called.
+        setBoard(null);
         if(root==null) {
+            // maybe leave it at null
+            // and adjust display?
             Logging.mainLogger.config("root is null!: ");
-            // should i do a set root here?
             setRoot();
             return;
         }
-        // return root so Model m=new Model().setRoot(root)?
-        // looks like we keep the whole tree (forrest?)
-        // 1/21/23
-        // trying to fix new game
-        //if(root.)
-        if(board()!=null) {
-            Logging.mainLogger.config(name+" "+"1 board is not null in setRoot()!");
-            // Logging.logger.fine(name+" "+"setting board to null in
-            // setRoot()");
-            // setBoard(null); // maybe this is a good idea?
-            // how to deal with null cases?
-        } else Logging.mainLogger.config(name+" "+"2 board is null in setRoot()!");
         stack.clear();
         state=new State();
         state.root=root;
@@ -187,6 +174,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(root!=null) checkForLittleGolem(root);
         Logging.mainLogger.config(name+" "+"doing root: "+root);
         do_(root);
+        if(board()==null) System.out.println("board is null after do root.");
+        else System.out.println("board is not null after do root.");
         // maybe do a second do_() in some cases?
         //if(root.children.size()>0)
         //    do_(root.children.get(0));
@@ -239,8 +228,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         Logging.mainLogger.config("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
         //IO.stackTrace(10);
         MNode newRoot=new MNode(null);
-        //MNode main=new MNode(newRoot);
-        MNode main=new MNode(null);
+        //MNode main=new MNode(newRoot); // add extra root
+        MNode main=new MNode(null); // no extra root
         addProperty(main,P.FF,"4");
         addProperty(main,P.GM,"1");
         addProperty(main,P.AP,sgfApplicationName);
@@ -250,6 +239,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
         if(width==depth) string=Integer.valueOf(width).toString();
         boolean alwaysSetBoardSize=true;// was true
+        // false breaks a lot of tests
         if(alwaysSetBoardSize) addProperty(main,P.SZ,string);
         // work needed here!
         if(topology.equals(Topology.torus)) addProperty(main,P.KM,"4.5");
