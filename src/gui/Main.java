@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.xml.stream.events.StartDocument;
 import io.*;
 import model.Model;
@@ -149,9 +150,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         System.err.println("err foo");
         textView.tee2.printStream.println("printstream 2 foo");
         Model model=new Model();
-        if(startWithFile!=null) {
-            model.restore(IO.toReader(startWithFile));
-        }
+        if(startWithFile!=null) { model.restore(IO.toReader(startWithFile)); }
         main=new Main(null,model,useTextView?textView:null);
         main.moveToLocationFor(name);
         String newTitle=main.title()+" "+name;
@@ -187,7 +186,48 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         else frame().setLocation(new Point());
         return point;
     }
+    private static void sysplaf() {
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch(UnsupportedLookAndFeelException e) {
+            // handle exception
+        } catch(ClassNotFoundException e) {
+            // handle exception
+        } catch(InstantiationException e) {
+            // handle exception
+        } catch(IllegalAccessException e) {
+            // handle exception
+        }
+    }
+    private static void xplaf() {
+        try {
+            // Set cross-platform Java L&F (also called "Metal")
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch(UnsupportedLookAndFeelException e) {
+            // handle exception
+        } catch(ClassNotFoundException e) {
+            // handle exception
+        } catch(InstantiationException e) {
+            // handle exception
+        } catch(IllegalAccessException e) {
+            // handle exception
+        }
+    }
+    public static void setPlaf(LookAndFeelInfo plaf_) {
+        System.out.println(plaf_);
+        try {
+            UIManager.setLookAndFeel(plaf_.getClassName());
+        } catch(ClassNotFoundException|InstantiationException|IllegalAccessException
+                |UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) {
+        System.out.println(Arrays.asList(args));
+        LookAndFeelInfo[] plafs=UIManager.getInstalledLookAndFeels();
+        System.out.println(Arrays.asList(plafs));
+        setPlaf(plafs[2]);
         // add a panel somewhere to control logging
         // add a bunch of frames to control everything.
         Init.first.twice();
@@ -196,6 +236,8 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         System.out.println(map);
         // use arguments from map instead of below.
         String name=(String)map.get("name");
+        System.out.println("name: "+name);
+        if(name!=null) { Main main=run(name); return; }
         Main maink=null;
         if(!run3) maink=run("one");
         else maink=run("black");
@@ -212,7 +254,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
     JPanel north,south,east,west;
     final Model model;
     Mediator mediator;
-    int ttl=10*60*1000;
+    int ttl=100*60*1000;
     final Timer timer=new Timer(ttl,this);
     public final TextView textView;
     String playerName;

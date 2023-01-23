@@ -88,7 +88,7 @@ public class Converter {
         dataModel.setMaximum(maximum);
         if(resetCurrentValues) { dataModel.setDoubleValue(maximum); }
     }
-    private static void initLookAndFeel() {
+    public  static void initLookAndFeel() {
         String lookAndFeel=null;
         if(LOOKANDFEEL!=null) {
             if(LOOKANDFEEL.equals("Metal")) {

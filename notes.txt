@@ -712,7 +712,17 @@ doing 2 do_()'s breaks 18 tests. not the ones one would expect though.
 equals in sgf property maybe wrong as it fails to find P.RT?
 only adding a new root when there is no RT seems to work.
 back to 2 failures in tst/
-add in an extra node when we did not restore sgf.
+added in an extra node when we did not restore sgf.
+this uses the RT sgf property.
+no need to waste this on that.
+we could just put in a comment in that said:  "restore by ... " or something.
+idea: may the tee/loging is failing because it is being set by 3 threads of gui.Main?
+maybe subclass the print stream and add thread local variables?
+the 2 failures  in TeeAndLoggingTestCase work fine when run by themselves.
+using plaf: javax.swing.UIManager$LookAndFeelInfo[CDE/Motif com.sun.java.swing.plaf.motif.MotifLookAndFeel]
+because it is faster.
+
+
 
 
 
