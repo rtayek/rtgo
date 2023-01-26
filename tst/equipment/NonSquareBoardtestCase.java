@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import equipment.Board.Topology;
+import equipment.Board.*;
 import utilities.MyTestWatcher;
 public class NonSquareBoardtestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -26,5 +26,5 @@ public class NonSquareBoardtestCase {
             assertEquals(Stone.black,b.at(x,y));
         }
     }
-    BoardImpl b=new BoardImpl(Board.standard,Board.standard/2,Topology.normal,0);
+    BoardImpl b=new BoardImpl(Board.standard,Board.standard/2,Topology.normal,Shape.normal,0);
 }

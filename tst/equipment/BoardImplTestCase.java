@@ -2,6 +2,7 @@ package equipment;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
+import equipment.Board.Shape;
 import utilities.MyTestWatcher;
 /*@FixMethodOrder(MethodSorters.NAME_ASCENDING)*/ public class BoardImplTestCase extends BoardABCTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -10,12 +11,12 @@ import utilities.MyTestWatcher;
     //}
     @Override @Before public void setUp() throws Exception {
         super.setUp();
-        board=boardImpl=new BoardImpl(Board.standard,Board.standard,Board.Topology.normal,0);
+        board=boardImpl=new BoardImpl(Board.standard,Board.standard,Board.Topology.normal,Shape.normal,0);
     }
     @Override @After public void tearDown() throws Exception {}
     @Test public void txestBoardImplInt() {
         for(Board.Topology type:Board.Topology.values()) {
-            Board board2=new BoardImpl(board.width(),board.depth(),type,0);
+            Board board2=new BoardImpl(board.width(),board.depth(),type,Shape.normal,0);
             assertNotNull(board2);
         }
     }
@@ -31,7 +32,7 @@ import utilities.MyTestWatcher;
     }
     @Test public void testSetAtImpl() {
         int width=5,depth=3;
-        BoardImpl boardImpl=new BoardImpl(width,depth,Board.Topology.normal,0);
+        BoardImpl boardImpl=new BoardImpl(width,depth,Board.Topology.normal,Shape.normal,0);
         for(int k=0;k<width*depth;k++) {
             boardImpl.setAt(k,Stone.black);
             assertEquals(Stone.black,boardImpl.at(k));

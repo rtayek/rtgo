@@ -1,8 +1,10 @@
 package equipment;
+import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.util.*;
 import equipment.Board.*;
-import io.Logging;
+import io.*;
+import model.Model;
 import utilities.Pair;
 public interface Board { // http://stackoverflow.com/questions/28681737/java-8-default-methods-as-traits-safe
     // make a subinterface called MutableBoard?
@@ -44,7 +46,7 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
                     Logging.mainLogger.warning("hole 5 points: "+points);
                     break;
                 case programmer:
-                    if(width<23||depth<19) {
+                    if(width>23||depth<19) {
                         Logging.mainLogger.warning("not big enough for programmers board!");
                     } else {
                         int[] x1=new int[] {5,11,17,18,19,20,21,22};
@@ -73,6 +75,7 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
     int width();
     int depth();
     Topology topology();
+    Shape shape();
     default int moduloWidth(int x) { // add these to board?
         return modulo(x,width());
     }
@@ -162,7 +165,7 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
         }
         return smaller;
     }
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void x() {
         Board board=factory.create(7,7,Topology.normal);
         for(int x=0;x<board.width();++x) board.setAt(x,board.depth()-1-x,Stone.black);
         for(int x=0;x<board.width();++x) board.setAt(x,x,Stone.white);
@@ -180,6 +183,35 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
             System.out.println(board);
             System.out.println(lowerLeft);
             System.out.println(point+" -----------------------");
+        }
+    }
+    public static void main(String[] args) throws FileNotFoundException {
+        //x(); 
+        int width=23,depth=19;
+        Topology topology=Topology.normal;
+        for(Shape shape:Shape.values()) {
+            Model model=new Model();
+            model.setBoardTopology(Topology.normal);
+            model.setBoardShape(shape);
+            model.setRoot(width,depth,topology,shape);
+            // triangle?
+            Board board=model.board();
+            List<Point> points=topology==Topology.diamond?points=Board.getPointsForDiamondRegion(width,depth)
+                    :Shape.getPointsForRegion(width,depth,shape);
+            System.out.println(points.size()+" points.");
+            int xMax=-1,yMax=-1;
+            for(Point point:points) {
+                if(point.x>xMax) xMax=point.x;
+                if(point.y>yMax) yMax=point.y;
+            }
+            System.out.println(xMax+"x"+yMax);
+            int i=0;
+            for(Point point:points) {
+                System.out.println(i+" point: "+point);
+                if(!Stone.edge.equals(board.at(point))) System.out.println("bad");
+                ++i;
+            }
+            System.out.println(model);
         }
     }
     Factory factory=BoardFactory.instance;
@@ -218,15 +250,17 @@ class BoardFactory implements Board.Factory {
     @Override public Board create(int n) { return create(n,Topology.normal); }
     @Override public Board create(int n,Topology type) { return create(n,n,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology type) { return create(width,depth,type,Shape.normal); }
-    @Override public Board create(int width,int depth,Topology type,Shape shape) {
+    @Override public Board create(int width,int depth,Topology topeology,Shape shape) {
+        System.out.println("factory is crearing board.");
         BoardImpl boardImpl=null;
-        if(type.equals(Topology.diamond)) if(shape.equals(Shape.programmer)) {
-            Logging.mainLogger.severe(type+" "+shape+"is illegal combination");
+        if(topeology.equals(Topology.diamond)) if(shape.equals(Shape.programmer)) {
+            Logging.mainLogger.severe(topeology+" "+shape+"is illegal combination");
             //throw new RuntimeException(type+" "+shape+"is illegal combination");
             return boardImpl;
         }
+        if(shape.equals(Shape.programmer)) { width=23; depth=19; }
         try {
-            boardImpl=new BoardImpl(width,depth,type,ids++);
+            boardImpl=new BoardImpl(width,depth,topeology,shape,ids++);
             // what about shape?
             // yes. what about it!
             // also, how is topology handled?
@@ -241,11 +275,12 @@ class BoardFactory implements Board.Factory {
     static final BoardFactory instance=new BoardFactory();
 }
 abstract class BoardABC implements Board {
-    BoardABC(int width,int depth,Topology typology,int id) {
+    BoardABC(int width,int depth,Topology topology,Shape shape,int id) {
         this.id=id;
         this.width=width;
         this.depth=depth;
-        this.typology=typology!=null?typology:Topology.normal;
+        this.topology=topology!=null?topology:Topology.normal;
+        this.shape=shape==null?Shape.normal:shape;
         center=new Point(width/2,depth/2);
         lL=new Point(0,0);
         lR=new Point(width()-1,0);
@@ -260,7 +295,8 @@ abstract class BoardABC implements Board {
         return board;
     }
     @Override public int id() { return id; }
-    @Override public Topology topology() { return typology; }
+    @Override public Topology topology() { return topology; }
+    @Override public Shape shape() { return shape; }
     @Override public int width() { return width; }
     @Override public int depth() { return depth; }
     @Override public Point uL() { return uL; }
@@ -310,7 +346,8 @@ abstract class BoardABC implements Board {
             for(int i=0;i<s.length()/2;i++) starPoints[i]=new Point(s.charAt(2*i)-'a'+1,s.charAt(2*i+1)-'a'+1);
         }
     }
-    final Topology typology;
+    final Topology topology;
+    final Shape shape;
     // no shape!
     // probably need a shape here
     final int width,depth;
@@ -343,13 +380,12 @@ abstract class BoardABC implements Board {
     };
 }
 class BoardImpl extends BoardABC {
-    BoardImpl(int n,int id) { this(n,n,Topology.normal,id); }
-    public static boolean isLeft(Point a,Point b,Point c) { return ((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))>0; }
-    BoardImpl(int width,int depth,Topology type,int id) {
-        super(width,depth,type,id);
+    BoardImpl(int n,int id) { this(n,n,Topology.normal,Shape.normal,id); }
+    BoardImpl(int width,int depth,Topology topology,Shape shape,int id) {
+        super(width,depth,topology,shape,id);
         stones=new Stone[width*depth];
         setAll(Stone.vacant);
-        if(type.equals(Topology.diamond)) {
+        if(topology.equals(Topology.diamond)) {
             // need to set the unused regions to edge!
             // not sure this is the right place to do this.
             // other boards with holes look like the do something else wth nodes and regions.
@@ -360,6 +396,7 @@ class BoardImpl extends BoardABC {
         }
     }
     @Override public Stone[] stones() { return stones; }
+    public static boolean isLeft(Point a,Point b,Point c) { return ((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))>0; }
     @Override public void setAt(int k,Stone color) {
         stones[k]=color; // no one else should use direct access!
     }

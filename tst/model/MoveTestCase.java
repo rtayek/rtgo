@@ -44,6 +44,7 @@ public class MoveTestCase {
     }
     @Test public void testMovesToCurrentState0() throws Exception {
         Model expected=new Model();
+        expected.ensureBoard();
         List<Move> moves=expected.movesToCurrentState();
         if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move.nullMove)) {
             // remove these tests when the dust settles.
@@ -53,7 +54,10 @@ public class MoveTestCase {
         System.out.println();
         System.out.println(moves);
         Model actual=new Model(); // maybe problems if custom width and depth?
+        actual.ensureBoard();
         actual.makeMoves(moves);
+        System.out.println(expected.board());
+        System.out.println(actual.board());
         assertTrue(expected.board().isEqual(actual.board()));
         List<Move> actualMoves=actual.movesToCurrentState();
         if(actualMoves!=null&&actualMoves.size()>0&&actualMoves.get(0).equals(Move.nullMove)) {

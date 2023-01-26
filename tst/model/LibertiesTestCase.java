@@ -11,7 +11,8 @@ public class LibertiesTestCase {
         { // why not just make a board?
             model.setRoot(9,9,Topology.normal,Shape.normal);
         }
-        // we need to actuallyy do the sgf for the above
+        // we need to actually do the sgf for the above
+        model.ensureBoard();
         int width=model.board().width();
         // one place uses depth. find and fix.
         MoveResult moveResult=null;
@@ -27,6 +28,7 @@ public class LibertiesTestCase {
         model.move(Stone.white,"E8",width);
         model.move(Stone.black,"C5",width);
         model.move(Stone.white,"D9",width);
+        System.out.println(model);
         Point point=Coordinates.fromGtpCoordinateSystem("C9",width);
         Block block=Block.find(model.board(),point);
         assertEquals(2,block.liberties());

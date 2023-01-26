@@ -7,6 +7,7 @@ import utilities.MyTestWatcher;
 public class SaveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testA1A2() throws IOException {
+        model.ensureBoard();
         model.move(Stone.black,"A1",model.board().width());
         model.move(Stone.white,"A2",model.board().width());
         StringWriter stringWriter=new StringWriter();

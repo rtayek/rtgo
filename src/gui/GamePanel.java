@@ -50,8 +50,8 @@ class MyShowingListener implements HierarchyListener {
 }
 public class GamePanel extends JPanel {
     GamePanel(double boardHeightInPixels,Mediator mediator) {
+        System.out.println("wnter game panel constructor");
         // need to make this so i don't have to roll up a new one every time a
-        System.out.println("start game panel init");
         // move is made.
         // maybe just put the code below into an init() method?
         this.mediator=mediator;
@@ -207,8 +207,17 @@ public class GamePanel extends JPanel {
         for(int x=0;x<board.width();x++) addLine(x0+x*dx,y0,x0+x*dx,y0+(board.depth()-1)*dy);
     }
     void initialize(double boardHeightInPixels) {
+        if(mediator==null) {
+            System.out.println("game panel initialize board is null!");
+            Logging.mainLogger.warning("mediator is null!");
+            return;
+        }
         board=mediator.model.board(); // maybe the board should be a parameter?
-        if(board==null) { Logging.mainLogger.warning("board is null!"); return; }
+        if(board==null) {
+            System.out.println("game panel initialize board is null!");
+            Logging.mainLogger.warning("board is null!");
+            return;
+        }
         Logging.mainLogger.config("board type is: "+board.topology()+", band: "+mediator.model.band());
         lines.clear();
         // fix this so it paints in a sane manner if the board is null!
@@ -445,9 +454,11 @@ public class GamePanel extends JPanel {
     @Override public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(board==null) {
+            System.out.println("board is null in paint component.");
             Logging.mainLogger.warning("board is null!");
             g.drawString("no board",10,10);
         } else {
+            System.out.println("board is not null in paint component.");
             Color color=g.getColor();
             for(Line line:lines) line.paint(g);
             if(board.starPoints()!=null) for(int i=0;i<board.starPoints().size();i++) {

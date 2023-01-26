@@ -80,6 +80,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         Container container=frame().getContentPane();
         //System.out.println("main frame contains");
         //listComponentsIn(container,null,false);
+        System.out.println("model for mediator: "+model.root());
         mediator=new Mediator(model,this,textView);
         System.out.println("exit addContent().");
     }
@@ -153,7 +154,8 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         if(startWithFile!=null) {
             System.out.println("restoring: "+startWithFile);
             model.restore(IO.toReader(startWithFile));
-            }
+            System.out.println("afer restore board is: "+model.board());
+        }
         main=new Main(null,model,useTextView?textView:null);
         main.moveToLocationFor(name);
         String newTitle=main.title()+" "+name;

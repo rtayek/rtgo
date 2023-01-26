@@ -294,4 +294,7 @@ public class OldModelTestCase {
         model.restore(IO.toReader(new File("url.sgf")));
     }
     Model model=new Model();
+    {
+        model.ensureBoard();
+    }
 }

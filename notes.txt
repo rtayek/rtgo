@@ -731,3 +731,26 @@ or come up doing a new game.
 let's work on display for no or multiple games etc.
 set root always initializes board to null
 then do_ may or may not actually create a board
+sgf display needs a lot of work.
+most of the stuff in ff4_ex.sgf does not display correctly.
+setting alwaysSetBoardSize to false to see who makes the board.
+since game panel paints a board when main is started normally.
+1/24/23 noticed that the gtp size command does: 
+if true then model.setBoard() else it does a set root().
+look at this later.
+maybe add a "needsBoard: flag to all commands (or maybe a does not need a board)?
+seems like starting a new game should make a board.
+looks like set root should always add the size command.
+sized are all messed up for the different board shapes.
+programmers board must be at least 23 by 19.
+maybe try and relax the always make a board?
+maybe not, set root ...?
+idea let's make a board if someone tries to move.
+board has topology but not shape.
+iirc, we had shape in the board.
+why did we  take it out?
+put shape back in
+added ensureBoard to model.
+moved a test case.
+problems with using width and depth from sgf.
+work on the abobe

@@ -2,6 +2,7 @@ package model;
 import static org.junit.Assert.assertEquals;
 import java.io.*;
 import org.junit.Test;
+import equipment.Board;
 import sgf.MNode;
 public class BasicMoveTestCase {
     //fail("wait for move complete will hang!");
@@ -40,6 +41,9 @@ public class BasicMoveTestCase {
         assertEquals(expectedMove,actualMove);
     }
     Model model=new Model();
+    {
+        model.ensureBoard();
+    }
     int width=model.board().width(),depth=model.board().depth();
     Move expectedMove,actualMove;
     int moves;

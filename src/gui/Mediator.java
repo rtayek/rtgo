@@ -52,6 +52,7 @@ class Mediator implements Observer,ActionListener {
         Component old=borderLayout.getLayoutComponent(BorderLayout.PAGE_START);
         // old=null; fixed the left panel problem. but it's probably not the cause
         if(old!=null) { System.out.println("removing: "+old.getName()); main.remove(old); main.validate(); }
+        // make all of the panels
         if(useNewTopPanel) {
             topPanel=null;
             newTopPanel=new NewTopPanel(this);
@@ -159,7 +160,8 @@ class Mediator implements Observer,ActionListener {
         //lastMove.setBorder(BorderFactory.createLineBorder(Color.black));
         extra.add(lastMove);
         extra.add(sgfProperties);
-        initializeGamePanel(); // in lieu of a splash screen
+        // try not doing this
+        //initializeGamePanel(); // in lieu of a splash screen
         // the above is causing problems when the gui is not completely
         // initialized!
         Mediator.this.model.addObserver(this);
@@ -322,6 +324,7 @@ class Mediator implements Observer,ActionListener {
             if(model==this.model) {
                 Logging.mainLogger.fine(model.name+" "+"hint: "+hint);
                 if(model.board()!=null) initializeGamePanel(); // gross overkill
+                // maybe just return here and see what happens?
                 else Logging.mainLogger.fine(model.name+" "+"board is null, skipping initializeGamePanel()");
                 if(hint instanceof Event||hint instanceof Event.Hint) {
                     Event event=null;

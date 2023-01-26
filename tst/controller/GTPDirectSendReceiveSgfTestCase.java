@@ -20,7 +20,7 @@ import utilities.*;
     }
     public GTPDirectSendReceiveSgfTestCase(Object key) { this.key=key; }
     @After public void tearDown() throws Exception {}
-    @Parameters public static Collection<Object[]> data() {
+    @Parameters public static Collection<Object[]> parameters() {
         Set<Object> objects=new LinkedHashSet<>();
         objects.addAll(sgfDataKeySet());
         objects.addAll(sgfFiles());

@@ -24,13 +24,11 @@ public abstract class AbstractGTPDirectTestCase {
     // in either case. it then waits for done.
     public static class DirectTestCase extends AbstractGTPDirectTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-        @Override @Before public void setUp() throws Exception { super.setUp(); directJustRun=true; }
-        @Override @After public void tearDown() throws Exception { super.tearDown(); }
+        @Before public void setUp() throws Exception { directJustRun=true; }
     }
     public static class ThreadTestCase extends AbstractGTPDirectTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-        @Override @Before public void setUp() throws Exception { super.setUp(); directJustRun=false; }
-        @Override @After public void tearDown() throws Exception { super.tearDown(); }
+        @Before public void setUp() throws Exception { directJustRun=false; }
     }
     @RunWith(Suite.class) @SuiteClasses({DirectTestCase.class,ThreadTestCase.class}) public class GTPDirectTestSuite {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -38,8 +36,6 @@ public abstract class AbstractGTPDirectTestCase {
         // this should have been found by grep!
         // eclipse still can't find this!
     }
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
     // almost all of these make a new gtp backen for each command.
     // except maybe for the one's that take a list of commands.
     @Test public void testGtpOneEmptyCommand() throws Exception {
@@ -205,6 +201,7 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testGtpPlayOneMove() throws Exception {
         // assumes that we can make a move with no setup (i.e. no board yet)
         Point point=new Point(0,0);
+        directModel.ensureBoard();
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
         String response=new GTPBackEnd(Command.play.name()+" Black "+noI,directModel).runCommands(directJustRun);
         Response actual=Response.response(response);
@@ -251,7 +248,7 @@ public abstract class AbstractGTPDirectTestCase {
         assertEquals(badString+Failure.illegal_move.toString2()+twoLineFeeds,actual);
     }
     @Test public void testPlayIllegalMove() throws Exception {
-        System.out.println("directJustRun: "+directJustRun);
+        directModel.ensureBoard();
         Point point=new Point(0,0);
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
         System.out.println("noI: "+noI);
@@ -329,6 +326,7 @@ public abstract class AbstractGTPDirectTestCase {
     }
     @Test public void testUndo() throws Exception {
         Point point=new Point(0,0);
+        directModel.ensureBoard();
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
         String commands=Command.play.name()+" Black "+noI+'\n'+Command.undo.name()+"\n";
         // i may have to roll up a new model?

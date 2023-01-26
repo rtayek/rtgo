@@ -2,14 +2,14 @@ package equipment;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
-import equipment.Board.Topology;
+import equipment.Board.*;
 import io.Logging;
 import utilities.MyTestWatcher;
 /*@FixMethodOrder(MethodSorters.NAME_ASCENDING)*/public abstract class BoardABCTestCase extends BoardTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // this test case may not need to be run for a bunch of strange boards?
     @Test public void testBoardABC() { assertNotNull(boardABC); }
-    @Test public void testTypeABC() { assertEquals(topology,boardABC.typology); }
+    @Test public void testTypeABC() { assertEquals(topology,boardABC.topology); }
     @Test public void testWidthABC() { assertEquals(width,boardABC.width); }
     @Test public void testDepthABC() { assertEquals(depth,boardABC.depth); }
     @Test public void testNeighbors() {
@@ -34,7 +34,7 @@ import utilities.MyTestWatcher;
     @Test public void testToStringImpl() {
         int width=6,depth=3;
         {
-            BoardImpl boardImpl=new BoardImpl(width,depth,Topology.normal,0);
+            BoardImpl boardImpl=new BoardImpl(width,depth,Topology.normal,Shape.normal,0);
             boardImpl.setAt(0,Stone.black);
             boardImpl.setAt(width/2,depth/2,Stone.edge);
             boardImpl.setAt(width-1,depth-1,Stone.white);
@@ -44,7 +44,8 @@ import utilities.MyTestWatcher;
     }
     int width=3,depth=5;
     Topology topology=Topology.normal;
-    BoardABC boardABC=new BoardABC(width,depth,topology,0) {
+    Shape shape=Shape.normal;
+    BoardABC boardABC=new BoardABC(width,depth,topology,shape,0) {
         @Override public Stone[] stones() { return null; }
         @Override public List<Point> starPoints() { return null; }
         @Override public void setAt(int k,Stone color) {}

@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.logging.Level;
+import org.junit.rules.ExpectedException;
 import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
@@ -98,6 +99,13 @@ public class Model extends Observable { // model of a go game or problem forrest
         //if(name.contains("19")) Logging.mainLogger.severe("frog model has 19 in name.");
         this.name=name;
         setRoot();
+    }
+    public void ensureBoard() {
+        if(board()==null) {
+            System.out.println("ensuring that we have a board.");
+            Board board=Board.factory.create(state.widthFromSgf,state.depthFromSgf,boardTopology(),boardShape());
+            setBoard(board);
+        }
     }
     public boolean save(Writer writer) {
         MNode root=root();
@@ -220,6 +228,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         Board.Topology topology=(Board.Topology)Parameters.topology.currentValue();
         Board.Shape shape=(Board.Shape)Parameters.shape.currentValue();
         setRoot(width,depth,topology,shape);
+        // this should work.
+        // how come we get 19x19 board?
     }
     public void setRoot() { setRoot(Board.standard,Board.standard); }
     public void setRoot(int width,int depth) { setRoot(width,depth,Board.Topology.normal,Shape.normal); }
@@ -233,13 +243,15 @@ public class Model extends Observable { // model of a go game or problem forrest
         addProperty(main,P.FF,"4");
         addProperty(main,P.GM,"1");
         addProperty(main,P.AP,sgfApplicationName);
-        addProperty(main,P.C,"root");
+        addProperty(main,P.C,"comment");
         if(!topology.equals(Topology.normal)) addProperty(main,P.C,sgfBoardTopology+topology);
         if(!shape.equals(Shape.normal)) addProperty(main,P.C,sgfBoardShape+shape);
         String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
         if(width==depth) string=Integer.valueOf(width).toString();
-        boolean alwaysSetBoardSize=true;// was true
+        boolean alwaysSetBoardSize=false;// was true
         // false breaks a lot of tests
+        // 1/22/23 
+        // trying false just to see who make the board       // that is displayed by game panel.
         if(alwaysSetBoardSize) addProperty(main,P.SZ,string);
         // work needed here!
         if(topology.equals(Topology.torus)) addProperty(main,P.KM,"4.5");
@@ -273,6 +285,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public Collection<Move> mainLineFromState() { while(Navigate.down.do_(this)); return movesToCurrentState(); }
     public List<String> gtpMovesToCurrentState() {
         // not necessarily the main line!
+        ensureBoard();
         List<Move> moves=movesToCurrentState();
         List<String> gtpMoves=Move.toGTPMoves(moves,board().width(),board().depth());
         return gtpMoves;
@@ -315,7 +328,10 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return point;
     }
-    public int movesToGenerate() { return board().width()*board().depth()*7/10; }
+    public int movesToGenerate() {
+        if(board()==null) { System.out.println("board() is null in moves to generate."); return 0; }
+        return board().width()*board().depth()*7/10;
+    }
     public static void generateSillyMoves(Model model,int moves) { // like silly
         Stone turn=Stone.black;
         int n=0;
@@ -327,6 +343,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
     }
     public static void generateAndMakeMoves(Model model,int moves) { // like silly (almost)
+        if(moves==0) return;
         int n=0;
         String move=null;
         while(true) {
@@ -337,6 +354,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
     }
     public static void generateRandomMoves(Model model,int n) {
+        if(model==null||model.board()==null) return;
         Stone turn=Stone.black;
         for(Point move=model.generateRandomMove();move!=null;move=model.generateRandomMove(),turn=turn.otherColor()) {
             if(model.moves()>=n) break;
@@ -518,6 +536,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public Where isPoint(Point point) { return Where.isPoint(board(),band(),null,point); }
     MoveResult addMoveNodeAndExecute(Move move) {
         // may not be a move node. see haskall version of sgf code.
+        ensureBoard();
         if(move instanceof Pass||move instanceof Resign) throw new RuntimeException();
         else {
             Stone color=move.color();
@@ -575,6 +594,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(node!=null) {//
             for(int i=0;i<node.sgfProperties.size();i++) {
                 try {
+                    System.out.println("node: "+node.sgfProperties.get(i));
                     processProperty(node.sgfProperties.get(i));
                 } catch(Exception e) {
                     Logging.mainLogger.severe(name+"1 caught: "+e);
@@ -739,11 +759,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     else throw new RuntimeException("oops");
                     string=property.list().get(0);
                     boolean isPass=string.equals("");
-                    if(board()==null) { // had to put this back in!
-                        Board board=Board.factory.create(Board.standard,Board.standard,Topology.normal);
-                        setBoard(board);
-                        // maybe we need to do this earlier?
-                    }
+                    ensureBoard();
                     if(board().width()<=Board.standard&&board().depth()<=Board.standard&&string.equals("tt"))
                         isPass=true; // hack for some sgf wierdness/
                     if(isPass) {
@@ -773,8 +789,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     }
                     break;
                 case RG:
-                    if(state.application.equals(sgfApplicationName)) Logging.mainLogger
-                            .warning(state.board.topology()+", "+state.shape+", region: "+property.list());
+                    System.out.println("RG:  "+state.shape+", region: "+property.list());
                     // above we have diamond, hole1, region [jj]
                     // using state.board above does not seem quite right.
                     // yes, diamond needs another region or a bigger region.
@@ -785,11 +800,13 @@ public class Model extends Observable { // model of a go game or problem forrest
                     //if(!shape.equals(Shape.normal))
                     // let's let any board have regions
                     // maybe restrict diamond to normal for now and add some holes later?
-                    for(String s:property.list()) {
+                    ensureBoard();
+                    if(board()!=null) for(String s:property.list()) {
                         Logging.mainLogger.config(name+" "+"hole at: "+s);
                         Point point=Coordinates.fromSgfCoordinates(s,board().depth());
                         board().setAt(point,Stone.edge);
                     }
+                    else System.out.println("RG: board() is  null.");
                     break;
                 case SZ: // create the board
                     // maybe delay the board creation?
@@ -1120,8 +1137,14 @@ public class Model extends Observable { // model of a go game or problem forrest
         return false;
     }
     public static class State implements Cloneable { // needs an equals or isEqual method.
-        private State() {}
-        @Override public State clone() throws CloneNotSupportedException { return (State)super.clone(); }
+        private State() {
+            // will set widthFromSgf and depth to defaults.
+        }
+        @Override public State clone() throws CloneNotSupportedException {
+            State state=(State)super.clone();
+            // should copy everything that we need?
+            return state;
+        }
         static void removeCapturedStones(Board board,List<Block> blocks) {
             for(Block block:blocks) {
                 Logging.mainLogger.fine(""+" "+"removing "+block);
@@ -1174,6 +1197,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             }
             // check for pass?
             if(stone.equals(Stone.vacant)) throw new RuntimeException("bad move");
+            if(board.at(point)!=Stone.vacant) Logging.mainLogger.severe("sgf is moving onan occupied point: "+point);
             addStoneToBoard(stone,point);
             lastMoveGTP=Coordinates.toGtpCoordinateSystem(point,board.width(),board.depth());
             lastColorGTP=stone;

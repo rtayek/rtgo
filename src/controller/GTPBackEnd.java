@@ -36,6 +36,7 @@ public class GTPBackEnd implements Runnable,Stopable {
         this.out=end.out();
         model=model!=null?model:new Model("model");
         this.model=model;
+        model.ensureBoard();
     }
     public GTPBackEnd(String command,Model model) { // for testing
         // makes a back end that will read the command.
@@ -126,10 +127,10 @@ public class GTPBackEnd implements Runnable,Stopable {
         // allow model to move
         Logging.mainLogger.fine(model.name+" after set waiting for move to true, old value was: "+previous);
         Logging.mainLogger
-        .fine(model.name+" "+"gtp: waiting for move to complete on board "+(model.moves()+1)+" to complete.");
+                .fine(model.name+" "+"gtp: waiting for move to complete on board "+(model.moves()+1)+" to complete.");
         model.waitForMoveCompleteOnBoard(old);
         Logging.mainLogger
-        .fine(model.name+" "+first.et+" before set waiting for move to false "+model.moves()+" to false.");
+                .fine(model.name+" "+first.et+" before set waiting for move to false "+model.moves()+" to false.");
         previous=isWaitingForMove;
         // prevent model from moving
         isWaitingForMove=false;
@@ -166,8 +167,8 @@ public class GTPBackEnd implements Runnable,Stopable {
                 model.setBoardTopology(Board.Topology.torus);
                 send(okCharacter,message.id,"");
                 break;
-                // maybe these next 4 should be tgo_role with a role argument?
-                // maybe.
+            // maybe these next 4 should be tgo_role with a role argument?
+            // maybe.
             case tgo_black:
                 System.out.println("got: "+message.command);
                 model.setRole(Model.Role.playBlack);
@@ -231,8 +232,8 @@ public class GTPBackEnd implements Runnable,Stopable {
                     send(okCharacter,message.id,"true");
                 } else send(okCharacter,message.id,"false");
                 break;
-                // these two are very similar.
-                // are they the same?
+            // these two are very similar.
+            // are they the same?
             case undo:
                 // see where else can delete gets called
                 if(Model.canDelete(model)) {
@@ -288,7 +289,8 @@ public class GTPBackEnd implements Runnable,Stopable {
                     if(1<=n&&n<=Model.LargestBoardSize) {
                         // maybe model should not be doing a set root here?
                         // maybe just a set board?
-                        if(true) {
+                        // this either does a set board or a set root.
+                        if(true) { // 1/25/23 was true
                             Board board=Board.factory.create(n,n,model.boardTopology(),model.boardShape());
                             model.setBoard(board);
                         } else model.setRoot(n,n,model.boardTopology(),model.boardShape());
@@ -300,12 +302,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 // probably not.
                 break;
             case clear_board:
-                if(model.board()==null) {
-                    int width=model.state().widthFromSgf;
-                    int depth=model.state().depthFromSgf;
-                    Board board=Board.factory.create(width,depth,model.boardTopology(),model.boardShape());
-                    model.setBoard(board);
-                }
+                model.ensureBoard();
                 //model.setRoot();
                 model.board().setAll(Stone.vacant);
                 send(okCharacter,message.id,"");

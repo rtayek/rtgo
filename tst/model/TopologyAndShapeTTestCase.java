@@ -48,6 +48,11 @@ public class TopologyAndShapeTTestCase {
         assertEquals(expectedTopology,model.boardTopology());
         assertEquals(expectedShape,model.boardShape());
         Board b=model.board();
+        if(b==null) { // this creat may not wor real well
+            // board topology may not be set yet.
+            b=Board.factory.create(n,n,model.boardTopology(),model.boardShape());
+            model.setBoard(b); // 1/25/23 experiment
+        }
         assertEquals(Stone.vacant,b.at(b.center()));
         model.move(Move.blackMoveAtA1);
         // failing because we added a new root in save
@@ -74,8 +79,6 @@ public class TopologyAndShapeTTestCase {
         assertEquals(expectedTopology,model.boardTopology());
         assertEquals(expectedShape,model.boardShape());
         Board b=model.board();
-        if(b==null) System.out.println("b: "+b);
-        System.out.println(b);
         System.out.println(b.center()); // bad for torus!
         assertEquals(Stone.vacant,b.at(b.center()));
         model.move(Move.blackMoveAtA1);

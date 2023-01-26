@@ -1,6 +1,6 @@
 package equipment;
 import org.junit.*;
-import equipment.Board.Topology;
+import equipment.Board.*;
 import io.Logging;
 import utilities.MyTestWatcher;
 public class ToStringTestCase {
@@ -12,7 +12,7 @@ public class ToStringTestCase {
         int width=3,depth=3;
         for(;width<5;width++) {
             Logging.mainLogger.info(width+" "+depth);
-            BoardImpl boardImpl=new BoardImpl(width,depth,Topology.normal,0);
+            BoardImpl boardImpl=new BoardImpl(width,depth,Topology.normal,Shape.normal,0);
             boardImpl.setAt(0,Stone.black);
             boardImpl.setAt(width/2,depth/2,Stone.edge);
             boardImpl.setAt(width-1,depth-1,Stone.white);

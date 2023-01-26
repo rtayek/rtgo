@@ -75,5 +75,8 @@ public class IllegalMoveTestCase {
         assertEquals(MoveResult.occupied,ok);
     }
     Model model=new Model();
+    {
+        model.ensureBoard();
+    }
     final String expectedSGF=getSgfData(Parser.consecutiveMoves);
 }

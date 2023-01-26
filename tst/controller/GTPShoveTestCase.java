@@ -27,7 +27,10 @@ public class GTPShoveTestCase {
         expected.move(pass);
     }
     @After public void tearDown() throws Exception {}
-    @Test public void testInitialBoardInNewModel() { Model model=new Model(); assertNotNull(model.board()); }
+    @Test public void testInitialBoardInNewModel() {
+        Model model=new Model();
+        assertNull(model.board());
+        }
     @Test public void testPushGTPMovesToCurrentStateDirectOneAtATime() throws Exception {
         Model actual=Move.pushGTPMovesToCurrentStateDirect(expected,true);
         assertTrue(actual.board().isEqual(expected.board()));
@@ -59,14 +62,16 @@ public class GTPShoveTestCase {
         assertTrue(model.board().isEqual(original.board()));
     }
     @Test public void testMainlineMovesToCurrentStateDirect() throws Exception {
+        expected.ensureBoard();
         expected.up();
         expected.up();
         List<String> gtpMoves=expected.gtpMovesToCurrentState();
         Model actual=new Model("actual");
+        actual.ensureBoard();
         if(expected.board()!=null) { // normally no access to both of these at the same time
             actual.setRoot(expected.board().width(),expected.board().depth());
             // probably need to set other stuff like shape etc.
-        }
+        } 
         Response[] responses=GTPBackEnd.runCommands(gtpMoves,actual,justRun);
         for(Response response:responses) assertTrue(response.isOk());
         assertTrue(expected.board().isEqual(actual.board()));
@@ -94,30 +99,6 @@ public class GTPShoveTestCase {
     @Test public void testPushGTPMovesBoth() throws Exception {
         Model actual=Move.pushGTPMovesToCurrentStateBoth(expected,true);
         assertTrue(actual.board().isEqual(expected.board()));
-    }
-    @Test public void testPushInGameDuplex() throws Exception { //1 asffadfpadsd[qsdk,q'sdq[
-        // consolidate this!
-        game=Game.setupLocalGameForShove(expected);
-        // 1/6/23
-        // this is the only test that uses game
-        // try to remove the dependency
-        // and put a copy of this in tst/game
-        Model black=game.blackFixture.backEnd.model;
-        Model white=game.whiteFixture.backEnd.model;
-        if(expected.board()!=null) { // normally no access to both of these at the same time
-            black.setRoot(expected.board().width(),expected.board().depth());
-            white.setRoot(expected.board().width(),expected.board().depth());
-            // probably need to set other stuff like shape etc.
-        }
-        game.printStatus();
-        assertTrue(game.namedThread==null);
-        game.startPlayerBackends();
-        getMovesAndPush(game.blackFixture.frontEnd,expected,true); // maybe all at once?
-        getMovesAndPush(game.whiteFixture.frontEnd,expected,true);
-        // GTPBackEnd.sleep(100); ???
-        //assertTrue(recorder.board().isEqual(expected.board()));
-        assertTrue(black.board().isEqual(expected.board()));
-        assertTrue(white.board().isEqual(expected.board()));
     }
     Model expected=new Model("model");
     GameFixture game;
