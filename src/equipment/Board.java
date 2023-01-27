@@ -149,10 +149,11 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
         for(int x=-n;x<=n;x++) for(int y=-n;y<=n;y++) points.add(new Point(y+width/2,x+depth/2));
         return points;
     }
-    Integer smallest=1,standard=19,largest=26;
+    Integer smallest=1,standard=19,largest=52;
     interface Factory {
         Board create();
         Board create(int n);
+        Board create(int n,int m);
         Board create(int n,Board.Topology type);
         Board create(int width,int depth,Board.Topology type);
         Board create(int width,int depth,Board.Topology type,Shape shape);
@@ -248,6 +249,7 @@ class BoardFactory implements Board.Factory {
     //board interface is way over-engineered. fix!
     @Override public Board create() { return create(Board.standard); }
     @Override public Board create(int n) { return create(n,Topology.normal); }
+    @Override public Board create(int n,int m) { return create(n,n,Topology.normal,Shape.normal); }
     @Override public Board create(int n,Topology type) { return create(n,n,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology type) { return create(width,depth,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology topeology,Shape shape) {
@@ -321,22 +323,38 @@ abstract class BoardABC implements Board {
     @Override public boolean hasStarPoints() { // add test for diamond. and others?
         return(width()==depth()&&width()<starPointTable.length);
     }
+    void sgfCCoordinates(StringBuffer sb) {
+        sb.append(' ');
+        for(int i=0;i<width;++i) { sb.append(Coordinates.sgfCharacterForX(new Point(i,0))); }
+        sb.append('\n');
+    }
     @Override public String toString() {
         StringBuffer sb=new StringBuffer((width+3)*(depth+2)+100);
+        sb.append(' ');
+        sgfCCoordinates(sb); //a-zA-Z
+        sb.append(' ');
+        sb.append(' ');
         sb.append('+');
         for(int column=0;column<width;column++) sb.append('-');
         sb.append('+');
         sb.append('\n');
         for(int row=0;row<depth;row++) {
+            String s=Integer.valueOf(depth-row).toString();
+            while(s.length()<2) s='0'+s;
+            sb.append(s);
             sb.append('|');
             for(int column=0;column<width;column++) sb.append(at(column,depth-1-row).toCharacter());
             sb.append('|');
             sb.append('\n');
         }
+        sb.append(' ');
+        sb.append(' ');
         sb.append('+');
         for(int column=0;column<width;column++) sb.append('-');
         sb.append('+');
         sb.append('\n');
+        sb.append(' ');
+        sgfCCoordinates(sb);
         return sb.toString();
     }
     private void initializeStarPoints() {

@@ -23,7 +23,7 @@ public class ShapeTestCase {
             model.setBoardTopology(Topology.normal);
             model.setBoardShape(shape);
             model.setRoot(width,depth,topology,shape);
-            assertNotNull(model.board());
+            model.ensureBoard();
             // triange?
             Board board=model.board();
             List<Point> points=topology==Topology.diamond?points=Board.getPointsForDiamondRegion(width,depth)

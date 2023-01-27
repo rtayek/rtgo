@@ -19,6 +19,8 @@ public class GTPShoveTestCase {
     @Before public void setUp() throws Exception {
         // parameterize this and use parser map?
         expected.setRoot(5,5);
+        Board board=Board.factory.create(5);
+        expected.setBoard(board);
         int n=expected.movesToGenerate();
         Model.generateAndMakeMoves(expected,n);
         Move pass=expected.passMove();
@@ -33,6 +35,8 @@ public class GTPShoveTestCase {
         }
     @Test public void testPushGTPMovesToCurrentStateDirectOneAtATime() throws Exception {
         Model actual=Move.pushGTPMovesToCurrentStateDirect(expected,true);
+        System.out.println(expected);
+        System.out.println(actual);
         assertTrue(actual.board().isEqual(expected.board()));
     }
     @Test public void testPushGTPMovesToCurrentStateDirectList() throws Exception {
@@ -62,18 +66,22 @@ public class GTPShoveTestCase {
         assertTrue(model.board().isEqual(original.board()));
     }
     @Test public void testMainlineMovesToCurrentStateDirect() throws Exception {
-        expected.ensureBoard();
         expected.up();
         expected.up();
         List<String> gtpMoves=expected.gtpMovesToCurrentState();
         Model actual=new Model("actual");
-        actual.ensureBoard();
+        //actual.ensureBoard();
         if(expected.board()!=null) { // normally no access to both of these at the same time
             actual.setRoot(expected.board().width(),expected.board().depth());
+            Board board=Board.factory.create(expected.board().width(),expected.board().depth());
+            actual.setBoard(board);
+
             // probably need to set other stuff like shape etc.
         } 
         Response[] responses=GTPBackEnd.runCommands(gtpMoves,actual,justRun);
         for(Response response:responses) assertTrue(response.isOk());
+        System.out.println(expected);
+        System.out.println(actual);
         assertTrue(expected.board().isEqual(actual.board()));
         List<Move> moves=expected.movesToCurrentState(); //current line
         List<Move> actualMoves=actual.movesToCurrentState();

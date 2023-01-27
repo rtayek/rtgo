@@ -27,6 +27,10 @@ public class PushTestCase {
         getMovesAndPush(game.whiteFixture.frontEnd,expected,true);
         // GTPBackEnd.sleep(100); ???
         //assertTrue(recorder.board().isEqual(expected.board()));
+        black.ensureBoard();
+        white.ensureBoard();
+        // the ensures make the test pass.
+        // but there ate no moves!
         assertTrue(black.board().isEqual(expected.board()));
         assertTrue(white.board().isEqual(expected.board()));
     }

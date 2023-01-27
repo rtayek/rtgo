@@ -13,6 +13,8 @@ public class ColorBugTestCase {
     @Before public void setUp() throws Exception { model.setRoot(); }
     @After public void tearDown() throws Exception {}
     void randomMove2() {
+        int width=model.board().width();
+        int depth=model.board().depth();
         Point point;
         do {
             point=new Point(random.nextInt(width),random.nextInt(depth));
@@ -46,6 +48,7 @@ public class ColorBugTestCase {
     }
     @Test public void test1() {
         model.setRoot(3,3);
+        model.ensureBoard();
         model.moveAndPlaySound(model.turn(),"A1",model.board().width());
         Navigate.up.do_(model);
         model.moveAndPlaySound(model.turn(),"A2",model.board().width());
@@ -54,14 +57,12 @@ public class ColorBugTestCase {
     }
     @Test public void testUpAndDown() {
         model.setRoot(3,3);
+        model.ensureBoard();
         model.moveAndPlaySound(model.turn(),"A1",model.board().width());
         Navigate.up.do_(model);
         Navigate.down.do_(model);
     }
     Model model=new Model();
-    Board board=model.board();
-    final int width=model.board().width();
-    final int depth=model.board().depth();
     Random random=new Random();
     final int directions=Navigate.values().length;
 }

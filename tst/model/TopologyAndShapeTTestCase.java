@@ -30,9 +30,7 @@ public class TopologyAndShapeTTestCase {
         final String expected=stringWriter.toString();
         Model m=new Model();
         m.restore(new StringReader(expected));
-        //assertNotNull(m.board());
-        // wrong board size if n!=19!
-        // find that place and fix!
+        m.ensureBoard();
         m.down(0); // need to execute the sgf
         assertNotNull(m.board());
         stringWriter=new StringWriter();
@@ -78,9 +76,9 @@ public class TopologyAndShapeTTestCase {
         model.setRoot(n,n,expectedTopology,expectedShape);
         assertEquals(expectedTopology,model.boardTopology());
         assertEquals(expectedShape,model.boardShape());
-        Board b=model.board();
-        System.out.println(b.center()); // bad for torus!
-        assertEquals(Stone.vacant,b.at(b.center()));
+        model.ensureBoard();
+        Board board=model.board();
+        assertEquals(Stone.vacant,board.at(board.center()));
         model.move(Move.blackMoveAtA1);
         saveAndRestore(model,Stone.edge);
     }

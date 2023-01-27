@@ -47,13 +47,17 @@ public class Coordinates {
     public static String toSgfCoordinates(Point point,int depth) {
         // allow "A-Z" and add test
         // this does not check to see if the coordinates are legit like to GTP
-        char cx=(char)('a'+point.x);
-        if(cx>'z') cx+=factor;
-        char cy=(char)('a'+depth-1-point.y);
-        if(cy>'z') cy+=factor;
+        char cx=sgfCharacterForX(point);
+        char cy=sgfCharacterForY(point,depth);
         return ""+cx+""+cy;
         // return ""+(char)('a'+board.x)+""+(char)('a'+depth-1-board.y);
     }
+    static char sgfCharacterForY(Point point,int depth) {
+        char cy=(char)('a'+depth-1-point.y);
+        if(cy>'z') cy+=factor;
+        return cy;
+    }
+    static char sgfCharacterForX(Point point) { char cx=(char)('a'+point.x); if(cx>'z') cx+=factor; return cx; }
     public static Point fromSgfCoordinates(String string,int depth) {
         // allow "A-Z" and add test
         if(string.length()!=2) throw new RuntimeException();

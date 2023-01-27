@@ -8,11 +8,14 @@ public class LibertiesTestCase {
     @Test public void testLiberties2() {
         // this uesed to work. i broke it on 10/11/22
         Model model=new Model();
-        { // why not just make a board?
-            model.setRoot(9,9,Topology.normal,Shape.normal);
-        }
+        Board board=Board.factory.create(9,9,Topology.normal,Shape.normal);
+        model.setBoard(board);
+        System.out.println(
+        model.state().widthFromSgf+" "+
+        model.state().depthFromSgf);
+
         // we need to actually do the sgf for the above
-        model.ensureBoard();
+        System.out.println(model);
         int width=model.board().width();
         // one place uses depth. find and fix.
         MoveResult moveResult=null;

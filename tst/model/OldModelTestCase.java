@@ -64,7 +64,9 @@ public class OldModelTestCase {
             List<Move> expectedMoves=model.movesToCurrentState();
             Model actual=new Model();
             actual.setRoot(i,i);
+            actual.ensureBoard();
             actual.makeMoves(expectedMoves);
+            model.ensureBoard();;
             model.board().isEqual(actual.board());
             List<Move> actualMoves=actual.movesToCurrentState();
             assertEquals(expectedMoves,actualMoves); // round trip
@@ -107,6 +109,7 @@ public class OldModelTestCase {
         Model actual=new Model();
         actual.setRoot(19,19);
         actual.makeMoves(expectedMoves);
+        model.ensureBoard();
         model.board().isEqual(actual.board());
         List<Move> actualMoves=actual.movesToCurrentState();
         assertEquals(expectedMoves,actualMoves); // round trip
@@ -124,17 +127,20 @@ public class OldModelTestCase {
     @Test public void testReplayRandomMoves() throws Exception {
         Model model=new Model();
         model.setRoot(5,5);
+        model.ensureBoard();
         int n=model.movesToGenerate();
         Model.generateRandomMoves(model,n);
         List<Move> moves=model.movesToCurrentState();
         Model actual=new Model();
         actual.setRoot(5,5);
+        actual.ensureBoard();
         actual.makeMoves(moves);
         model.board().isEqual(actual.board());
     }
     @Test public void testReplayRandomMovesList() throws Exception {
         Model model=new Model();
         model.setRoot(5,5);
+        model.ensureBoard();
         int n=model.movesToGenerate();
         List<Point> points=Model.generateRandomMovesInList(model,n);
         Model actual=new Model();

@@ -753,4 +753,10 @@ put shape back in
 added ensureBoard to model.
 moved a test case.
 problems with using width and depth from sgf.
-work on the abobe
+work on the above
+setRioot does set the boardsize
+then it gets reset again i think.
+causing LibertiesTestCase to fail
+no test failures.
+ensure board after a set root loses any width, depth, topolgy or shape information.
+

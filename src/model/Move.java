@@ -122,6 +122,8 @@ public interface Move {
         Model model=new Model();
         if(original.board()!=null) { // normally no access to both of these at the same time
             model.setRoot(original.board().width(),original.board().depth());
+            Board board=Board.factory.create(original.board().width(),original.board().depth());
+            model.setBoard(board);
             // probably need to set other stuff like shape etc.
         }
         // should set the board shape and topology also?
@@ -138,6 +140,7 @@ public interface Move {
     //gtpMoves.add(0,command);
     static void getMovesAndPush(GTPFrontEnd frontEnd,Model model,boolean oneAtATime) {
         List<String> gtpMoves=model.gtpMovesToCurrentState();
+        System.out.println("gtp moves: "+gtpMoves);
         if(oneAtATime) {
             for(String gtpMove:gtpMoves) {
                 Response response=frontEnd.sendAndReceive(gtpMove);
@@ -149,7 +152,8 @@ public interface Move {
         Model model=new Model("model");
         if(original.board()!=null) { // normally no access to both of these at the same time
             model.setRoot(original.board().width(),original.board().depth());
-            // probably need to set other stuff like shape etc.
+            Board board=Board.factory.create(original.board().width(),original.board().depth());
+            model.setBoard(board);
         }
         BothEnds both=new BothEnds();
         Holder holder=Holder.duplex();

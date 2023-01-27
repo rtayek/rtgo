@@ -255,6 +255,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(alwaysSetBoardSize) addProperty(main,P.SZ,string);
         // work needed here!
         if(topology.equals(Topology.torus)) addProperty(main,P.KM,"4.5");
+        state.widthFromSgf=width;
+        state.depthFromSgf=depth;
         addRegion(width,depth,topology,shape,main);
         Logging.mainLogger.fine(name+" "+"new root is: "+main);
         setRoot(main);
@@ -376,6 +378,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public Move generateSillyMove(Stone who) {
         // always returns a black move
+        ensureBoard();
         int width=board().width();
         int depth=board().depth();
         if(width!=depth) width=depth=Math.min(width,depth);
@@ -574,6 +577,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public String generateAndMakeMove() { // finds first legal move
         Stone who=turn();
+        ensureBoard();
         for(int x=0;x<board().width();x++) {
             for(int y=0;y<board().depth();y++) {
                 Point point=new Point(x,y);
@@ -1339,7 +1343,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public static final String defaultSgfVersion="1";
     public static final String version="0.1"; // internal i guess
     public static final int sgfGoGame=1;
-    public static final int LargestBoardSize=25;
+    public static final int LargestBoardSize=52;
     public static final double epsilon=Math.sqrt(2)*.49;
     public static final String black="black",white="white"; // use black.name()?
     static final long[][] randomBlack=new long[LargestBoardSize][LargestBoardSize];
