@@ -1,7 +1,13 @@
 package gui;
 import java.awt.*;
+import java.awt.Dialog.*;
+import java.awt.datatransfer.Clipboard;
 import java.awt.event.*;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Point2D;
+import java.awt.im.InputMethodHighlight;
+import java.awt.image.*;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import javax.swing.*;
@@ -60,8 +66,8 @@ public class GamePanel extends JPanel {
         addMouseListener(new MouseListener() {
             @Override public void mouseReleased(MouseEvent e) { releases++; }
             @Override public void mousePressed(MouseEvent e) { presses++; }
-            @Override public void mouseExited(MouseEvent e) {}
-            @Override public void mouseEntered(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) { setCursor(cursor); }
+            @Override public void mouseEntered(MouseEvent e) { cursor=getCursor(); setCursor(blackCursor); }
             @Override public void mouseClicked(MouseEvent e) { clicks++; processClick(e); }
             @SuppressWarnings("unused") int presses,releases,clicks;
         });
@@ -91,6 +97,22 @@ public class GamePanel extends JPanel {
         });
         addHierarchyListener(new MyShowingListener(this));
         System.out.println("end game panel init");
+    }
+    public void cursor(Stone who) {
+        switch(who) {
+            case black: // should be black stone
+                setCursor(new Cursor(Cursor.HAND_CURSOR));
+                break;
+            case white: // should be white stone
+                setCursor(new Cursor(Cursor.HAND_CURSOR));
+                break;
+            case edge: // should be x
+                setCursor(new Cursor(Cursor.HAND_CURSOR));
+                break;
+            case vacant: // should be x
+                setCursor(new Cursor(Cursor.HAND_CURSOR));
+                break;
+        }
     }
     private MNode isAlreadyInTree(Point closest) {
         MNode found=null;
@@ -133,9 +155,9 @@ public class GamePanel extends JPanel {
                 boolean ok=mediator.model.goToMNode(found);
                 if(!ok) System.out.println("go to node fails!");
             } else {
-                //String move=Coordinates.toGtpCoordinateSystem(closest,
-                //        board.depth());
-                //Model.Move move=new Model.MoveImpl(closest);
+                // String move=Coordinates.toGtpCoordinateSystem(closest,
+                // board.depth());
+                // Model.Move move=new Model.MoveImpl(closest);
                 // need to check role and legality here!
                 boolean ok=mediator.model.checkAction(role,What.move);
                 if(!ok) { System.out.println("not ok: "+role+" move"); Toast.toast("Move is no ok!"); }
@@ -274,9 +296,10 @@ public class GamePanel extends JPanel {
                 break;
             default:
                 throw new RuntimeException("bad ropology");
-            //break;
+            // break;
         }
         black=blackStone(dx,dy,getBackground());
+        System.out.println("blac: "+black);
         white=whiteStone(dx,dy,getBackground());
         edge=edgeStone(dx,dy,getBackground());
         Dimension d=new Dimension(boardWidth+2*dx,boardDepth+2*dy);
@@ -291,6 +314,13 @@ public class GamePanel extends JPanel {
         // setOpaque(true);
         Color color=new Color(0xffa500);
         setBackground(color);
+        Point point=new Point();
+        Toolkit toolkit=Toolkit.getDefaultToolkit();
+        System.out.println(black);
+        if(black!=null) blackCursor=toolkit.createCustomCursor(black,point,"black");
+        else System.err.println("black stone imahe is null!");
+        if(white!=null) whiteCursor=toolkit.createCustomCursor(white,point,"white");
+        else System.err.println("white stone imahe is null!");
     }
     Point2D.Float toBoardCoordinates(Point screen,int depth) {
         return Coordinates.toBoardCoordinates(screen,pUpperLeft,dp,depth);
@@ -306,7 +336,7 @@ public class GamePanel extends JPanel {
         Graphics g=img.getGraphics();
         g.setColor(color);
         g.fillRect(0,0,width,height);
-        g.setColor(getBackground()/*Color.yellow*/);
+        g.setColor(getBackground()/* Color.yellow */);
         g.fillOval(0,0,width-1,height-1);
         g.drawOval(0,0,width-1,height-1);
         // these two are different from
@@ -362,7 +392,7 @@ public class GamePanel extends JPanel {
         int jX=jitter.xJitter(index),jY=jitter.yJitter(index);
         try {
             switch(stone) {
-                case black:
+                case black: // no wonder it's null the first time.
                     if(black!=null) g.drawImage(black,screen.x-dx/2+jX,screen.y-dy/2+jY,dx+extra,dy+extra,null);
                     else {
                         g.setColor(Color.black);
@@ -542,18 +572,20 @@ public class GamePanel extends JPanel {
         g.setFont(old);
     }
     private final Mediator mediator;
-    private /*final*/ Board board;
+    private /* final */ Board board;
     private int boardWidth,boardDepth;
     private double lineWidth;
     // private Point closest; // closest point that he clicked on.
     private double torusAmount=.4; // size of real board
-    //@SuppressWarnings("unused")
+    // @SuppressWarnings("unused")
     private Point pUpperLeft,pLowerLeft,pUpperRight,pLowerRight;
     private int dx,dy;
     private Point dp;
     private final Set<Line> lines=new LinkedHashSet<Line>();
     private Image black,white,edge;
-    Jitter jitter;
+    // toggle cursor only over vacant!
+    private Jitter jitter;
+    private Cursor cursor,blackCursor,whiteCursor;
     static final long serialVersionUID=1L;
     public static final double aspectRatio=434.2/454.5;
     static double starPointDiameter=4/454.5;
