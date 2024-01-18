@@ -7,4 +7,6 @@ see more in notes,txt
 was at: https://sourceforge.net/projects/tgo-java/
 now at: https://github.com/rtayek/rtgo
 
+code7 project in eclipse seems to be that latest.
+
 

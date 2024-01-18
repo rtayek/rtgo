@@ -754,9 +754,19 @@ added ensureBoard to model.
 moved a test case.
 problems with using width and depth from sgf.
 work on the above
-setRioot does set the boardsize
+setRioot does set the board size now.
 then it gets reset again i think.
 causing LibertiesTestCase to fail
 no test failures.
 ensure board after a set root loses any width, depth, topolgy or shape information.
+1/27/23
+idea: add a "smart" width() and depth() to model?
+will this solve the set root using the wrong values?
+
+1/13/24 on new pc from chandler!
+look at removing dependencies from gtp.
+
+try to change mouse cursor in game panel like ogs
+Image is null in game panel.  old code in ../go/ works.
+
 
