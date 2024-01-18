@@ -20,7 +20,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
             frame().addComponentListener(this);
             frame.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                    textView.teardownTees();
+                    textView.teardownTeest();
                     System.out.println("closing");
                     System.err.println("closing");
                 }

@@ -20,7 +20,7 @@ import io.Tee;
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                textView.teardownTees();
+                textView.teardownTeest();
                 System.out.println("closing");
                 System.err.println("closing");
             }
@@ -39,7 +39,7 @@ import io.Tee;
         tee2.addOutputStream(System.err);
         tee2.setErr();
     }
-    void teardownTees() { tee.restoreOut(); tee2.restoreErr(); }
+    void teardownTeest() { tee.restoreOut(); tee2.restoreErr(); }
     private void printStuuff() {
         //System.out.println("System.out");
         tee.printStream.println("tee ps");
