@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Random;
 import org.junit.*;
 import equipment.*;
-import io.IO;
+import io.IOs;
 import model.Model.MoveResult;
 import model.Move.MoveImpl;
 import utilities.MyTestWatcher;
@@ -35,7 +35,7 @@ public class ColorBugTestCase {
         }
         File temporaryFile=File.createTempFile("tgo-","sgf");
         temporaryFile.deleteOnExit();
-        boolean ok=model.save(IO.toWriter(temporaryFile));
+        boolean ok=model.save(IOs.toWriter(temporaryFile));
         assertTrue(ok);
         Model actual=new Model();
         model.restore(new StringReader(""));

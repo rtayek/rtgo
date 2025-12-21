@@ -3,7 +3,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import org.junit.*;
 import io.*;
-import io.IO.Stopable;
+import io.IOs.Stopable;
 import model.Model;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
@@ -27,7 +27,7 @@ public /*abstract*/ class TeardownOrderTestCase {
         @Override public boolean setIsStopping() { boolean rc=isStopping; isStopping=true; return rc; }
         @Override public void stop() {
             isStopping=true;
-            IO.myClose(null,null,null,(NamedThread)thread,both.frontEnd.name,this);
+            IOs.myClose(null,null,null,(NamedThread)thread,both.frontEnd.name,this);
         }
         final BothEnds both;
         Thread thread;

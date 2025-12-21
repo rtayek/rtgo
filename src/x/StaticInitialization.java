@@ -1,7 +1,7 @@
 package x;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import io.IO;
+import io.IOs;
 import sgf.Parser;
 class A implements Runnable {
     int id=++ids;
@@ -14,7 +14,7 @@ class A implements Runnable {
     private static void initializeMap() { sgfData.put("sgfExamleFromRedBean",""); }
     static {
         System.out.println("static init");
-        IO.stackTrace(20);
+        IOs.stackTrace(20);
     }
     static final AtomicBoolean isInitialized=new AtomicBoolean();
     static { // this kind of thing needs to be done once!

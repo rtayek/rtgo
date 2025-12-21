@@ -1,5 +1,5 @@
 package equipment;
-import static org.junit.Assert.*;
+//import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.util.*;
 import equipment.Board.*;
@@ -417,31 +417,6 @@ class BoardImpl extends BoardABC {
     public static boolean isLeft(Point a,Point b,Point c) { return ((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))>0; }
     @Override public void setAt(int k,Stone color) {
         stones[k]=color; // no one else should use direct access!
-    }
-    private static void addNeighbors(List<Point> points,int x,int y) {
-        // fix this code, it's duplicated above in neighbors.
-        // and this is only called from unused code!
-        points.add(new Point(x-1,y-1));
-        points.add(new Point(x,y-1));
-        points.add(new Point(x+1,y-1));
-        points.add(new Point(x-1,y));
-        points.add(new Point(x,y)); // maybe omit this?
-        points.add(new Point(x+1,y));
-        points.add(new Point(x-1,y+1));
-        points.add(new Point(x,y+1));
-        points.add(new Point(x+1,y+1));
-    }
-    private Pair<List<Point>,List<Point>> NeighborsOfCorners(int n) { // unused!
-        List<Point> points=new ArrayList<Point>(36);
-        addNeighbors(points,0,0);
-        addNeighbors(points,0,n-1);
-        addNeighbors(points,n-1,0);
-        addNeighbors(points,n-1,n-1);
-        List<Point> onBoard=new ArrayList<Point>(16);
-        List<Point> offBoard=new ArrayList<Point>(20);
-        for(Point point:points) if(isOnBoard(point)) onBoard.add(point);
-        else offBoard.add(point);
-        return new Pair<>(onBoard,offBoard);
     }
     @Override public List<Point> starPoints() {
         if(width()>standard||depth()>standard||width()!=depth()) return null;

@@ -1,5 +1,5 @@
 package sgf.combine;
-import static io.IO.standardIndent;
+import static io.IOs.standardIndent;
 import static org.junit.Assert.assertTrue;
 import java.io.*;
 import java.util.*;

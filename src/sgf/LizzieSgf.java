@@ -2,7 +2,7 @@ package sgf;
 import static sgf.Parser.restoreSgf;
 import java.io.File;
 import java.util.*;
-import io.IO;
+import io.IOs;
 /*
        case VK_E:
 
@@ -454,7 +454,7 @@ class LizzieSgf {
         MyAcceptor myAcceptor=new MyAcceptor();
         Traverser traverser=new Traverser(myAcceptor);
         File file=new File("lizzie1.sgf");
-        SgfNode games=restoreSgf(IO.toReader(file));
+        SgfNode games=restoreSgf(IOs.toReader(file));
         traverser.visit(games);
         //System.out.println("lizzies nodes: "+myAcceptor.idToNode);
         for(Integer key:myAcceptor.idToNode.keySet()) {

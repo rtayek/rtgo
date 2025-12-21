@@ -3,7 +3,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import org.junit.*;
 import controller.GTPFrontEnd;
-import io.IO.Duplex;
+import io.IOs.Duplex;
 import utilities.MyTestWatcher;
 public class DuplexTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -71,5 +71,5 @@ public class DuplexTestCase {
         assertEquals("bar",s2);
     }
     final long timeout=0;
-    IO.Duplex duplex=new Duplex();
+    IOs.Duplex duplex=new Duplex();
 }

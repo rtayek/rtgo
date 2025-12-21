@@ -3,7 +3,7 @@ import static io.Init.first;
 import static org.junit.Assert.assertTrue;
 import org.junit.*;
 import equipment.Board;
-import io.IO.End.Holder;
+import io.IOs.End.Holder;
 import io.Logging;
 import utilities.MyTestWatcher;
 public class ABothTestCase {

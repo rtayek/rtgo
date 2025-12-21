@@ -10,7 +10,7 @@ import server.NamedThreadGroup.NamedThread;
 import utilities.Pair;
 // move more io methods here
 // maybe move pipe and duplex classes here
-public class IO {
+public class IOs {
     public interface Stopable {
         void stop() throws IOException,InterruptedException;
         default boolean isStopping() { return false; }
@@ -71,7 +71,7 @@ public class IO {
         public Thread thread() { return thread; }
         @Override public boolean isStopping() { return isStopping; }
         @Override public boolean setIsStopping() { boolean rc=isStopping; isStopping=true; return rc; }
-        @Override public void stop() { isStopping=true; IO.myClose(in,out,socket,thread,name(),this); }
+        @Override public void stop() { isStopping=true; IOs.myClose(in,out,socket,thread,name(),this); }
         public String toShortString() {
             return "End [in="+in+", out="+out+", socket="+socket+", thread="+thread+", name="+name+"]";
         }
@@ -96,7 +96,7 @@ public class IO {
                 // and no front end
                 Holder holder=null;
                 Socket backEnd=new Socket();
-                boolean ok=connect(IO.host,port,100,backEnd);
+                boolean ok=connect(IOs.host,port,100,backEnd);
                 if(ok) holder=new Holder(null,new End(backEnd));
                 else {
                     try {
@@ -155,10 +155,10 @@ public class IO {
             public static Holders holders(int port) {
                 Holder blackHolder=null;
                 Holder whiteHolder=null;
-                if(port==IO.noPort) {
+                if(port==IOs.noPort) {
                     blackHolder=Holder.duplex();
                     whiteHolder=Holder.duplex();
-                } else if(port==IO.anyPort) {
+                } else if(port==IOs.anyPort) {
                     blackHolder=Holder.trick(port);
                     whiteHolder=Holder.trick(port);
                 } else { // a real port, might be in use
@@ -456,12 +456,12 @@ public class IO {
         for(int i=2;i<Math.min(n,ste.length);++i) System.out.println(name+" "+ste[i]);
     }
     public static boolean currentThreadIsTimeLimited() {
-        if(false&&Thread.currentThread().getName()==IO.timeLimitedThreadName) {
+        if(false&&Thread.currentThread().getName()==IOs.timeLimitedThreadName) {
             System.out.println("on "+Thread.currentThread().getName());
             System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             System.exit(1);
         }
-        return Thread.currentThread().getName()==IO.timeLimitedThreadName;
+        return Thread.currentThread().getName()==IOs.timeLimitedThreadName;
     }
     public static final String timeLimitedThreadName="Time-limited test";
     public static final Integer anyPort=0,noPort=-1;
@@ -471,7 +471,7 @@ public class IO {
     public static final Indent noIndent=new Indent("");
     public static final Indent oneSpaceIndent=new Indent(" ");
     public static final Indent standardIndent=new Indent("  ");
-    public static final Set<Integer> ports=Set.of(IO.noPort,IO.anyPort,IO.defaultPort);
+    public static final Set<Integer> ports=Set.of(IOs.noPort,IOs.anyPort,IOs.defaultPort);
     static {
         //System.out.println("ports: "+ports);
     }

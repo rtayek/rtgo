@@ -1,5 +1,5 @@
 package sgf;
-import static io.IO.noIndent;
+import static io.IOs.noIndent;
 import static org.junit.Assert.assertEquals;
 import static sgf.SgfNode.sgfRestoreAndSave;
 import java.io.*;

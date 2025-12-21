@@ -3,7 +3,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.StringReader;
 import java.util.Collection;
 import org.junit.*;
-import io.IO;
+import io.IOs;
 import sgf.*;
 import utilities.MyTestWatcher;
 public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
@@ -28,7 +28,7 @@ public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
     }
     @Test public void testCheckBoardInRoot() {
         if(key==null) {
-            IO.stackTrace(10);
+            IOs.stackTrace(10);
             //System.out.println("system exit");
             //System.exit(1);
         }

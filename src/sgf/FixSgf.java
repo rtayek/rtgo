@@ -1,12 +1,12 @@
 package sgf;
 import static io.Logging.parserLogger;
 import java.io.File;
-import io.IO;
+import io.IOs;
 public class FixSgf {
     void fix(File in,File out) {
         // looks like a round trip!
-        MNode root=MNode.restore(IO.toReader(in));
-        boolean ok=MNode.save(IO.toWriter(out),root,null);
+        MNode root=MNode.restore(IOs.toReader(in));
+        boolean ok=MNode.save(IOs.toWriter(out),root,null);
         if(!ok) parserLogger.severe("fix failed for: "+in);
     }
     void run(File directory) {

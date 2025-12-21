@@ -2,7 +2,7 @@ package sgf;
 import static sgf.Parser.restoreSgf;
 import java.io.*;
 import java.util.*;
-import io.IO;
+import io.IOs;
 import utilities.Pair;
 public class Lec {
     static int howSimilar(String previous,String string) {
@@ -15,7 +15,7 @@ public class Lec {
     }
     static void moveSequences(StringBuffer stringBuffer,List<Pair<String,String>> pairs,File dir,String filename) {
         Pair<String,String> previous;
-        SgfNode games=restoreSgf(IO.toReader(new File(dir,filename)));
+        SgfNode games=restoreSgf(IOs.toReader(new File(dir,filename)));
         stringBuffer.setLength(0);
         Traverser traverser=new Traverser(new SgfAcceptorImpl() {
             @Override public void accept(SgfNode node) {
@@ -76,7 +76,7 @@ public class Lec {
     }
     static void moveSets(int max,StringBuffer stringBuffer,File dir,final Set<String> moves,
             Set<Pair<String,Set<String>>> pairs2,String filename) {
-        SgfNode games=restoreSgf(IO.toReader(new File(dir,filename)));
+        SgfNode games=restoreSgf(IOs.toReader(new File(dir,filename)));
         stringBuffer.setLength(0);
         moves.clear();
         Traverser traverser=new Traverser(new SgfAcceptorImpl() {

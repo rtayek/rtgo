@@ -1,5 +1,5 @@
 package sgf.combine;
-import static io.IO.standardIndent;
+import static io.IOs.standardIndent;
 import static sgf.SgfNode.sgfRoundTripTwice;
 import java.io.*;
 import io.*;
@@ -26,10 +26,10 @@ public class CombineTest {
         Reader reader=null;
         Boolean ok=null;
         Tee tee=Tee.tee(new File(Combine.sgfOutputFilename));
-        reader=IO.toReader(new File(Combine.pathToHere,"ff4_ex.sgf"));
+        reader=IOs.toReader(new File(Combine.pathToHere,"ff4_ex.sgf"));
         ok=sgfRoundTripTwice(reader);
         if(!ok) { System.err.println("failure"); throw new Exception("test fails"); }
-        reader=IO.toReader(new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf"));
+        reader=IOs.toReader(new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf"));
         ok=sgfRoundTripTwice(reader);
         if(!ok) { System.err.println("failure"); throw new Exception("test fails"); }
         if(!testCombine("test.sgf")) { System.err.println("failure"); throw new Exception("test fails"); }

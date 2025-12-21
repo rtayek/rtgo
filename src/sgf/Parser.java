@@ -196,7 +196,7 @@ public class Parser {
         return null;
     }
     private static void combineAndCheckKogosJosekiDictionary() throws IOException,Exception { // this has been sorta replaced by code in the test case.
-        Reader reader=IO.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
+        Reader reader=IOs.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
         boolean ok=sgfRoundTripTwice(reader);
         if(!ok) throw new Exception("test fails");
     }
@@ -235,7 +235,7 @@ public class Parser {
         else if(key instanceof File) sgf=utilities.Utilities.fromFile((File)key);
         else {
             System.out.println(key+" is not a string or a file!");
-            IO.stackTrace(10);
+            IOs.stackTrace(10);
             //System.exit(1);
             throw new RuntimeException(key+" is not a string or a file!");
         }

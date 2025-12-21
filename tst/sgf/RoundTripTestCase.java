@@ -47,7 +47,7 @@ public class RoundTripTestCase {
     }
     @Test public void testVariation() throws IOException {
         File file=new File("sgf","variation.sgf");
-        checkReader(IO.toReader(file));
+        checkReader(IOs.toReader(file));
         StringBuffer sb=new StringBuffer();
         fromFile(sb,file);
         // now what should i do with string buffer?

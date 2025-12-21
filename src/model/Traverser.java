@@ -30,7 +30,7 @@ class Traverser { // half of a visitor
         Logging.mainLogger.info(""+" "+"|||");
         if(true) return;
         file=new File("sgf","1635215-056-rtayek-Sighris.sgf");
-        games_=restoreSgf(IO.toReader(file));
+        games_=restoreSgf(IOs.toReader(file));
         games=MNode.toGeneralTree(games_);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
@@ -40,7 +40,7 @@ class Traverser { // half of a visitor
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         file=new File("sgf","ray-SmartGo-2022-01-07.sgf");
-        games_=restoreSgf(IO.toReader(file));
+        games_=restoreSgf(IOs.toReader(file));
         Logging.mainLogger.warning(file+" "+games_);
         games=MNode.toGeneralTree(games_);
         Logging.mainLogger.warning(file+" "+games);
@@ -54,7 +54,7 @@ class Traverser { // half of a visitor
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         file=new File("sgf","reallyempty.sgf");
-        games_=restoreSgf(IO.toReader(file));
+        games_=restoreSgf(IOs.toReader(file));
         System.out.println(games_);
         games=MNode.toGeneralTree(games_);
         System.out.println(games);

@@ -114,7 +114,7 @@ class Node2 extends MNode { // why did i make this?
             fileChoser.setFileFilter(new FileNameExtensionFilter("SGF file","sgf"));
             if(fileChoser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
                 File file=fileChoser.getSelectedFile();
-                model.restore(IO.toReader(file));
+                model.restore(IOs.toReader(file));
                 lastLoadDirectory=file.getParentFile();
             }
         }
@@ -178,7 +178,7 @@ class Node2 extends MNode { // why did i make this?
         TreeView myTreeView=new TreeView(null,model);
         myTreeView.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         model.addObserver(myTreeView);
-        model.restore(IO.toReader(new File("sgf/ff4_ex.sgf")));
+        model.restore(IOs.toReader(new File("sgf/ff4_ex.sgf")));
         return myTreeView;
     }
     public final Model model;

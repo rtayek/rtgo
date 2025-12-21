@@ -769,4 +769,6 @@ look at removing dependencies from gtp.
 try to change mouse cursor in game panel like ogs
 Image is null in game panel.  old code in ../go/ works.
 
+maybe  try to work on server from command line after we move the new pc.?
+
 

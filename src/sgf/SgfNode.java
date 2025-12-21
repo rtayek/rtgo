@@ -1,5 +1,5 @@
 package sgf;
-import static io.IO.*;
+import static io.IOs.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;
 import java.io.*;
@@ -100,7 +100,7 @@ public class SgfNode {
         if(hasAMoveType&&hasASetupType) {
             parserLogger.severe("node has move and setup type properties!");
             System.out.println("node has move and setup type properties!");
-            if(!ignoreMoveAndSetupFlags) { IO.stackTrace(10); System.exit(1); }
+            if(!ignoreMoveAndSetupFlags) { IOs.stackTrace(10); System.exit(1); }
             ok=false;
         }
         return ok;

@@ -79,17 +79,17 @@ public enum Init {
         System.out.println("highest named threads id: "+NamedThreadGroup.ids);
         System.out.println(NamedThreadGroup.allNamedThreads.size()+"/"+NamedThreadGroup.ids);
         NamedThreadGroup.printNamedThreads(NamedThreadGroup.allNamedThreads,"all",false);
-        IO.printThreads(IO.activeThreads(),"active at end",false);
+        IOs.printThreads(IOs.activeThreads(),"active at end",false);
         GTPBackEnd.sleep2(2); // was 10
         NamedThreadGroup.removeAllTerminated();
         System.out.println("highest named threads id: "+NamedThreadGroup.ids);
         System.out.println(NamedThreadGroup.allNamedThreads.size()+"/"+NamedThreadGroup.ids);
         NamedThreadGroup.printNamedThreads(NamedThreadGroup.allNamedThreads,"all",false);
-        IO.printThreads(IO.activeThreads(),"active at end",false);
+        IOs.printThreads(IOs.activeThreads(),"active at end",false);
     }
     public synchronized void wrapupTests() {
         boolean printMore=false;
-        if(printMore) { IO.stackTrace(3); System.out.println("wrapup counter: "+counter+", max counter: "+maxCounter); }
+        if(printMore) { IOs.stackTrace(3); System.out.println("wrapup counter: "+counter+", max counter: "+maxCounter); }
         if(wasWrapupTestsCalled) Logging.mainLogger.severe("duplicate call to wrapup");
         if(suiteControls) return;
         else {
@@ -114,7 +114,7 @@ public enum Init {
         NamedThreadGroup.printThraedsAtEnd();
         int n=NamedThreadGroup.printNamedThreadGroups(true);
         System.out.println(n);
-        IO.printThreads(IO.activeThreads(),"last",true);
+        IOs.printThreads(IOs.activeThreads(),"last",true);
         System.out.println("tests run: "+first.testsRun);
     }
     public static void init(String[] argument) {

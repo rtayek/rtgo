@@ -1,5 +1,5 @@
 package model;
-import static io.IO.*;
+import static io.IOs.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.restoreSgf;
 import java.awt.geom.Point2D;
@@ -7,14 +7,14 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.logging.Level;
-import org.junit.rules.ExpectedException;
+//import org.junit.rules.ExpectedException;
 import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
 import equipment.*;
 import equipment.Board.*;
 import io.*;
-import io.IO.*;
+import io.IOs.*;
 import model.Move.*;
 import server.NamedThreadGroup.NamedThread;
 import sgf.*;
@@ -602,7 +602,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     processProperty(node.sgfProperties.get(i));
                 } catch(Exception e) {
                     Logging.mainLogger.severe(name+"1 caught: "+e);
-                    IO.stackTrace(10);
+                    IOs.stackTrace(10);
                     setChangedAndNotify(new Event.Hint(Event.exception,"do"));
                 }
             }
@@ -1124,7 +1124,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public static boolean connectToServer(Model model) {
         if(model.gtp==null) {
             Socket socket=new Socket();
-            boolean ok=connect(IO.host,IO.defaultPort,1000,socket);
+            boolean ok=connect(IOs.host,IOs.defaultPort,1000,socket);
             if(ok) {
                 End socketEnd=new End(socket);
                 model.gtp=new GTPBackEnd(socketEnd,model);

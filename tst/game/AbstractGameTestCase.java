@@ -6,14 +6,14 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import controller.GameFixture;
 import equipment.*;
-import io.IO;
+import io.IOs;
 import model.Move;
 import utilities.*;
 public abstract class AbstractGameTestCase { // these test cases require a running game.
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public static class GameSocketTestCase extends AbstractGameTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-        @Override @Before public void setUp() throws Exception { serverPort=IO.anyPort; super.setUp(); }
+        @Override @Before public void setUp() throws Exception { serverPort=IOs.anyPort; super.setUp(); }
         @Override @After public void tearDown() throws Exception { game.stop(); super.tearDown(); }
         @RunWith(Parameterized.class) public static class ParameterizedGameSocketTestCase extends GameSocketTestCase {
             @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -27,7 +27,7 @@ public abstract class AbstractGameTestCase { // these test cases require a runni
     }
     public static class GameDuplexTestCase extends AbstractGameTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-        @Override @Before public void setUp() throws Exception { serverPort=IO.noPort; super.setUp(); }
+        @Override @Before public void setUp() throws Exception { serverPort=IOs.noPort; super.setUp(); }
         @Override @After public void tearDown() throws Exception { game.stop(); super.tearDown(); }
         @RunWith(Parameterized.class) public static class ParameterizedGameDuplexTestCase extends GameDuplexTestCase {
             @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

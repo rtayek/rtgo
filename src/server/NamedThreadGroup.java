@@ -5,7 +5,7 @@ import java.lang.Thread.State;
 import java.util.*;
 import controller.GTPBackEnd;
 import io.*;
-import io.IO.Stopable;
+import io.IOs.Stopable;
 import utilities.Et;
 public class NamedThreadGroup { // one set of named threads.
     public static class Check {
@@ -13,7 +13,7 @@ public class NamedThreadGroup { // one set of named threads.
         public Check() { this(false); }
         public void startCheck() {
             if(!doCheck) return;
-            if(checkManyThings) { initialThreads=IO.activeThreads(); ids=removeLeftoverThreads(initialThreads); }
+            if(checkManyThings) { initialThreads=IOs.activeThreads(); ids=removeLeftoverThreads(initialThreads); }
         }
         public void howMany() {
             int black=0,white=0,model=0,game=0,server=0;
@@ -32,8 +32,8 @@ public class NamedThreadGroup { // one set of named threads.
         public void endCheck() {
             if(!doCheck) return;
             if(checkManyThings) {
-                Set<Thread> active=IO.activeThreads();
-                IO.printThreads(active,active.size()+" active.",false);
+                Set<Thread> active=IOs.activeThreads();
+                IOs.printThreads(active,active.size()+" active.",false);
                 if(checkThreads) {
                     System.out.println("<<<");
                     Set<Thread> finalThreads=getFinalThreads(ids,initialThreads);
@@ -65,7 +65,7 @@ public class NamedThreadGroup { // one set of named threads.
         }
         @Override public void start() { Logging.mainLogger.config("started: "+getName()); super.start(); }
         @Override public String toString() {
-            if(this!=null) if(this.getName().contains(IO.timeLimitedThreadName)) {
+            if(this!=null) if(this.getName().contains(IOs.timeLimitedThreadName)) {
                 mainLogger.severe(this.getName()+" time limited");
             }
             return this==null?null
@@ -80,7 +80,7 @@ public class NamedThreadGroup { // one set of named threads.
     public synchronized Set<NamedThread> activeNamedThreads() {
         // this has side effects. fix!!!
         // for this group of named threads
-        Set<Thread> threads=IO.activeThreads();
+        Set<Thread> threads=IOs.activeThreads();
         Set<NamedThread> active=new LinkedHashSet<>();
         Set<NamedThread> inActive=new LinkedHashSet<>();
         for(NamedThread namedThread:namedThreadsWithRunnables) {
@@ -117,7 +117,7 @@ public class NamedThreadGroup { // one set of named threads.
         Set<Thread> joined=new LinkedHashSet<>();
         for(NamedThread namedThread:activeNamedThreads()) if(!namedThread.getState().equals(Thread.State.TERMINATED)) {
             if(namedThread.runnable instanceof Stopable) ((Stopable)namedThread.runnable).setIsStopping();
-            IO.myClose(null,null,null,namedThread,string,null);
+            IOs.myClose(null,null,null,namedThread,string,null);
             if(namedThread.getState().equals(Thread.State.TERMINATED)) joined.add(namedThread);
             else; // System.out.println("int: "+namedThread.getName()+" "+IO.toString(namedThread)+" "+IO.toString(namedThread)+"was not terminated!");
         } else System.out.println(" 1 already terminated.");
@@ -135,7 +135,7 @@ public class NamedThreadGroup { // one set of named threads.
         System.out.println(allNamedThreads.size()+" remaining threads: "+allNamedThreads);
     }
     public static synchronized Set<NamedThread> allActiveNamedThreads() {
-        Set<Thread> threads=IO.activeThreads();
+        Set<Thread> threads=IOs.activeThreads();
         Set<NamedThread> set=new LinkedHashSet<>();
         for(Thread thread:threads) if(thread instanceof NamedThread) set.add((NamedThread)thread);
         return set;
@@ -191,8 +191,8 @@ public class NamedThreadGroup { // one set of named threads.
                 if(!thread.getName().contains("AWT-EventQueue"));
                 else if(!thread.getName().contains("Image Fetcher"));
                 else {
-                    System.out.println("not a named thread: "+" "+IO.toString(thread));
-                    IO.stackTrace(10);
+                    System.out.println("not a named thread: "+" "+IOs.toString(thread));
+                    IOs.stackTrace(10);
                     printNamedThreads(allActiveNamedThreads(),"not a named thread, active named treads: ",false);
                     System.exit(0);
                 }
@@ -213,7 +213,7 @@ public class NamedThreadGroup { // one set of named threads.
     }
     public static String name(Thread thread) { return thread!=null?thread.getName():"null"; }
     public static Thread findThread(String name) {
-        Set<Thread> threads=IO.activeThreads();
+        Set<Thread> threads=IOs.activeThreads();
         Thread target=null;
         for(Thread thread:threads) {
             boolean startWatchdog=true; // ???????
@@ -226,7 +226,7 @@ public class NamedThreadGroup { // one set of named threads.
             System.out.println("initial threads is null!");
             initialThreads=Collections.emptySet();
         }
-        Set<Thread> finalThreads=IO.activeThreads();
+        Set<Thread> finalThreads=IOs.activeThreads();
         Et et=new Et();
         int max=10;
         int i=0,n=checkThreads(ids0,initialThreads,finalThreads,false);
@@ -349,7 +349,7 @@ public class NamedThreadGroup { // one set of named threads.
         System.out.println("ptae >>>>>>>>>>>>>>>>>>>>>>");
         System.out.println(allNamedThreads.size()+"/"+NamedThreadGroup.ids);
         printNamedThreads(allNamedThreads,"all named threads",true);
-        IO.printThreads(IO.activeThreads(),"active at end",true);
+        IOs.printThreads(IOs.activeThreads(),"active at end",true);
     }
     public final long groupId; // usually a game id.
     public final Set<NamedThread> namedThreadsWithRunnables=new LinkedHashSet<>();

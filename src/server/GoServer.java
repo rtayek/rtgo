@@ -5,8 +5,8 @@ import java.net.*;
 import java.util.*;
 import controller.*;
 import io.*;
-import io.IO.*;
-import io.IO.End.Holders;
+import io.IOs.*;
+import io.IOs.End.Holders;
 import model.Model;
 import server.NamedThreadGroup.NamedThread;
 public class GoServer implements Runnable,Stopable {
@@ -59,8 +59,8 @@ public class GoServer implements Runnable,Stopable {
     }
     GameFixture setupRemoteGameBackEnds(int port) {
         Holders holders=Holders.create(port);
-        if(port==IO.noPort) addConnection(holders.first.front); // duplex
-        if(port==IO.noPort) addConnection(holders.second.front); // duplex
+        if(port==IOs.noPort) addConnection(holders.first.front); // duplex
+        if(port==IOs.noPort) addConnection(holders.second.front); // duplex
         if(connections.size()<2) System.out.println("1 waiting for a game");
         GameFixture game=waitForAGame(); // let server consume the connections and create a game.
         game.blackFixture.setupBackEnd(holders.first.back,game.blackName(),game.id);
@@ -69,7 +69,7 @@ public class GoServer implements Runnable,Stopable {
         return game;
     }
     @Override public void run() {
-        final int port=serverSocket!=null?serverSocket.getLocalPort():IO.noPort;
+        final int port=serverSocket!=null?serverSocket.getLocalPort():IOs.noPort;
         serverLogger.info("go server is running on port: "+port);
         while(!isStopping&&!namedThread.isInterrupted()) {
             End blackFrontEnd=null,whiteFrontEnd=null;
@@ -84,7 +84,7 @@ public class GoServer implements Runnable,Stopable {
                 }
                 game.startGameThread();
             }
-            if(port!=IO.noPort) {
+            if(port!=IOs.noPort) {
                 try {
                     Socket socket=serverSocket.accept();
                     Logging.mainLogger.info(socket+" "+serverSocket);
@@ -105,11 +105,11 @@ public class GoServer implements Runnable,Stopable {
     public static GoServer startServer(int port) throws IOException {
         // fix this later. there will be fewer choices.
         GoServer goServer=null;
-        if(port==IO.noPort) {
+        if(port==IOs.noPort) {
             goServer=new GoServer(null);
             (goServer.namedThread=NamedThreadGroup.createNamedThread(goServer.id,goServer,"server")).start();
-        } else if(port==IO.anyPort) {
-            ServerSocket serverSocket=IO.getServerSocket(0);
+        } else if(port==IOs.anyPort) {
+            ServerSocket serverSocket=IOs.getServerSocket(0);
             // tricklike. make sure that we are connecting to this server.
             if(serverSocket!=null) {
                 goServer=new GoServer(serverSocket);
@@ -121,7 +121,7 @@ public class GoServer implements Runnable,Stopable {
     private static GoServer startServer(boolean useSocketForServer,int port) throws IOException {
         GoServer goServer=null;
         for(int i=0;i<maxTries;i++) {
-            ServerSocket serverSocket=IO.getServerSocket(port+i);
+            ServerSocket serverSocket=IOs.getServerSocket(port+i);
             if(serverSocket!=null) {
                 goServer=new GoServer(serverSocket);
                 // bad id!!!
@@ -136,7 +136,7 @@ public class GoServer implements Runnable,Stopable {
     private void stopServer() throws IOException,InterruptedException {
         isStopping=true;
         if(serverSocket!=null) { if(!serverSocket.isClosed()) serverSocket.close(); }
-        IO.myClose(null,null,null,namedThread,"server",this);
+        IOs.myClose(null,null,null,namedThread,"server",this);
     }
     public void stopEverything() throws IOException,InterruptedException {
         serverLogger.info("stopping go server.");
@@ -174,7 +174,7 @@ public class GoServer implements Runnable,Stopable {
     public static void playSillyGame(int port) throws Exception {
         GoServer goServer=GoServer.startServer(port);
         // this will always connect to the server socket's local port
-        final int serverPort=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IO.noPort;
+        final int serverPort=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IOs.noPort;
         GameFixture game=goServer.setupRemoteGameBackEnds(serverPort);
         Model blackModel=game.blackFixture.backEnd.model;
         // use recorder fixture instead of black's?
@@ -208,7 +208,7 @@ public class GoServer implements Runnable,Stopable {
                     dir.mkdir();
                     if(!dir.exists()) throw new RuntimeException("can not create folder: "+dir);
                 }
-                GoServer goServer=GoServer.startServer(IO.defaultPort);
+                GoServer goServer=GoServer.startServer(IOs.defaultPort);
             } catch(IOException e) {
                 e.printStackTrace();
             }
@@ -220,10 +220,10 @@ public class GoServer implements Runnable,Stopable {
         for(int i=0;i<m;++i) {
             Logging.mainLogger.warning("sample game: "+i);
             // make this into a test!
-            for(int port:IO.ports) playSillyGame(port);
-            //serverDtrt(IO.noPort);
-            //serverDtrt(IO.anyPort);
-            //serverDtrt(IO.defaultPort);
+            for(int port:IOs.ports) playSillyGame(port);
+            //serverDtrt(IOs.noPort);
+            //serverDtrt(IOs.anyPort);
+            //serverDtrt(IOs.defaultPort);
         }
         NamedThreadGroup.printThraedsAtEnd();
         Logging.mainLogger.info("exit main");

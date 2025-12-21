@@ -1,5 +1,5 @@
 package sgf;
-import static io.IO.*;
+import static io.IOs.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;
 import java.io.*;
@@ -41,7 +41,7 @@ public class MNode {
         if(hasAMoveType&&hasASetupType) {
             parserLogger.severe("node has move and setup type properties!");
             System.out.println("node has move and setup type properties!");
-            if(!ignoreMoveAndSetupFlags) { IO.stackTrace(10); System.exit(1); }
+            if(!ignoreMoveAndSetupFlags) { IOs.stackTrace(10); System.exit(1); }
             ok=false;
         }
         return ok;
@@ -129,7 +129,7 @@ public class MNode {
         // this fails to save if there are variations on the *first* move!
         // seems like it fails if the are any variations!
         // was failing because we did not add the extra root node.
-        if(indent==null) indent=new Indent(IO.standardIndent);
+        if(indent==null) indent=new Indent(IOs.standardIndent);
         SgfNode games=null;
         if(root!=null) {
             int children=root.children.size();
@@ -163,7 +163,7 @@ public class MNode {
     }
     private static MNode quietLoad(File file) {
         Logging.mainLogger.info("loading: "+file);
-        Reader reader=IO.toReader(file);
+        Reader reader=IOs.toReader(file);
         MNode root=quietLoad(reader);
         return root;
     }
@@ -199,7 +199,7 @@ public class MNode {
     }
     public static void saveDirectly(Writer writer,MNode root,Indent indent) throws IOException {
         if(root==null) return;
-        if(indent==null) indent=new Indent(IO.standardIndent);
+        if(indent==null) indent=new Indent(IOs.standardIndent);
         writer.write(indent.indent()+'(');
         saveDirectly_(writer,root,indent);
         writer.write(indent.indent()+')');

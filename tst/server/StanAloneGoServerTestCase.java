@@ -23,9 +23,9 @@ import utilities.*;
     @Before public void setUp() throws Exception {
         //watchdog=Watchdog.watchdog(Thread.currentThread());
         // check for duplicate code in other tests.
-        goServer=GoServer.startServer(i%2==0?IO.anyPort:IO.noPort);
+        goServer=GoServer.startServer(i%2==0?IOs.anyPort:IOs.noPort);
         assertNotNull("no go server!",goServer);
-        final int port=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IO.noPort;
+        final int port=goServer.serverSocket!=null?goServer.serverSocket.getLocalPort():IOs.noPort;
         game=goServer.setupRemoteGameBackEnds(port);
         assertNotNull("no game from server!",game);
         GTPBackEnd.sleep2(2); // try to find out why this is necessary.

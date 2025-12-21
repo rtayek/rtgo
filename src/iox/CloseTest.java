@@ -2,7 +2,7 @@ package iox;
 import java.io.*;
 import java.net.*;
 import java.util.Set;
-import io.IO;
+import io.IOs;
 public class CloseTest {
     Thread server() {
         Thread server=new Thread(new Runnable() {
@@ -39,7 +39,7 @@ public class CloseTest {
             @Override public void run() {
                 try {
                     System.out.println("reader is reading ...");
-                    System.out.println("1 reader: "+IO.toString(reader));
+                    System.out.println("1 reader: "+IOs.toString(reader));
                     String s=bufferedReader.readLine();
                     // should never get here
                     System.out.println("reader returned "+s);
@@ -87,10 +87,10 @@ public class CloseTest {
         testBufferedReader();
         Thread.sleep(400);
         boolean printActiveThreads=false;
-        Set<Thread> activeThreads=IO.activeThreads();
+        Set<Thread> activeThreads=IOs.activeThreads();
         if(printActiveThreads) {
             System.out.println("active threads");
-            for(Thread thread:activeThreads) { System.out.println("ct run "+IO.toString(thread)); }
+            for(Thread thread:activeThreads) { System.out.println("ct run "+IOs.toString(thread)); }
         }
         System.out.println("interrupt server, reader and closer.");
         //server.interrupt();
@@ -98,10 +98,10 @@ public class CloseTest {
         closer.interrupt();
         Thread.sleep(500);
         //testDataInputStream();
-        activeThreads=IO.activeThreads();
+        activeThreads=IOs.activeThreads();
         if(printActiveThreads) {
             System.out.println("active threads");
-            for(Thread thread:activeThreads) { System.out.println("ct run 2 "+IO.toString(thread)); }
+            for(Thread thread:activeThreads) { System.out.println("ct run 2 "+IOs.toString(thread)); }
         }
         System.out.println("exit main run().");
     }

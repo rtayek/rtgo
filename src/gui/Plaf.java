@@ -5,7 +5,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import io.IO;
+import io.IOs;
 import sgf.*;
 import utilities.MainGui;
 public class Plaf extends MainGui {

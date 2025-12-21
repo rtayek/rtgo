@@ -2,7 +2,7 @@ package io;
 import static org.junit.Assert.assertEquals;
 import java.io.*;
 import org.junit.*;
-import io.IO.Pipe;
+import io.IOs.Pipe;
 import utilities.MyTestWatcher;
 public class PipeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -48,7 +48,7 @@ public class PipeTestCase {
         thread2.start();
     }
     @Test() public void testCrossWiring() throws Exception {
-        io.IO.Duplex duplex=new io.IO.Duplex();
+        io.IOs.Duplex duplex=new io.IOs.Duplex();
         duplex.front.out().write("foo\n");
         duplex.front.out().flush();
         String s1=duplex.back.in().readLine();
@@ -59,7 +59,7 @@ public class PipeTestCase {
         assertEquals("bar",s2);
     }
     @Test public void testCrossWiring2() throws IOException {
-        io.IO.Duplex duplex=new io.IO.Duplex();
+        io.IOs.Duplex duplex=new io.IOs.Duplex();
         String expected="message";
         String actual=writeFlushRead(duplex.back.in(),duplex.front.out(),expected);
         assertEquals(expected,actual);
@@ -74,7 +74,7 @@ public class PipeTestCase {
         assertEquals("foo",s1);
     }
     @Test() public void testwriteFlushRunRead() throws Exception {
-        io.IO.Duplex duplex=new io.IO.Duplex();
+        io.IOs.Duplex duplex=new io.IOs.Duplex();
         Copy frontEnd1=new Copy(duplex.front.in(),duplex.front.out()); // crosswired
         frontEnd1.name="1";
         Copy frontEnd2=new Copy(duplex.back.in(),duplex.back.out()); // crosswired
@@ -83,7 +83,7 @@ public class PipeTestCase {
         //writeFlushRunRead(frontEnd1,frontEnd2);
     }
     @Test() public void testwriteFlushRunRead2() throws Exception {
-        io.IO.Duplex duplex=new io.IO.Duplex();
+        io.IOs.Duplex duplex=new io.IOs.Duplex();
         Copy frontEnd1=new Copy(duplex.front.in(),duplex.front.out()); // crosswired
         frontEnd1.name="1";
         Copy frontEnd2=new Copy(duplex.back.in(),duplex.back.out()); // crosswired

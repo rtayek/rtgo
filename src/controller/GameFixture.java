@@ -7,8 +7,8 @@ import java.util.*;
 import controller.GTPFrontEnd.PipeEofException;
 import equipment.*;
 import io.*;
-import io.IO.*;
-import io.IO.End.Holder;
+import io.IOs.*;
+import io.IOs.End.Holder;
 import model.*;
 import model.Move.MoveImpl;
 import server.NamedThreadGroup;
@@ -134,7 +134,7 @@ public class GameFixture implements Runnable,Stopable {
         // https://www.reddit.com/r/javahelp/comments/7j1omm/buffer_reader_hangs_socket_communication/
         Logging.mainLogger.info("stop game threadr");
         String threadName=namedThread!=null?namedThread.getName():"null";
-        IO.myClose(null,null,null,namedThread,threadName,this);
+        IOs.myClose(null,null,null,namedThread,threadName,this);
         GTPBackEnd.sleep2(GTPBackEnd.yield);
     }
     public void startPlayerBackends() {
@@ -226,7 +226,7 @@ public class GameFixture implements Runnable,Stopable {
                     try {
                         File file=new File(directory,"game"+fileId+".sgf");
                         System.out.println(file);
-                        Writer writer=IO.toWriter(file);
+                        Writer writer=IOs.toWriter(file);
                         boolean wasSaved=recorderFixture.backEnd.model.save(writer);
                         writer.close();
                         if(!wasSaved) {

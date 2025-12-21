@@ -27,13 +27,13 @@ public class ManyGamesTestCase {
     }
     @Before public void setUp() throws Exception { //
         for(int i=0;i<n;i++) {
-            game=Game.setUpStandaloneLocalGame(IO.anyPort);
+            game=Game.setUpStandaloneLocalGame(IOs.anyPort);
             game.startGameThread();
             games.add(game);
         }
     }
     @After public void tearDown() throws Exception {
-        if(IO.currentThreadIsTimeLimited()) {
+        if(IOs.currentThreadIsTimeLimited()) {
             System.out.println("not main! "+"'"+Thread.currentThread().getName());
             Logging.mainLogger.severe("not main! "+"'"+Thread.currentThread().getName());
         }

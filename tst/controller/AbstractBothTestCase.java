@@ -9,7 +9,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 import equipment.*;
 import io.*;
-import io.IO.End.Holder;
+import io.IOs.End.Holder;
 import model.Model;
 import utilities.*;
 public abstract class AbstractBothTestCase {
@@ -26,7 +26,7 @@ public abstract class AbstractBothTestCase {
     }
     public static class SocketTestCase extends AbstractBothTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-        @Override @Before public void setUp() throws Exception { holder=Holder.trick(IO.anyPort); super.setUp(); }
+        @Override @Before public void setUp() throws Exception { holder=Holder.trick(IOs.anyPort); super.setUp(); }
         @Override @After public void tearDown() throws Exception { super.tearDown(); }
     }
     @RunWith(Suite.class) @SuiteClasses({SocketTestCase.class,

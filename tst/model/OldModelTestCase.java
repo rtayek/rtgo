@@ -6,7 +6,7 @@ import java.util.*;
 import org.junit.*;
 import equipment.*;
 import equipment.Board.Topology;
-import io.IO;
+import io.IOs;
 import model.Model.*;
 import static model.Model.*;
 import model.Move.MoveImpl;
@@ -234,7 +234,7 @@ public class OldModelTestCase {
     @Test public void testSave() {
         File file=new File("tmp/saved.sgf");
         if(file.exists()) file.delete();
-        boolean ok=model.save(IO.toWriter(file));
+        boolean ok=model.save(IOs.toWriter(file));
         assertTrue(ok);
         assertTrue(file.exists());
     }
@@ -297,7 +297,7 @@ public class OldModelTestCase {
     /*@Test*/ public void testSgfFileFromLittleGolem() {
         // Node root=quietLoad(new File("url.sgf"));
         Model model=new Model();
-        model.restore(IO.toReader(new File("url.sgf")));
+        model.restore(IOs.toReader(new File("url.sgf")));
     }
     Model model=new Model();
     {

@@ -38,15 +38,15 @@ public class Watchdog extends Thread {
                 //for(StackTraceElement stackTraceElement:stackTraceElements) System.out.println(stackTraceElement);
                 threadToWatch.join(100);
                 Logging.mainLogger.severe(this+" w join result: "+threadToWatch.isAlive()+" "+threadToWatch.getState());
-                System.out.println("w run "+IO.toString(threadToWatch));
+                System.out.println("w run "+IOs.toString(threadToWatch));
                 Logging.mainLogger.severe(this+" w joined with: "+threadToWatch);
             } catch(InterruptedException e) {
                 Logging.mainLogger.severe(this+" w join interrupted.");
                 System.exit(1);
             } finally {
                 Logging.mainLogger.severe("w finally");
-                Set<Thread> threads=IO.activeThreads();
-                for(Thread thread:threads) System.out.println("w run 2 "+IO.toString(thread));
+                Set<Thread> threads=IOs.activeThreads();
+                for(Thread thread:threads) System.out.println("w run 2 "+IOs.toString(thread));
             }
         } else reason="done.";
         Logging.mainLogger.severe(this+" w exiting run().");

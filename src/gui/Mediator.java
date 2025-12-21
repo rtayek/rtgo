@@ -272,7 +272,7 @@ class Mediator implements Observer, ActionListener {
 				fileChoser.setFileFilter(new FileNameExtensionFilter("SGF file", "sgf"));
 				if (fileChoser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					File file = fileChoser.getSelectedFile();
-					model.restore(IO.toReader(file));
+					model.restore(IOs.toReader(file));
 					// maybe here is where i can check for my root node?
 					// it would be in the first child.
 					String comment = "from: " + file;
@@ -298,7 +298,7 @@ class Mediator implements Observer, ActionListener {
 				if (fileChoser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 					File file = fileChoser.getSelectedFile();
 					file = Model.insureExtension(file, Model.desiredExtension);
-					if (!model.save(IO.toWriter(file)))
+					if (!model.save(IOs.toWriter(file)))
 						Logging.mainLogger.warning(model.name + " " + "can not save to: " + file);
 					lastSaveDirectory = file.getParentFile();
 				}

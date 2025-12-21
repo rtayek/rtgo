@@ -21,7 +21,7 @@ import utilities.*;
         }
     }
     @After public void tearDown() throws Exception {
-        Set<Thread> threads=IO.activeThreads();
+        Set<Thread> threads=IOs.activeThreads();
         System.out.println(threads);
     }
     @Test(timeout=watchdogTimeoutTime) public void testInfiniteLoop() {

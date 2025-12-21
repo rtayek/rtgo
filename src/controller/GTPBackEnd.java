@@ -10,7 +10,7 @@ import java.util.*;
 import equipment.*;
 import gui.*;
 import io.*;
-import io.IO.*;
+import io.IOs.*;
 import model.*;
 import model.MNodeAcceptor.MNodeFinder;
 import model.Model.*;
@@ -43,10 +43,10 @@ public class GTPBackEnd implements Runnable,Stopable {
         this(new End(new BufferedReader(new StringReader(command)),new StringWriter()),model);
     }
     public NamedThread startGTP(long id) { // starts with a new thread each time.
-        if(IO.currentThreadIsTimeLimited())
+        if(IOs.currentThreadIsTimeLimited())
             Logging.mainLogger.severe("not main! "+id+" "+model.name+" "+Thread.currentThread().getName());
         boolean failIfOnTimeLimitedThread=false;
-        if(failIfOnTimeLimitedThread&&IO.currentThreadIsTimeLimited()) {
+        if(failIfOnTimeLimitedThread&&IOs.currentThreadIsTimeLimited()) {
             if(false) System.exit(0);
             Logging.mainLogger.severe("not starting gtp thread!");
             return null;
@@ -467,8 +467,8 @@ public class GTPBackEnd implements Runnable,Stopable {
         isStopping=true;
         Logging.mainLogger.fine("enter back end stop");
         boolean printActiveThreads=false;
-        if(printActiveThreads) IO.printThreads(IO.activeThreads(),"active",false);
-        IO.myClose(in,out,socket,namedThread,model!=null?model.name:null,this);
+        if(printActiveThreads) IOs.printThreads(IOs.activeThreads(),"active",false);
+        IOs.myClose(in,out,socket,namedThread,model!=null?model.name:null,this);
         Logging.mainLogger.fine("exit back end stop");
     }
     @Override public boolean isStopping() { return isStopping; }
@@ -510,7 +510,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                     if(isStopping) Logging.mainLogger.info("stopping - process command caught: "+e);
                     else {
                         Logging.mainLogger.severe("not stopping - process command caught: "+e);
-                        Logging.mainLogger.severe("stopping: "+isStopping()+" "+IO.toString(namedThread));
+                        Logging.mainLogger.severe("stopping: "+isStopping()+" "+IOs.toString(namedThread));
                         // break for now, but maybe try to continue/recover later
                     }
                     break loop;

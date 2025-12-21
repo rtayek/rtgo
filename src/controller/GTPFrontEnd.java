@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.List;
 import io.*;
-import io.IO.*;
+import io.IOs.*;
 import server.NamedThreadGroup.NamedThread;
 public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
     // try to consolidate the i/o.
@@ -128,7 +128,7 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
     @Override public void stop() {
         Logging.mainLogger.fine("enter front end stop "+name+" "+thread);
         isStopping=true;
-        IO.myClose(in,out,socket,thread,name,this);
+        IOs.myClose(in,out,socket,thread,name,this);
         Logging.mainLogger.fine("exit front end stop "+name+" "+thread);
     }
     @Override public void run() { // usually just used for testing,

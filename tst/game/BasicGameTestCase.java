@@ -12,11 +12,11 @@ import utilities.*;
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
     public BasicGameTestCase(int i) { this.i=i; }
     @Before public void setUp() throws Exception {
-        game=Game.setUpStandaloneLocalGame(IO.anyPort);
+        game=Game.setUpStandaloneLocalGame(IOs.anyPort);
         game.startGameThread();
     }
     @After public void tearDown() throws Exception {
-        if(IO.currentThreadIsTimeLimited()) {
+        if(IOs.currentThreadIsTimeLimited()) {
             System.out.println("not main! "+"'"+Thread.currentThread().getName());
             Logging.mainLogger.severe("not main! "+"'"+Thread.currentThread().getName());
         }

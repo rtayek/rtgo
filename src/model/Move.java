@@ -3,7 +3,7 @@ import java.util.*;
 import controller.*;
 import controller.Command;
 import equipment.*;
-import io.IO.End.Holder;
+import io.IOs.End.Holder;
 import io.Logging;
 // maybe have a type of move that is setup or ?
 public interface Move {

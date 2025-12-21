@@ -1,9 +1,9 @@
 package sgf.combine;
-import static io.IO.standardIndent;
+import static io.IOs.standardIndent;
 import static sgf.Parser.*;
 import java.io.*;
 import java.util.ArrayList;
-import io.IO;
+import io.IOs;
 import sgf.*;
 public class Combine { // the purpose of this class is to combine two sgf files
     static SgfNode combine_(SgfNode annotated,SgfNode current) {
@@ -52,7 +52,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
         System.err.println("process: "+name);
         //Parser parser=new Parser();
         File file=new File(new File(pathToOldGames,"annotated"),name);
-        Reader reader=IO.toReader(file);
+        Reader reader=IOs.toReader(file);
         if(reader==null) throw new RuntimeException(file+" has null reader!");
         SgfNode annotated=restoreSgf(reader);
         System.err.println("annotated: "+name);
@@ -60,7 +60,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
         Writer writer=new PrintWriter(out);
         annotated.saveSgf(writer,standardIndent);
         System.err.println();
-        SgfNode current=restoreSgf(IO.toReader(new File(pathToOldGames,name)));
+        SgfNode current=restoreSgf(IOs.toReader(new File(pathToOldGames,name)));
         System.err.println("current: "+name);
         current.saveSgf(writer,standardIndent);
         System.err.println();

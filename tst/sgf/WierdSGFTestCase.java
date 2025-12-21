@@ -7,7 +7,7 @@ import static utilities.Utilities.addFiles;
 import java.io.*;
 import java.util.*;
 import org.junit.*;
-import io.IO;
+import io.IOs;
 import utilities.MyTestWatcher;
 @Ignore public class WierdSGFTestCase {
     // these take a long time when tst/ is run
@@ -22,7 +22,7 @@ import utilities.MyTestWatcher;
         if(files.size()==0) fail("no files!");
         fail=false;
         for(File file:files) try {
-            boolean ok=sgfRoundTripTwice(IO.toReader(file));
+            boolean ok=sgfRoundTripTwice(IOs.toReader(file));
             if(!ok) System.out.println(file+" fails!");
         } catch(Exception e) {
             parserLogger.warning(this+" caught: "+e);
@@ -39,7 +39,7 @@ import utilities.MyTestWatcher;
         // change some of the logger stuff back to print on err.
         List<SgfNode> all=new ArrayList<>();
         for(File file:files) try {
-            SgfNode games=restoreSgf(IO.toReader(file));
+            SgfNode games=restoreSgf(IOs.toReader(file));
             all.add(games);
         } catch(Exception e) {
             System.out.println(this+" caught: "+e); //

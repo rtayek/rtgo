@@ -3,7 +3,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import org.junit.*;
 import io.*;
-import io.IO.Stopable;
+import io.IOs.Stopable;
 import server.NamedThreadGroup.NamedThread;
 import utilities.MyTestWatcher;
 public class NamedThreadsTestCase {
@@ -51,7 +51,7 @@ public class NamedThreadsTestCase {
         NamedThread thread=namedThreadGroup.new NamedThread("0",r1);
         namedThreadGroup.addNamedThread(thread);
         assertTrue(namedThreadGroup.namedThreadsWithRunnables.contains(thread));
-        IO.myClose(null,null,null,thread,null,r1);
+        IOs.myClose(null,null,null,thread,null,r1);
     }
     @Test() public void testRs() throws Exception {
         R r1=new R();
@@ -61,7 +61,7 @@ public class NamedThreadsTestCase {
         NamedThread thread2=namedThreadGroup.new NamedThread("R2-1",r2);
         thread2.start();
         //print3();
-        IO.myClose(null,null,null,thread1,"thread 1",r1);
+        IOs.myClose(null,null,null,thread1,"thread 1",r1);
         //Thread.sleep(10); //
         //print3();
         //System.out.println(namedThreadGroup.activeNamedThreads().size());

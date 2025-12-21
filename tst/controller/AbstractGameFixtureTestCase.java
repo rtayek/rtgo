@@ -10,7 +10,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 import equipment.Stone;
 import io.*;
-import io.IO.End.Holder;
+import io.IOs.End.Holder;
 import model.*;
 import utilities.*;
 public abstract class AbstractGameFixtureTestCase {
@@ -50,7 +50,7 @@ public abstract class AbstractGameFixtureTestCase {
             final int i;
             static final int n=2;
         }
-        @Override @Before public void setUp() throws Exception { blackHolder=Holder.trick(IO.anyPort); super.setUp(); }
+        @Override @Before public void setUp() throws Exception { blackHolder=Holder.trick(IOs.anyPort); super.setUp(); }
         @Override @After public void tearDown() throws Exception { super.tearDown(); }
     }
     @RunWith(Suite.class) @SuiteClasses({DuplexTestCase.class,SocketTestCase.class}) public static class ATestSuite {

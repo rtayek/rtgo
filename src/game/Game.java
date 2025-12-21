@@ -2,7 +2,7 @@ package game;
 import java.io.*;
 import controller.*;
 import io.*;
-import io.IO.End.Holders;
+import io.IOs.End.Holders;
 import model.Model;
 import server.NamedThreadGroup;
 import sgf.HexAscii;
@@ -18,7 +18,7 @@ public class Game {
         return game;
     }
     public static GameFixture setupLocalGameForShove(Model recorder) {
-        Holders holders=Holders.holders(IO.anyPort);
+        Holders holders=Holders.holders(IOs.anyPort);
         GameFixture game=new GameFixture(recorder);
         game.setupFrontEnds(holders.first.front,holders.second.front);
         game.blackFixture.setupBackEnd(holders.first.back,game.blackName(),game.id);
@@ -29,7 +29,7 @@ public class Game {
         // no references to any back end stuff here.
         if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
-        recorder.restore(IO.toReader(file));
+        recorder.restore(IOs.toReader(file));
         StringWriter stringWriter=new StringWriter();
         recorder.save(stringWriter);
         String sgf=stringWriter.toString();
@@ -54,11 +54,11 @@ public class Game {
     public static void main(String[] args) throws Exception {
         System.out.println(Init.first);
         for(int i=0;i<1;++i) { //
-            for(int port:IO.ports) try {
+            for(int port:IOs.ports) try {
                 run(port);
             } catch(Exception e) {
                 e.printStackTrace();
-                if(port==IO.defaultPort) System.out.println("default port, probably ok.");
+                if(port==IOs.defaultPort) System.out.println("default port, probably ok.");
             }
         }
         NamedThreadGroup.printThraedsAtEnd();

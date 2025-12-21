@@ -115,7 +115,7 @@ class Traverser {
         File dir=new File("sgf");
         System.out.println("||||");
         File file=new File(dir,"1635215-056-rtayek-Sighris.sgf");
-        SgfNode games=restoreSgf(IO.toReader(file));
+        SgfNode games=restoreSgf(IOs.toReader(file));
         traverser.visit(games);
         System.out.println("||||");
         String sgfString=getSgfData("oneMoveAtA1");

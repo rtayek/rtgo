@@ -13,7 +13,7 @@ public class LoadExistinGameTestCase {
     // use finder and goto node
     // how do we let one person drive this?
     @Before public void setUp() throws Exception {
-        game=Game.setUpStandaloneLocalGame(IO.noPort);
+        game=Game.setUpStandaloneLocalGame(IOs.noPort);
         black=game.blackFixture.backEnd.model;
         white=game.whiteFixture.backEnd.model;
     }

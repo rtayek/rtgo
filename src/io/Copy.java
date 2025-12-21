@@ -1,7 +1,7 @@
 package io;
 import java.io.*;
 import java.util.function.Function;
-import io.IO.Duplex;
+import io.IOs.Duplex;
 public class Copy implements Runnable {
     public static class CopyBC implements Runnable {
         public CopyBC(BufferedReader in,Writer out) { this.in=in; this.out=out; };
