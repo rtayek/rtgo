@@ -44,10 +44,10 @@ class Sleeper implements Runnable {
 }
 class MyReader implements Runnable { // maybe call this cat?
     MyReader() throws IOException {
-        PipedOutputStream out=new PipedOutputStream();
-        PipedInputStream input=new PipedInputStream(out);
-        in=new BufferedReader(new InputStreamReader(input));
-        this.out=new OutputStreamWriter(out);
+        pout=new PipedOutputStream();
+        pin=new PipedInputStream(pout);
+        in=new BufferedReader(new InputStreamReader(pin));
+        this.out=new OutputStreamWriter(pout);
     }
     @Override public void run() {
         try { // can't possibly work - needs to write before reading!
@@ -63,14 +63,26 @@ class MyReader implements Runnable { // maybe call this cat?
         } finally {
             try {
                 in.close();
-            } catch(IOException ignored) {}
+            } catch(IOException ignored) {
+            }
             try {
                 out.close();
-            } catch(IOException ignored) {}
+            } catch(IOException ignored) {
+            }
+            try {
+                pin.close();
+            } catch(IOException ignored) {
+            }
+            try {
+                pout.close();
+            } catch(IOException ignored) {
+            }
         }
     }
     final BufferedReader in;
     final Writer out;
+    final PipedInputStream pin;
+    final PipedOutputStream pout;
     boolean done;
 }
 public class ThreadTestCase {
