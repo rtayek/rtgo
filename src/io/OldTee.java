@@ -9,15 +9,15 @@ public class OldTee extends FilterOutputStream /* make this into a writer or mak
     }
     public synchronized void addOutputStream(final OutputStream out) { streams.addElement(out); }
     @Override public synchronized void write(final int b) throws IOException {
-        for(Enumeration e=streams.elements();e.hasMoreElements();) {
-            final OutputStream out=(OutputStream)e.nextElement();
+        for(Enumeration<OutputStream> e=streams.elements();e.hasMoreElements();) {
+            final OutputStream out=e.nextElement();
             out.write(b);
             out.flush();
         }
     }
     @Override public synchronized void write(final byte[] data,final int offset,final int length) throws IOException {
-        for(Enumeration e=streams.elements();e.hasMoreElements();) {
-            final OutputStream out=(OutputStream)e.nextElement();
+        for(Enumeration<OutputStream> e=streams.elements();e.hasMoreElements();) {
+            final OutputStream out=e.nextElement();
             out.write(data,offset,length);
             out.flush();
         }

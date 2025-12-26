@@ -3,14 +3,13 @@ import java.awt.LayoutManager;
 import java.awt.event.*;
 import java.net.InetAddress;
 import javax.swing.*;
-import gui.ButtonsABC.ButtonWithEnum;
 import io.Logging;
 import model.Model;
 import model.Model.Role;
 public class WestPanels {
     public static enum MyEnums { connect, disconnect }
     static public class NewWestPanel extends JPanel {
-        class MyButtons extends ButtonsABC {
+        class MyButtons extends ButtonsABC<MyEnums> {
             // rename to just buttons.
             // but do it later when the dust settles.
             @Override public void enableAll(Mediator mediator) {
@@ -45,7 +44,7 @@ public class WestPanels {
             setLayout(layoutManager);
             for(MyEnums enums:MyEnums.values()) {
                 // better to iterate over the buttons?
-                ButtonWithEnum button=buttons.get(enums);
+                ButtonsABC<MyEnums>.ButtonWithEnum button=buttons.get(enums);
                 button.abstractButton.addActionListener(actionListener);
                 add(button.abstractButton);
             }
@@ -62,7 +61,7 @@ public class WestPanels {
             add(modeLabel);
         }
         void setPlayerColor() { Role mode=mediator.model.role(); modeLabel.setText("Mode: "+mode); }
-        ButtonsABC buttons=new MyButtons();
+        ButtonsABC<MyEnums> buttons=new MyButtons();
         final Mediator mediator;
         JLabel modeLabel;
         ActionListener actionListener=new ActionListener() {
@@ -71,10 +70,10 @@ public class WestPanels {
                 if(object instanceof AbstractButton) {
                     AbstractButton abstractButton=((AbstractButton)object);
                     String name=abstractButton.getName();
-                    Enum e2=buttons.valueOf(name);
-                    ButtonWithEnum b=buttons.get(e2);
-                    if(name!=null&&e2!=null&&b!=null) if(e2 instanceof WestPanels.MyEnums) {
-                        WestPanels.MyEnums e21=(WestPanels.MyEnums)e2;
+                    MyEnums e2=buttons.valueOf(name);
+                    ButtonsABC<MyEnums>.ButtonWithEnum b=buttons.get(e2);
+                    if(name!=null&&e2!=null&&b!=null) {
+                        WestPanels.MyEnums e21=e2;
                         Model model=mediator.model;
                         boolean ok=false;
                         switch(e21) {
@@ -89,8 +88,7 @@ public class WestPanels {
                             default:
                                 Logging.mainLogger.info(mediator.model.name+" button for"+e21+"  was not handled!");
                         }
-                    } else throw new RuntimeException("oops");
-                    else Logging.mainLogger.info(mediator.model.name+" "+"unknown action "+e);
+                    } else Logging.mainLogger.info(mediator.model.name+" "+"unknown action "+e);
                 } else Logging.mainLogger.info(mediator.model.name+" "+"what is action performed in "+e.getSource());
             }
         };
@@ -120,10 +118,10 @@ public class WestPanels {
                 // maybe later.
                 for(ConnectButtons button:values()) switch(button) {
                     case connect:
-                        button.abstractButton.enable(enable);
+                        button.abstractButton.setEnabled(enable);
                         break;
                     case disconnect:
-                        button.abstractButton.enable(!enable);
+                        button.abstractButton.setEnabled(!enable);
                         break;
                     default:
                         Logging.mainLogger.info(button+" was not handled!");

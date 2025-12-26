@@ -8,10 +8,11 @@ public class CloseTest {
         Thread server=new Thread(new Runnable() {
             @Override public void run() {
                 System.out.println("server thread enter run().");
+                Socket socket=null;
                 try {
                     Thread.sleep(100);
                     InetAddress host=InetAddress.getLocalHost();
-                    Socket s=new Socket(host,PORT);
+                    socket=new Socket(host,PORT);
                     System.out.println("server wait");
                     synchronized(this) { // why not just sleep?
                         while(!done) wait(10);
@@ -21,6 +22,10 @@ public class CloseTest {
                 } catch(Exception e) {
                     System.out.println("server caught: "+e);
                     System.out.println("server caught: "+e.getMessage());
+                } finally {
+                    if(socket!=null) try {
+                        socket.close();
+                    } catch(IOException ignored) {}
                 }
                 System.out.println("server thread exit run().");
             }

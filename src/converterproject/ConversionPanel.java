@@ -56,7 +56,7 @@ public class ConversionPanel extends JPanel implements ActionListener,ChangeList
      */
     private static final long serialVersionUID=1L;
     JFormattedTextField textField;
-    JComboBox unitChooser;
+    JComboBox<String> unitChooser;
     JSlider slider;
     ConverterRangeModel sliderModel;
     Converter controller;
@@ -88,7 +88,7 @@ public class ConversionPanel extends JPanel implements ActionListener,ChangeList
         textField.setValue(Double.valueOf(sliderModel.getDoubleValue()));
         textField.addPropertyChangeListener(this);
         //Add the combo box.
-        unitChooser=new JComboBox();
+        unitChooser=new JComboBox<>();
         for(int i=0;i<units.length;i++) { //Populate it.
             unitChooser.addItem(units[i].description);
         }

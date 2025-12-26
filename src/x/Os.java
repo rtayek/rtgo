@@ -4,7 +4,7 @@ import x.Os.O;
 enum E1 { e1, e11 }
 enum E2 { e2, e22 }
 enum Names { e1, e2 }
-public class Os extends LinkedHashMap<Enum,O> {
+public class Os extends LinkedHashMap<Enum<?>,O> {
     public static class O { // add range later
         public O(Object value) { this.defaultValue=currentValue=value; }
         public Object currentValue() { return currentValue; }
@@ -14,8 +14,8 @@ public class Os extends LinkedHashMap<Enum,O> {
         public final Object defaultValue;
         private Object currentValue;
     }
-    public void add(Enum t,O o) { put(t,o); }
-    public Enum valueOf(String name) { for(Enum e:keySet()) if(e.name().equals(name)) return e; return null; }
+    public void add(Enum<?> t,O o) { put(t,o); }
+    public Enum<?> valueOf(String name) { for(Enum<?> e:keySet()) if(e.name().equals(name)) return e; return null; }
     // do i need a fully qualified name like Frog.fred?
     public static void main(String[] args) {
         Os os=new Os() {

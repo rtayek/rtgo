@@ -60,6 +60,13 @@ class MyReader implements Runnable { // maybe call this cat?
             //out.close();
         } catch(Exception e) {
             Logging.mainLogger.info(Thread.currentThread()+"caught: "+e);
+        } finally {
+            try {
+                in.close();
+            } catch(IOException ignored) {}
+            try {
+                out.close();
+            } catch(IOException ignored) {}
         }
     }
     final BufferedReader in;

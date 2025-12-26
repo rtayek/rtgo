@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.util.Properties;
 import javax.swing.*;
 import javax.swing.event.*;
-import gui.ButtonsABC.ButtonWithEnum;
 import gui.Spinners.NewSpinners.ParameterSpinners;
 import gui.Spinners.NewSpinners.SpinnersABC.SpinnerWithAnEnum;
 import io.Logging;
@@ -18,26 +17,24 @@ RIGHT("Right", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
  */
 public class TopPanels {
     public static class NewTopPanel extends JPanel {
-        class MyButtons extends ButtonsABC {
+        class MyButtons extends ButtonsABC<Navigate> {
             // old top panel had enable and enable all!
             @Override public void enableAll(Mediator mediator) { // call from node changed
                 Model model=mediator.model;
-                for(ButtonWithEnum button:buttons.buttons()) {
-                    Enum e=button.t;
-                    if(e instanceof Navigate) {
-                        boolean canDo=((Navigate)e).canDoNoCheck(model);
-                        button.abstractButton.setEnabled(canDo);
-                    } else throw new RuntimeException();
+                for(ButtonsABC<Navigate>.ButtonWithEnum button:buttons.buttons()) {
+                    Navigate e=button.t;
+                    boolean canDo=e.canDoNoCheck(model);
+                    button.abstractButton.setEnabled(canDo);
                 }
             }
             // try to get rid of the instances
-            ButtonWithEnum<Navigate> top=new ButtonWithEnum<Navigate>(Navigate.top);
-            ButtonWithEnum<Navigate> bottoml=new ButtonWithEnum<Navigate>(Navigate.bottom);
-            ButtonWithEnum<Navigate> up=new ButtonWithEnum<Navigate>(Navigate.up);
-            ButtonWithEnum<Navigate> down=new ButtonWithEnum<Navigate>(Navigate.down);
-            ButtonWithEnum<Navigate> right=new ButtonWithEnum<Navigate>(Navigate.right);
-            ButtonWithEnum<Navigate> left=new ButtonWithEnum<Navigate>(Navigate.left);
-            ButtonWithEnum<Navigate> deleye=new ButtonWithEnum<Navigate>(Navigate.delete,"Delete this branch");
+            ButtonsABC<Navigate>.ButtonWithEnum top=new ButtonWithEnum(Navigate.top);
+            ButtonsABC<Navigate>.ButtonWithEnum bottoml=new ButtonWithEnum(Navigate.bottom);
+            ButtonsABC<Navigate>.ButtonWithEnum up=new ButtonWithEnum(Navigate.up);
+            ButtonsABC<Navigate>.ButtonWithEnum down=new ButtonWithEnum(Navigate.down);
+            ButtonsABC<Navigate>.ButtonWithEnum right=new ButtonWithEnum(Navigate.right);
+            ButtonsABC<Navigate>.ButtonWithEnum left=new ButtonWithEnum(Navigate.left);
+            ButtonsABC<Navigate>.ButtonWithEnum deleye=new ButtonWithEnum(Navigate.delete,"Delete this branch");
         } // end of inner class
         public NewTopPanel(Mediator mediator) {
             setName("top  panel");
@@ -54,13 +51,13 @@ public class TopPanels {
                 // looks like we are not doing that.
                 // so lets try it.
                 // are these the right ones?
-                for(ButtonWithEnum button:buttons.buttons()) {
+                for(ButtonsABC<Navigate>.ButtonWithEnum button:buttons.buttons()) {
                     button.abstractButton.addActionListener(actionListener);
                     add(button.abstractButton);
                 }
             } else {
                 // are these the right ones?
-                for(ButtonWithEnum button:buttons.buttons()) {
+                for(ButtonsABC<Navigate>.ButtonWithEnum button:buttons.buttons()) {
                     button.abstractButton.addActionListener(actionListener);
                     add(button.abstractButton);
                 }
@@ -69,7 +66,7 @@ public class TopPanels {
         //for(OldSpinners spinner:map.values())
         //    spinner.setValueInWidgetFromCurrentValue();
         // old spinners
-        public void change(SpinnerWithAnEnum button,Object value) {
+        public void change(SpinnerWithAnEnum<?> button,Object value) {
             //Logging.mainLogger.info(parameter.name()+" changed from: "+parameter.currentValue()+"+ to: "+value);
             // move this inside spinners?
             // make thsi an instance method
@@ -79,12 +76,12 @@ public class TopPanels {
             // looks like loadropertiesFromCurrentValues()?
             // yes. but this is for spinner with an enum?
             // and not the old parameter
-            for(SpinnerWithAnEnum b:spinners.buttons()) properties.put(b.t.name(),b.currentValue.toString());
+            for(SpinnerWithAnEnum<?> b:spinners.buttons()) properties.put(b.t.name(),b.currentValue.toString());
             //Logging.mainLogger.config("writing new properties to: "+propertiesFilename+": "+properties);
             store(properties,Parameters.propertiesFilename);
         }
         final Mediator mediator;
-        ButtonsABC buttons=new MyButtons();
+        ButtonsABC<Navigate> buttons=new MyButtons();
         // part of new spinner stuff
         // this is the single instance
         // maybe move this to mediator when the dust setles.
@@ -104,14 +101,11 @@ public class TopPanels {
                     AbstractButton abstractButton=((AbstractButton)object);
                     name=abstractButton.getName();
                     Logging.mainLogger.info(mediator.model.name+" "+"click: "+name);
-                    Enum e2=buttons.valueOf(name);
-                    ButtonWithEnum b=buttons.get(e2);
+                    Navigate e2=buttons.valueOf(name);
+                    ButtonsABC<Navigate>.ButtonWithEnum b=buttons.get(e2);
                     if(name!=null&&e2!=null&&b!=null) {
                         //Logging.mainLogger.info(mediator.model.name+" "+"click: "+name);
-                        if(e2 instanceof Navigate) {
-                            Navigate navigate=(Navigate)e2;
-                            navigate(navigate);
-                        } else Logging.mainLogger.info(mediator.model.name+" "+"unknown enum!n "+e);
+                        navigate(e2);
                     } else Logging.mainLogger.info(mediator.model.name+" "+"unknown action "+e);
                 } else Logging.mainLogger.info(mediator.model.name+" "+"what is action performed in "+e.getSource());
             }
@@ -126,8 +120,8 @@ public class TopPanels {
                     JSpinner jSpinner=(JSpinner)e.getSource();
                     name=jSpinner.getName();
                     Logging.mainLogger.info(mediator.model.name+" "+"click: "+name);
-                    Enum e2=spinners.valueOf(name);
-                    SpinnerWithAnEnum b=spinners.get(e2);
+                    Enum<?> e2=spinners.valueOf(name);
+                    SpinnerWithAnEnum<?> b=spinners.get(e2);
                     if(name!=null&&e2!=null&&b!=null) {
                         if(e2 instanceof Parameters) {
                             if(Parameters.valueOf(name)!=null) {

@@ -31,7 +31,7 @@ public class GTPShoveTestCase {
     @After public void tearDown() throws Exception {}
     @Test public void testInitialBoardInNewModel() {
         Model model=new Model();
-        assertNull(model.board());
+        assertNull(model.board()); // maybe fails because we added and ensure board?
         }
     @Test public void testPushGTPMovesToCurrentStateDirectOneAtATime() throws Exception {
         Model actual=Move.pushGTPMovesToCurrentStateDirect(expected,true);

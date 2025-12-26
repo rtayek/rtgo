@@ -2,13 +2,12 @@ package gui;
 import java.awt.event.*;
 import javax.swing.*;
 import equipment.Board;
-import gui.ButtonsABC.ButtonWithEnum;
 import io.Logging;
 import model.Model;
 public class EastPanels {
     public static enum MyEnums { scroll, foo, bar }
     public static class NewEastPanel extends JPanel {
-        class MyButtons extends ButtonsABC {
+        class MyButtons extends ButtonsABC<MyEnums> {
             // rename to just buttons.
             // but do it later when the dust settles.
             @Override public void enableAll(Mediator mediator) {
@@ -20,36 +19,35 @@ public class EastPanels {
                     boolean isSelected=scroll.abstractButton.isSelected(); // uses instance variable
                     //boolean isSelected=get(MyEnums.scroll).abstractButton.isSelected(); // maybe use this instead?
                     for(MyEnums e:MyEnums.values())
-                        if(!e.equals(MyEnums.scroll)) get(e).abstractButton.enable(isSelected&&isTorus);
+                        if(!e.equals(MyEnums.scroll)) get(e).abstractButton.setEnabled(isSelected&&isTorus);
                 }
             }
             // remove instance variables!
-            ButtonWithEnum<MyEnums> scroll=new ButtonWithEnum<MyEnums>(MyEnums.scroll,new JToggleButton());
-            ButtonWithEnum<MyEnums> foo=new ButtonWithEnum<MyEnums>(MyEnums.foo);
-            ButtonWithEnum<MyEnums> bar=new ButtonWithEnum<MyEnums>(MyEnums.bar);
+            ButtonsABC<MyEnums>.ButtonWithEnum scroll=new ButtonWithEnum(MyEnums.scroll,new JToggleButton());
+            ButtonsABC<MyEnums>.ButtonWithEnum foo=new ButtonWithEnum(MyEnums.foo);
+            ButtonsABC<MyEnums>.ButtonWithEnum bar=new ButtonWithEnum(MyEnums.bar);
         }
         public NewEastPanel(Mediator mediator) {
             setName("east panel");
             this.mediator=mediator;
-            for(ButtonWithEnum button:buttons.buttons()) {
+            for(ButtonsABC<MyEnums>.ButtonWithEnum button:buttons.buttons()) {
                 button.abstractButton.addActionListener(actionListener);
                 add(button.abstractButton);
             }
         }
         final Mediator mediator;
-        ButtonsABC buttons=new MyButtons();
+        ButtonsABC<MyEnums> buttons=new MyButtons();
         ActionListener actionListener=new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 Object object=e.getSource();
                 if(object instanceof AbstractButton) {
                     AbstractButton abstractButton=((AbstractButton)object);
                     String name=abstractButton.getName();
-                    Enum e2=buttons.valueOf(name);
-                    ButtonWithEnum b=buttons.get(e2);
+                    MyEnums e2=buttons.valueOf(name);
+                    ButtonsABC<MyEnums>.ButtonWithEnum b=buttons.get(e2);
                     if(name!=null&&e2!=null&&b!=null) { //
                         Logging.mainLogger.info("click: "+name);
-                        MyEnums myEnums=(MyEnums)e2;
-                        switch(myEnums) {
+                        switch(e2) {
                             case foo:
                                 mediator.gamePanel.repaint();
                                 break;
@@ -91,10 +89,10 @@ public class EastPanels {
                 if(model.board()==null) Logging.mainLogger.severe("board is null!");
                 else {
                     boolean isTorus=model.board().topology().equals(Board.Topology.torus);
-                    scroll.abstractButton.enable(isTorus);
+                    scroll.abstractButton.setEnabled(isTorus);
                     boolean isSelected=scroll.abstractButton.isSelected();
                     for(Buttons button:values())
-                        if(!button.equals(scroll)) button.abstractButton.enable(isSelected&&isTorus);
+                        if(!button.equals(scroll)) button.abstractButton.setEnabled(isSelected&&isTorus);
                 }
             }
             public static void oldSouthPanelenableAll(Mediator mediator) {
@@ -103,10 +101,10 @@ public class EastPanels {
                 if(model.board()==null) Logging.mainLogger.config("board is null!");
                 else {
                     boolean isTorus=model.board().topology().equals(Board.Topology.torus);
-                    scroll.abstractButton.enable(isTorus);
+                    scroll.abstractButton.setEnabled(isTorus);
                     boolean isSelected=scroll.abstractButton.isSelected();
                     for(Buttons button:values())
-                        if(!button.equals(scroll)) button.abstractButton.enable(isSelected&&isTorus);
+                        if(!button.equals(scroll)) button.abstractButton.setEnabled(isSelected&&isTorus);
                 }
             }
             public final String tooltipText;

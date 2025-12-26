@@ -80,12 +80,12 @@ public class MNode<T> {
     public static <T> boolean structureDeepEquals(MNode<T> node,MNode<T> other) {
         return node!=null?node.deepEquals_(other,false):other==null;
     }
-    public static <T> LinkedHashSet<T> processed() { return processed; }
+    public static LinkedHashSet<Object> processed() { return processed; }
     MNode<T> parent;
     ArrayList<MNode<T>> children=new ArrayList<>();
     // add a set temporarily to see if we are adding stuff in twice?
     public T data;
     final int id=++ids;
     static int ids;
-    static LinkedHashSet processed=new LinkedHashSet<>();
+    static LinkedHashSet<Object> processed=new LinkedHashSet<>();
 }

@@ -248,5 +248,5 @@ public class Node<T> {
     String encoded;
     final int id=++ids;
     static int ids;
-    static LinkedHashSet processed=new LinkedHashSet<>();
+    static Set<Object> processed=new LinkedHashSet<>();
 }

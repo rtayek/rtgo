@@ -1,58 +1,69 @@
 buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'org.hidetake:gradle-ssh-plugin:1.1.2'
-  }
+  repositories { mavenCentral() }
+  dependencies { classpath "org.hidetake:gradle-ssh-plugin:1.1.2" }
 }
+
 plugins {
-	id 'java'
-	id 'checkstyle'
-	id 'distribution'
-	id 'application'
+  id "java"
+  id "checkstyle"
+  id "distribution"
+  id "application"
 }
+
+repositories { mavenCentral() }
+
+sourceSets {
+  main {
+    java.srcDirs = ["src"]
+    resources.srcDirs = ["resources"]
+  }
+  test {
+    java.srcDirs = ["tst"]
+  }
+}
+
+dependencies {
+  implementation files("lib/java-getopt-1.0.13.jar")
+  testImplementation "junit:junit:4.13.2"
+}
+
+java {
+  toolchain { languageVersion = JavaLanguageVersion.of(24) }
+  // If you prefer not to use toolchains yet, remove the toolchain block
+  // and keep source/targetCompatibility below instead.
+  // sourceCompatibility = JavaVersion.VERSION_16
+  // targetCompatibility = JavaVersion.VERSION_16
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = "UTF-8"
+  options.compilerArgs += ["-Xlint:unchecked", "-Xlint:deprecation"]
+}
+
 checkstyle {
-    configFile file("config/checkstyle/checkstyle.xml")
-    //println(configFile+" "+configFile.exists()+" "+configFile.canRead())
-    toolVersion '7.8.1'
+  configFile = file("config/checkstyle/checkstyle.xml")
+  toolVersion = "7.8.1"
 }
+
 checkstyleMain {
-    source ='src'
+  source = fileTree("src") { include "**/*.java" }
 }
 checkstyleTest {
-    source ='tst'
+  source = fileTree("tst") { include "**/*.java" }
 }
-repositories {
-    mavenCentral()
-    //flatDir { dirs 'lib' }
+
+application {
+  mainClass = "utilities.Dispatcher"
 }
-sourceSets {
-	main {
-		main.java.srcDirs = ["src"]
-		main.resources.srcDirs = ["resources"]
-	}
-	test {
-		test.java.srcDirs = ["tst"] // removed slow/ as it was very.
-	}
-}
-dependencies {
-//compile files('lib/*.jar')
-	implementation files('lib/java-getopt-1.0.13.jar')
-	testImplementation 'junit:junit:4.13.2'
-	}
+
 jar {
-    manifest {
-        attributes 'Main-Class': MyStuff.main
-    }
+  manifest {
+    attributes "Main-Class": "utilities.Dispatcher"
+  }
 }
+
 run {
-    standardInput = System.in
+  standardInput = System.in
 }
-targetCompatibility = "16"  
-sourceCompatibility = "16"
-version = '0.1' 
-mainClassName = MyStuff.main // for application plugin
-class MyStuff {
-	public static final String main="utilities.Dispatcher";
-}
+
+version = "0.2"

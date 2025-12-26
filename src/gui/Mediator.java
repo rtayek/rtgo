@@ -9,7 +9,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import audio.Audio;
 import audio.Audio.Sound;
 import equipment.*;
-import gui.ButtonsABC.ButtonWithEnum;
 import gui.EastPanels.*;
 import gui.SouthPanels.*;
 import gui.SpinnerOptions.SpinnerOption;
@@ -63,16 +62,17 @@ class Mediator implements Observer,ActionListener {
                 if(useSpinnerOptions) {
                     System.out.println("using spinner options.");
                     newTopPanel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
-                    for(Option button:newTopPanel.spinnerParameterOptions.options()) {
-                        ((SpinnerOption)button).jSpinner.addChangeListener(TopPanel.changeListener);
-                        newTopPanel.add(((SpinnerOption)button).jSpinner);
+                    for(Option<?,?> button:newTopPanel.spinnerParameterOptions.options()) {
+                        SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)button;
+                        spinnerOption.jSpinner.addChangeListener(TopPanel.changeListener);
+                        newTopPanel.add(spinnerOption.jSpinner);
                     }
                 } else {
                     System.out.println("using new spinners.");
                     // newTopPanel.spinners.initializeParameters(Parameters.propertiesFilename);
                     newTopPanel.spinners.setValuesInWidgetsFromCurrentValues();
                     // button should be widget or something
-                    for(SpinnerWithAnEnum button:newTopPanel.spinners.buttons()) {
+                    for(SpinnerWithAnEnum<?> button:newTopPanel.spinners.buttons()) {
                         button.jSpinner.addChangeListener(TopPanel.changeListener);
                         newTopPanel.add(button.jSpinner);
                     }
@@ -344,7 +344,8 @@ class Mediator implements Observer,ActionListener {
                                 SouthPanel.Buttons.scroll.abstractButton.setSelected(false);
                                 SouthPanel.Buttons.enableAll(this);
                             } else {
-                                ButtonWithEnum scroll=newSouthPanel.buttons.get(SouthPanels.MyEnums.scroll);
+                                ButtonsABC<SouthPanels.MyEnums>.ButtonWithEnum scroll=newSouthPanel.buttons
+                                        .get(SouthPanels.MyEnums.scroll);
                                 scroll.abstractButton.setEnabled(false);
                                 scroll.abstractButton.setSelected(useNewSouthPanel);
                                 newSouthPanel.buttons.enableAll(this);

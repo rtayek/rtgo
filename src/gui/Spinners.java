@@ -83,16 +83,16 @@ public class Spinners {
                 public final Object defaultValue;
                 Object currentValue; // make stuff like this private!
             } // end of inner class
-            public SpinnerWithAnEnum get(Enum e) { return map.get(e); }
-            public Set<Enum> enums() { return map.keySet(); }
-            public Collection<SpinnerWithAnEnum> buttons() { return map.values(); }
+            public SpinnerWithAnEnum<?> get(Enum<?> e) { return map.get(e); }
+            public Set<Enum<?>> enums() { return map.keySet(); }
+            public Collection<SpinnerWithAnEnum<?>> buttons() { return map.values(); }
             public void enableAll(Mediator mediator) { // default behavious is to enable all of the buttons.
-                for(SpinnerWithAnEnum button:buttons()) button.jSpinner.setEnabled(true);
+                for(SpinnerWithAnEnum<?> button:buttons()) button.jSpinner.setEnabled(true);
             }
-            public Enum valueOf(String name) { for(Enum e:enums()) if(e.name().equals(name)) return e; return null; }
+            public Enum<?> valueOf(String name) { for(Enum<?> e:enums()) if(e.name().equals(name)) return e; return null; }
             @Override public void setValuesInWidgetsFromCurrentValues() { // maybe bogus?
                 // no, move above to new spinnes (not spinner optiomns).
-                for(SpinnerWithAnEnum button:buttons()) {
+                for(SpinnerWithAnEnum<?> button:buttons()) {
                     System.out.println(button.t);
                     boolean ok=button.setValueInWidgetFromCurrentValue();
                     if(!ok) System.out.println("not ok!");
@@ -102,12 +102,12 @@ public class Spinners {
             // then see if we can push them up!
             // options has these 2 methods:
             @Override public void setCurrentValuesFromProperties(Properties properties) {
-                for(SpinnerWithAnEnum button:buttons()) if(properties.containsKey(button.t.name()))
+                for(SpinnerWithAnEnum<?> button:buttons()) if(properties.containsKey(button.t.name()))
                     button.currentValue=button.fromString(properties.getProperty(button.t.name()));
                 else System.out.println("can not find property: "+button.t.name()+" in "+properties);
             }
             @Override public void setPropertiesFromCurrentValues(Properties properties) {
-                for(SpinnerWithAnEnum parameter:buttons())
+                for(SpinnerWithAnEnum<?> parameter:buttons())
                     properties.setProperty(parameter.t.name(),parameter.currentValue.toString());
             }
             @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
@@ -130,10 +130,10 @@ public class Spinners {
             }
             @Override public String toString() {
                 LinkedHashMap<String,Object> map=new LinkedHashMap<>();
-                for(Enum e:enums()) map.put(e.getClass().getName()+"."+e.name(),get(e).currentValue);
+                for(Enum<?> e:enums()) map.put(e.getClass().getName()+"."+e.name(),get(e).currentValue);
                 return map.toString();
             }
-            final Map<Enum,SpinnerWithAnEnum> map=new LinkedHashMap<>();
+            final Map<Enum<?>,SpinnerWithAnEnum<?>> map=new LinkedHashMap<>();
         }
         public static class ParameterSpinners extends SpinnersABC {
             ParameterSpinners() { initializeParameters(Parameters.propertiesFilename); }

@@ -21,13 +21,13 @@ public class MainTestCase {
     @Test public void testNewWestPanelConnectButtom() {
         Mediator.useNewWestPanel=true;
         Main main=Main.run("test");
-        ButtonsABC button=main.mediator.newWestPanel.buttons;
+        ButtonsABC<WestPanels.MyEnums> button=main.mediator.newWestPanel.buttons;
         assertTrue(button.get(WestPanels.MyEnums.connect).isEnabled());
     }
     @Test public void testNewWestPanel() {
         Mediator.useNewWestPanel=true;
         Main main=Main.run("test");
-        ButtonsABC button=main.mediator.newWestPanel.buttons;
+        ButtonsABC<WestPanels.MyEnums> button=main.mediator.newWestPanel.buttons;
         assertFalse(button.get(WestPanels.MyEnums.disconnect).isEnabled());
     }
 }

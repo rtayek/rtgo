@@ -1,40 +1,29 @@
 package utilities;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 public class Range<T> {
-    static class Ranges extends TreeSet<Range> {
+    static class Ranges extends TreeSet<Range<?>> {
         // add  and and or
         // how about not?
         // allow -max int x, and c max int?
         private static final long serialVersionUID=1L;
     }
-    static class NumberComparator<T extends Number> implements Comparator<T> {
-        @Override public int compare(T a,T b) {
-            if(a instanceof Comparable) if(a.getClass().equals(b.getClass())) return ((Comparable<T>)a).compareTo(b);
-            throw new UnsupportedOperationException();
-        }
-    }
-    static class NumberComparator2<T extends Number & Comparable> implements Comparator<T> {
-        @Override public int compare(T a,T b) throws ClassCastException { return a.compareTo(b); }
-    }
     public static <T extends Number & Comparable<T>> int compare(T a,T b) { return a.compareTo(b); }
-    static class NumberComparator3<T extends Number> implements Comparator<T> {
-        @Override public int compare(T a,T b) {
-            if(a instanceof Comparable) if(a.getClass().equals(b.getClass())) return ((Comparable<T>)a).compareTo(b);
-            throw new UnsupportedOperationException();
-        }
-    }
-    Range(T min,T max) { this.min=min; this.max=max; }
+    public Range(T min,T max) { this.min=min; this.max=max; }
     boolean contains(T t) {
         if(min instanceof Number) {
-            int rc1=comparator.compare((Number)min,(Number)t);
-            int rc2=comparator.compare((Number)t,(Number)max);
+            int rc1=numberComparator.compare((Number)min,(Number)t);
+            int rc2=numberComparator.compare((Number)t,(Number)max);
             if(rc1<=0&&rc2<=0) return true;
-        } else if(min instanceof Enum) {
-            Class<T> clazz=((Enum)t).getDeclaringClass();
+        } else if(min instanceof Enum<?>) {
+            Class<?> clazz=((Enum<?>)t).getDeclaringClass();
             if(clazz!=null) {
-                List<T> enums=Arrays.asList(clazz.getEnumConstants());
+                List<?> enums=Arrays.asList(clazz.getEnumConstants());
                 if(enums.contains(t))
-                    if(((Enum)min).ordinal()<=((Enum)t).ordinal()&&((Enum)t).ordinal()<=((Enum)max).ordinal())
+                    if(((Enum<?>)min).ordinal()<=((Enum<?>)t).ordinal()
+                            &&((Enum<?>)t).ordinal()<=((Enum<?>)max).ordinal())
                         return true;
             }
         }
@@ -56,5 +45,5 @@ public class Range<T> {
         System.out.println(er.contains(L.e));
     }
     final T min,max;
-    static final NumberComparator3 comparator=new NumberComparator3<>();
+    static final Comparator<Number> numberComparator=(a,b)->Double.compare(a.doubleValue(),b.doubleValue());
 }

@@ -57,14 +57,14 @@ public class SpinnerOptions extends WidgetOptions {
         final KeyStroke keyStroke;
     } // end of inner option class
     @Override public void setValuesInWidgetsFromCurrentValues() {
-        for(Option button:options()) {
+        for(Option<?,?> button:options()) {
             System.out.println(button.t);
-            boolean ok=((SpinnerOption)button).setValueInWidgetFromCurrentValue();
+            boolean ok=((SpinnerOption<?,?>)button).setValueInWidgetFromCurrentValue();
             if(!ok) System.out.println("not ok!");
         }
     }
     public void enableAll(Mediator mediator) { // default behavious is to enable all of the buttons.
-        for(Option button:options()) ((SpinnerOption)button).jSpinner.setEnabled(true);
+        for(Option<?,?> button:options()) ((SpinnerOption<?,?>)button).jSpinner.setEnabled(true);
         // maybe we can just cast to j component?
         // or move up to a base class?
     }
@@ -81,22 +81,22 @@ class SpinnerParameterOptions extends SpinnerOptions {
     // so we need to initialize earlier?
     // how much of the above code can we push up into the abc or the options class?
     {
-        new SpinnerOption(Parameters.topology,Parameters.topology.defaultValue,(Range)null,
-                OldSpinners.spinner(Parameters.topologies,150),(String)null,(KeyStroke)null) {
+        new SpinnerOption<Parameters,Topology>(Parameters.topology,(Topology)Parameters.topology.defaultValue,
+                (Range<Topology>)null,OldSpinners.spinner(Parameters.topologies,150),(String)null,(KeyStroke)null) {
             @Override public Object fromString(String string) { return Topology.valueOf(string); }
         };
-        new SpinnerOption(Parameters.shape,Parameters.shape.defaultValue,(Range)null,
+        new SpinnerOption<Parameters,Shape>(Parameters.shape,(Shape)Parameters.shape.defaultValue,(Range<Shape>)null,
                 OldSpinners.spinner(Parameters.shapes,100),(String)null,(KeyStroke)null) {
             @Override public Object fromString(String string) { return Shape.valueOf(string); }
         };
-        new SpinnerOption(Parameters.width,Board.standard,(Range)null,OldSpinners.spinner(Parameters.sizes,50),
-                (String)null,(KeyStroke)null);
-        new SpinnerOption(Parameters.depth,Board.standard,(Range)null,OldSpinners.spinner(Parameters.sizes,50),
-                (String)null,(KeyStroke)null);
-        new SpinnerOption(Parameters.band,Parameters.band.defaultValue,(Range)null,
-                OldSpinners.spinner(Parameters.bands,30),(String)null,(KeyStroke)null);
-        new SpinnerOption(Parameters.role,Parameters.role.defaultValue,(Range)null,
-                OldSpinners.spinner(Parameters.roles,30),(String)null,(KeyStroke)null) {
+        new SpinnerOption<Parameters,Integer>(Parameters.width,(Integer)Board.standard,(Range<Integer>)null,
+                OldSpinners.spinner(Parameters.sizes,50),(String)null,(KeyStroke)null);
+        new SpinnerOption<Parameters,Integer>(Parameters.depth,(Integer)Board.standard,(Range<Integer>)null,
+                OldSpinners.spinner(Parameters.sizes,50),(String)null,(KeyStroke)null);
+        new SpinnerOption<Parameters,Integer>(Parameters.band,(Integer)Parameters.band.defaultValue,
+                (Range<Integer>)null,OldSpinners.spinner(Parameters.bands,30),(String)null,(KeyStroke)null);
+        new SpinnerOption<Parameters,Model.Role>(Parameters.role,(Model.Role)Parameters.role.defaultValue,
+                (Range<Model.Role>)null,OldSpinners.spinner(Parameters.roles,30),(String)null,(KeyStroke)null) {
             @Override public Object fromString(String string) { return Model.Role.valueOf(string); }
         };
     }

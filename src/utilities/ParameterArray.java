@@ -14,7 +14,7 @@ public class ParameterArray {
     public static void main(String[] args) {
         Collection<Object[]> collection=modulo(3);
         for(Object[] o:collection) {
-            List x=Arrays.asList(o);
+            List<Object> x=Arrays.asList(o);
             System.out.println(x);
         }
     }

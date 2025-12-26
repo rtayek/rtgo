@@ -22,10 +22,11 @@ public class OptionsABC implements Persistance { // an instance of options.
         public Option(T t,Object defaultValue) { this(t,defaultValue,null); }
         public Object fromString(String string) { return Integer.valueOf(string); } // maybe should be double?
         // above needs to be overwritten for special cases.
-        private Enum[] values() { // just for this enum constant.
+        private Enum<?>[] values() { // just for this enum constant.
             // this wants to get the values for this option if it's values are enums.
             // so this is not a T!
-            Class<T> clazz=t.getDeclaringClass();
+            @SuppressWarnings("unchecked")
+            Class<T> clazz=(Class<T>)t.getDeclaringClass();
             // this will not work.
             // we need to get the enums fro the default value?
             // do not forget to do this!
@@ -46,17 +47,20 @@ public class OptionsABC implements Persistance { // an instance of options.
         // subclass to get option with a widget.
         // or ?
     } // end of inner option class.
-    public Option get(Enum name) { return map.get(name); }
-    public Set<Enum> enums() { return map.keySet(); }
-    public Collection<Option> options() { return map.values(); }
-    public Enum valueOf(String name) { for(Enum e:enums()) if(e.name().equals(name)) return e; return null; }
+    @SuppressWarnings("unchecked") public <T extends Enum<T>,R> Option<T,R> get(T name) {
+        return (Option<T,R>)map.get(name);
+    }
+    public Option<?,?> getOption(Enum<?> name) { return map.get(name); }
+    public Set<Enum<?>> enums() { return map.keySet(); }
+    public Collection<Option<?,?>> options() { return map.values(); }
+    public Enum<?> valueOf(String name) { for(Enum<?> e:enums()) if(e.name().equals(name)) return e; return null; }
     @Override public void setCurrentValuesFromProperties(Properties properties) {
-        for(Option option:options()) if(properties.containsKey(option.t.name())) {
+        for(Option<?,?> option:options()) if(properties.containsKey(option.t.name())) {
             option.currentValue=option.fromString(properties.getProperty(option.t.name()));
         } else System.out.println("can not find option: "+option.t.name()+" in "+properties);
     }
     @Override public void setPropertiesFromCurrentValues(Properties properties) {
-        for(Option option:options()) properties.setProperty(option.t.name(),option.currentValue.toString());
+        for(Option<?,?> option:options()) properties.setProperty(option.t.name(),option.currentValue.toString());
     }
     @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
         Properties properties=new Properties();
@@ -78,12 +82,12 @@ public class OptionsABC implements Persistance { // an instance of options.
     }
     @Override public String toString() {
         LinkedHashMap<String,Object> map=new LinkedHashMap<>();
-        for(Enum e:enums()) map.put(e.getClass().getSimpleName()+"."+e.name(),get(e).currentValue);
+        for(Enum<?> e:enums()) map.put(e.getClass().getSimpleName()+"."+e.name(),getOption(e).currentValue);
         return map.toString();
     }
     public String toLongString() {
         LinkedHashMap<String,Object> map=new LinkedHashMap<>();
-        for(Enum e:enums()) map.put('\n'+e.getClass().getSimpleName()+"."+e.name(),get(e).currentValue);
+        for(Enum<?> e:enums()) map.put('\n'+e.getClass().getSimpleName()+"."+e.name(),getOption(e).currentValue);
         return map.toString();
     }
     public static <T extends Enum<T>> T fromString(Class<T> clazz,String string) {
@@ -96,7 +100,7 @@ public class OptionsABC implements Persistance { // an instance of options.
         }
         return null;
     }
-    LinkedHashMap<Enum,Option> map=new LinkedHashMap<>();
+    LinkedHashMap<Enum<?>,Option<?,?>> map=new LinkedHashMap<>();
     public static void main(String[] args) {
         //
     }

@@ -470,7 +470,7 @@ public class SgfNode {
             }
             return;
         }
-        Set<String> keys=new LinkedHashSet(
+        Set<String> keys=new LinkedHashSet<>(
                 List.of("comments1","twoEmptyWithSemicolon","smartgo4","twosmallgamesflat","smartgo42"));
         for(Object key:Parser.sgfDataKeySet()) {
             System.out.println(key);
