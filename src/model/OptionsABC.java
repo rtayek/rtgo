@@ -60,14 +60,14 @@ public class OptionsABC implements Persistance { // an instance of options.
     }
     @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
         Properties properties=new Properties();
-        loadPropertiesFile(properties,propertiesFilename);
+        load(properties,propertiesFilename);
         System.out.println(properties);
         setCurrentValuesFromProperties(properties);
     }
     @Override public void storeCurrentValuesInPropertiesFile(String filename) {
         Properties properties=new Properties();
         setPropertiesFromCurrentValues(properties);
-        writePropertiesFile(properties,filename);
+        store(properties,filename);
     }
     @Override public void initializeParameters(String filename) {
         // can we move this to base class?

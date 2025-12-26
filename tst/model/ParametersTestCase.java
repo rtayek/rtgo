@@ -21,15 +21,15 @@ public class ParametersTestCase {
         String filename="test.properties";
         File file=new File(filename);
         if(file.exists()) file.delete();
-        writePropertiesFile(new Properties(),filename);
+        store(new Properties(),filename);
         assertTrue(new File(filename).exists());
     }
     @Test public void testSaveAndReadAPropertiesFile() {
         Properties expected=new Properties();
         Parameters.setPropertiesFromCurrentValues(expected);
-        writePropertiesFile(expected,"test.properties");
+        store(expected,"test.properties");
         Properties actual=new Properties();
-        loadPropertiesFile(actual,"test.properties");
+        load(actual,"test.properties");
         assertEquals(expected,actual);
     }
     @Test public void testChange() {

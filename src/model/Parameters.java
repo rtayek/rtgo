@@ -35,13 +35,9 @@ public enum Parameters { // properties
         Properties properties=new Properties();
         for(Parameters p:Parameters.values()) properties.put(p.name(),p.currentValue().toString());
         //Logging.mainLogger.config("writing new properties to: "+propertiesFilename+": "+properties);
-        writePropertiesFile(properties,propertiesFilename);
+        store(properties,propertiesFilename);
     }
     public static void resetAll() { for(Parameters parameter:Parameters.values()) parameter.reset(); }
-    private static void loadPropertiesFileUsingGetResource(Properties properties,String filename) {
-        URL url=width.getClass().getResource(filename);
-        load(properties,filename,url);
-    }
     static void setCurrentValuesFromProperties(Properties properties) {
         for(Parameters parameter:values()) if(properties.containsKey(parameter.name())) {
             parameter.currentValue=parameter.fromString(properties.getProperty(parameter.name()));
@@ -52,13 +48,13 @@ public enum Parameters { // properties
     }
     static void setCurrentValuesFromPropertiesFile() {
         Properties properties=new Properties();
-        loadPropertiesFile(properties,propertiesFilename);
+        load(properties,propertiesFilename);
         setCurrentValuesFromProperties(properties);
     }
     static void storeCurrentValuesInPropertiesFile(String filename) {
         Properties properties=new Properties();
         setPropertiesFromCurrentValues(properties);
-        writePropertiesFile(properties,filename);
+        store(properties,filename);
     }
     static void initializeParameters(String filename) {
         // we need a way to reset

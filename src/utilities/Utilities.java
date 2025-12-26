@@ -34,57 +34,22 @@ public class Utilities {
         for(File file:dir.listFiles()) addFiles(files,file);
         return files;
     }
-    void mumble() { method(); }
     public static String method(int n) {
         return Thread.currentThread().getStackTrace()[n].getClassName()+'.'
                 +Thread.currentThread().getStackTrace()[n].getMethodName()+"()";
     }
     public static String method() { return method(2); }
+    void mumble() { method(); }
     public static String shortMethod(int n) {
         return '.'+Thread.currentThread().getStackTrace()[n].getMethodName()+"()";
     }
     public static String shortMethod() { return shortMethod(2); }
-    public static void loadPropertiesFile(Properties properties,String filename) {
+    public static void load(Properties properties,String filename) {
         File file=new File(filename);
         try {
             InputStream in=new FileInputStream(file);
             properties.load(in);
             //Logging.mainLogger.config("properties loaded from url: "+file+": "+properties);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static void load(Properties properties,String filename,URL url) {
-        // this may find a properties file nearby.
-        // we are not using this.
-        if(url!=null) try {
-            InputStream in=url.openStream();
-            if(in!=null) {
-                properties.load(in);
-                Logging.mainLogger.config("properties loaded from url: "+filename+": "+properties);
-            } else Logging.mainLogger.warning("properties stream is null!");
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-        else Logging.mainLogger.warning("url is null for filename: "+filename);
-    }
-    public static void writePropertiesFile(Properties properties,String filename) {
-        try {
-            // File file=new File(new File("resources/model"),filename);
-            File file=new File(filename);
-            Logging.mainLogger.config("writing new properties to: "+filename+": "+properties);
-            properties.store(new FileOutputStream(file),"initial");
-        } catch(FileNotFoundException e) {
-            Logging.mainLogger.warning("properties"+" "+"caught: "+e+" property file was not written!");
-        } catch(IOException e) {
-            Logging.mainLogger.warning("properties"+" "+"caught: "+e+" property file was not written!");
-        }
-    }
-    public static Properties load(final Reader reader) {
-        try {
-            Properties properties=new Properties();
-            properties.load(reader);
-            return properties;
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
@@ -99,20 +64,29 @@ public class Utilities {
         }
         return p;
     }
-    public static Properties load(final File propertiesFile) {
-        Properties p=null;
+    public static void store(Properties properties,String filename) {
         try {
-            final InputStream in=new FileInputStream(propertiesFile);
-            p=load(in);
+            // File file=new File(new File("resources/model"),filename);
+            File file=new File(filename);
+            Logging.mainLogger.config("writing new properties to: "+filename+": "+properties);
+            properties.store(new FileOutputStream(file),"initial");
         } catch(FileNotFoundException e) {
-            System.out.println("load caught: "+e);
+            Logging.mainLogger.warning("properties"+" "+"caught: "+e+" property file was not written!");
+        } catch(IOException e) {
+            Logging.mainLogger.warning("properties"+" "+"caught: "+e+" property file was not written!");
         }
-        return p;
     }
-    public static void store(final File propertiesFile,Properties p) {
+    public static void store(final Properties properties,final OutputStream outputStream) {
+        try {
+            properties.store(outputStream,null);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void store(final Properties properties,final File propertiesFile) {
         try {
             final OutputStream out=new FileOutputStream(propertiesFile);
-            store(out,p);
+            store(properties,out);
             out.close();
         } catch(FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -129,99 +103,6 @@ public class Utilities {
         } catch(MissingResourceException e) {}
         return string;
     }
-    public static void store(final OutputStream outputStream,final Properties properties) {
-        try {
-            properties.store(outputStream,null);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static void store(final Writer writer,final Properties properties) {
-        try {
-            properties.store(writer,null);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static void storeXml(final OutputStream outputStream,final Properties properties) {
-        try {
-            properties.storeToXML(outputStream,null);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static void storeXml(final File propertiesFile,Properties p) {
-        try {
-            final OutputStream out=new FileOutputStream(propertiesFile);
-            storeXml(out,p);
-            out.close();
-        } catch(FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static byte[] save(final Object o) {
-        try {
-            ByteArrayOutputStream baos=new ByteArrayOutputStream();
-            ObjectOutputStream out=new ObjectOutputStream(baos);
-            out.writeObject(o);
-            out.flush();
-            out.close();
-            return baos.toByteArray();
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static Object restore(final ObjectInputStream objectInputStream) {
-        try {
-            final Object o=objectInputStream.readObject();
-            objectInputStream.close();
-            return o;
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        } catch(ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static Object restore(final byte[] b) {
-        try {
-            ObjectInputStream in=new ObjectInputStream(new ByteArrayInputStream(b));
-            return restore(in);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static Object restore(final File file) {
-        try {
-            ObjectInputStream in=new ObjectInputStream(new FileInputStream(file));
-            return restore(in);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static void toFile(final byte[] b,final File file) {
-        try {
-            OutputStream out=new FileOutputStream(file);
-            out.write(b);
-            out.close();
-        } catch(FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static void toFile(final String s,final File file) {
-        try {
-            Writer out=new FileWriter(file);
-            out.write(s);
-            out.close();
-        } catch(FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
     public static void fromReader(final StringBuffer stringBuffer,Reader reader) {
         if(reader!=null) try {
             int c=0;
@@ -231,11 +112,6 @@ public class Utilities {
             System.out.println("fromReader caught: "+e);
             e.printStackTrace();
         }
-    }
-    public static String fromReader(final Reader reader) {
-        StringBuffer stringBuffer=new StringBuffer();
-        fromReader(stringBuffer,reader);
-        return stringBuffer.toString();
     }
     public static void fromFile(final StringBuffer stringBuffer,final File file) {
         Reader r=null;

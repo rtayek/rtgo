@@ -112,14 +112,14 @@ public class Spinners {
             }
             @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
                 Properties properties=new Properties();
-                loadPropertiesFile(properties,propertiesFilename);
+                load(properties,propertiesFilename);
                 System.out.println("loaded: "+properties);
                 setCurrentValuesFromProperties(properties);
             }
             @Override public void storeCurrentValuesInPropertiesFile(String filename) {
                 Properties properties=new Properties();
                 setPropertiesFromCurrentValues(properties);
-                writePropertiesFile(properties,filename);
+                store(properties,filename);
             }
             @Override public void initializeParameters(String filename) {
                 // can we move this to base class?
