@@ -3,6 +3,8 @@ import static sgf.Parser.*;
 import java.io.*;
 import java.util.Stack;
 import io.*;
+import io.IOs;
+
 import sgf.*;
 class Traverser { // half of a visitor
     // also have in in sgf/

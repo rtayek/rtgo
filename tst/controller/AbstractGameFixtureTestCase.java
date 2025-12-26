@@ -11,6 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import equipment.Stone;
 import io.*;
 import io.IOs.End.Holder;
+import io.IOs.End.Holders;
 import model.*;
 import utilities.*;
 public abstract class AbstractGameFixtureTestCase {

@@ -6,6 +6,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import controller.GameFixture;
 import io.*;
+import io.IOs; 
 import utilities.*;
 @RunWith(Parameterized.class) public class BasicGameTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

@@ -6,6 +6,7 @@ import org.junit.*;
 import controller.GameFixture;
 import equipment.*;
 import io.*;
+import io.IOs;
 import model.*;
 import model.Model.*;
 public class LoadExistinGameTestCase {

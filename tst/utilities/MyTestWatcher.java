@@ -3,6 +3,7 @@ import static io.Init.first;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import io.*;
+import io.IOs;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.Check;
 public class MyTestWatcher extends TestWatcher {

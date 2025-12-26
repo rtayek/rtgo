@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.xml.stream.events.StartDocument;
 import io.*;
+import io.IOs;
 import model.Model;
 import utilities.*;
 public class Main extends MainGui implements ActionListener,ComponentListener { // this is the main ui.

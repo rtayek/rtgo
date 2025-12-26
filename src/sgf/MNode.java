@@ -1,4 +1,5 @@
 package sgf;
+import io.IOs;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;

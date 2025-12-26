@@ -2,6 +2,7 @@ package server;
 import org.junit.*;
 import controller.GameFixture;
 import io.*;
+import io.IOs;
 import utilities.MyTestWatcher;
 public class SillyGameTestCase extends AbstractGoServerTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

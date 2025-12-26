@@ -5,6 +5,7 @@ import static utilities.Utilities.fromFile;
 import java.io.*;
 import org.junit.*;
 import io.*;
+import io.IOs;
 import model.Model;
 import utilities.MyTestWatcher;
 // sgf file->sgf node tree->sgf tree->sgf string

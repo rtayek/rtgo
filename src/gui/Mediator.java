@@ -19,7 +19,7 @@ import gui.Spinners.OldSpinners;
 import gui.TopPanels.*;
 import gui.WestPanels.WestPanel;
 import io.*;
-import equipment.*;
+import io.IOs; 
 import model.*;
 import model.Event;
 import model.Move;

@@ -249,7 +249,7 @@ class BoardFactory implements Board.Factory {
     //board interface is way over-engineered. fix!
     @Override public Board create() { return create(Board.standard); }
     @Override public Board create(int n) { return create(n,Topology.normal); }
-    @Override public Board create(int n,int m) { return create(n,n,Topology.normal,Shape.normal); }
+    @Override public Board create(int n,int m) { return create(n,m,Topology.normal,Shape.normal); }
     @Override public Board create(int n,Topology type) { return create(n,n,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology type) { return create(width,depth,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology topeology,Shape shape) {
@@ -419,8 +419,8 @@ class BoardImpl extends BoardABC {
         stones[k]=color; // no one else should use direct access!
     }
     @Override public List<Point> starPoints() {
-        if(width()>standard||depth()>standard||width()!=depth()) return null;
-        // check topology
+        if(width()>standard||depth()>standard||width()!=depth()) return List.of();
+        // check topology!
         return Arrays.asList(starPoints);
     }
     static BoardImpl random(int n) {

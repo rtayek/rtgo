@@ -8,6 +8,7 @@ import javax.swing.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.*;
 import io.*;
+import io.IOs;
 import model.Event;
 import model.Model;
 import sgf.MNode;

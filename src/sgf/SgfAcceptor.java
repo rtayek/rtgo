@@ -3,6 +3,8 @@ import static sgf.Parser.*;
 import java.io.*;
 import java.util.*;
 import io.*;
+import io.IOs;
+
 public interface SgfAcceptor {
     void accept(SgfNode node);
     Stack<SgfNode> nodes();

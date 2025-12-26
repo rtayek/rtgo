@@ -4,6 +4,7 @@ import org.junit.*;
 import controller.*;
 import equipment.*;
 import io.*;
+import io.IOs;
 import model.Move;
 import utilities.MyTestWatcher;
 public abstract class AbstractGoServerTestCase {

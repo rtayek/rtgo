@@ -9,4 +9,6 @@ now at: https://github.com/rtayek/rtgo
 
 code7 project in eclipse seems to be that latest.
 
+12/20/25 started to have ai look a this.
+
 

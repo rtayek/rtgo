@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import io.*;
+import io.IOs;
 import sgf.combine.Combine;
 // https://github.com/search?q=sgf4j
 public class Parser {
