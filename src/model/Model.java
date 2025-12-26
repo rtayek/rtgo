@@ -181,8 +181,10 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(root!=null) checkForLittleGolem(root);
         Logging.mainLogger.config(name+" "+"doing root: "+root);
         do_(root);
-        if(board()==null) System.out.println("board is null after do root.");
-        else System.out.println("board is not null after do root.");
+        if(board()==null) {
+            Logging.mainLogger.warning("board is null after do root; creating one from stored size/topology/shape");
+            ensureBoard();
+        } else Logging.mainLogger.fine("board is not null after do root.");
         // maybe do a second do_() in some cases?
         //if(root.children.size()>0)
         //    do_(root.children.get(0));

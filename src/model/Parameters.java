@@ -50,7 +50,7 @@ public enum Parameters { // properties
     static void setPropertiesFromCurrentValues(Properties properties) {
         for(Parameters parameter:values()) properties.setProperty(parameter.name(),parameter.currentValue.toString());
     }
-    static void seturrentValuesFromPropertiesFile() {
+    static void setCurrentValuesFromPropertiesFile() {
         Properties properties=new Properties();
         loadPropertiesFile(properties,propertiesFilename);
         setCurrentValuesFromProperties(properties);
@@ -65,7 +65,7 @@ public enum Parameters { // properties
         // we need a way to not write to file.
         // or use another file for testing.
         File file=new File(filename);
-        if(file.exists()) seturrentValuesFromPropertiesFile();
+        if(file.exists()) setCurrentValuesFromPropertiesFile();
         else storeCurrentValuesInPropertiesFile(filename);
     }
     public static void main(String argv[]) {
