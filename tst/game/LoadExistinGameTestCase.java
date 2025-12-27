@@ -9,6 +9,7 @@ import io.*;
 import io.IOs;
 import model.*;
 import model.Model.*;
+import model.Move2.MoveType;
 public class LoadExistinGameTestCase {
     // how do we go to a particular position?
     // use finder and goto node
@@ -35,21 +36,22 @@ public class LoadExistinGameTestCase {
         // the rest of these cases have been moved to role test case.
         assertEquals(Stone.vacant,white.board().at(point));
         white.setRole(Role.playWhite);
-        move=new model.LegacyMove.MoveImpl(Stone.black,point);
+        move=new Move2(MoveType.move,Stone.black,point);
         moveResult=white.move(move);
         assertEquals(MoveResult.badRole,moveResult);
         white.setRole(Role.anything);
-        move=new model.LegacyMove.MoveImpl(Stone.black,point);
+        move=new Move2(MoveType.move,Stone.black,point);
         moveResult=white.move(move);
         assertEquals(MoveResult.legal,moveResult);
         System.out.println(white);
-        move=new model.LegacyMove.MoveImpl(Stone.white,point);
+        move=new Move2(MoveType.move,Stone.white,point);
+
         moveResult=white.move(move);
         assertEquals(MoveResult.occupied,moveResult);
         Logging.setLevels(Level.OFF);
     }
     Point point=new Point(3,3);
-    LegacyMove move;
+    Move2 move;
     MoveResult moveResult;
     GameFixture game;
     Model recorder=new Model(),black,white;
