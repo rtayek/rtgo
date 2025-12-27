@@ -3,6 +3,7 @@ import static org.junit.Assert.*;
 import org.junit.*;
 import equipment.*;
 import model.Model.*;
+import model.Move2.MoveType;
 import utilities.MyTestWatcher;
 public class RoleTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -76,14 +77,14 @@ public class RoleTestCase {
     // all models had role-anything.
     @Test public void testMakeLegalBlackMove() throws InterruptedException {
         model.setRole(Role.playBlack);
-        LegacyMove move=new model.LegacyMove.MoveImpl(Stone.black,point);
+        Move2 move=new Move2(MoveType.move,Stone.black,point);
         if(!model.checkAction(model.role(),What.move)) throw new RuntimeException("check fails!");
         MoveResult moveResult=model.move(move);
         assertEquals(model.board().at(point),Stone.black);
         assertEquals(MoveResult.legal,moveResult);
     }
     @Test public void testMakeMoveOutOfTurn() throws InterruptedException {
-        LegacyMove move=new model.LegacyMove.MoveImpl(Stone.white,point);
+        Move2 move=new Move2(MoveType.move,Stone.white,point);
         model.setRole(Role.playBlack);
         boolean ok=model.checkAction(model.role(),What.move);
         System.out.println("ok: "+ok);

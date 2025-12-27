@@ -19,14 +19,14 @@ public class MoveTestCase {
     }
     @Test public void testThatWeCanMakeABlackPassMoveOnANewModel() {
         Model model=new Model();
-        LegacyMove passMove=LegacyMove.blackPass;
+        Move2 passMove=Move2.blackPass;
         MoveResult ok=model.move(passMove);
         assertEquals(MoveResult.legal,ok);
         // how to test for sgf and gtp
     }
     @Test public void testThatWeCanMakeABlackResignMoveOnANewModel() {
         Model model=new Model();
-        LegacyMove resignMove=LegacyMove.blackResign;
+        Move2 resignMove=Move2.blackResign;
         MoveResult ok=model.move(resignMove);
         assertEquals(MoveResult.legal,ok);
         // how to test for sgf and gtp
@@ -95,9 +95,10 @@ public class MoveTestCase {
         // and ???
         // maybe i can use last gtp
         Model model=new Model();
-        LegacyMove move=LegacyMove.blackResign;
-        move.toGTPCoordinates(0,0); // returns a string?
-        model.move(move);
+        Move2 move=Move2.blackResign;
+        LegacyMove legacyMove=toLegacyMove(move);
+        legacyMove.toGTPCoordinates(0,0); // returns a string?
+        model.move(legacyMove);
         System.out.println("resign "+move);
         Move2 lastMove=model.lastMove2();
         String lastMoveGtp=model.lastMoveGTP();

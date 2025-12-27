@@ -18,13 +18,13 @@ public class OldModelTestCase {
     @Before public void setUp() throws Exception {}
     // random seems to work!
     @Test public void testResignOutOfOrder() {
-        model.move(new MoveImpl(Stone.black,new Point()));
-        model.move(LegacyMove.blackPass);
+        model.move(new Move2(MoveType.move,Stone.black,new Point()));
+        model.move(Move2.blackPass);
     }
     @Test public void testHash() {
-        model.move(new MoveImpl(Stone.black,new Point()));
-        model.move(LegacyMove.whitePass);
-        model.move(LegacyMove.blackPass);
+        model.move(new Move2(MoveType.move,Stone.black,new Point()));
+        model.move(Move2.whitePass);
+        model.move(Move2.blackPass);
         // test for collision problem here
         // how?
     }
@@ -147,7 +147,7 @@ public class OldModelTestCase {
         List<Point> points=Model.generateRandomMovesInList(model,n);
         Model actual=new Model();
         actual.setRoot(5,5);
-        for(Point point:points) model.move(new MoveImpl(model.turn(),point));
+        for(Point point:points) model.move(new Move2(MoveType.move,model.turn(),point));
         model.board().isEqual(actual.board());
     }
     @Test public void testPushAndPop() {
@@ -243,7 +243,7 @@ public class OldModelTestCase {
     }
     @Test public void testIsLegalMove() {
         model.setRoot();
-        LegacyMove move=new MoveImpl(model.turn(),new Point());
+        Move2 move=new Move2(MoveType.move,model.turn(),new Point());
         MoveResult actual=model.isLegalMove(move);
         assertEquals(MoveResult.legal,actual);
     }

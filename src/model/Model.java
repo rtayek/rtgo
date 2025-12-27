@@ -544,6 +544,10 @@ public class Model extends Observable { // model of a go game or problem forrest
         Point point=Coordinates.fromGtpCoordinateSystem(GtpCoordinates,width);
         return move(color,point);
     }
+    public MoveResult isLegalMove(Move2 move) { // change to accept
+        LegacyMove legacyMove=toLegacyMove(move);
+        return isLegalMove(legacyMove);
+    }
     public MoveResult isLegalMove(LegacyMove move) { // change to accept
         // string
         // also, maybe check for duplicate code.
@@ -552,6 +556,10 @@ public class Model extends Observable { // model of a go game or problem forrest
         return wasLegal;
     }
     public Where isPoint(Point point) { return Where.isPoint(board(),band(),null,point); }
+    MoveResult addMoveNodeAndExecute(Move2 move) {
+        LegacyMove legacyMove=toLegacyMove(move);
+        return addMoveNodeAndExecute(legacyMove);
+    }
     MoveResult addMoveNodeAndExecute(LegacyMove move) {
         // may not be a move node. see haskall version of sgf code.
         ensureBoard();
