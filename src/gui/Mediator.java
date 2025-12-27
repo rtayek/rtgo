@@ -295,11 +295,11 @@ class Mediator implements Observer,ActionListener {
             // 7/15/21 spinners are set in initialization.
             model.setRootFromParameters();
             Audio.play(Sound.challenge);
-        } else if(e.getActionCommand().equals("Pass")) model.move(Move.blackPass);
+        } else if(e.getActionCommand().equals("Pass")) model.move(Move2.blackPass);
         // maybe need to check turn here?
         // yes, the are both for black.
         // but pass() and resign() use turn().
-        else if(e.getActionCommand().equals("Resign")) model.move(Move.blackResign);
+        else if(e.getActionCommand().equals("Resign")) model.move(Move2.blackResign);
         // and here also?
         else if(e.getActionCommand().equals("Tree view")) {
             if(myTreeView==null) {

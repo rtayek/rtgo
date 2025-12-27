@@ -23,7 +23,7 @@ public class MoveHelper {
             return Move2.nullMove;
         } else if(legacy instanceof MoveImpl) {
             Point point=legacy.point();
-            return Move2.move(legacy.color(),point);
+            return Move2.move(legacy.color(),point,legacy.name());
         } else throw new RuntimeException("unknown legacy move type: "+legacy);
     }
     static Move toLegacyMove(Move2 m) {

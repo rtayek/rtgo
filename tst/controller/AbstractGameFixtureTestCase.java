@@ -101,7 +101,7 @@ public abstract class AbstractGameFixtureTestCase {
     @Test() public void testResign() throws Exception {
         Model model=game.blackFixture.backEnd.model;
         int moves=model.moves();
-        String expected=Move.blackResign.name();
+        String expected=Move2.blackResign.name();
         game.blackFixture.backEnd.model.playOneMove(Stone.black,expected);
         model.waitForMoveCompleteOnBoard(moves);
         assertEquals(expected,model.lastMoveGTP());
@@ -109,7 +109,7 @@ public abstract class AbstractGameFixtureTestCase {
     @Test() public void testPass() throws Exception {
         Model model=game.blackFixture.backEnd.model;
         int moves=model.moves();
-        String expected=blackPass.name();
+        String expected=Move2.blackPass.name();
         game.blackFixture.backEnd.model.playOneMove(Stone.black,expected);
         model.waitForMoveCompleteOnBoard(moves);
         assertEquals(expected,model.lastMoveGTP());

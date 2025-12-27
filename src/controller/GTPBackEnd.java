@@ -395,7 +395,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                                 send(okCharacter,message.id,noICoordinates);
                             } else {
                                 Logging.mainLogger.warning(model.name+" failed to generate a move! returning pass.");
-                                Move pass=model.turn().equals(Stone.black)?Move.blackPass:Move.whitePass;
+                                Move2 pass=model.turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
                                 send(okCharacter,message.id,pass.name());
                                 return false;
                             }

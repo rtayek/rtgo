@@ -2,14 +2,23 @@ package model;
 import java.util.Objects;
 import equipment.*;
 public final class Move2 {
+    Move2(MoveTYpe moveType,Stone color,Point point) { this(moveType,color,point,moveType.toString()); }
+    Move2(MoveTYpe moveType,Stone color,Point point,String name) {
+        this.name=name;
+        this.moveType=moveType;
+        this.color=color;
+        this.point=point;
+    }
     public enum MoveTYpe { move, nullMove, pass, resign, } // setup or undo?
+    public String name() { return name; }
+    public final String name;
     public final MoveTYpe moveType;
     public final Stone color; // or null if you really must
     public final Point point; // only for play
-    public static Move2 move(Stone color,Point point) {
+    public static Move2 move(Stone color,Point point,String name) {
         Objects.requireNonNull(color);
         Objects.requireNonNull(point);
-        return new Move2(MoveTYpe.move,color,point);
+        return new Move2(MoveTYpe.move,color,point,name);
     }
     public static Move2 pass(Stone color) { return new Move2(MoveTYpe.pass,color,null); }
     public static Move2 resign(Stone color) { return new Move2(MoveTYpe.resign,color,null); }
@@ -17,11 +26,6 @@ public final class Move2 {
     public boolean isPass() { return moveType.equals(MoveTYpe.pass); }
     public boolean isResign() { return moveType.equals(MoveTYpe.resign); }
     public boolean isNull() { return moveType.equals(MoveTYpe.nullMove); }
-    private Move2(MoveTYpe moveType,Stone color,Point point) {
-        this.moveType=moveType;
-        this.color=color;
-        this.point=point;
-    }
     boolean isMove() { return moveType==MoveTYpe.move; }
     @Override public String toString() { /* keep whatever legacy format */ return moveType.toString(); }
     public static final Move2 nullMove=new Move2(MoveTYpe.nullMove,Stone.vacant,null);

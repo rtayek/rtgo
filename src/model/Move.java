@@ -55,6 +55,7 @@ public interface Move {
     }
     public static class NoMove extends MoveABC {
         // test to see if we can use this as root for game forest.
+        // does not seem to be used anywhere.
         private NoMove() { super(null,null); }
         @Override public String toSGFCoordinates(int width,int depth) { // TODO Auto-generated method stub
             return null;

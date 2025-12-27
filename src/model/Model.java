@@ -17,6 +17,7 @@ import equipment.Board.*;
 import io.*;
 import io.IOs;
 import model.Move.*;
+import static model.MoveHelper.*;
 import server.NamedThreadGroup.NamedThread;
 import sgf.*;
 import utilities.*;
@@ -1010,9 +1011,9 @@ public class Model extends Observable { // model of a go game or problem forrest
         int n=model.movesToGenerate();
         Model.generateAndMakeMoves(model,n);
         List<Move> generatedMoves=model.movesToCurrentState();
-        Move pass=model.turn().equals(Stone.black)?Move.blackPass:Move.whitePass;
+        Move2 pass=model.turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
         model.move(pass);
-        pass=model.turn().equals(Stone.black)?Move.blackPass:Move.whitePass;
+        pass=model.turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
         model.move(pass);
         // what am i testing here?
     }
@@ -1193,7 +1194,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // problem with last move - it needs to be in sgf/gtp format?
         private void sgfPass() {
             Move move=turn==Stone.black?Move.blackPass:Move.whitePass;
-            lastMoveGTP=move.toGTPCoordinates(board.width(),board.depth());
+            lastMoveGTP=toGTPCoordinates(move,board.width(),board.depth());
             lastColorGTP=move.color();
             moves++;
             toggleTurn();
