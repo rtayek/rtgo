@@ -319,7 +319,7 @@ public class GameFixture implements Runnable,Stopable {
         // these nay not be necessary?
         if(opponent.frontEnd==null) throw new RuntimeException();
         Model playerModel=player.backEnd.model,opponentModel=opponent.backEnd.model;
-        if(move.equals(Move.nullMove))
+        if(move.equals(Move2.nullMove))
             throw new RuntimeException(move+" 4 "+playerModel.lastMoveGTP()+" "+playerModel.lastMove2()+" move oops");
         Logging.mainLogger.info("wait until it's time to move");
         int moves=playerModel.moves();
@@ -364,7 +364,7 @@ public class GameFixture implements Runnable,Stopable {
             // this should wait for a turn before moving
             Stone color=i%2==0?Stone.black:Stone.white;
             Move2 move=new Move2(MoveType.move,color,new Point(i/n,i%n));
-            if(move.equals(Move.nullMove)) { throw new RuntimeException(move+" null move in play silly game."); }
+            if(move.equals(Move2.nullMove)) { throw new RuntimeException(move+" null move in play silly game."); }
             Stone turn=i%2==0?Stone.black:Stone.white;
             int moves=turn==Stone.black?gameFixture.playOneMoveAndWait(black,white,move)
                     :gameFixture.playOneMoveAndWait(white,black,move);

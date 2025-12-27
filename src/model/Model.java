@@ -343,7 +343,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public static void generateSillyMoves(Model model,int moves) { // like silly
         Stone turn=Stone.black;
         int n=0;
-        for(Move move=model.generateSillyMove(model.turn());move!=null;move=model
+        for(Move2 move=model.generateSillyMove(model.turn());move!=null;move=model
                 .generateSillyMove(model.turn()),turn=turn.otherColor(),++n) {
             if(n>=moves) break;
             if(n>=model.board().width()*model.board().depth()) break;
@@ -369,6 +369,9 @@ public class Model extends Observable { // model of a go game or problem forrest
             model.move(new MoveImpl(turn,move));
         }
     }
+    public Move2 passMove2() { // make this static?
+        return turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
+    }
     public Pass passMove() { // make this static?
         return turn().equals(Stone.black)?Move.blackPass:Move.whitePass;
     }
@@ -382,14 +385,14 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return points;
     }
-    public Move generateSillyMove(Stone who) {
+    public Move2 generateSillyMove(Stone who) {
         // always returns a black move
         ensureBoard();
         int width=board().width();
         int depth=board().depth();
         if(width!=depth) width=depth=Math.min(width,depth);
         int moves=moves();
-        Move move=new MoveImpl(who,new Point(moves/width,moves%width));
+        Move2 move=new Move2(MoveType.move,who,new Point(moves/width,moves%width));
         return move;
     }
     public Move2 lastMove2() {
@@ -428,7 +431,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // 8/22/22 investigate this
         boolean ok=checkAction(role(),What.move);
         if(ok) {
-            Move move=new MoveImpl(color,point);
+            Move2 move=new Move2(MoveType.move,color,point);
             MoveResult wasLegal=move(move);
             if(wasLegal==MoveResult.legal) {
                 Audio.play(Audio.Sound.stone); // all the same just for now
@@ -446,7 +449,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public int playOneMove(Move2 move) {
         Logging.mainLogger.info("play one move: "+move);
-        if(move.equals(Move.nullMove))
+        if(move.equals(Move2.nullMove))
             throw new RuntimeException(move+" 1 "+lastMoveGTP()+" "+lastMove2()+" move oops");
         int moves=moves();
         Model.MoveResult ok=move(move);
@@ -472,7 +475,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public int playOneMove(Stone color,String gtpMoveString) {
         Logging.mainLogger.info("play one move from gtp: "+gtpMoveString);
         Move2 move=fromGTP(color,gtpMoveString,board().width(),board().depth());
-        if(move.equals(Move.nullMove)) {
+        if(move.equals(Move2.nullMove)) {
             throw new RuntimeException(move+" "+lastMoveGTP()+" "+lastMove2()+" 6 move oops");
         }
         // what is gtp move string for resign?

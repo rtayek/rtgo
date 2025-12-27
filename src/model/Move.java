@@ -91,7 +91,5 @@ public interface Move {
         @Override public String toGTPCoordinates(int width,int depth) { return Move.nullMove.name(); }
         @Override public String toString() { return name(); }
     }
-    static final Move blackMoveAtA1=new MoveImpl(Stone.black,new Point());
-    static final Move whiteMoveAtA2=new MoveImpl(Stone.white,new Point(0,1));
     // PASS & resign https://www.gnu.org/software/gnugo/gnugo_19.html
 }

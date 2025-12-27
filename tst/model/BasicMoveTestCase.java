@@ -9,7 +9,7 @@ public class BasicMoveTestCase {
     //model.waitForMoveCompleteOnBoard(moves);
     // test all of these with gtp also!
     void run() {
-        model.move(Move.blackMoveAtA1);
+        model.move(Move2.blackMoveAtA1);
         moves=model.moves();
         model.move(expectedMove);
         boolean ok=MNode.save(stringWriter,model.root(),null);

@@ -52,7 +52,7 @@ public class TopologyAndShapeTTestCase {
             model.setBoard(b); // 1/25/23 experiment
         }
         assertEquals(Stone.vacant,b.at(b.center()));
-        model.move(Move.blackMoveAtA1);
+        model.move(Move2.blackMoveAtA1);
         // failing because we added a new root in save
         saveAndRestore(model,Stone.vacant);
     }
@@ -66,7 +66,7 @@ public class TopologyAndShapeTTestCase {
         Board b=model.board();
         if(b==null) System.out.println("b: "+b);
         assertEquals(Stone.edge,b.at(b.center()));
-        model.move(Move.blackMoveAtA1);
+        model.move(Move2.blackMoveAtA1);
         saveAndRestore(model,Stone.edge);
     }
     @Test public void testsetRootWithTorus() {
@@ -79,7 +79,7 @@ public class TopologyAndShapeTTestCase {
         model.ensureBoard();
         Board board=model.board();
         assertEquals(Stone.vacant,board.at(board.center()));
-        model.move(Move.blackMoveAtA1);
+        model.move(Move2.blackMoveAtA1);
         saveAndRestore(model,Stone.edge);
     }
     @Test public void testsetRootWithHoleAndTorus() {
@@ -92,7 +92,7 @@ public class TopologyAndShapeTTestCase {
         Board b=model.board();
         if(b==null) System.out.println("b: "+b);
         assertEquals(Stone.edge,b.at(b.center()));
-        model.move(Move.blackMoveAtA1);
+        model.move(Move2.blackMoveAtA1);
         saveAndRestore(model,Stone.edge);
     }
     final int n=19;

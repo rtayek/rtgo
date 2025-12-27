@@ -68,24 +68,6 @@ public class MoveHelper {
     public static String toGTPCoordinates(Move2 move,int width,int depth) {
         return toGTPCoordinates(toLegacyMove(move),width,depth);
     }
-    static Move oldfromGTP(Stone color,String string,int width,int depth) {
-        if(string==null) return Move.nullMove;
-        else if(string.equals("")) {
-            System.out.println("string is: "+"\"\"");
-            return Move.nullMove; // pass?
-        } else if(string.contains(gtpPassString)) {
-            if(color.equals(Stone.black)) return Move.blackPass;
-            else if(color.equals(Stone.white)) return Move.whitePass;
-            else throw new RuntimeException("pass bad color!");
-        } else if(string.contains(gtpResignString)) {
-            if(color.equals(Stone.black)) return Move.blackResign;
-            else if(color.equals(Stone.white)) return Move.whiteResign;
-            else throw new RuntimeException("resign bad color!");
-        }
-        Point point=Coordinates.fromGtpCoordinateSystem(string,width);
-        // check to see if point is on board? or at lease in range?
-        return new MoveImpl(color,point);
-    }
     public static Move2 fromGTP(Stone color,String string,int width,int depth) {
         if(string==null) return Move2.nullMove;
         else if(string.equals("")) {

@@ -164,10 +164,10 @@ public class OldModelTestCase {
         Model model=new Model();
         // 19x19?
         List<Move2> moves=model.movesToCurrentState();
-        assertTrue(moves==null||moves.size()==0||moves.size()==1&&moves.get(0).equals(Move.nullMove));
+        assertTrue(moves==null||moves.size()==0||moves.size()==1&&moves.get(0).equals(Move2.nullMove));
         model.setRoot(5,5);
         moves=model.movesToCurrentState();
-        assertTrue(moves==null||moves.size()==0||moves.size()==1&&moves.get(0).equals(Move.nullMove));
+        assertTrue(moves==null||moves.size()==0||moves.size()==1&&moves.get(0).equals(Move2.nullMove));
         model.move(model.turn(),new Point());
         // confused. problem when first node or top is wierd?
         moves=model.movesToCurrentState();

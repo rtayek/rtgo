@@ -388,9 +388,10 @@ public class GTPBackEnd implements Runnable,Stopable {
                         // maybe we need two stricts, one for the model and one for gtp?
                         if(generateMove) { // generate move. can return "PASS" "Resign"
                             String noICoordinates=null;
-                            Move move=model.generateSillyMove(model.turn());
+                            Move2 move=model.generateSillyMove(model.turn());
                             if(move!=null) {
-                                noICoordinates=move.toGTPCoordinates(model.board().width(),model.board().depth());
+                                noICoordinates=toGTPCoordinates(move,model.board().width(),model.board().depth());
+                                //move.toGTPCoordinates(model.board().width(),model.board().depth());
                                 Logging.mainLogger.info(model.name+" returning move: "+noICoordinates);
                                 send(okCharacter,message.id,noICoordinates);
                             } else {

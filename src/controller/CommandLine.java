@@ -8,6 +8,7 @@ import io.*;
 import model.*;
 import model.Model.MoveResult;
 import model.Move.MoveImpl;
+import model.Move2.MoveType;
 import view.CommandLIneView;
 public class CommandLine {
     // we need the command line options
@@ -83,7 +84,7 @@ public class CommandLine {
                     // should be the same as other places?
                     //String move=Coordinates.toGtpCoordinateSystem(point,
                     //        model.board().depth());
-                    Move move=new MoveImpl(model.turn(),point);
+                    Move2 move=new Move2(MoveType.move,model.turn(),point);
                     MoveResult wasLegal=model.move(move);
                     if(wasLegal!=MoveResult.legal) System.out.println("illegal move");
                 } else System.out.println("no board, can not move!");

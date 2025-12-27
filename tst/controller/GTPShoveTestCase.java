@@ -22,9 +22,9 @@ public class GTPShoveTestCase {
         expected.setBoard(board);
         int n=expected.movesToGenerate();
         Model.generateAndMakeMoves(expected,n);
-        Move pass=expected.passMove();
+        Move2 pass=expected.turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
         expected.move(pass);
-        pass=expected.passMove();
+        pass=expected.turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
         expected.move(pass);
     }
     @After public void tearDown() throws Exception {}
@@ -32,7 +32,6 @@ public class GTPShoveTestCase {
         Model model=new Model();
         assertNotNull(model.board()); // was returning null
     }
-        
     @Test public void testPushGTPMovesToCurrentStateDirectOneAtATime() throws Exception {
         Model actual=MoveHelper.pushGTPMovesToCurrentStateDirect(expected,true);
         System.out.println(expected);
@@ -75,9 +74,8 @@ public class GTPShoveTestCase {
             actual.setRoot(expected.board().width(),expected.board().depth());
             Board board=Board.factory.create(expected.board().width(),expected.board().depth());
             actual.setBoard(board);
-
             // probably need to set other stuff like shape etc.
-        } 
+        }
         Response[] responses=GTPBackEnd.runCommands(gtpMoves,actual,justRun);
         for(Response response:responses) assertTrue(response.isOk());
         System.out.println(expected);

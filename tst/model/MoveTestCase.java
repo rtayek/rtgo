@@ -48,7 +48,7 @@ public class MoveTestCase {
         Model expected=new Model();
         expected.ensureBoard();
         List<Move2> moves=expected.movesToCurrentState();
-        if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move.nullMove)) {
+        if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move2.nullMove)) {
             // remove these tests when the dust settles.
             Logging.mainLogger.severe("removing null move from move list!");
             moves.remove(moves.get(0));
@@ -62,7 +62,7 @@ public class MoveTestCase {
         System.out.println(actual.board());
         assertTrue(expected.board().isEqual(actual.board()));
         List<Move2> actualMoves=actual.movesToCurrentState();
-        if(actualMoves!=null&&actualMoves.size()>0&&actualMoves.get(0).equals(Move.nullMove)) {
+        if(actualMoves!=null&&actualMoves.size()>0&&actualMoves.get(0).equals(Move2.nullMove)) {
             Logging.mainLogger.severe("removing null move from move list!");
             actualMoves.remove(actualMoves.get(0));
         }
@@ -79,12 +79,12 @@ public class MoveTestCase {
         assertEquals(moves,actualMoves);
     }
     @Test public void testFromGTPWithNullOrEmptyString() {
-        Move expected=Move.nullMove;
+        Move2 expected=Move2.nullMove;
         // maybe use for resign??
         // sgf pass is [] or [tt]
-        Move actual=toLegacyMove(fromGTP(Stone.black,null,0,0));
+        Move2 actual=fromGTP(Stone.black,null,0,0);
         assertEquals(expected,actual);
-        actual=toLegacyMove(fromGTP(Stone.black,"",0,0));
+        actual=fromGTP(Stone.black,"",0,0);
         assertEquals(expected,actual);
     }
     @Test public void testResign() throws Exception {
