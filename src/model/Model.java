@@ -1,4 +1,6 @@
 package model;
+import model.MoveHelper;
+import static model.MoveHelper.*;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.restoreSgf;
@@ -290,7 +292,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // not necessarily the main line!
         ensureBoard();
         List<Move> moves=movesToCurrentState();
-        List<String> gtpMoves=Move.toGTPMoves(moves,board().width(),board().depth());
+        List<String> gtpMoves=toGTPMoves(moves,board().width(),board().depth());
         return gtpMoves;
     }
     public List<Move> movesToCurrentState() {
@@ -308,7 +310,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                 // take a look a this skip later!
             } else {
                 if(state.board==null) board=state.board=Board.factory.create();
-                Move move=Move.fromGTP(state.lastColorGTP,state.lastMoveGTP,state.board.width(),state.board.depth());
+                Move move=fromGTP(state.lastColorGTP,state.lastMoveGTP,state.board.width(),state.board.depth());
                 moves.add(move);
             }
             if(state.lastMoveGTP!=null) lastMoveGTP=state.lastMoveGTP;
@@ -389,7 +391,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public Move lastMove() {
         if(board()==null) { System.out.println("board is null, returning null mode."); return Move.nullMove; }
-        return Move.fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth());
+        return fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth());
     }
     public String lastMoveGTP() { // what about pass?
         return state.lastMoveGTP;
@@ -461,7 +463,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public int playOneMove(Stone color,String gtpMoveString) {
         Logging.mainLogger.info("play one move from gtp: "+gtpMoveString);
-        Move move=Move.fromGTP(color,gtpMoveString,board().width(),board().depth());
+        Move move=fromGTP(color,gtpMoveString,board().width(),board().depth());
         if(move.equals(Move.nullMove)) {
             throw new RuntimeException(move+" "+lastMoveGTP()+" "+lastMove()+" 6 move oops");
         }

@@ -3,10 +3,41 @@ import java.util.*;
 import controller.*;
 import controller.Command;
 import equipment.*;
+import model.MoveHelper;
+import static model.MoveHelper.*;
 import io.IOs.End.Holder;
 import io.Logging;
 // maybe have a type of move that is setup or ?
-public interface Move {
+interface Move_ {}
+public interface Move extends Move_ {
+    public final class Move__ {
+        public enum MoveTYpe { move, pass, resign, } // setup or undo?
+        public final MoveTYpe moveType;
+        public final Stone color; // or null if you really must
+        public final Point point; // only for play
+        public static Move__ move(Stone color,Point point) {
+            Objects.requireNonNull(color);
+            Objects.requireNonNull(point);
+            return new Move__(MoveTYpe.move,color,point);
+        }
+        public static Move__ pass(Stone color) { return new Move__(MoveTYpe.pass,color,null); }
+        public static Move__ resign(Stone color) { return new Move__(MoveTYpe.resign,color,null); }
+        public String nameWithColor() { return color+" "+moveType; }
+        public boolean isPass() { return moveType.equals(MoveTYpe.pass); }
+        public boolean isResign() { return moveType.equals(MoveTYpe.resign); }
+        private Move__(MoveTYpe moveType,Stone color,Point point) {
+            this.moveType=moveType;
+            this.color=color;
+            this.point=point;
+        }
+        boolean isMove() { return moveType==MoveTYpe.move; }
+
+        @Override public String toString() { /* keep whatever legacy format */ return moveType.toString(); }
+        public static final Move__ blackPass=new Move__(MoveTYpe.pass,Stone.black,null); 
+        Move__ whitePass=new Move__(MoveTYpe.pass,Stone.white,null);
+        Move__ blackResign=new Move__(MoveTYpe.resign,Stone.white,null);
+        Move__ whiteResign=new Move__(MoveTYpe.resign,Stone.black,null);
+    }
     String name();
     Stone color(); // we may need this
     default String nameWithColor() { return color()+" "+name(); }
@@ -21,32 +52,6 @@ public interface Move {
     Resign blackResign=new Resign(Stone.black);
     Resign whiteResign=new Resign(Stone.white);
     Null nullMove=new Null();
-    static Move fromGTP(Stone color,String string,int width,int depth) {
-        if(string==null) return Move.nullMove;
-        else if(string.equals("")) {
-            System.out.println("string is: "+"\"\"");
-            return Move.nullMove; // pass?
-        } else if(string.contains(gtpPassString)) {
-            if(color.equals(Stone.black)) return Move.blackPass;
-            else if(color.equals(Stone.white)) return Move.whitePass;
-            else throw new RuntimeException("pass bad color!");
-        } else if(string.contains(gtpResignString)) {
-            if(color.equals(Stone.black)) return Move.blackResign;
-            else if(color.equals(Stone.white)) return Move.whiteResign;
-            else throw new RuntimeException("resign bad color!");
-        }
-        Point point=Coordinates.fromGtpCoordinateSystem(string,width);
-        // check to see if point is on board? or at lease in range?
-        return new MoveImpl(color,point);
-    }
-    static List<String> toGTPMoves(List<Move> moves,int width,int depth) {
-        List<String> commands=new ArrayList<>();
-        for(Move move:moves) { // how about pass and resign?
-            String string=Command.play.name()+" "+move.color()+" "+move.toGTPCoordinates(width,depth);
-            commands.add(string);
-        }
-        return commands;
-    }
     public abstract class MoveABC implements Move {
         @Override public Stone color() { return color; }
         @Override public int hashCode() { return point()!=null?Objects.hash(point()):Objects.hash(name); }
@@ -179,5 +184,4 @@ public interface Move {
     static final Move blackMoveAtA1=new MoveImpl(Stone.black,new Point());
     static final Move whiteMoveAtA2=new MoveImpl(Stone.white,new Point(0,1));
     // PASS & resign https://www.gnu.org/software/gnugo/gnugo_19.html
-    static String gtpPassString="pass",gtpResignString="resign";
 }

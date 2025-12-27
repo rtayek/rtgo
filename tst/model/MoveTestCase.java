@@ -1,4 +1,6 @@
 package model;
+import model.MoveHelper;
+import static model.MoveHelper.*;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
@@ -80,9 +82,9 @@ public class MoveTestCase {
         Move expected=Move.nullMove;
         // maybe use for resign??
         // sgf pass is [] or [tt]
-        Move actual=Move.fromGTP(Stone.black,null,0,0);
+        Move actual=fromGTP(Stone.black,null,0,0);
         assertEquals(expected,actual);
-        actual=Move.fromGTP(Stone.black,"",0,0);
+        actual=fromGTP(Stone.black,"",0,0);
         assertEquals(expected,actual);
     }
     @Test public void testResign() throws Exception {

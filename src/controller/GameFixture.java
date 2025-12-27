@@ -1,4 +1,7 @@
 package controller;
+import model.MoveHelper;
+import static model.MoveHelper.*;
+
 import static controller.GTPBackEnd.sleep2;
 import static io.Init.first;
 import static io.Logging.*;
@@ -257,7 +260,7 @@ public class GameFixture implements Runnable,Stopable {
                         throw new RuntimeException("default color oops");
                 }
                 tellObservers(command); // send move to any observers
-                if(move.contains(Move.gtpResignString)) { gameLogger.info("resign: "+move+" "+response); break; }
+                if(move.contains(gtpResignString)) { gameLogger.info("resign: "+move+" "+response); break; }
                 if(recorderFixture.backEnd.model.moves()>maxMoves) {
                     gameLogger.info(
                             "breaking out of game run loop after "+recorderFixture.backEnd.model.moves()+" moves.");
