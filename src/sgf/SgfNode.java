@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import io.*;
-import model.Move;
+import model.LegacyMove;
 import tree.*;
 import utilities.Holder;
 import utilities.Iterators.Strings;
@@ -245,7 +245,7 @@ public class SgfNode {
         for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {
             SgfProperty property=i.next();
             P p=property.p();
-            if(p instanceof Move&&(p==P.B||p==P.W)) {
+            if(p instanceof LegacyMove&&(p==P.B||p==P.W)) {
                 moves++;
                 holder.left=this;
                 holder.sgfProperties.clear();
@@ -270,7 +270,7 @@ public class SgfNode {
         for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {
             SgfProperty property=i.next();
             P p=property.p();
-            if(p instanceof Move&&(p==P.B||p==P.W)) {
+            if(p instanceof LegacyMove&&(p==P.B||p==P.W)) {
                 moves++;
                 if(property.equals(move)) {
                     holder.left=this;

@@ -5,14 +5,14 @@ import java.io.*;
 import org.junit.*;
 import equipment.*;
 import model.Model.MoveResult;
-import model.Move.MoveImpl;
+import model.LegacyMove.MoveImpl;
 import sgf.*;
 import utilities.MyTestWatcher;
 public class IllegalMoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testResignOutOfOrder() {
         model.move(new MoveImpl(Stone.black,new Point()));
-        model.move(Move.blackPass);
+        model.move(LegacyMove.blackPass);
     }
     @Test public void testA1A2x() throws IOException {
         model.move(Stone.black,"A1",model.board().width());
@@ -29,11 +29,11 @@ public class IllegalMoveTestCase {
     @Test public void testIsLegalMoveOnOccupoedPoint() {
         //model.setRoot();
         Point a1=new Point(0,0);
-        Move move=new MoveImpl(model.turn(),a1);
+        LegacyMove move=new MoveImpl(model.turn(),a1);
         MoveResult actual=model.isLegalMove(move);
         assertEquals(MoveResult.legal,actual);
         model.move(move);
-        Move whiteMove=new MoveImpl(model.turn().otherColor(),a1);
+        LegacyMove whiteMove=new MoveImpl(model.turn().otherColor(),a1);
         actual=model.isLegalMove(whiteMove);
         assertEquals(MoveResult.occupied,actual);
         actual=model.isLegalMove(move);
@@ -44,7 +44,7 @@ public class IllegalMoveTestCase {
         // maybe that is where out of turn stuff is handled?
         //model.setRoot();
         Point a1=new Point(0,0);
-        Move move=new MoveImpl(model.turn(),a1);
+        LegacyMove move=new MoveImpl(model.turn(),a1);
         MoveResult ok=model.addMoveNodeAndExecute(move);
         assertEquals(MoveResult.legal,ok);
         ok=model.addMoveNodeAndExecute(move);
@@ -58,7 +58,7 @@ public class IllegalMoveTestCase {
         // model.setRoot();
         Point a1=new Point();
         // maybe just do the add move node and execute?
-        Move move=new MoveImpl(model.turn(),a1);
+        LegacyMove move=new MoveImpl(model.turn(),a1);
         MoveResult ok=model.isLegalMove(move);
         assertEquals(MoveResult.legal,ok);
         ok=model.addMoveNodeAndExecute(move);

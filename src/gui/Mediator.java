@@ -20,7 +20,7 @@ import io.*;
 import io.IOs;
 import model.*;
 import model.Event;
-import model.Move;
+import model.LegacyMove;
 import model.OptionsABC.Option;
 import sgf.*;
 class Mediator implements Observer,ActionListener {

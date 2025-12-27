@@ -222,7 +222,7 @@ public abstract class AbstractGTPDirectTestCase {
         // look at sgf stuff. combine maybe
     }
     @Test public void testGtpPassWithClearBoard() throws Exception {
-        String commands=""+Command.clear_board+'\n'+Command.play.name()+" "+Move.blackPass.nameWithColor()+"\n";
+        String commands=""+Command.clear_board+'\n'+Command.play.name()+" "+LegacyMove.blackPass.nameWithColor()+"\n";
         String response=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
         // this has 2 commands
         Response actual=Response.response(response);
@@ -230,7 +230,7 @@ public abstract class AbstractGTPDirectTestCase {
         assertEquals(Move2.blackPass,directModel.lastMove2());
     }
     @Test public void testGtpPass() throws Exception {
-        String command=Command.play.name()+" "+Move.blackPass.nameWithColor();
+        String command=Command.play.name()+" "+LegacyMove.blackPass.nameWithColor();
         String response=new GTPBackEnd(command,directModel).runCommands(directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());

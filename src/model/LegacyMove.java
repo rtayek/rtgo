@@ -5,7 +5,7 @@ import controller.Command;
 import equipment.*;
 import static model.MoveHelper.*;
 // maybe have a type of move that is setup or ?
-public interface Move {
+public interface LegacyMove {
     String name();
     Stone color(); // we may need this
     default String nameWithColor() { return color()+" "+name(); }
@@ -19,7 +19,7 @@ public interface Move {
     Resign blackResign=new Resign(Stone.black);
     Resign whiteResign=new Resign(Stone.white);
     Null nullMove=new Null();
-    public abstract class MoveABC implements Move {
+    public abstract class MoveABC implements LegacyMove {
         @Override public Stone color() { return color; }
         @Override public int hashCode() { return point()!=null?Objects.hash(point()):Objects.hash(name); }
         @Override public boolean equals(Object obj) {
@@ -47,7 +47,7 @@ public interface Move {
             // i use width everywhere else
         }
         @Override public String toGTPCoordinates(int width,int depth) {
-            return Coordinates.toGtpCoordinateSystem(point,Board.standard,Board.standard);
+            return Coordinates.toGtpCoordinateSystem(point,width,depth); // uses to use Board.standard width/depth 
         }
         // above is a problem. we don't know width or depth :)
         /// write a test for this!
@@ -72,7 +72,7 @@ public interface Move {
             // was returning "" - check for this!
         }
         @Override public String toGTPCoordinates(int width,int depth) {
-            return color().equals(Stone.black)?Move.blackPass.name():Move.whitePass.name();
+            return color().equals(Stone.black)?LegacyMove.blackPass.name():LegacyMove.whitePass.name();
         }
         @Override public String toString() { return name(); }
     }
@@ -81,14 +81,14 @@ public interface Move {
         @Override public boolean isResign() { return true; }
         @Override public String toSGFCoordinates(int width,int depth) { return gtpResignString; } // is this a bug?
         @Override public String toGTPCoordinates(int width,int depth) {
-            return color().equals(Stone.black)?Move.blackResign.name():Move.whiteResign.name();
+            return color().equals(Stone.black)?LegacyMove.blackResign.name():LegacyMove.whiteResign.name();
         }
         @Override public String toString() { return name(); }
     }
     public static class Null extends MoveABC {
         Null() { super(Stone.vacant,"nullMove"); }
         @Override public String toSGFCoordinates(int width,int depth) { return ""; }
-        @Override public String toGTPCoordinates(int width,int depth) { return Move.nullMove.name(); }
+        @Override public String toGTPCoordinates(int width,int depth) { return LegacyMove.nullMove.name(); }
         @Override public String toString() { return name(); }
     }
     // PASS & resign https://www.gnu.org/software/gnugo/gnugo_19.html

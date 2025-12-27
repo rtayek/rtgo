@@ -1,7 +1,7 @@
 package model;
 import java.util.Objects;
 import equipment.*;
-import model.Move.MoveImpl;
+import model.LegacyMove.MoveImpl;
 // PASS & resign https://www.gnu.org/software/gnugo/gnugo_19.html
 public final class Move2 {
     @Override public int hashCode() { return Objects.hash(color,moveType,name,point); }

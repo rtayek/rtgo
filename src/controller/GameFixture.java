@@ -13,7 +13,7 @@ import io.*;
 import io.IOs.*;
 import io.IOs.End.Holder;
 import model.*;
-import model.Move.MoveImpl;
+import model.LegacyMove.MoveImpl;
 import model.Move2.MoveType;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;

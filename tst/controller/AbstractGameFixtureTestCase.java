@@ -1,6 +1,6 @@
 package controller;
 import static io.Init.first;
-import static model.Move.blackPass;
+import static model.LegacyMove.blackPass;
 import static org.junit.Assert.*;
 import java.util.Collection;
 import org.junit.*;

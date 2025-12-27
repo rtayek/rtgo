@@ -76,14 +76,14 @@ public class RoleTestCase {
     // all models had role-anything.
     @Test public void testMakeLegalBlackMove() throws InterruptedException {
         model.setRole(Role.playBlack);
-        Move move=new model.Move.MoveImpl(Stone.black,point);
+        LegacyMove move=new model.LegacyMove.MoveImpl(Stone.black,point);
         if(!model.checkAction(model.role(),What.move)) throw new RuntimeException("check fails!");
         MoveResult moveResult=model.move(move);
         assertEquals(model.board().at(point),Stone.black);
         assertEquals(MoveResult.legal,moveResult);
     }
     @Test public void testMakeMoveOutOfTurn() throws InterruptedException {
-        Move move=new model.Move.MoveImpl(Stone.white,point);
+        LegacyMove move=new model.LegacyMove.MoveImpl(Stone.white,point);
         model.setRole(Role.playBlack);
         boolean ok=model.checkAction(model.role(),What.move);
         System.out.println("ok: "+ok);
@@ -92,7 +92,7 @@ public class RoleTestCase {
         assertEquals(MoveResult.notYourTurn,moveResult);
     }
     @Test public void testMakeMoveOutOfTurnAnything() throws InterruptedException {
-        Move move=new model.Move.MoveImpl(Stone.white,point);
+        LegacyMove move=new model.LegacyMove.MoveImpl(Stone.white,point);
         model.setRole(Role.anything);
         if(!model.checkAction(model.role(),What.move)) throw new RuntimeException("check fails!");
         MoveResult moveResult=model.move(move);
@@ -101,11 +101,11 @@ public class RoleTestCase {
     }
     @Test public void testMoveOnOccupiedPoint() throws InterruptedException {
         model.setRole(Role.anything);
-        Move move=new model.Move.MoveImpl(Stone.black,point);
+        LegacyMove move=new model.LegacyMove.MoveImpl(Stone.black,point);
         MoveResult moveResult=model.move(move);
         assertEquals(model.board().at(point),Stone.black);
         assertEquals(MoveResult.legal,moveResult);
-        move=new model.Move.MoveImpl(Stone.white,point);
+        move=new model.LegacyMove.MoveImpl(Stone.white,point);
         moveResult=model.move(move);
         assertEquals(MoveResult.occupied,moveResult);
         // should this be allowed if role is anything?

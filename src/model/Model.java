@@ -16,7 +16,7 @@ import equipment.*;
 import equipment.Board.*;
 import io.*;
 import io.IOs;
-import model.Move.*;
+import model.LegacyMove.*;
 import model.Move2.MoveType;
 import static model.MoveHelper.*;
 import model.MoveHelper;
@@ -373,7 +373,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         return turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
     }
     public Pass passMove() { // make this static?
-        return turn().equals(Stone.black)?Move.blackPass:Move.whitePass;
+        return turn().equals(Stone.black)?LegacyMove.blackPass:LegacyMove.whitePass;
     }
     public static List<Point> generateRandomMovesInList(Model model,int n) {
         Stone turn=Stone.black;
@@ -399,8 +399,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(board()==null) { System.out.println("board is null, returning null move."); return Move2.nullMove; }
         return fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth());
     }
-    public Move lastMovex() {
-        if(board()==null) { System.out.println("board is null, returning null move."); return Move.nullMove; }
+    public LegacyMove lastMovex() {
+        if(board()==null) { System.out.println("board is null, returning null move."); return LegacyMove.nullMove; }
         return toLegacyMove(fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth()));
     }
     public String lastMoveGTP() { // what about pass?
@@ -512,7 +512,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         return false;
     }
     public MoveResult move(Move2 move) { return move(MoveHelper.toLegacyMove(move)); }
-    public MoveResult move(Move move) {
+    public MoveResult move(LegacyMove move) {
         if(!checkAction(role(),What.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
         MoveResult rc=MoveResult.legal;
@@ -539,12 +539,12 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return rc;
     }
-    public MoveResult move(Stone color,Point point) { Move move=new MoveImpl(color,point); return move(move); }
+    public MoveResult move(Stone color,Point point) { LegacyMove move=new MoveImpl(color,point); return move(move); }
     public MoveResult move(Stone color,String GtpCoordinates,int width) {
         Point point=Coordinates.fromGtpCoordinateSystem(GtpCoordinates,width);
         return move(color,point);
     }
-    public MoveResult isLegalMove(Move move) { // change to accept
+    public MoveResult isLegalMove(LegacyMove move) { // change to accept
         // string
         // also, maybe check for duplicate code.
         MoveResult wasLegal=addMoveNodeAndExecute(move);
@@ -552,7 +552,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         return wasLegal;
     }
     public Where isPoint(Point point) { return Where.isPoint(board(),band(),null,point); }
-    MoveResult addMoveNodeAndExecute(Move move) {
+    MoveResult addMoveNodeAndExecute(LegacyMove move) {
         // may not be a move node. see haskall version of sgf code.
         ensureBoard();
         if(move instanceof Pass||move instanceof Resign) throw new RuntimeException();
@@ -597,7 +597,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             for(int y=0;y<board().depth();y++) {
                 Point point=new Point(x,y);
                 if(board().at(point).equals(Stone.vacant)) {
-                    Move move=new MoveImpl(who,point);
+                    LegacyMove move=new MoveImpl(who,point);
                     MoveResult wasLegal=move(move);
                     if(wasLegal==MoveResult.legal) {
                         Logging.mainLogger.info(name+"model made "+who+" move at "+point);
@@ -1202,7 +1202,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         // problem with last move - it needs to be in sgf/gtp format?
         private void sgfPass() {
-            Move move=turn==Stone.black?Move.blackPass:Move.whitePass;
+            LegacyMove move=turn==Stone.black?LegacyMove.blackPass:LegacyMove.whitePass;
             lastMoveGTP=toGTPCoordinates(move,board.width(),board.depth());
             lastColorGTP=move.color();
             moves++;

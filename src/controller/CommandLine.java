@@ -7,7 +7,7 @@ import gui.*;
 import io.*;
 import model.*;
 import model.Model.MoveResult;
-import model.Move.MoveImpl;
+import model.LegacyMove.MoveImpl;
 import model.Move2.MoveType;
 import view.CommandLIneView;
 public class CommandLine {

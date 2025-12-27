@@ -9,7 +9,7 @@ import equipment.Board.Topology;
 import io.IOs;
 import model.Model.*;
 import static model.Model.*;
-import model.Move.MoveImpl;
+import model.LegacyMove.MoveImpl;
 import model.Move2.MoveType;
 import sgf.*;
 import utilities.MyTestWatcher;
@@ -19,12 +19,12 @@ public class OldModelTestCase {
     // random seems to work!
     @Test public void testResignOutOfOrder() {
         model.move(new MoveImpl(Stone.black,new Point()));
-        model.move(Move.blackPass);
+        model.move(LegacyMove.blackPass);
     }
     @Test public void testHash() {
         model.move(new MoveImpl(Stone.black,new Point()));
-        model.move(Move.whitePass);
-        model.move(Move.blackPass);
+        model.move(LegacyMove.whitePass);
+        model.move(LegacyMove.blackPass);
         // test for collision problem here
         // how?
     }
@@ -243,7 +243,7 @@ public class OldModelTestCase {
     }
     @Test public void testIsLegalMove() {
         model.setRoot();
-        Move move=new MoveImpl(model.turn(),new Point());
+        LegacyMove move=new MoveImpl(model.turn(),new Point());
         MoveResult actual=model.isLegalMove(move);
         assertEquals(MoveResult.legal,actual);
     }

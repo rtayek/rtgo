@@ -6,7 +6,7 @@ import org.junit.*;
 import equipment.*;
 import io.IOs;
 import model.Model.MoveResult;
-import model.Move.MoveImpl;
+import model.LegacyMove.MoveImpl;
 import utilities.MyTestWatcher;
 public class ColorBugTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -18,7 +18,7 @@ public class ColorBugTestCase {
         Point point;
         do {
             point=new Point(random.nextInt(width),random.nextInt(depth));
-            Move move=new MoveImpl(model.turn(),point);
+            LegacyMove move=new MoveImpl(model.turn(),point);
             if(model.addMoveNodeAndExecute(move)==MoveResult.legal) break;
         } while(model.board().at(point).equals(Stone.vacant));
         // what should we test for here?
