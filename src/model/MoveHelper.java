@@ -1,5 +1,4 @@
 package model;
-import static model.MoveHelper.*;
 import java.util.*;
 import controller.*;
 import controller.Command;
@@ -8,6 +7,35 @@ import io.IOs.End.Holder;
 import io.Logging;
 import model.Move.*;
 public class MoveHelper {
+    static Move2 toGameMove(Move legacy,int width,int depth) {
+        if(legacy instanceof Pass) {
+            if(legacy.color().equals(Stone.black)) return Move2.blackPass;
+            else if(legacy.color().equals(Stone.white)) return Move2.whitePass;
+            else throw new RuntimeException("pass bad color!");
+        } else if(legacy instanceof Resign) {
+            if(legacy.color().equals(Stone.black)) return Move2.blackResign;
+            else if(legacy.color().equals(Stone.white)) return Move2.whiteResign;
+            else throw new RuntimeException("resign bad color!");
+        } else if(legacy instanceof Null) {
+            throw new RuntimeException("null move cannot be converted to Move2!");
+        } else if(legacy instanceof MoveImpl) {
+            Point point=legacy.point();
+            return Move2.move(legacy.color(),point);
+        } else throw new RuntimeException("unknown legacy move type: "+legacy);
+    }
+    static Move toLegacyMove(Move2 m) {
+        if(m.isMove()) {
+            return new MoveImpl(m.color,m.point);
+        } else if(m.isPass()) {
+            if(m.color.equals(Stone.black)) return Move.blackPass;
+            else if(m.color.equals(Stone.white)) return Move.whitePass;
+            else throw new RuntimeException("pass bad color!");
+        } else if(m.isResign()) {
+            if(m.color.equals(Stone.black)) return Move.blackResign;
+            else if(m.color.equals(Stone.white)) return Move.whiteResign;
+            else throw new RuntimeException("resign bad color!");
+        } else throw new RuntimeException("unknown Move2 type: "+m);
+    }
     public static String toSGFCoordinates(Move move,int width,int depth) {
         if(move instanceof Pass) {
             return gtpPassString; // was returning "" - check for this!

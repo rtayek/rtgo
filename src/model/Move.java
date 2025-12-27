@@ -5,36 +5,7 @@ import controller.Command;
 import equipment.*;
 import static model.MoveHelper.*;
 // maybe have a type of move that is setup or ?
-interface Move_ {}
-public interface Move extends Move_ {
-    public final class Move__ {
-        public enum MoveTYpe { move, pass, resign, } // setup or undo?
-        public final MoveTYpe moveType;
-        public final Stone color; // or null if you really must
-        public final Point point; // only for play
-        public static Move__ move(Stone color,Point point) {
-            Objects.requireNonNull(color);
-            Objects.requireNonNull(point);
-            return new Move__(MoveTYpe.move,color,point);
-        }
-        public static Move__ pass(Stone color) { return new Move__(MoveTYpe.pass,color,null); }
-        public static Move__ resign(Stone color) { return new Move__(MoveTYpe.resign,color,null); }
-        public String nameWithColor() { return color+" "+moveType; }
-        public boolean isPass() { return moveType.equals(MoveTYpe.pass); }
-        public boolean isResign() { return moveType.equals(MoveTYpe.resign); }
-        private Move__(MoveTYpe moveType,Stone color,Point point) {
-            this.moveType=moveType;
-            this.color=color;
-            this.point=point;
-        }
-        boolean isMove() { return moveType==MoveTYpe.move; }
-
-        @Override public String toString() { /* keep whatever legacy format */ return moveType.toString(); }
-        public static final Move__ blackPass=new Move__(MoveTYpe.pass,Stone.black,null); 
-        Move__ whitePass=new Move__(MoveTYpe.pass,Stone.white,null);
-        Move__ blackResign=new Move__(MoveTYpe.resign,Stone.white,null);
-        Move__ whiteResign=new Move__(MoveTYpe.resign,Stone.black,null);
-    }
+public interface Move {
     String name();
     Stone color(); // we may need this
     default String nameWithColor() { return color()+" "+name(); }
