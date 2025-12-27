@@ -2,6 +2,7 @@ package core.cli;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import core.api.*;
 import core.session.BasicGameSession;
 import games.go.*;
@@ -10,61 +11,73 @@ import games.ttt.*;
 public final class CliMain {
 
     public static void main(String[] args) throws Exception {
+        CliMain cli = new CliMain(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out, true));
+        cli.run(args);
+    }
+
+    /**
+     * Entry point that accepts an explicit reader, making this class testable.
+     */
+    public void run(String[] args) throws Exception {
         String gameId = argValue(args, "--game");
         if (gameId == null) gameId = argValue(args, "-g");
-        //if (gameId == null) gameId = "go";
-        if (gameId == null) gameId = "ttt";
+        if (gameId == null) gameId = "go";
+        //if (gameId == null) gameId = "ttt";
 
-        if (gameId.equals("go")) {
-            runGo();
-            return;
+        switch (gameId) {
+            case "go" -> runGo();
+            case "ttt" -> runTtt();
+            default -> {
+                out.println("unknown game id: " + gameId);
+                out.println("available games: go, ttt");
+                out.println("usage: CliMain --game <id>");
+                out.flush();
+                System.exit(2);
+            }
         }
-
-        if (gameId.equals("ttt")) {
-            runTtt();
-            return;
-        }
-
-        System.out.println("unknown game id: " + gameId);
-        System.out.println("available games: go, ttt");
-        System.out.println("usage: CliMain --game <id>");
-        System.exit(2);
     }
 
-    private static void runGo() throws Exception {
-        GoPlugin plugin = new GoPlugin();
-        GoSpec spec = plugin.defaultSpec();
+    private void runGo() throws Exception {
+        GoPlugin goPlugin = new GoPlugin();
+        this.plugin = goPlugin;
+        GoSpec spec = goPlugin.defaultSpec();
 
-        GameSession<GoState, GoMove> session =
-                new BasicGameSession<GoState, GoMove, GoSpec>("local", plugin, spec);
+        GameSession<GoState, GoMove> goSession =
+                new BasicGameSession<GoState, GoMove, GoSpec>("local", goPlugin, spec);
+        this.session = goSession;
 
-        session.setRole("p1", Role.playBlack);
-        session.setRole("p2", Role.playWhite);
+        goSession.setRole("p1", Role.playBlack);
+        goSession.setRole("p2", Role.playWhite);
 
-        runLoop(plugin, session);
+        runLoop(goPlugin, goSession);
     }
 
-    private static void runTtt() throws Exception {
-        TttPlugin plugin = new TttPlugin();
-        TttSpec spec = plugin.defaultSpec();
+    private void runTtt() throws Exception {
+        TttPlugin tttPlugin = new TttPlugin();
+        this.plugin = tttPlugin;
+        TttSpec spec = tttPlugin.defaultSpec();
 
-        GameSession<TttState, TttMove> session =
-                new BasicGameSession<TttState, TttMove, TttSpec>("local", plugin, spec);
+        GameSession<TttState, TttMove> tttSession =
+                new BasicGameSession<TttState, TttMove, TttSpec>("local", tttPlugin, spec);
+        this.session = tttSession;
 
-        session.setRole("p1", Role.playBlack); // X
-        session.setRole("p2", Role.playWhite); // O
+        tttSession.setRole("p1", Role.playBlack); // X
+        tttSession.setRole("p2", Role.playWhite); // O
 
-        runLoop(plugin, session);
+        runLoop(tttPlugin, tttSession);
     }
 
-    private static <S extends GameState, M extends Move> void runLoop(GamePlugin<S, M, ?> plugin, GameSession<S, M> session)
+    private <S extends GameState, M extends Move> void runLoop(
+            GamePlugin<S, M, ?> plugin, GameSession<S, M> session)
             throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader in = reader;
         Actor actor = new Actor("p1", Who.commandLine);
 
         while (true) {
-            System.out.println(plugin.renderer().render(session.state()));
-            System.out.print("> ");
+            //System.out.println("run loop");
+            out.println(plugin.renderer().render(session.state()));
+            out.print("> ");
+            out.flush();
             String line = in.readLine();
             if (line == null) return;
 
@@ -72,11 +85,12 @@ public final class CliMain {
             if (trimmed.equals("quit")) return;
 
             if (trimmed.equals("help") || trimmed.equals("?")) {
-                System.out.println("commands:");
-                System.out.println("  help | ?    show this help");
-                System.out.println("  quit        exit");
-                System.out.println("moves:");
-                System.out.println("  parsed by the current game's MoveCodec");
+                out.println("commands:");
+                out.println("  help | ?    show this help");
+                out.println("  quit        exit");
+                out.println("moves:");
+                out.println("  parsed by the current game's MoveCodec");
+                out.flush();
                 continue;
             }
 
@@ -84,12 +98,16 @@ public final class CliMain {
             try {
                 move = plugin.moveCodec().parse(line);
             } catch (RuntimeException e) {
-                System.out.println("parse error: " + e.getMessage());
+                out.println("parse error: " + e.getMessage());
+                out.flush();
                 continue;
             }
 
             ApplyResult<S> result = session.submit(actor, move);
-            if (!result.accepted) System.out.println("rejected: " + result.message);
+            if (!result.accepted) {
+                out.println("rejected: " + result.message);
+                out.flush();
+            }
 
             // quick local 2-player (temporary)
             actor = actor.participantId().equals("p1")
@@ -105,6 +123,13 @@ public final class CliMain {
         return null;
     }
 
-    private CliMain() {
+    public CliMain(BufferedReader reader, PrintWriter out) {
+        this.reader = reader;
+        this.out = out;
     }
+
+    private final BufferedReader reader;
+    private final PrintWriter out;
+    private GamePlugin<? extends GameState, ? extends Move, ?> plugin;
+    private GameSession<? extends GameState, ? extends Move> session;
 }

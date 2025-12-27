@@ -1142,7 +1142,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         return false;
     }
     public static class State implements Cloneable { // needs an equals or isEqual method.
-        private State() {
+        public State() {
             // will set widthFromSgf and depth to defaults.
         }
         @Override public State clone() throws CloneNotSupportedException {
@@ -1195,7 +1195,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             toggleTurn();
         }
         private void sgfUnpass() { moves--; toggleTurn(); } // ??
-        private void sgfMakeMove(Stone stone,Point point) {
+        public void sgfMakeMove(Stone stone,Point point) {
             if(board==null) {
                 Logging.mainLogger.severe(""+" "+"board is null!");
                 throw new RuntimeException("board is null!");
@@ -1212,7 +1212,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             removeCapturedStones(board,capturedBlocks);
             if(capturedBlocks.size()>0); // Audio.playCaptureSound();
             Block fromThisMove=Block.find(board,point);
-            if(fromThisMove.liberties()==0) {
+            if(fromThisMove.liberties()==0) { //can we assume capturedBlocks.size()==0
                 Logging.mainLogger.fine(""+" "+"self capture");
                 Logging.mainLogger.fine(""+" "+"removing "+fromThisMove);
                 for(Point point2:fromThisMove.points()) board.setAt(point2.x,point2.y,Stone.vacant);

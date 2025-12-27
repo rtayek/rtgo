@@ -16,11 +16,11 @@ public interface Move {
     String toGTPCoordinates(int width,int depth);
     // maybe change default the above to methods for pass and resign?
     default Point point() { return null; }
-    static Pass blackPass=new Pass(Stone.black);
-    static Pass whitePass=new Pass(Stone.white);
-    static Resign blackResign=new Resign(Stone.black);
-    static Resign whiteResign=new Resign(Stone.white);
-    static Null nullMove=new Null();
+    Pass blackPass=new Pass(Stone.black);
+    Pass whitePass=new Pass(Stone.white);
+    Resign blackResign=new Resign(Stone.black);
+    Resign whiteResign=new Resign(Stone.white);
+    Null nullMove=new Null();
     static Move fromGTP(Stone color,String string,int width,int depth) {
         if(string==null) return Move.nullMove;
         else if(string.equals("")) {

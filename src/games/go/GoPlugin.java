@@ -24,18 +24,19 @@ public final class GoPlugin implements GamePlugin<GoState, GoMove, GoSpec> {
         }
 
         GoMove.Play play = (GoMove.Play) move;
-
-        // TODO wire to your existing legality + capture logic.
-        // This should:
-        //  - reject illegal move (occupied, suicide, ko, off-board, masked)
-        //  - update board stones and captures
-        //  - flip toPlay
-        //
-        // For now, placeholder:
         boolean legal = state.board.isOnBoard(play.point);
         if(legal) legal=state.board.at(play.point)==Stone.vacant;
         if(!legal) return ApplyResult.rejected(state, "off board");
+        state.state.sgfMakeMove(state.toPlay,play.point);
+
+        //  - flip toPlay
+        
         return ApplyResult.rejected(state, "not wired yet");
+        
+        // looks like we need a stack<State>
+        // down and up from model doing a 
+        // sgfMakeMove and sgfUnMakeMove
+        // with a push and a pop.
     }
 
     @Override public MoveCodec<GoMove> moveCodec() { return codec; }
