@@ -10,7 +10,6 @@ public class MoveHelper {
     static Move2 toGameMove(Move legacy,int width,int depth) {
         //@Override public String toSGFCoordinates(int width,int depth) { return ""; }
         //@Override public String toGTPCoordinates(int width,int depth) { return Move.nullMove.name(); }
-
         if(legacy instanceof Pass) {
             if(legacy.color().equals(Stone.black)) return Move2.blackPass;
             else if(legacy.color().equals(Stone.white)) return Move2.whitePass;
@@ -55,7 +54,6 @@ public class MoveHelper {
             return Coordinates.toSgfCoordinates(move.point(),/*width,*/depth);
         } else throw new RuntimeException("unknown move type for sgf coordinates: "+move);
     }
-    
     public static String toGTPCoordinates(Move move,int width,int depth) {
         if(move instanceof Pass) {
             return move.color().equals(Stone.black)?Move.blackPass.name():Move.whitePass.name();
@@ -104,12 +102,12 @@ public class MoveHelper {
         }
         Point point=Coordinates.fromGtpCoordinateSystem(string,width);
         // check to see if point is on board? or at lease in range?
-        return toGameMove(new MoveImpl(color,point), depth, depth);
+        return toGameMove(new MoveImpl(color,point),depth,depth);
     }
-    public static List<String> toGTPMoves(List<Move> moves,int width,int depth) {
+    public static List<String> toGTPMoves(List<Move2> moves,int width,int depth) {
         List<String> commands=new ArrayList<>();
-        for(Move move:moves) { // how about pass and resign?
-            String string=Command.play.name()+" "+move.color()+" "+move.toGTPCoordinates(width,depth);
+        for(Move2 move:moves) { // how about pass and resign?
+            String string=Command.play.name()+" "+move.color+" "+toGTPCoordinates(move,width,depth);
             commands.add(string);
         }
         return commands;

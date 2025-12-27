@@ -83,8 +83,8 @@ public class GTPShoveTestCase {
         System.out.println(expected);
         System.out.println(actual);
         assertTrue(expected.board().isEqual(actual.board()));
-        List<Move> moves=expected.movesToCurrentState(); //current line
-        List<Move> actualMoves=actual.movesToCurrentState();
+        List<Move2> moves=expected.movesToCurrentState(); //current line
+        List<Move2> actualMoves=actual.movesToCurrentState();
         assertEquals(moves,actualMoves);
     }
     @Test public void testPushOneGTPMoveDirect() throws Exception {

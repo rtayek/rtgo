@@ -14,6 +14,7 @@ import io.IOs.*;
 import io.IOs.End.Holder;
 import model.*;
 import model.Move.MoveImpl;
+import model.Move2.MoveType;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 import utilities.*;
@@ -296,7 +297,7 @@ public class GameFixture implements Runnable,Stopable {
         if(blackFixture.backEnd!=null) System.out.println("   black: "+blackFixture.backEnd.namedThread);
         if(whiteFixture.backEnd!=null) System.out.println("   white: "+whiteFixture.backEnd.namedThread);
     }
-    public void playOneMove(BothEnds player,Move move) { // does not wait for opponent's board.
+    public void playOneMove(BothEnds player,Move2 move) { // does not wait for opponent's board.
         double t0=et.etms();
         player.backEnd.waitUntilItIsTmeToMove();
         waitBefore.add(et.etms()-t0);
@@ -308,7 +309,7 @@ public class GameFixture implements Runnable,Stopable {
     public void checkStatus() {
         if(!backends||!initialized||!started) { printStatus(); throw new RuntimeException("game status."); }
     }
-    public int playOneMoveAndWait(BothEnds player,BothEnds opponent,Move move) {
+    public int playOneMoveAndWait(BothEnds player,BothEnds opponent,Move2 move) {
         //checkStatus();
         // needs a game to be running and we need both back ends.
         // makes one move and waits for it to show up on opponents board.
@@ -362,7 +363,7 @@ public class GameFixture implements Runnable,Stopable {
             Logging.mainLogger.info("move "+i);
             // this should wait for a turn before moving
             Stone color=i%2==0?Stone.black:Stone.white;
-            Move move=new MoveImpl(color,new Point(i/n,i%n));
+            Move2 move=new Move2(MoveType.move,color,new Point(i/n,i%n));
             if(move.equals(Move.nullMove)) { throw new RuntimeException(move+" null move in play silly game."); }
             Stone turn=i%2==0?Stone.black:Stone.white;
             int moves=turn==Stone.black?gameFixture.playOneMoveAndWait(black,white,move)
@@ -384,8 +385,8 @@ public class GameFixture implements Runnable,Stopable {
         // gtp supposedly can/will do this.
         Logging.mainLogger.info("at end, play a resign at: "+first.et);
         if(m%2==0) // play a resign at the end.
-            gameFixture.playOneMoveAndWait(black,white,Move.blackResign);
-        else gameFixture.playOneMoveAndWait(white,black,Move.whiteResign);
+            gameFixture.playOneMoveAndWait(black,white,Move2.blackResign);
+        else gameFixture.playOneMoveAndWait(white,black,Move2.whiteResign);
         if(verbose) {
             Board board=gameFixture.recorderFixture.backEnd.model.board();
             Pair<List<Block>,List<Block>> blocks=Block.findBlocks(board);

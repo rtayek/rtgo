@@ -5,7 +5,8 @@ import controller.*;
 import equipment.*;
 import io.*;
 import io.IOs;
-import model.Move;
+import model.*;
+import model.Move2.MoveType;
 import utilities.MyTestWatcher;
 public abstract class AbstractGoServerTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -47,31 +48,31 @@ public abstract class AbstractGoServerTestCase {
     @Test() public void testZeroeMovse() throws Exception { check(); }
     @Test() public void testPlayOneMove() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
     }
     @Test() public void testPlayTwoMoves() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move.MoveImpl(Stone.white,new Point(1,0)));
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
+        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move2(MoveType.move,Stone.white,new Point(1,0)));
     }
     @Test() public void testPlayThreeMoves() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move.MoveImpl(Stone.white,new Point(1,0)));
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point(2,0)));
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
+        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move2(MoveType.move,Stone.white,new Point(1,0)));
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point(2,0)));
     }
     @Test() public void testPassOnce() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move.blackPass);
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackPass);
     }
     @Test() public void testPassTwice() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move.blackPass);
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,Move.whitePass);
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackPass);
+        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,Move2.whitePass);
     }
     @Test() public void testResign() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move.blackResign);
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackResign);
     }
     GoServer goServer;
     public Integer serverPort;

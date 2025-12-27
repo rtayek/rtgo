@@ -17,6 +17,7 @@ import equipment.Board.*;
 import io.*;
 import io.IOs;
 import model.Move.*;
+import model.Move2.MoveType;
 import static model.MoveHelper.*;
 import model.MoveHelper;
 import server.NamedThreadGroup.NamedThread;
@@ -289,18 +290,18 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void setBand(int band) { Logging.mainLogger.warning("set band to: "+band); state.band=band; }
     public int band() { return state.band; }
     public synchronized int moves() { return state.moves; }
-    public Collection<Move> mainLineFromState() { while(Navigate.down.do_(this)); return movesToCurrentState(); }
+    public Collection<Move2> mainLineFromState() { while(Navigate.down.do_(this)); return movesToCurrentState(); }
     public List<String> gtpMovesToCurrentState() {
         // not necessarily the main line!
         ensureBoard();
-        List<Move> moves=movesToCurrentState();
+        List<Move2> moves=movesToCurrentState();
         List<String> gtpMoves=toGTPMoves(moves,board().width(),board().depth());
         return gtpMoves;
     }
-    public List<Move> movesToCurrentState() {
+    public List<Move2> movesToCurrentState() {
         // current line
         Stack<State> stack=this.stack;
-        List<Move> moves=new ArrayList<>();
+        List<Move2> moves=new ArrayList<>();
         Board board=null;
         String lastMoveGTP=null;
         boolean first=true;
@@ -312,8 +313,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                 // take a look a this skip later!
             } else {
                 if(state.board==null) board=state.board=Board.factory.create();
-                Move move=toLegacyMove(
-                        fromGTP(state.lastColorGTP,state.lastMoveGTP,state.board.width(),state.board.depth()));
+                Move2 move=fromGTP(state.lastColorGTP,state.lastMoveGTP,state.board.width(),state.board.depth());
                 moves.add(move);
             }
             if(state.lastMoveGTP!=null) lastMoveGTP=state.lastMoveGTP;
@@ -324,13 +324,13 @@ public class Model extends Observable { // model of a go game or problem forrest
         //moves.add(ve);
         return moves;
     }
-    public void makeMoves(List<Move> moves) { for(Move move:moves) move(move); }
+    public void makeMoves(List<Move2> moves) { for(Move2 move:moves) move(move); }
     public Point generateRandomMove() {
         Point point=new Point(random.nextInt(board().width()),random.nextInt(board().depth()));
         int i=0,limit=10*board().width()*board().depth();
         for(;board().at(point).equals(
                 Stone.vacant);point=new Point(random.nextInt(board().width()),random.nextInt(board().depth())),++i) {
-            Move move=new MoveImpl(turn(),point);
+            Move2 move=new Move2(MoveType.move,turn(),point);
             if(move(move)==MoveResult.legal) break;
             else if(i>limit) { Logging.mainLogger.warning("break out "+i+" "+limit); point=null; break; }
         }
@@ -445,12 +445,9 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
     }
     public int playOneMove(Move2 move) {
-        Logging.mainLogger.info("play one move2: "+move);
-        return playOneMove(MoveHelper.toLegacyMove(move));
-    }
-    public int playOneMove(Move move) {
         Logging.mainLogger.info("play one move: "+move);
-        if(move.equals(Move.nullMove)) throw new RuntimeException(move+" 1 "+lastMoveGTP()+" "+lastMove2()+" move oops");
+        if(move.equals(Move.nullMove))
+            throw new RuntimeException(move+" 1 "+lastMoveGTP()+" "+lastMove2()+" move oops");
         int moves=moves();
         Model.MoveResult ok=move(move);
         // maybe use was legal here?
@@ -462,12 +459,12 @@ public class Model extends Observable { // model of a go game or problem forrest
             default:
                 throw new RuntimeException(ok+" !ok play one move move oops "+this);
         }
-        if(!move.equals(lastMove())) {
+        if(!move.equals(lastMove2())) {
             // let's try to get resign into last move!
             if(true&&move.isResign()) System.out.println(move);
             else {
-                Logging.mainLogger.info(move+"!="+lastMoveGTP()+" "+lastMove()+" 3 move oops");
-                throw new RuntimeException(move+"!="+lastMoveGTP()+" "+lastMove()+" 5 move oops");
+                Logging.mainLogger.info(move+"!="+lastMoveGTP()+" "+lastMove2()+" 3 move oops");
+                throw new RuntimeException(move+"!="+lastMoveGTP()+" "+lastMove2()+" 5 move oops");
             }
         }
         return moves;
@@ -1019,7 +1016,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     static void strangeGame(Model model) {
         int n=model.movesToGenerate();
         Model.generateAndMakeMoves(model,n);
-        List<Move> generatedMoves=model.movesToCurrentState();
+        List<Move2> generatedMoves=model.movesToCurrentState();
         Move2 pass=model.turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
         model.move(pass);
         pass=model.turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;

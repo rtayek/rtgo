@@ -28,6 +28,8 @@ public class BasicMoveTestCase {
     @Test() public void testMoveAtA2() throws Exception {
         expectedMove=Move2.whiteMoveAtA2;
         run();
+        System.out.println("expected move: "+expectedMove);
+        System.out.println("actual move: "+actualMove);
         assertEquals(expectedMove,actualMove);
     }
     @Test() public void testPass() throws Exception {

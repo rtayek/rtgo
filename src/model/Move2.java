@@ -3,8 +3,17 @@ import java.util.Objects;
 import equipment.*;
 import model.Move.MoveImpl;
 public final class Move2 {
-    Move2(MoveType moveType,Stone color,Point point) { this(moveType,color,point,moveType.toString()); }
-    Move2(MoveType moveType,Stone color,Point point,String name) {
+    @Override public int hashCode() { return Objects.hash(color,moveType,name,point); }
+    @Override public boolean equals(Object obj) {
+        if(this==obj) return true;
+        if(obj==null) return false;
+        if(getClass()!=obj.getClass()) return false;
+        Move2 other=(Move2)obj;
+        return color==other.color&&moveType==other.moveType&&Objects.equals(name,other.name)
+                &&Objects.equals(point,other.point);
+    }
+    public Move2(MoveType moveType,Stone color,Point point) { this(moveType,color,point,moveType.toString()); }
+    public Move2(MoveType moveType,Stone color,Point point,String name) {
         this.name=name;
         this.moveType=moveType;
         this.color=color;

@@ -10,6 +10,7 @@ import io.IOs;
 import model.Model.*;
 import static model.Model.*;
 import model.Move.MoveImpl;
+import model.Move2.MoveType;
 import sgf.*;
 import utilities.MyTestWatcher;
 public class OldModelTestCase {
@@ -61,14 +62,15 @@ public class OldModelTestCase {
             model.setRoot(i,i);
             int n=model.movesToGenerate();
             Model.generateAndMakeMoves(model,n);
-            List<Move> expectedMoves=model.movesToCurrentState();
+            List<Move2> expectedMoves=model.movesToCurrentState();
             Model actual=new Model();
             actual.setRoot(i,i);
             actual.ensureBoard();
             actual.makeMoves(expectedMoves);
-            model.ensureBoard();;
+            model.ensureBoard();
+            ;
             model.board().isEqual(actual.board());
-            List<Move> actualMoves=actual.movesToCurrentState();
+            List<Move2> actualMoves=actual.movesToCurrentState();
             assertEquals(expectedMoves,actualMoves); // round trip
         }
     }
@@ -76,12 +78,12 @@ public class OldModelTestCase {
     @Test public void testGenerateAndReplayAllSillyMoves() {
         int n=model.board().width()*model.board().depth();
         Model.generateSillyMoves(model,n-1);
-        List<Move> expectedMoves=model.movesToCurrentState();
+        List<Move2> expectedMoves=model.movesToCurrentState();
         System.out.println(expectedMoves);
         Model actual=new Model();
         actual.makeMoves(expectedMoves);
         model.board().isEqual(actual.board());
-        List<Move> actualMoves=actual.movesToCurrentState();
+        List<Move2> actualMoves=actual.movesToCurrentState();
         assertEquals(expectedMoves,actualMoves); // round trip
     }
     @Test public void testGenerateSillyMovesTime() {
@@ -91,13 +93,13 @@ public class OldModelTestCase {
             int n=model.movesToGenerate();
             System.out.println("start");
             Model.generateSillyMoves(model,n);
-            List<Move> expectedMoves=model.movesToCurrentState();
+            List<Move2> expectedMoves=model.movesToCurrentState();
             System.out.println(expectedMoves);
             Model actual=new Model();
             actual.setRoot(i,i);
             actual.makeMoves(expectedMoves);
             model.board().isEqual(actual.board());
-            List<Move> actualMoves=actual.movesToCurrentState();
+            List<Move2> actualMoves=actual.movesToCurrentState();
             assertEquals(expectedMoves,actualMoves); // round trip
         }
     }
@@ -105,13 +107,13 @@ public class OldModelTestCase {
         model.setRoot(19,19);
         int n=model.movesToGenerate();
         Model.generateAndMakeMoves(model,n);
-        List<Move> expectedMoves=model.movesToCurrentState();
+        List<Move2> expectedMoves=model.movesToCurrentState();
         Model actual=new Model();
         actual.setRoot(19,19);
         actual.makeMoves(expectedMoves);
         model.ensureBoard();
         model.board().isEqual(actual.board());
-        List<Move> actualMoves=actual.movesToCurrentState();
+        List<Move2> actualMoves=actual.movesToCurrentState();
         assertEquals(expectedMoves,actualMoves); // round trip
     }
     @Test public void testRandomMove() throws Exception {
@@ -130,7 +132,7 @@ public class OldModelTestCase {
         model.ensureBoard();
         int n=model.movesToGenerate();
         Model.generateRandomMoves(model,n);
-        List<Move> moves=model.movesToCurrentState();
+        List<Move2> moves=model.movesToCurrentState();
         Model actual=new Model();
         actual.setRoot(5,5);
         actual.ensureBoard();
@@ -161,7 +163,7 @@ public class OldModelTestCase {
     @Test public void testListMoves() {
         Model model=new Model();
         // 19x19?
-        List<Move> moves=model.movesToCurrentState();
+        List<Move2> moves=model.movesToCurrentState();
         assertTrue(moves==null||moves.size()==0||moves.size()==1&&moves.get(0).equals(Move.nullMove));
         model.setRoot(5,5);
         moves=model.movesToCurrentState();
@@ -176,9 +178,10 @@ public class OldModelTestCase {
         model.move(Stone.black,new Point());
         model.move(Stone.white,new Point(1,1));
         model.move(Stone.black,new Point(2,2));
-        List<Move> moves=model.movesToCurrentState();
-        List<Move> expected=Arrays.asList(new MoveImpl(Stone.black,new Point(0,0)),
-                new MoveImpl(Stone.white,new Point(1,1)),new MoveImpl(Stone.black,new Point(2,2))); //"[move (0,0), move (1,1), move (2,2)]";
+        List<Move2> moves=model.movesToCurrentState();
+        List<Move2> expected=Arrays.asList(new Move2(MoveType.move,Stone.black,new Point(0,0)),
+                new Move2(MoveType.move,Stone.white,new Point(1,1)),
+                new Move2(MoveType.move,Stone.black,new Point(2,2))); //"[move (0,0), move (1,1), move (2,2)]";
         assertEquals(expected,moves);
     }
     @Test public void testCopyConstructorWithEmpty() {

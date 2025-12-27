@@ -9,7 +9,8 @@ import org.junit.runners.Parameterized.Parameters;
 import controller.*;
 import equipment.*;
 import io.*;
-import model.Move;
+import model.*;
+import model.Move2.MoveType;
 import utilities.*;
 @RunWith(Parameterized.class) public class StanAloneGoServerTestCase { // standalone tests
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -47,12 +48,12 @@ import utilities.*;
     }
     @Test() public void testPlayOneMove() throws Exception {
         printStuff(game);
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
         System.out.println("exit testPlayOneMove()");
     }
     @Test() public void testPlayTwoMoves() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move.MoveImpl(Stone.black,new Point()));
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move.MoveImpl(Stone.white,new Point(0,1)));
+        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
+        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move2(MoveType.move,Stone.white,new Point(0,1)));
     }
     @Test(/*timeout=1000/*timeoutTime*/) public void testPlaySomeMoves() throws Exception {
         int n=1; // will fail on small boards
@@ -61,7 +62,7 @@ import utilities.*;
             BothEnds player=i%2==0?game.blackFixture:game.whiteFixture;
             Stone color=game.color(player);
             BothEnds opponent=game.opponent(player);
-            game.playOneMoveAndWait(player,opponent,new Move.MoveImpl(color,new Point(0,i)));
+            game.playOneMoveAndWait(player,opponent,new Move2(MoveType.move,color,new Point(0,i)));
             assertTrue(game.blackFixture.backEnd.model.board().isEqual(game.whiteFixture.backEnd.model.board()));
         }
     }

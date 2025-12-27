@@ -47,7 +47,7 @@ public class MoveTestCase {
     @Test public void testMovesToCurrentState0() throws Exception {
         Model expected=new Model();
         expected.ensureBoard();
-        List<Move> moves=expected.movesToCurrentState();
+        List<Move2> moves=expected.movesToCurrentState();
         if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move.nullMove)) {
             // remove these tests when the dust settles.
             Logging.mainLogger.severe("removing null move from move list!");
@@ -61,7 +61,7 @@ public class MoveTestCase {
         System.out.println(expected.board());
         System.out.println(actual.board());
         assertTrue(expected.board().isEqual(actual.board()));
-        List<Move> actualMoves=actual.movesToCurrentState();
+        List<Move2> actualMoves=actual.movesToCurrentState();
         if(actualMoves!=null&&actualMoves.size()>0&&actualMoves.get(0).equals(Move.nullMove)) {
             Logging.mainLogger.severe("removing null move from move list!");
             actualMoves.remove(actualMoves.get(0));
@@ -71,11 +71,11 @@ public class MoveTestCase {
     @Test public void testMovesToCurrentState1() throws Exception {
         Model expected=new Model();
         expected.move(Stone.black,new Point());
-        List<Move> moves=expected.movesToCurrentState();
+        List<Move2> moves=expected.movesToCurrentState();
         Model actual=new Model(); // maybe problems if custom width and depth?
         actual.makeMoves(moves);
         assertTrue(expected.board().isEqual(actual.board()));
-        List<Move> actualMoves=actual.movesToCurrentState();
+        List<Move2> actualMoves=actual.movesToCurrentState();
         assertEquals(moves,actualMoves);
     }
     @Test public void testFromGTPWithNullOrEmptyString() {
