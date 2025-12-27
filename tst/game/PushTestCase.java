@@ -1,9 +1,8 @@
 package game;
-import static model.Move.getMovesAndPush;
 import static org.junit.Assert.*;
 import org.junit.*;
 import controller.GameFixture;
-import model.Model;
+import model.*;
 public class PushTestCase {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
@@ -23,8 +22,8 @@ public class PushTestCase {
         game.printStatus();
         assertTrue(game.namedThread==null);
         game.startPlayerBackends();
-        getMovesAndPush(game.blackFixture.frontEnd,expected,true); // maybe all at once?
-        getMovesAndPush(game.whiteFixture.frontEnd,expected,true);
+        MoveHelper.getMovesAndPush(game.blackFixture.frontEnd,expected,true); // maybe all at once?
+        MoveHelper.getMovesAndPush(game.whiteFixture.frontEnd,expected,true);
         // GTPBackEnd.sleep(100); ???
         //assertTrue(recorder.board().isEqual(expected.board()));
         black.ensureBoard();

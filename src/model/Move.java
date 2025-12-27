@@ -3,10 +3,7 @@ import java.util.*;
 import controller.*;
 import controller.Command;
 import equipment.*;
-import model.MoveHelper;
 import static model.MoveHelper.*;
-import io.IOs.End.Holder;
-import io.Logging;
 // maybe have a type of move that is setup or ?
 interface Move_ {}
 public interface Move extends Move_ {
@@ -121,64 +118,6 @@ public interface Move extends Move_ {
         @Override public String toSGFCoordinates(int width,int depth) { return ""; }
         @Override public String toGTPCoordinates(int width,int depth) { return Move.nullMove.name(); }
         @Override public String toString() { return name(); }
-    }
-    public static Model pushGTPMovesToCurrentStateDirect(Model original,boolean oneAtATime) {
-        Model model=new Model();
-        if(original.board()!=null) { // normally no access to both of these at the same time
-            model.setRoot(original.board().width(),original.board().depth());
-            Board board=Board.factory.create(original.board().width(),original.board().depth());
-            model.setBoard(board);
-            // probably need to set other stuff like shape etc.
-        }
-        // should set the board shape and topology also?
-        List<String> gtpMoves=original.gtpMovesToCurrentState();
-        boolean ok=GTPBackEnd.checkMoveCommandsDirect(model,gtpMoves,oneAtATime);
-        if(!ok) Logging.mainLogger.severe("push fails on: "+gtpMoves);
-        return model;
-    }
-    // should we do this before sending commands?
-    //int width=model.board().width();
-    //int depth=model.board().depth();
-    // use width and depth command?
-    //String command=Command.boardsize.name()+" "+width+":"+depth;
-    //gtpMoves.add(0,command);
-    static void getMovesAndPush(GTPFrontEnd frontEnd,Model model,boolean oneAtATime) {
-        List<String> gtpMoves=model.gtpMovesToCurrentState();
-        System.out.println("gtp moves: "+gtpMoves);
-        if(oneAtATime) {
-            for(String gtpMove:gtpMoves) {
-                Response response=frontEnd.sendAndReceive(gtpMove);
-                if(!response.isOk()) Logging.mainLogger.severe(response+" is not ok!");
-            }
-        } else frontEnd.sendAndReceive(gtpMoves);
-    }
-    public static Model pushGTPMovesToCurrentStateBoth(Model original,boolean oneAtATime) {
-        Model model=new Model("model");
-        if(original.board()!=null) { // normally no access to both of these at the same time
-            model.setRoot(original.board().width(),original.board().depth());
-            Board board=Board.factory.create(original.board().width(),original.board().depth());
-            model.setBoard(board);
-        }
-        BothEnds both=new BothEnds();
-        Holder holder=Holder.duplex();
-        both.setupBoth(holder,"test",model);
-        @SuppressWarnings("unused") Thread back=both.backEnd.startGTP(0);
-        getMovesAndPush(both.frontEnd,original,oneAtATime);
-        return model;
-    }
-    public static void main(String[] args) {
-        Model original=new Model();
-        original.setRoot(5,5);
-        original.move(Stone.black,new Point());
-        original.move(Stone.white,new Point(1,1));
-        Model model=Move.pushGTPMovesToCurrentStateDirect(original,false);
-        if(!model.board().isEqual(original.board())) System.out.println("fail!");
-        Model model2=Move.pushGTPMovesToCurrentStateDirect(original,true);
-        if(!model2.board().isEqual(original.board())) System.out.println("fail!");
-        Model model3=Move.pushGTPMovesToCurrentStateBoth(original,true);
-        if(!model3.board().isEqual(original.board())) System.out.println("fail!");
-        Model model4=Move.pushGTPMovesToCurrentStateBoth(original,false);
-        if(!model4.board().isEqual(original.board())) System.out.println("fail!");
     }
     static final Move blackMoveAtA1=new MoveImpl(Stone.black,new Point());
     static final Move whiteMoveAtA2=new MoveImpl(Stone.white,new Point(0,1));

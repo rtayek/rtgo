@@ -1,5 +1,4 @@
 package controller;
-import static model.Move.getMovesAndPush;
 //maybe shove sgf text with a new gtp command?
 //maybe: restore <sgf text>?
 // shove a tree of games to remote model.
@@ -35,26 +34,26 @@ public class GTPShoveTestCase {
     }
         
     @Test public void testPushGTPMovesToCurrentStateDirectOneAtATime() throws Exception {
-        Model actual=Move.pushGTPMovesToCurrentStateDirect(expected,true);
+        Model actual=MoveHelper.pushGTPMovesToCurrentStateDirect(expected,true);
         System.out.println(expected);
         System.out.println(actual);
         assertTrue(actual.board().isEqual(expected.board()));
     }
     @Test public void testPushGTPMovesToCurrentStateDirectList() throws Exception {
-        Model actual=Move.pushGTPMovesToCurrentStateDirect(expected,false);
+        Model actual=MoveHelper.pushGTPMovesToCurrentStateDirect(expected,false);
         assertTrue(actual.board().isEqual(expected.board()));
     }
     @Test public void testPushGTPMovesToEachStateDirectBottomUp() throws Exception {
         expected.bottom();
         while(Navigate.up.do_(expected)) {
-            Model actual=Move.pushGTPMovesToCurrentStateDirect(expected,false);
+            Model actual=MoveHelper.pushGTPMovesToCurrentStateDirect(expected,false);
             assertTrue(actual.board().isEqual(expected.board()));
         }
     }
     @Test public void testPushGTPMovesToEachStateDirectTopDown() throws Exception {
         expected.top();
         while(Navigate.down.do_(expected)) {
-            Model actual=Move.pushGTPMovesToCurrentStateDirect(expected,false);
+            Model actual=MoveHelper.pushGTPMovesToCurrentStateDirect(expected,false);
             assertTrue(actual.board().isEqual(expected.board()));
         }
     }
@@ -63,7 +62,7 @@ public class GTPShoveTestCase {
         Model original=new Model();
         original.restore(new StringReader(sgf));
         original.bottom();
-        Model model=Move.pushGTPMovesToCurrentStateDirect(original,false);
+        Model model=MoveHelper.pushGTPMovesToCurrentStateDirect(original,false);
         assertTrue(model.board().isEqual(original.board()));
     }
     @Test public void testMainlineMovesToCurrentStateDirect() throws Exception {
@@ -93,7 +92,7 @@ public class GTPShoveTestCase {
         Model model=new Model();
         model.setRoot(5,5);
         model.move(Stone.black,new Point());
-        Model actual=Move.pushGTPMovesToCurrentStateDirect(model,false);
+        Model actual=MoveHelper.pushGTPMovesToCurrentStateDirect(model,false);
         assertTrue(actual.board().isEqual(model.board()));
     }
     @Test public void testPushOneGTPMoveBoth() throws Exception {
@@ -102,11 +101,11 @@ public class GTPShoveTestCase {
         // maybe give backend it's own name?
         model.setRoot(5,5);
         model.move(Stone.black,new Point());
-        Model actual=Move.pushGTPMovesToCurrentStateBoth(model,true);
+        Model actual=MoveHelper.pushGTPMovesToCurrentStateBoth(model,true);
         assertTrue(actual.board().isEqual(model.board()));
     }
     @Test public void testPushGTPMovesBoth() throws Exception {
-        Model actual=Move.pushGTPMovesToCurrentStateBoth(expected,true);
+        Model actual=MoveHelper.pushGTPMovesToCurrentStateBoth(expected,true);
         assertTrue(actual.board().isEqual(expected.board()));
     }
     Model expected=new Model("model");
