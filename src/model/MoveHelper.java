@@ -1,9 +1,35 @@
 package model;
+import static model.MoveHelper.*;
 import java.util.*;
 import controller.Command;
 import equipment.*;
-import model.Move.MoveImpl;
+import model.Move.*;
 public class MoveHelper {
+    public static String toSGFCoordinates(Move move,int width,int depth) {
+        if(move instanceof Pass) {
+            return gtpPassString; // was returning "" - check for this!
+            // looks like a bug!
+        } else if(move instanceof Resign) {
+            return gtpResignString;
+        } else if(move instanceof Null) {
+            throw new RuntimeException("null move has no sgf coordinates!");
+        } else if(move instanceof MoveImpl) {
+            // looks like sgf uses depth
+            // i use width everywhere else
+            return Coordinates.toSgfCoordinates(move.point(),/*width,*/depth);
+        } else throw new RuntimeException("unknown move type for sgf coordinates: "+move);
+    }
+    public static String toGTPCoordinates(Move move,int width,int depth) {
+        if(move instanceof Pass) {
+            return move.color().equals(Stone.black)?Move.blackPass.name():Move.whitePass.name();
+        } else if(move instanceof Resign) {
+            return move.color().equals(Stone.black)?Move.blackResign.name():Move.whiteResign.name();
+        } else if(move instanceof Null) {
+            throw new RuntimeException("null move has no gtp coordinates!");
+        } else if(move instanceof MoveImpl) {
+            return Coordinates.toGtpCoordinateSystem(move.point(),width,depth);
+        } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
+    }
     public static Move fromGTP(Stone color,String string,int width,int depth) {
         if(string==null) return Move.nullMove;
         else if(string.equals("")) {

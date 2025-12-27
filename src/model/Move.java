@@ -45,7 +45,6 @@ public interface Move extends Move_ {
     default boolean isResign() { return false; }
     String toSGFCoordinates(int width,int depth); // unused?
     String toGTPCoordinates(int width,int depth);
-    // maybe change default the above to methods for pass and resign?
     default Point point() { return null; }
     Pass blackPass=new Pass(Stone.black);
     Pass whitePass=new Pass(Stone.white);
@@ -111,7 +110,7 @@ public interface Move extends Move_ {
     public static class Resign extends MoveABC {
         Resign(Stone color) { super(color,gtpResignString); }
         @Override public boolean isResign() { return true; }
-        @Override public String toSGFCoordinates(int width,int depth) { return gtpResignString; }
+        @Override public String toSGFCoordinates(int width,int depth) { return gtpResignString; } // is this a bug?
         @Override public String toGTPCoordinates(int width,int depth) {
             return color().equals(Stone.black)?Move.blackResign.name():Move.whiteResign.name();
         }
