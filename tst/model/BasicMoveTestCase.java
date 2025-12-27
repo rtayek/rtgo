@@ -16,7 +16,7 @@ public class BasicMoveTestCase {
         if(!ok) throw new RuntimeException();
         // do a round trip. yes it is, but we have the move to make
         String expectedSgf=stringWriter.toString();
-        actualMove=model.lastMove();
+        actualMove=model.lastMove2();
         MNode mNode=MNode.restore(new StringReader(expectedSgf));
         StringWriter stringWriter2=new StringWriter();
         // instead of new, maybe: https://stackoverflow.com/questions/3738095/how-do-you-empty-a-stringwriter-in-java
@@ -26,17 +26,17 @@ public class BasicMoveTestCase {
         assertEquals(expectedSgf,actualSgf2);
     }
     @Test() public void testMoveAtA2() throws Exception {
-        expectedMove=Move.whiteMoveAtA2;
+        expectedMove=Move2.whiteMoveAtA2;
         run();
         assertEquals(expectedMove,actualMove);
     }
     @Test() public void testPass() throws Exception {
-        expectedMove=Move.whitePass;
+        expectedMove=Move2.whitePass;
         run();
         assertEquals(expectedMove,actualMove);
     }
     @Test public void testResign() throws Exception {
-        expectedMove=Move.whiteResign;
+        expectedMove=Move2.whiteResign;
         run();
         assertEquals(expectedMove,actualMove);
     }
@@ -45,7 +45,7 @@ public class BasicMoveTestCase {
         model.ensureBoard();
     }
     int width=model.board().width(),depth=model.board().depth();
-    Move expectedMove,actualMove;
+    Move2 expectedMove,actualMove;
     int moves;
     StringWriter stringWriter=new StringWriter();
 }

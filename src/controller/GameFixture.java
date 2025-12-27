@@ -319,7 +319,7 @@ public class GameFixture implements Runnable,Stopable {
         if(opponent.frontEnd==null) throw new RuntimeException();
         Model playerModel=player.backEnd.model,opponentModel=opponent.backEnd.model;
         if(move.equals(Move.nullMove))
-            throw new RuntimeException(move+" 4 "+playerModel.lastMoveGTP()+" "+playerModel.lastMove()+" move oops");
+            throw new RuntimeException(move+" 4 "+playerModel.lastMoveGTP()+" "+playerModel.lastMove2()+" move oops");
         Logging.mainLogger.info("wait until it's time to move");
         int moves=playerModel.moves();
         playOneMove(player,move);

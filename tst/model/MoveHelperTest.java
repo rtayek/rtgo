@@ -9,7 +9,7 @@ public class MoveHelperTest {
         Point p=new Point(1,2);
         Move move=new Move.MoveImpl(Stone.black,p);
         Move2 gameMove=MoveHelper.toGameMove(move,19,19);
-        assertEquals(Move2.MoveTYpe.move,gameMove.moveType);
+        assertEquals(Move2.MoveType.move,gameMove.moveType);
         assertEquals(Stone.black,gameMove.color);
         assertEquals(p,gameMove.point);
         assertEquals(move.name(),gameMove.name());
@@ -30,7 +30,7 @@ public class MoveHelperTest {
         Move legacy=MoveHelper.toLegacyMove(gameMove);
         assertSame(Move.whiteResign,legacy);
         Move2 back=MoveHelper.toGameMove(legacy,19,19);
-        assertEquals(Move2.MoveTYpe.resign,back.moveType);
+        assertEquals(Move2.MoveType.resign,back.moveType);
         assertEquals(Stone.white,back.color);
     }
     @Ignore @Test(expected=RuntimeException.class) public void toGameMove_rejectsNullMove() {

@@ -227,21 +227,22 @@ public abstract class AbstractGTPDirectTestCase {
         // this has 2 commands
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
-        assertEquals(Move.blackPass,directModel.lastMove());
+        assertEquals(Move2.blackPass,directModel.lastMove2());
     }
     @Test public void testGtpPass() throws Exception {
         String command=Command.play.name()+" "+Move.blackPass.nameWithColor();
         String response=new GTPBackEnd(command,directModel).runCommands(directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
-        assertEquals(Move.blackPass,directModel.lastMove());
+        assertEquals(Move2.blackPass,directModel.lastMove2());
     }
     @Test public void testGtpResign2() throws Exception {
-        String response=new GTPBackEnd(Command.play.name()+" "+Move.blackResign.nameWithColor(),directModel)
+        String response=new GTPBackEnd(Command.play.name()+" "+Move2.blackResign.nameWithColor(),directModel)
                 .runCommands(directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
-        assertEquals(Move.blackResign,directModel.lastMove());
+        Move2 lastMove=directModel.lastMove2();
+        assertEquals(Move2.blackResign,lastMove);
     }
     @Test public void testPlayOffTheBoard() throws Exception {
         String actual=new GTPBackEnd(Command.play.name()+" Black Z101",directModel).runCommands(directJustRun);

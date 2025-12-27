@@ -520,7 +520,7 @@ public class GamePanel extends JPanel {
                         +mediator.model.prisoners(Stone.white)+" captured white stones"+", "+mediator.model.komi()
                         +" komi"+", "+mediator.model.moves()+" moves.";
                 mediator.status.setText(string);
-                mediator.lastMove.setText("last move: "+mediator.model.lastMove()+"\\nfoo\\nbar");
+                mediator.lastMove.setText("last move: "+mediator.model.lastMove2()+"\\nfoo\\nbar");
                 MNode currentNode=mediator.model.currentNode();
                 if(currentNode!=null) {
                     String properties=currentNode.toString();

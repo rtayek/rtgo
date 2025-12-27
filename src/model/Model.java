@@ -318,8 +318,8 @@ public class Model extends Observable { // model of a go game or problem forrest
             }
             if(state.lastMoveGTP!=null) lastMoveGTP=state.lastMoveGTP;
         }
-        Move lastMove=this.lastMove(); // was breaking edge test case at top
-        if(!lastMove.equals(Move.nullMove)) if(this.board()!=null) moves.add(this.lastMove());
+        Move2 lastMove=this.lastMove2(); // was breaking edge test case at top
+        if(!lastMove.equals(Move2.nullMove)) if(this.board()!=null) moves.add(this.lastMove2());
         //Move ve=Move.fromGTP(veGTP,board.width(),board.depth());
         //moves.add(ve);
         return moves;
@@ -392,8 +392,12 @@ public class Model extends Observable { // model of a go game or problem forrest
         Move move=new MoveImpl(who,new Point(moves/width,moves%width));
         return move;
     }
-    public Move lastMove() {
-        if(board()==null) { System.out.println("board is null, returning null mode."); return Move.nullMove; }
+    public Move2 lastMove2() {
+        if(board()==null) { System.out.println("board is null, returning null move."); return Move2.nullMove; }
+        return fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth());
+    }
+    public Move lastMovex() {
+        if(board()==null) { System.out.println("board is null, returning null move."); return Move.nullMove; }
         return toLegacyMove(fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth()));
     }
     public String lastMoveGTP() { // what about pass?
@@ -440,9 +444,13 @@ public class Model extends Observable { // model of a go game or problem forrest
             // maybe have a move result for a role violation
         }
     }
+    public int playOneMove(Move2 move) {
+        Logging.mainLogger.info("play one move2: "+move);
+        return playOneMove(MoveHelper.toLegacyMove(move));
+    }
     public int playOneMove(Move move) {
         Logging.mainLogger.info("play one move: "+move);
-        if(move.equals(Move.nullMove)) throw new RuntimeException(move+" 1 "+lastMoveGTP()+" "+lastMove()+" move oops");
+        if(move.equals(Move.nullMove)) throw new RuntimeException(move+" 1 "+lastMoveGTP()+" "+lastMove2()+" move oops");
         int moves=moves();
         Model.MoveResult ok=move(move);
         // maybe use was legal here?
@@ -466,9 +474,9 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public int playOneMove(Stone color,String gtpMoveString) {
         Logging.mainLogger.info("play one move from gtp: "+gtpMoveString);
-        Move move=toLegacyMove(fromGTP(color,gtpMoveString,board().width(),board().depth()));
+        Move2 move=fromGTP(color,gtpMoveString,board().width(),board().depth());
         if(move.equals(Move.nullMove)) {
-            throw new RuntimeException(move+" "+lastMoveGTP()+" "+lastMove()+" 6 move oops");
+            throw new RuntimeException(move+" "+lastMoveGTP()+" "+lastMove2()+" 6 move oops");
         }
         // what is gtp move string for resign?
         return playOneMove(move);
