@@ -82,9 +82,9 @@ public class MoveTestCase {
         Move expected=Move.nullMove;
         // maybe use for resign??
         // sgf pass is [] or [tt]
-        Move actual=fromGTP(Stone.black,null,0,0);
+        Move actual=toLegacyMove(fromGTP(Stone.black,null,0,0));
         assertEquals(expected,actual);
-        actual=fromGTP(Stone.black,"",0,0);
+        actual=toLegacyMove(fromGTP(Stone.black,"",0,0));
         assertEquals(expected,actual);
     }
     @Test public void testResign() throws Exception {

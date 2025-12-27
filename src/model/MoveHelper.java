@@ -8,6 +8,9 @@ import io.Logging;
 import model.Move.*;
 public class MoveHelper {
     static Move2 toGameMove(Move legacy,int width,int depth) {
+        //@Override public String toSGFCoordinates(int width,int depth) { return ""; }
+        //@Override public String toGTPCoordinates(int width,int depth) { return Move.nullMove.name(); }
+
         if(legacy instanceof Pass) {
             if(legacy.color().equals(Stone.black)) return Move2.blackPass;
             else if(legacy.color().equals(Stone.white)) return Move2.whitePass;
@@ -17,7 +20,7 @@ public class MoveHelper {
             else if(legacy.color().equals(Stone.white)) return Move2.whiteResign;
             else throw new RuntimeException("resign bad color!");
         } else if(legacy instanceof Null) {
-            throw new RuntimeException("null move cannot be converted to Move2!");
+            return Move2.nullMove;
         } else if(legacy instanceof MoveImpl) {
             Point point=legacy.point();
             return Move2.move(legacy.color(),point);
@@ -34,6 +37,8 @@ public class MoveHelper {
             if(m.color.equals(Stone.black)) return Move.blackResign;
             else if(m.color.equals(Stone.white)) return Move.whiteResign;
             else throw new RuntimeException("resign bad color!");
+        } else if(m.isNull()) {
+            return Move.nullMove;
         } else throw new RuntimeException("unknown Move2 type: "+m);
     }
     public static String toSGFCoordinates(Move move,int width,int depth) {
@@ -61,7 +66,7 @@ public class MoveHelper {
             return Coordinates.toGtpCoordinateSystem(move.point(),width,depth);
         } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
     }
-    public static Move fromGTP(Stone color,String string,int width,int depth) {
+    static Move oldfromGTP(Stone color,String string,int width,int depth) {
         if(string==null) return Move.nullMove;
         else if(string.equals("")) {
             System.out.println("string is: "+"\"\"");
@@ -78,6 +83,24 @@ public class MoveHelper {
         Point point=Coordinates.fromGtpCoordinateSystem(string,width);
         // check to see if point is on board? or at lease in range?
         return new MoveImpl(color,point);
+    }
+    public static Move2 fromGTP(Stone color,String string,int width,int depth) {
+        if(string==null) return Move2.nullMove;
+        else if(string.equals("")) {
+            System.out.println("string is: "+"\"\"");
+            return Move2.nullMove; // pass?
+        } else if(string.contains(gtpPassString)) {
+            if(color.equals(Stone.black)) return Move2.blackPass;
+            else if(color.equals(Stone.white)) return Move2.whitePass;
+            else throw new RuntimeException("pass bad color!");
+        } else if(string.contains(gtpResignString)) {
+            if(color.equals(Stone.black)) return Move2.blackResign;
+            else if(color.equals(Stone.white)) return Move2.whiteResign;
+            else throw new RuntimeException("resign bad color!");
+        }
+        Point point=Coordinates.fromGtpCoordinateSystem(string,width);
+        // check to see if point is on board? or at lease in range?
+        return toGameMove(new MoveImpl(color,point), depth, depth);
     }
     public static List<String> toGTPMoves(List<Move> moves,int width,int depth) {
         List<String> commands=new ArrayList<>();

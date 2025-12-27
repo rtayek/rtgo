@@ -310,7 +310,8 @@ public class Model extends Observable { // model of a go game or problem forrest
                 // take a look a this skip later!
             } else {
                 if(state.board==null) board=state.board=Board.factory.create();
-                Move move=fromGTP(state.lastColorGTP,state.lastMoveGTP,state.board.width(),state.board.depth());
+                Move move=toLegacyMove(
+                        fromGTP(state.lastColorGTP,state.lastMoveGTP,state.board.width(),state.board.depth()));
                 moves.add(move);
             }
             if(state.lastMoveGTP!=null) lastMoveGTP=state.lastMoveGTP;
@@ -391,7 +392,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public Move lastMove() {
         if(board()==null) { System.out.println("board is null, returning null mode."); return Move.nullMove; }
-        return fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth());
+        return toLegacyMove(fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth()));
     }
     public String lastMoveGTP() { // what about pass?
         return state.lastMoveGTP;
@@ -463,7 +464,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public int playOneMove(Stone color,String gtpMoveString) {
         Logging.mainLogger.info("play one move from gtp: "+gtpMoveString);
-        Move move=fromGTP(color,gtpMoveString,board().width(),board().depth());
+        Move move=toLegacyMove(fromGTP(color,gtpMoveString,board().width(),board().depth()));
         if(move.equals(Move.nullMove)) {
             throw new RuntimeException(move+" "+lastMoveGTP()+" "+lastMove()+" 6 move oops");
         }
@@ -500,6 +501,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(action.equals(What.move)&&turn().equals(role.stone)) return true;
         return false;
     }
+    public MoveResult move(Move2 move) { return move(MoveHelper.toLegacyMove(move)); }
     public MoveResult move(Move move) {
         if(!checkAction(role(),What.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);

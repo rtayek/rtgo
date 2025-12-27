@@ -2,9 +2,7 @@ package model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-
-import org.junit.Test;
-
+import org.junit.*;
 import equipment.Point;
 import equipment.Stone;
 
@@ -44,8 +42,12 @@ public class MoveHelperTest {
         assertEquals(Stone.white, back.color);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Ignore @Test(expected = RuntimeException.class)
     public void toGameMove_rejectsNullMove() {
+        MoveHelper.toGameMove(Move.nullMove, 19, 19);
+    }
+    @Test()
+    public void toGameMove_acceptsNullMove() {
         MoveHelper.toGameMove(Move.nullMove, 19, 19);
     }
 }

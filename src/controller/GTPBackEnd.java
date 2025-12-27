@@ -335,7 +335,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                     if(who!=null) {
                         if(/*!model.strict||*/who.equals(model.turn())) { // may not be needed?
                             String moveString=message.arguments[2];
-                            Move move=fromGTP(who,moveString,model.board().width(),model.board().depth());
+                            Move2 move=fromGTP(who,moveString,model.board().width(),model.board().depth());
                             Role old=model.role();
                             model.setRole(Role.anything);
                             MoveResult moveResult=model.move(move);
