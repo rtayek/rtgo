@@ -1,8 +1,7 @@
 package games.go;
 
 import core.api.*;
-import equipment.Board;
-import equipment.Stone;
+import equipment.*;
 
 public final class GoPlugin implements GamePlugin<GoState, GoMove, GoSpec> {
     @Override public String gameId() { return "go"; }
@@ -34,6 +33,7 @@ public final class GoPlugin implements GamePlugin<GoState, GoMove, GoSpec> {
         //
         // For now, placeholder:
         boolean legal = state.board.isOnBoard(play.point);
+        if(legal) legal=state.board.at(play.point)==Stone.vacant;
         if(!legal) return ApplyResult.rejected(state, "off board");
         return ApplyResult.rejected(state, "not wired yet");
     }
