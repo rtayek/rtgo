@@ -55,6 +55,7 @@ public class MoveHelper {
             return Coordinates.toSgfCoordinates(move.point(),/*width,*/depth);
         } else throw new RuntimeException("unknown move type for sgf coordinates: "+move);
     }
+    
     public static String toGTPCoordinates(Move move,int width,int depth) {
         if(move instanceof Pass) {
             return move.color().equals(Stone.black)?Move.blackPass.name():Move.whitePass.name();
@@ -65,6 +66,9 @@ public class MoveHelper {
         } else if(move instanceof MoveImpl) {
             return Coordinates.toGtpCoordinateSystem(move.point(),width,depth);
         } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
+    }
+    public static String toGTPCoordinates(Move2 move,int width,int depth) {
+        return toGTPCoordinates(toLegacyMove(move),width,depth);
     }
     static Move oldfromGTP(Stone color,String string,int width,int depth) {
         if(string==null) return Move.nullMove;

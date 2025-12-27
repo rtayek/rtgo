@@ -18,6 +18,7 @@ import io.*;
 import io.IOs;
 import model.Move.*;
 import static model.MoveHelper.*;
+import model.MoveHelper;
 import server.NamedThreadGroup.NamedThread;
 import sgf.*;
 import utilities.*;
@@ -1185,9 +1186,9 @@ public class Model extends Observable { // model of a go game or problem forrest
         private void addStoneToBoard(Stone stone,Point point) { board.setAt(point.x,point.y,stone); }
         private void toggleTurn() { turn=turn.otherColor(); }
         private void sgfResign() { // make sure this is correct
-            Move move=turn==Stone.black?Move.blackResign:Move.whiteResign;
-            lastMoveGTP=move.toGTPCoordinates(board.width(),board.depth());
-            lastColorGTP=move.color();
+            Move2 move=turn==Stone.black?Move2.blackResign:Move2.whiteResign;
+            lastMoveGTP=toGTPCoordinates(move,board.width(),board.depth());
+            lastColorGTP=move.color;
             moves++;
             toggleTurn();
         }
