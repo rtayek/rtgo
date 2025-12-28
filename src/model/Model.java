@@ -519,23 +519,11 @@ public class Model extends Observable { // model of a go game or problem forrest
     public MoveResult move(Move2 move) {
         if(!checkAction(role(),What.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
-        if(move.isPass()) {
-            pass();
-            return MoveResult.legal;
-        }
-        if(move.isResign()) {
-            resign();
-            return MoveResult.legal;
-        }
-        if(move.isNull()) {
-            Logging.mainLogger.warning("null move ignored");
-            return MoveResult.unknown;
-        }
+        if(move.isPass()) { pass(); return MoveResult.legal; }
+        if(move.isResign()) { resign(); return MoveResult.legal; }
+        if(move.isNull()) { Logging.mainLogger.warning("null move ignored"); return MoveResult.unknown; }
         Point point=move.point;
-        if(point==null) {
-            Logging.mainLogger.severe("point is null: "+move);
-            throw new RuntimeException();
-        }
+        if(point==null) { Logging.mainLogger.severe("point is null: "+move); throw new RuntimeException(); }
         try {
             MoveResult wasLegal=addMoveNodeAndExecute(move);
             if(wasLegal!=MoveResult.legal)
@@ -549,8 +537,8 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public MoveResult move(Stone color,Point point) {
         Move2 move=new Move2(MoveType.move,color,point);
-        return move(move); 
-        }
+        return move(move);
+    }
     public MoveResult move(Stone color,String GtpCoordinates,int width) {
         Point point=Coordinates.fromGtpCoordinateSystem(GtpCoordinates,width);
         return move(color,point);
@@ -616,34 +604,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return null;
     }
-    static record InterpretedNode(List<DomainAction> actions,List<SgfProperty> extras) {
-        //
-    }
-    List<DomainAction> mapPropertyToDomainActions(SgfProperty property) {
-        P2 p2=P2.which(property.p().id);
-        if(p2==null) return List.of();
-        return switch(p2) {
-            case AB->mapSetupAdds(Stone.black,property.list());
-            case AW->mapSetupAdds(Stone.white,property.list());
-            case B->List.of(mapMoveOrPass(Stone.black,property.list().get(0)));
-            case W->List.of(mapMoveOrPass(Stone.white,property.list().get(0)));
-            case RG->mapEdges(property.list());
-            case SZ->List.of(mapSize(property.list().get(0)));
-            case C->mapComment(property.list().get(0));
-            case ZB->List.of(new DomainAction.Resign(Stone.black));
-            case ZW->List.of(new DomainAction.Resign(Stone.white));
-            case RE->List.of(new DomainAction.RecordResult(property.list().get(0)));
-            // Keep metadata as metadata for now; apply() can mutate state like today.
-            case AP,FF,GM,HA,KM,BL,WL,RT->List.of(new DomainAction.Metadata(p2,property.list()));
-            default->List.of(new DomainAction.Metadata(p2,property.list()));
-        };
-    }
-    private List<DomainAction> mapSetupAdds(Stone color,List<String> coords) {
-        List<DomainAction> out=new ArrayList<>(coords.size());
-        for(String s:coords) out.add(new DomainAction.SetupAddStone(color,parseSgfPoint(s)));
-        return out;
-    }
-    void apply(DomainAction action) { action.apply(this); }
     private void recreateBoardIfPresent() {
         if(board()==null) return;
         int w=board().width();
@@ -668,50 +628,16 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
     }
+    List<DomainAction> mapPropertyToDomainActions(SgfProperty property) {
+        return ModelHelper.mapPropertyToDomainActions(this,property);
+    }
     private List<DomainAction> mapNodeToDomainActions(MNode node) {
         List<DomainAction> actions=new ArrayList<>();
         if(node==null) return actions;
         for(SgfProperty property:node.sgfProperties) actions.addAll(mapPropertyToDomainActions(property));
         return actions;
     }
-    private DomainAction mapMoveOrPass(Stone color,String coord) {
-        if(coord==null||coord.isEmpty()) return new DomainAction.Pass(color);
-        Point point=parseSgfPoint(coord);
-        return new DomainAction.Move(color,point);
-    }
-    private DomainAction mapSize(String sz) {
-        if(sz==null||sz.isEmpty()) return new DomainAction.SetBoardSpec(Board.standard,Board.standard);
-        if(sz.contains(":")) {
-            String[] parts=sz.split(":");
-            int w=Integer.parseInt(parts[0]);
-            int d=Integer.parseInt(parts[1]);
-            return new DomainAction.SetBoardSpec(w,d);
-        }
-        int n=Integer.parseInt(sz);
-        return new DomainAction.SetBoardSpec(n,n);
-    }
-    private List<DomainAction> mapEdges(List<String> coords) {
-        List<DomainAction> actions=new ArrayList<>(coords.size());
-        for(String s:coords) actions.add(new DomainAction.SetupSetEdge(parseSgfPoint(s)));
-        return actions;
-    }
-    private List<DomainAction> mapComment(String comment) {
-        if(comment==null) return List.of();
-        List<DomainAction> actions=new ArrayList<>();
-        if(comment.startsWith(sgfBoardTopology)) {
-            String topo=comment.substring(sgfBoardTopology.length());
-            actions.add(new DomainAction.SetTopology(Board.Topology.valueOf(topo)));
-        } else if(comment.startsWith(sgfBoardShape)) {
-            String shapeString=comment.substring(sgfBoardShape.length());
-            actions.add(new DomainAction.SetShape(Shape.valueOf(shapeString)));
-        }
-        actions.add(new DomainAction.Metadata(P2.C,List.of(comment)));
-        return actions;
-    }
-    private Point parseSgfPoint(String coord) {
-        int depth=board()!=null?board().depth():state.depthFromSgf>0?state.depthFromSgf:Board.standard;
-        return Coordinates.fromSgfCoordinates(coord,depth);
-    }
+    int depthFromSgf() { return state.depthFromSgf; }
     void do_(MNode node) { // set node and execute the sgf
         final boolean useNewWay=true;
         if(useNewWay) do2(node); // new way
@@ -835,8 +761,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                 throw new RuntimeException("default navigate!");
         }
     }
-    private void processProperty(SgfProperty property) { ModelHelper.processProperty(this, state,property); }
-
+    private void processProperty(SgfProperty property) { ModelHelper.processProperty(this,state,property); }
     private void savethisprocessProperty(SgfProperty property) {
         // need a way to convert this/these to gtp?
         Logging.mainLogger.config("property: "+property);
@@ -1435,9 +1360,3 @@ public class Model extends Observable { // model of a go game or problem forrest
     public boolean stopWaiting=false;
     static long ids;
 }
-
-
-
-
-
-
