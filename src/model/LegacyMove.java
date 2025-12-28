@@ -11,7 +11,8 @@ public interface LegacyMove {
     default String nameWithColor() { return color()+" "+name(); }
     default boolean isPass() { return false; }
     default boolean isResign() { return false; }
-    //String toSGFCoordinates(int width,int depth); // unused?
+    String toSGFCoordinates(int width,int depth); // unused?
+    String toGTPCoordinates(int width,int depth);
     default Point point() { return null; }
     Pass blackPass=new Pass(Stone.black);
     Pass whitePass=new Pass(Stone.white);
@@ -40,14 +41,14 @@ public interface LegacyMove {
         public MoveImpl(Stone color,Point point) { super(color,"move"); this.point=point; }
         final Point point;
         @Override public Point point() { return point; }
-        //@Override public String toSGFCoordinates(int width,int depth) {
-        //    return Coordinates.toSgfCoordinates(point,/*width,*/depth);
+        @Override public String toSGFCoordinates(int width,int depth) {
+            return Coordinates.toSgfCoordinates(point,/*width,*/depth);
             // looks like sgf uses depth
             // i use width everywhere else
-        //}
-        //@Override public String toGTPCoordinates(int width,int depth) {
-        //    return Coordinates.toGtpCoordinateSystem(point,width,depth); // uses to use Board.standard width/depth 
-        //}
+        }
+        @Override public String toGTPCoordinates(int width,int depth) {
+            return Coordinates.toGtpCoordinateSystem(point,width,depth); // uses to use Board.standard width/depth 
+        }
         // above is a problem. we don't know width or depth :)
         /// write a test for this!
         @Override public String toString() { return color()+" "+name()+" "+point; }
@@ -55,28 +56,28 @@ public interface LegacyMove {
     public static class Pass extends MoveABC {
         private Pass(Stone color) { super(color,gtpPassString); }
         @Override public boolean isPass() { return true; }
-        //@Override public String toSGFCoordinates(int width,int depth) {
-        //    return gtpPassString;
+        @Override public String toSGFCoordinates(int width,int depth) {
+            return gtpPassString;
             // was returning "" - check for this!
-        //}
-        //@Override public String toGTPCoordinates(int width,int depth) {
-        //    return color().equals(Stone.black)?LegacyMove.blackPass.name():LegacyMove.whitePass.name();
-        //}
+        }
+        @Override public String toGTPCoordinates(int width,int depth) {
+            return color().equals(Stone.black)?LegacyMove.blackPass.name():LegacyMove.whitePass.name();
+        }
         @Override public String toString() { return name(); }
     }
     public static class Resign extends MoveABC {
         Resign(Stone color) { super(color,gtpResignString); }
         @Override public boolean isResign() { return true; }
-        //@Override public String toSGFCoordinates(int width,int depth) { return gtpResignString; } // is this a bug?
-        //@Override public String toGTPCoordinates(int width,int depth) {
-        //    return color().equals(Stone.black)?LegacyMove.blackResign.name():LegacyMove.whiteResign.name();
-        //}
+        @Override public String toSGFCoordinates(int width,int depth) { return gtpResignString; } // is this a bug?
+        @Override public String toGTPCoordinates(int width,int depth) {
+            return color().equals(Stone.black)?LegacyMove.blackResign.name():LegacyMove.whiteResign.name();
+        }
         @Override public String toString() { return name(); }
     }
     public static class Null extends MoveABC {
         Null() { super(Stone.vacant,"nullMove"); }
-        //@Override public String toSGFCoordinates(int width,int depth) { return ""; }
-        //@Override public String toGTPCoordinates(int width,int depth) { return LegacyMove.nullMove.name(); }
+        @Override public String toSGFCoordinates(int width,int depth) { return ""; }
+        @Override public String toGTPCoordinates(int width,int depth) { return LegacyMove.nullMove.name(); }
         @Override public String toString() { return name(); }
     }
     // PASS & resign https://www.gnu.org/software/gnugo/gnugo_19.html
