@@ -33,10 +33,8 @@ public class MoveHelperTest {
         assertEquals(Move2.MoveType.resign,back.moveType);
         assertEquals(Stone.white,back.color);
     }
-   @Test(expected=RuntimeException.class) public void toGameMove_rejectsNullMove() {
-        MoveHelper.toGameMove(LegacyMove.nullMove,19,19);
+    @Test public void toGameMove_acceptsNullMove() {
+        Move2 m=MoveHelper.toGameMove(LegacyMove.nullMove,19,19);
+        assertSame(Move2.nullMove,m);
     }
-   /*@Ignore*/  @Test() public void toGameMove_acceptsNullMove() {
-        MoveHelper.toGameMove(LegacyMove.nullMove,19,19);
-        }
 }

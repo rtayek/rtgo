@@ -264,7 +264,10 @@ public class OldModelTestCase {
             model.push();
             model.do_(model.currentNode().children.get(0));
             assertNotEquals(expected,model.board().id());
-            model.pop();
+            model.pop(); 
+            // fails because do2 does not do a push  
+            // first child is a setup node
+            // "(;GM[1]FF[4]VW[]AP[Many Faces of Go:12.022]SZ[19]HA[0]ST[0]PB[ray]PW[ray]DT[2015-03-31]KM[7.5]RU[Chinese]BR[2 Dan]WR[2 Dan];B[as]BL[50]WL[60];W[qd]BL[1800]WL[1727])";
             int actual=model.board().id();
             // what is this actually testing?
             assertEquals("we get the same board id.",expected,actual);

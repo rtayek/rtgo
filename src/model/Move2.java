@@ -3,7 +3,7 @@ import java.util.Objects;
 import equipment.*;
 import model.LegacyMove.MoveImpl;
 // PASS & resign https://www.gnu.org/software/gnugo/gnugo_19.html
-public final class Move2 {
+public final class Move2 { // make this a record?
     @Override public int hashCode() { return Objects.hash(color,moveType,name,point); }
     @Override public boolean equals(Object obj) {
         if(this==obj) return true;

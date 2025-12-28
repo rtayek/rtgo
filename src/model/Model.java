@@ -644,14 +644,21 @@ public class Model extends Observable { // model of a go game or problem forrest
         return out;
     }
     void apply(DomainAction action) {
+        System.out.println(name+" "+"applying action: "+action);
         switch(action) {
             case DomainAction.SetBoardSpec a-> {
                 // use existing topology/shape from state unless set separately
                 setRoot(a.width(),a.depth(),boardTopology(),boardShape());
                 setBoard(Board.factory.create(a.width(),a.depth(),boardTopology(),boardShape()));
             }
-            case DomainAction.SetTopology a->setBoardTopology(a.topology());
-            case DomainAction.SetShape a->setBoardShape(a.shape());
+            case DomainAction.SetTopology a-> {
+                setBoardTopology(a.topology());
+                recreateBoardIfPresent();
+            }
+            case DomainAction.SetShape a-> {
+                setBoardShape(a.shape());
+                recreateBoardIfPresent();
+            }
             case DomainAction.SetupAddStone a-> {
                 ensureBoard();
                 board().setAt(a.point(),a.color());
@@ -670,9 +677,16 @@ public class Model extends Observable { // model of a go game or problem forrest
             case DomainAction.RecordResult a-> {
                 /* metadata only for now */ }
             case DomainAction.Metadata a-> {
+                // causes pop throw?
                 /* no-op */ }
             default->throw new IllegalArgumentException("Unexpected value: "+action);
         }
+    }
+    private void recreateBoardIfPresent() {
+        if(board()==null) return;
+        int w=board().width();
+        int d=board().depth();
+        setBoard(Board.factory.create(w,d,boardTopology(),boardShape()));
     }
     void do2(MNode node) {
         state.node=node;
@@ -682,8 +696,8 @@ public class Model extends Observable { // model of a go game or problem forrest
             return;
         }
         try {
-            var actions=mapNodeToDomainActions(node); // node-level mapping
-            for(var action:actions) apply(action);
+            List<DomainAction> actions=mapNodeToDomainActions(node); // node-level mapping
+            for(DomainAction action:actions) apply(action);
         } catch(Exception e) {
             Logging.mainLogger.severe(name+" caught: "+e);
             IOs.stackTrace(10);
@@ -720,14 +734,25 @@ public class Model extends Observable { // model of a go game or problem forrest
         return actions;
     }
     private List<DomainAction> mapComment(String comment) {
-        return List.of(new DomainAction.Metadata(P2.C,List.of(comment)));
+        if(comment==null) return List.of();
+        List<DomainAction> actions=new ArrayList<>();
+        if(comment.startsWith(sgfBoardTopology)) {
+            String topo=comment.substring(sgfBoardTopology.length());
+            actions.add(new DomainAction.SetTopology(Board.Topology.valueOf(topo)));
+        } else if(comment.startsWith(sgfBoardShape)) {
+            String shapeString=comment.substring(sgfBoardShape.length());
+            actions.add(new DomainAction.SetShape(Shape.valueOf(shapeString)));
+        }
+        actions.add(new DomainAction.Metadata(P2.C,List.of(comment)));
+        return actions;
     }
     private Point parseSgfPoint(String coord) {
         int depth=board()!=null?board().depth():state.depthFromSgf>0?state.depthFromSgf:Board.standard;
         return Coordinates.fromSgfCoordinates(coord,depth);
     }
     void do_(MNode node) { // set node and execute the sgf
-        if(true) do2(node); // new way
+        final boolean useNewWay=false;
+        if(useNewWay) do2(node); // new way
         else {
             state.node=node;
             if(node!=null) {//

@@ -61,7 +61,7 @@ public class MoveHelper {
         } else if(move instanceof Resign) {
             return move.color().equals(Stone.black)?LegacyMove.blackResign.name():LegacyMove.whiteResign.name();
         } else if(move instanceof Null) {
-            throw new RuntimeException("null move has no gtp coordinates!");
+            return ""; // treat null as no-op for encoding
         } else if(move instanceof MoveImpl) {
             return Coordinates.toGtpCoordinateSystem(move.point(),width,depth);
         } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
