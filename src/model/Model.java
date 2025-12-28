@@ -616,6 +616,127 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return null;
     }
+    void apply(DomainAction action) {
+        switch(action) {
+            case DomainAction.SetBoardSpec a -> {
+                // use existing topology/shape from state unless set separately
+                setRoot(a.width(),a.depth(),boardTopology(),boardShape());
+                setBoard(Board.factory.create(a.width(),a.depth(),boardTopology(),boardShape()));
+            }
+            case DomainAction.SetTopology a -> setBoardTopology(a.topology());
+            case DomainAction.SetShape a -> setBoardShape(a.shape());
+            case DomainAction.SetupAddStone a -> {
+                ensureBoard();
+                board().setAt(a.point(),a.color());
+            }
+            case DomainAction.SetupSetEdge a -> {
+                ensureBoard();
+                board().setAt(a.point(),Stone.edge);
+            }
+            case DomainAction.Move a -> {
+                ensureBoard();
+                if(a.point()==null) state.sgfPass();
+                else state.sgfMakeMove(a.color(),a.point());
+            }
+            case DomainAction.Pass a -> state.sgfPass();
+            case DomainAction.Resign a -> state.sgfResign(/* maybe color */);
+            case DomainAction.RecordResult a -> { /* metadata only for now */ }
+            case DomainAction.Metadata a -> { /* no-op */ }
+            default -> throw new IllegalArgumentException("Unexpected value: "+action);
+        }
+    }
+    static record InterpretedNode(List<DomainAction> actions,List<SgfProperty> extras) {
+        //
+    }
+    List<DomainAction> mapPropertyToDomainActions(SgfProperty property) {
+        P2 p2 = P2.which(property.p().id);
+        if (p2 == null) return List.of();
+
+        return switch (p2) {
+            case AB -> mapSetupAdds(Stone.black, property.list());
+            case AW -> mapSetupAdds(Stone.white, property.list());
+
+            case B  -> List.of(mapMoveOrPass(Stone.black, property.list().get(0)));
+            case W  -> List.of(mapMoveOrPass(Stone.white, property.list().get(0)));
+
+            case RG -> mapEdges(property.list());
+
+            case SZ -> List.of(mapSize(property.list().get(0)));
+
+            case C  -> mapComment(property.list().get(0));
+
+            case ZB -> List.of(new DomainAction.Resign(Stone.black));
+            case ZW -> List.of(new DomainAction.Resign(Stone.white));
+
+            case RE -> List.of(new DomainAction.RecordResult(property.list().get(0)));
+
+            // Keep metadata as metadata for now; apply() can mutate state like today.
+            case AP, FF, GM, HA, KM, BL, WL, RT -> List.of(new DomainAction.Metadata(p2, property.list()));
+
+            default -> List.of(new DomainAction.Metadata(p2, property.list()));
+        };
+    }
+
+    private List<DomainAction> mapSetupAdds(Stone color, List<String> coords) {
+        List<DomainAction> out=new ArrayList<>(coords.size());
+        for(String s:coords) out.add(new DomainAction.SetupAddStone(color,parseSgfPoint(s)));
+        return out;
+    }
+
+    void do2(MNode node) {
+        state.node = node;
+        if (node == null) {
+            Logging.mainLogger.warning(name + " do with null!");
+            setChangedAndNotify(new Event.Hint(Event.nodeChanged, "do"));
+            return;
+        }
+
+        try {
+            var actions = mapNodeToDomainActions(node);   // node-level mapping
+            for (var action : actions) apply(action);
+        } catch (Exception e) {
+            Logging.mainLogger.severe(name + " caught: " + e);
+            IOs.stackTrace(10);
+            setChangedAndNotify(new Event.Hint(Event.exception, "do"));
+            return;
+        }
+
+        setChangedAndNotify(new Event.Hint(Event.nodeChanged, "do"));
+    }
+    private List<DomainAction> mapNodeToDomainActions(MNode node) {
+        List<DomainAction> actions=new ArrayList<>();
+        if(node==null) return actions;
+        for(SgfProperty property:node.sgfProperties) actions.addAll(mapPropertyToDomainActions(property));
+        return actions;
+    }
+    private DomainAction mapMoveOrPass(Stone color,String coord) {
+        if(coord==null||coord.isEmpty()) return new DomainAction.Pass(color);
+        Point point=parseSgfPoint(coord);
+        return new DomainAction.Move(color,point);
+    }
+    private DomainAction mapSize(String sz) {
+        if(sz==null||sz.isEmpty()) return new DomainAction.SetBoardSpec(Board.standard,Board.standard);
+        if(sz.contains(":")) {
+            String[] parts=sz.split(":");
+            int w=Integer.parseInt(parts[0]);
+            int d=Integer.parseInt(parts[1]);
+            return new DomainAction.SetBoardSpec(w,d);
+        }
+        int n=Integer.parseInt(sz);
+        return new DomainAction.SetBoardSpec(n,n);
+    }
+    private List<DomainAction> mapEdges(List<String> coords) {
+        List<DomainAction> actions=new ArrayList<>(coords.size());
+        for(String s:coords) actions.add(new DomainAction.SetupSetEdge(parseSgfPoint(s)));
+        return actions;
+    }
+    private List<DomainAction> mapComment(String comment) {
+        return List.of(new DomainAction.Metadata(P2.C,List.of(comment)));
+    }
+    private Point parseSgfPoint(String coord) {
+        int depth=board()!=null?board().depth():state.depthFromSgf>0?state.depthFromSgf:Board.standard;
+        return Coordinates.fromSgfCoordinates(coord,depth);
+    }
     void do_(MNode node) { // set node and execute the sgf
         state.node=node;
         if(node!=null) {//
