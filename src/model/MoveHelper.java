@@ -41,31 +41,6 @@ public class MoveHelper {
             return LegacyMove.nullMove;
         } else throw new RuntimeException("unknown Move2 type: "+m);
     }
-    public static String toSGFCoordinates(LegacyMove move,int width,int depth) {
-        if(move instanceof Pass) {
-            return gtpPassString; // was returning "" - check for this!
-            // looks like a bug!
-        } else if(move instanceof Resign) {
-            return gtpResignString;
-        } else if(move instanceof Null) {
-            throw new RuntimeException("null move has no sgf coordinates!");
-        } else if(move instanceof MoveImpl) {
-            // looks like sgf uses depth
-            // i use width everywhere else
-            return Coordinates.toSgfCoordinates(move.point(),/*width,*/depth);
-        } else throw new RuntimeException("unknown move type for sgf coordinates: "+move);
-    }
-    public static String toGTPCoordinates(LegacyMove move,int width,int depth) {
-        if(move instanceof Pass) {
-            return move.color().equals(Stone.black)?LegacyMove.blackPass.name():LegacyMove.whitePass.name();
-        } else if(move instanceof Resign) {
-            return move.color().equals(Stone.black)?LegacyMove.blackResign.name():LegacyMove.whiteResign.name();
-        } else if(move instanceof Null) {
-            return ""; // treat null as no-op for encoding
-        } else if(move instanceof MoveImpl) {
-            return Coordinates.toGtpCoordinateSystem(move.point(),width,depth);
-        } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
-    }
     public static String toGTPCoordinates(Move2 move,int width,int depth) {
         if(move.isPass()) {
             return move.color.equals(Stone.black)?Move2.blackPass.name():Move2.whitePass.name();
