@@ -67,7 +67,15 @@ public class MoveHelper {
         } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
     }
     public static String toGTPCoordinates(Move2 move,int width,int depth) {
-        return toGTPCoordinates(toLegacyMove(move),width,depth);
+        if(move.isPass()) {
+            return move.color.equals(Stone.black)?Move2.blackPass.name():Move2.whitePass.name();
+        } else if(move.isResign()) {
+            return move.color.equals(Stone.black)?Move2.blackResign.name():Move2.whiteResign.name();
+        } else if(move.isNull()) {
+            return "";
+        } else if(move.isMove()) {
+            return Coordinates.toGtpCoordinateSystem(move.point,width,depth);
+        } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
     }
     public static Move2 fromGTP(Stone color,String raw,int width,int depth) {
         if(raw==null) return Move2.nullMove;

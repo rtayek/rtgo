@@ -403,6 +403,8 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(board()==null) { System.out.println("board is null, returning null move."); return LegacyMove.nullMove; }
         return toLegacyMove(fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth()));
     }
+    void sgfPassAction() { state.sgfPass(); }
+    void sgfResignAction() { state.sgfResign(); /* color ignored for now */ }
     public String lastMoveGTP() { // what about pass?
         return state.lastMoveGTP;
     }
@@ -697,7 +699,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         try {
             List<DomainAction> actions=mapNodeToDomainActions(node); // node-level mapping
-            for(DomainAction action:actions) apply(action);
+            for(DomainAction action:actions) action.apply(this);
         } catch(Exception e) {
             Logging.mainLogger.severe(name+" caught: "+e);
             IOs.stackTrace(10);
@@ -751,7 +753,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         return Coordinates.fromSgfCoordinates(coord,depth);
     }
     void do_(MNode node) { // set node and execute the sgf
-        final boolean useNewWay=false;
+        final boolean useNewWay=true;
         if(useNewWay) do2(node); // new way
         else {
             state.node=node;
