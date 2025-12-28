@@ -53,17 +53,6 @@ public interface LegacyMove {
         /// write a test for this!
         @Override public String toString() { return color()+" "+name()+" "+point; }
     }
-    public static class NoMove extends MoveABC {
-        // test to see if we can use this as root for game forest.
-        // does not seem to be used anywhere.
-        private NoMove() { super(null,null); }
-        @Override public String toSGFCoordinates(int width,int depth) { // TODO Auto-generated method stub
-            return null;
-        }
-        @Override public String toGTPCoordinates(int width,int depth) { // TODO Auto-generated method stub
-            return null;
-        }
-    }
     public static class Pass extends MoveABC {
         private Pass(Stone color) { super(color,gtpPassString); }
         @Override public boolean isPass() { return true; }
