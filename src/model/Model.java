@@ -633,45 +633,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         for(String s:coords) out.add(new DomainAction.SetupAddStone(color,parseSgfPoint(s)));
         return out;
     }
-    void apply(DomainAction action) {
-        System.out.println(name+" "+"applying action: "+action);
-        switch(action) {
-            case DomainAction.SetBoardSpec a-> {
-                // use existing topology/shape from state unless set separately
-                setRoot(a.width(),a.depth(),boardTopology(),boardShape());
-                setBoard(Board.factory.create(a.width(),a.depth(),boardTopology(),boardShape()));
-            }
-            case DomainAction.SetTopology a-> {
-                setBoardTopology(a.topology());
-                recreateBoardIfPresent();
-            }
-            case DomainAction.SetShape a-> {
-                setBoardShape(a.shape());
-                recreateBoardIfPresent();
-            }
-            case DomainAction.SetupAddStone a-> {
-                ensureBoard();
-                board().setAt(a.point(),a.color());
-            }
-            case DomainAction.SetupSetEdge a-> {
-                ensureBoard();
-                board().setAt(a.point(),Stone.edge);
-            }
-            case DomainAction.Move a-> {
-                ensureBoard();
-                if(a.point()==null) state.sgfPass();
-                else state.sgfMakeMove(a.color(),a.point());
-            }
-            case DomainAction.Pass a->state.sgfPass();
-            case DomainAction.Resign a->state.sgfResign(/* maybe color */);
-            case DomainAction.RecordResult a-> {
-                /* metadata only for now */ }
-            case DomainAction.Metadata a-> {
-                // causes pop throw?
-                /* no-op */ }
-            default->throw new IllegalArgumentException("Unexpected value: "+action);
-        }
-    }
+    void apply(DomainAction action) { action.apply(this); }
     private void recreateBoardIfPresent() {
         if(board()==null) return;
         int w=board().width();
@@ -1209,60 +1171,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         System.out.flush();
         System.out.println(model);
     }
-    public static MNode modelRoundTrip(Reader reader,Writer writer) {
-        StringBuffer stringBuffer=new StringBuffer();
-        Utilities.fromReader(stringBuffer,reader);
-        String expectedSgf=stringBuffer.toString(); // so we can compare
-        StringWriter stringWriter=new StringWriter();
-        SgfNode games=restoreSgf(new StringReader(expectedSgf));
-        if(games==null) return null; // return empty node!
-        if(games!=null) if(games.right!=null) System.out.println(" 2 more than one game!");
-        // maybe return empty node if sgf is ""?
-        //games.saveSgf(stringWriter,noIndent); // writes sgf from binary tree.
-        MNode mNodes0=MNode.toGeneralTree(games);
-        Model model=new Model();
-        model.setRoot(mNodes0);
-        MNode mNodes=model.root();
-        if(mNodes!=null) {
-            if(mNodes.children.size()>1); //System.out.println("more than one child: "+mNodes.children);
-            SgfNode sgfRoot=mNodes.toBinaryTree();
-            SgfNode actual=sgfRoot.left;
-            StringWriter hack=new StringWriter();
-            actual.saveSgf(hack,noIndent);
-            try {
-                writer.write(hack.toString());
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return mNodes;
-    }
-    public static MNode modelRoundTrip2(String expectedSgf,Writer writer) {
-        // move to model package?
-        // only used in one test method.
-        SgfNode games=restoreSgf(new StringReader(expectedSgf));
-        if(games==null) return null;
-        if(games!=null) if(games.right!=null) System.out.println(" 2 more than one game!");
-        games.saveSgf(new StringWriter(),noIndent);
-        MNode mNodes0=MNode.toGeneralTree(games);
-        Model model=new Model();
-        model.setRoot(mNodes0);
-        MNode mNodes=model.root();
-        String actualSgf=null;
-        if(games!=null) {
-            SgfNode sgfRoot=mNodes.toBinaryTree();
-            SgfNode actual=sgfRoot.left;
-            StringWriter stringWriter=new StringWriter();
-            actual.saveSgf(stringWriter,noIndent);
-            actualSgf=stringWriter.toString();
-        }
-        if(actualSgf!=null) try {
-            writer.write(actualSgf);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return mNodes;
-    }
     public static boolean disconnectFromServer(Model model) {
         if(model.gtp!=null) {
             model.gtp.stop();
@@ -1515,3 +1423,4 @@ public class Model extends Observable { // model of a go game or problem forrest
     public boolean stopWaiting=false;
     static long ids;
 }
+

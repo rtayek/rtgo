@@ -38,7 +38,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
     }
     @Test public void testLongRoundTrip() throws Exception {
         StringWriter stringWriter=new StringWriter();
-        MNode games=Model.modelRoundTrip(expectedSgf!=null?new StringReader(expectedSgf):null,stringWriter);
+        MNode games=ModelHelper.modelRoundTrip(expectedSgf!=null?new StringReader(expectedSgf):null,stringWriter);
         String actualSgf=expectedSgf!=null?stringWriter.toString():null;
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
@@ -57,7 +57,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
     }
     @Test public void testLongRoundTrip21() throws Exception {
         StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=Model.modelRoundTrip2(expectedSgf,stringWriter);
+        @SuppressWarnings("unused") MNode games=ModelHelper.modelRoundTrip2(expectedSgf,stringWriter);
         String actualSgf=stringWriter.toString();
         if(expectedSgf==null) actualSgf=null; // hack for now
         System.out.println("ex: "+expectedSgf);

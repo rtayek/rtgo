@@ -6,7 +6,7 @@ import java.io.*;
 import org.junit.*;
 import io.*;
 import io.IOs;
-import model.Model;
+import model.ModelHelper;
 import utilities.MyTestWatcher;
 // sgf file->sgf node tree->sgf tree->sgf string
 public class RoundTripTestCase {
@@ -20,12 +20,12 @@ public class RoundTripTestCase {
         // looks like a double round trup?
         // do we need this?
         StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=Model.modelRoundTrip(r,stringWriter);
+        @SuppressWarnings("unused") MNode games=ModelHelper.modelRoundTrip(r,stringWriter);
         String expected=stringWriter.toString();
         Reader reader=new StringReader(expected);
         stringWriter=new StringWriter();
         // does round trip belong here?
-        games=Model.modelRoundTrip(reader,stringWriter);
+        games=ModelHelper.modelRoundTrip(reader,stringWriter);
         String actual=stringWriter.toString();
         try {
             r.close();
