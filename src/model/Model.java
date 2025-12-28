@@ -399,10 +399,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(board()==null) { System.out.println("board is null, returning null move."); return Move2.nullMove; }
         return fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth());
     }
-    public LegacyMove lastMovex() {
-        if(board()==null) { System.out.println("board is null, returning null move."); return LegacyMove.nullMove; }
-        return toLegacyMove(fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth()));
-    }
     void sgfPassAction() { state.sgfPass(); }
     void sgfResignAction() { state.sgfResign(); /* color ignored for now */ }
     public String lastMoveGTP() { // what about pass?
@@ -547,10 +543,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         return move(color,point);
     }
     public MoveResult isLegalMove(Move2 move) { // change to accept
-        LegacyMove legacyMove=toLegacyMove(move);
-        return isLegalMove(legacyMove);
-    }
-    public MoveResult isLegalMove(LegacyMove move) { // change to accept
         // string
         // also, maybe check for duplicate code.
         MoveResult wasLegal=addMoveNodeAndExecute(move);
@@ -607,7 +599,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             for(int y=0;y<board().depth();y++) {
                 Point point=new Point(x,y);
                 if(board().at(point).equals(Stone.vacant)) {
-                    LegacyMove move=new MoveImpl(who,point);
+                    Move2 move=new Move2(MoveType.move,who,point);
                     MoveResult wasLegal=move(move);
                     if(wasLegal==MoveResult.legal) {
                         Logging.mainLogger.info(name+"model made "+who+" move at "+point);

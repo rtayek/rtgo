@@ -5,14 +5,15 @@ import java.io.*;
 import org.junit.*;
 import equipment.*;
 import model.Model.MoveResult;
+import model.Move2.MoveType;
 import model.LegacyMove.MoveImpl;
 import sgf.*;
 import utilities.MyTestWatcher;
 public class IllegalMoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testResignOutOfOrder() {
-        model.move(new MoveImpl(Stone.black,new Point()));
-        model.move(LegacyMove.blackPass);
+        model.move(new Move2(MoveType.pass,Stone.white,null));
+        model.move(Move2.blackPass);
     }
     @Test public void testA1A2x() throws IOException {
         model.move(Stone.black,"A1",model.board().width());
@@ -29,11 +30,11 @@ public class IllegalMoveTestCase {
     @Test public void testIsLegalMoveOnOccupoedPoint() {
         //model.setRoot();
         Point a1=new Point(0,0);
-        LegacyMove move=new MoveImpl(model.turn(),a1);
+        Move2 move=new Move2(MoveType.move,model.turn(),a1);
         MoveResult actual=model.isLegalMove(move);
         assertEquals(MoveResult.legal,actual);
         model.move(move);
-        LegacyMove whiteMove=new MoveImpl(model.turn().otherColor(),a1);
+        Move2 whiteMove=new Move2(MoveType.move,model.turn().otherColor(),a1);
         actual=model.isLegalMove(whiteMove);
         assertEquals(MoveResult.occupied,actual);
         actual=model.isLegalMove(move);
@@ -44,7 +45,7 @@ public class IllegalMoveTestCase {
         // maybe that is where out of turn stuff is handled?
         //model.setRoot();
         Point a1=new Point(0,0);
-        LegacyMove move=new MoveImpl(model.turn(),a1);
+        Move2 move=new Move2(MoveType.move,model.turn(),a1);
         MoveResult ok=model.addMoveNodeAndExecute(move);
         assertEquals(MoveResult.legal,ok);
         ok=model.addMoveNodeAndExecute(move);
@@ -58,7 +59,7 @@ public class IllegalMoveTestCase {
         // model.setRoot();
         Point a1=new Point();
         // maybe just do the add move node and execute?
-        LegacyMove move=new MoveImpl(model.turn(),a1);
+        Move2 move=new Move2(MoveType.move,model.turn(),a1);
         MoveResult ok=model.isLegalMove(move);
         assertEquals(MoveResult.legal,ok);
         ok=model.addMoveNodeAndExecute(move);
@@ -67,10 +68,10 @@ public class IllegalMoveTestCase {
         assertEquals(MoveResult.occupied,ok);
         ok=model.addMoveNodeAndExecute(move);
         assertEquals(MoveResult.occupied,ok);
-        move=new MoveImpl(model.turn().otherColor(),a1);
+        move=new Move2(MoveType.move,model.turn().otherColor(),a1);
         ok=model.isLegalMove(move);
         assertEquals(MoveResult.occupied,ok);
-        move=new MoveImpl(model.turn().otherColor(),a1);
+        move=new Move2(MoveType.move,model.turn().otherColor(),a1);
         ok=model.addMoveNodeAndExecute(move);
         assertEquals(MoveResult.occupied,ok);
     }

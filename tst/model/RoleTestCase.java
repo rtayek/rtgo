@@ -93,7 +93,7 @@ public class RoleTestCase {
         assertEquals(MoveResult.notYourTurn,moveResult);
     }
     @Test public void testMakeMoveOutOfTurnAnything() throws InterruptedException {
-        LegacyMove move=new model.LegacyMove.MoveImpl(Stone.white,point);
+        Move2 move=new Move2(MoveType.move,Stone.white,point);
         model.setRole(Role.anything);
         if(!model.checkAction(model.role(),What.move)) throw new RuntimeException("check fails!");
         MoveResult moveResult=model.move(move);
@@ -102,11 +102,11 @@ public class RoleTestCase {
     }
     @Test public void testMoveOnOccupiedPoint() throws InterruptedException {
         model.setRole(Role.anything);
-        LegacyMove move=new model.LegacyMove.MoveImpl(Stone.black,point);
+        Move2 move=new Move2(MoveType.move,Stone.black,point);
         MoveResult moveResult=model.move(move);
         assertEquals(model.board().at(point),Stone.black);
         assertEquals(MoveResult.legal,moveResult);
-        move=new model.LegacyMove.MoveImpl(Stone.white,point);
+        move=new Move2(MoveType.move,Stone.white,point);
         moveResult=model.move(move);
         assertEquals(MoveResult.occupied,moveResult);
         // should this be allowed if role is anything?

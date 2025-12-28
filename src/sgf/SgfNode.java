@@ -5,6 +5,7 @@ import static sgf.Parser.*;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
+import javax.management.RuntimeErrorException;
 import io.*;
 import model.LegacyMove;
 import tree.*;
@@ -272,6 +273,7 @@ public class SgfNode {
             P p=property.p();
             if(p instanceof LegacyMove&&(p==P.B||p==P.W)) {
                 moves++;
+                if(true) throw new RuntimeException("&&&&&&&&&&&&&&&&&");
                 if(property.equals(move)) {
                     holder.left=this;
                     holder.sgfProperties.clear();
@@ -383,15 +385,15 @@ public class SgfNode {
     (;C[d];C[e]))
     (;C[f](;C[g];C[h];C[i])
     (;C[j])))
-
+    
     (;FF[4]C[root];C[a];C[b];C[c]
             ;C[d];C[e]
                     ;C[f];C[g];C[h];C[i]
                             ;C[j])
-
+    
     (;FF[4]C[root];C[a](;C[b];C[c];C[d];C[e];C[f];C[g](;C[h];C[i];C[j])))
-
-
+    
+    
     acdfgj
      */
     public static String preorderRouundTrip(String expectedSgf) throws IOException {

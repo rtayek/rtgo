@@ -96,9 +96,8 @@ public class MoveTestCase {
         // maybe i can use last gtp
         Model model=new Model();
         Move2 move=Move2.blackResign;
-        LegacyMove legacyMove=toLegacyMove(move);
-        legacyMove.toGTPCoordinates(0,0); // returns a string?
-        model.move(legacyMove);
+        toGTPCoordinates(move,0,0);// returns a string?
+        model.move(move);
         System.out.println("resign "+move);
         Move2 lastMove=model.lastMove2();
         String lastMoveGtp=model.lastMoveGTP();
