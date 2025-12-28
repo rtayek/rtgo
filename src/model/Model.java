@@ -396,6 +396,16 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(board()==null) { System.out.println("board is null, returning null move."); return Move2.nullMove; }
         return fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth());
     }
+    // helpers for ModelHelper
+    void setApplicationFromSgf(String app) { state.application=app; }
+    void setSgfVersion(String version) { state.sgfVersion=version; }
+    void setGameType(int gameType) { state.gameType=gameType; }
+    void setHandicap(double handicap) { state.handicap=handicap; }
+    void sgfMakeMoveFromProperty(Stone color,Point point) { state.sgfMakeMove(color,point); }
+    void appendComment(String string) {
+        Logging.mainLogger.info("appending comment: "+string);
+        if(string!=null&&!string.isEmpty()) addProperty(currentNode(),P.C,string);
+    }
     void sgfPassAction() { state.sgfPass(); }
     void sgfResignAction() { state.sgfResign(); /* color ignored for now */ }
     public String lastMoveGTP() { // what about pass?
@@ -711,7 +721,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                 for(int i=0;i<node.sgfProperties.size();i++) {
                     try {
                         System.out.println("node: "+node.sgfProperties.get(i));
-                        processProperty(node.sgfProperties.get(i));
+                        ModelHelper.processProperty(this,state,node.sgfProperties.get(i));
                     } catch(Exception e) {
                         Logging.mainLogger.severe(name+"1 caught: "+e);
                         IOs.stackTrace(10);
@@ -825,7 +835,9 @@ public class Model extends Observable { // model of a go game or problem forrest
                 throw new RuntimeException("default navigate!");
         }
     }
-    private void processProperty(SgfProperty property) {
+    private void processProperty(SgfProperty property) { ModelHelper.processProperty(this, state,property); }
+
+    private void savethisprocessProperty(SgfProperty property) {
         // need a way to convert this/these to gtp?
         Logging.mainLogger.config("property: "+property);
         String string=null;
@@ -1237,7 +1249,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         private void addStoneToBoard(Stone stone,Point point) { board.setAt(point.x,point.y,stone); }
         private void toggleTurn() { turn=turn.otherColor(); }
-        private void sgfResign() { // make sure this is correct
+        void sgfResign() { // make sure this is correct
             Move2 move=turn==Stone.black?Move2.blackResign:Move2.whiteResign;
             lastMoveGTP=toGTPCoordinates(move,board.width(),board.depth());
             lastColorGTP=move.color;
@@ -1245,14 +1257,14 @@ public class Model extends Observable { // model of a go game or problem forrest
             toggleTurn();
         }
         // problem with last move - it needs to be in sgf/gtp format?
-        private void sgfPass() {
+        void sgfPass() {
             Move2 move=turn==Stone.black?Move2.blackPass:Move2.whitePass;
             lastMoveGTP=toGTPCoordinates(move,board.width(),board.depth());
             lastColorGTP=move.color;
             moves++;
             toggleTurn();
         }
-        private void sgfUnpass() { moves--; toggleTurn(); } // ??
+        void sgfUnpass() { moves--; toggleTurn(); } // ??
         public void sgfMakeMove(Stone stone,Point point) {
             if(board==null) {
                 Logging.mainLogger.severe(""+" "+"board is null!");
@@ -1348,14 +1360,14 @@ public class Model extends Observable { // model of a go game or problem forrest
         // should the stuff below be pushed up?
         // does it make any sense to change these in game?
         private boolean isFromLittleGolem;
-        private Topology topology=Topology.normal;
-        private Shape shape=Shape.normal;
+        Topology topology=Topology.normal;
+        Shape shape=Shape.normal;
         // the above looks problematic also.
         private int band=(Integer)Parameters.band.currentValue();
-        private Double komi=.5,handicap=0.;
-        private Integer gameType=sgfGoGame;
-        private String application;
-        private String sgfVersion=defaultSgfVersion;
+        Double komi=.5,handicap=0.;
+        Integer gameType=sgfGoGame;
+        String application;
+        String sgfVersion=defaultSgfVersion;
         public Integer widthFromSgf=Board.standard;
         public Integer depthFromSgf=Board.standard;
     }
@@ -1387,7 +1399,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     // it does belong to the view, but where else can it go
     public GTPBackEnd gtp; // moved from mediator for command line.
     private State state=new State();
-    private Stack<State> stack=new Stack<>();
+    /*private*/ Stack<State> stack=new Stack<>();
     public final String name;
     private boolean isWaitingForMoveCompleteOnBoard; // investigate!
     private transient boolean checkingForLegalMove;
@@ -1423,4 +1435,9 @@ public class Model extends Observable { // model of a go game or problem forrest
     public boolean stopWaiting=false;
     static long ids;
 }
+
+
+
+
+
 
