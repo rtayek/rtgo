@@ -366,14 +366,11 @@ public class Model extends Observable { // model of a go game or problem forrest
         Stone turn=Stone.black;
         for(Point move=model.generateRandomMove();move!=null;move=model.generateRandomMove(),turn=turn.otherColor()) {
             if(model.moves()>=n) break;
-            model.move(new MoveImpl(turn,move));
+            model.move(new Move2(MoveType.move,turn,move));
         }
     }
     public Move2 passMove2() { // make this static?
         return turn().equals(Stone.black)?Move2.blackPass:Move2.whitePass;
-    }
-    public Pass passMove() { // make this static?
-        return turn().equals(Stone.black)?LegacyMove.blackPass:LegacyMove.whitePass;
     }
     public static List<Point> generateRandomMovesInList(Model model,int n) {
         Stone turn=Stone.black;
@@ -381,7 +378,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         for(Point point=model.generateRandomMove();point!=null;points
                 .add(point),point=model.generateRandomMove(),turn=turn.otherColor()) {
             if(model.moves()>=n) break;
-            model.move(new MoveImpl(turn,point));
+            model.move(new Move2(MoveType.move,turn,point));
         }
         return points;
     }
@@ -509,35 +506,41 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(action.equals(What.move)&&turn().equals(role.stone)) return true;
         return false;
     }
-    public MoveResult move(Move2 move) { return move(MoveHelper.toLegacyMove(move)); }
-    public MoveResult move(LegacyMove move) {
+    public MoveResult move(Move2 move) {
         if(!checkAction(role(),What.move)) return MoveResult.badRole;
         Logging.mainLogger.info(name+" "+turn()+" move #"+(moves()+1)+" is: "+move);
-        MoveResult rc=MoveResult.legal;
-        if(move instanceof Pass) //
+        if(move.isPass()) {
             pass();
-        else if(move instanceof Resign) //
-            resign(); // generates RE and Z[BW]
-        else /*if(move instanceof MoveImpl)*/ {
-            Point point=move.point();
-            if(point==null) { Logging.mainLogger.severe("point is null: "+move); throw new RuntimeException(); }
-            try {
-                MoveResult wasLegal;
-                //Point point=Coordinates.fromGtpCoordinateSystem(string,board().depth());
-                wasLegal=addMoveNodeAndExecute(move);
-                if(wasLegal!=MoveResult.legal)
-                    Logging.mainLogger.info(name+" not legal because: "+wasLegal+" "+turn()+" at move #"+moves()
-                            +" illegal move: can not move "+move.color()+" at point: "+point+", "+isPoint(point));
-                // bad message above fix!
-                rc=wasLegal;
-            } catch(Exception e) {
-                Logging.mainLogger.warning(this+" caught: "+e);
-                rc=MoveResult.threw;
-            }
+            return MoveResult.legal;
         }
-        return rc;
+        if(move.isResign()) {
+            resign();
+            return MoveResult.legal;
+        }
+        if(move.isNull()) {
+            Logging.mainLogger.warning("null move ignored");
+            return MoveResult.unknown;
+        }
+        Point point=move.point;
+        if(point==null) {
+            Logging.mainLogger.severe("point is null: "+move);
+            throw new RuntimeException();
+        }
+        try {
+            MoveResult wasLegal=addMoveNodeAndExecute(move);
+            if(wasLegal!=MoveResult.legal)
+                Logging.mainLogger.info(name+" not legal because: "+wasLegal+" "+turn()+" at move #"+moves()
+                        +" illegal move: can not move "+move.color+" at point: "+point+", "+isPoint(point));
+            return wasLegal;
+        } catch(Exception e) {
+            Logging.mainLogger.warning(this+" caught: "+e);
+            return MoveResult.threw;
+        }
     }
-    public MoveResult move(Stone color,Point point) { LegacyMove move=new MoveImpl(color,point); return move(move); }
+    public MoveResult move(Stone color,Point point) {
+        Move2 move=new Move2(MoveType.move,color,point);
+        return move(move); 
+        }
     public MoveResult move(Stone color,String GtpCoordinates,int width) {
         Point point=Coordinates.fromGtpCoordinateSystem(GtpCoordinates,width);
         return move(color,point);
@@ -551,46 +554,39 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public Where isPoint(Point point) { return Where.isPoint(board(),band(),null,point); }
     MoveResult addMoveNodeAndExecute(Move2 move) {
-        LegacyMove legacyMove=toLegacyMove(move);
-        return addMoveNodeAndExecute(legacyMove);
-    }
-    MoveResult addMoveNodeAndExecute(LegacyMove move) {
-        // may not be a move node. see haskall version of sgf code.
         ensureBoard();
-        if(move instanceof Pass||move instanceof Resign) throw new RuntimeException();
-        else {
-            Stone color=move.color();
-            Point point=move.point();
-            if(point==null) { Logging.mainLogger.fine("point is null!"); }
-            if(currentNode()!=null) {
-                Where where=Where.isPoint(board(),band(),null,point);
-                if(where.equals(Model.Where.onVacant)) {
-                    if(color.equals(turn())||role.equals(Role.anything)) {
-                        MNode child=new MNode(currentNode());
-                        P p=color==Stone.black?P.B:P.W;
-                        String sgfCoordinates=Coordinates.toSgfCoordinates(point,board().depth());
-                        addChildWithOneProperty(child,p,sgfCoordinates);
-                        down_(currentNode().children.size()-1); // might be a variation
-                        if(!isduplicateHash()) {
-                            return MoveResult.legal;
-                        } else {
-                            Logging.mainLogger.info(name+" "+"duplicate hash!");
-                            delete();
-                            if(!checkingForLegalMove)
-                                setChangedAndNotify(new Event.Hint(Event.illegalMove,"duplicate hash"));
-                            return MoveResult.duplicateHash;
-                        }
+        if(move.isPass()||move.isResign()) throw new RuntimeException();
+        Stone color=move.color;
+        Point point=move.point;
+        if(point==null) { Logging.mainLogger.fine("point is null!"); }
+        if(currentNode()!=null) {
+            Where where=Where.isPoint(board(),band(),null,point);
+            if(where.equals(Model.Where.onVacant)) {
+                if(color.equals(turn())||role.equals(Role.anything)) {
+                    MNode child=new MNode(currentNode());
+                    P p=color==Stone.black?P.B:P.W;
+                    String sgfCoordinates=Coordinates.toSgfCoordinates(point,board().depth());
+                    addChildWithOneProperty(child,p,sgfCoordinates);
+                    down_(currentNode().children.size()-1); // might be a variation
+                    if(!isduplicateHash()) {
+                        return MoveResult.legal;
                     } else {
-                        Logging.mainLogger.severe(name+" "+MoveResult.notYourTurn);
-                        return MoveResult.notYourTurn;
+                        Logging.mainLogger.info(name+" "+"duplicate hash!");
+                        delete();
+                        if(!checkingForLegalMove)
+                            setChangedAndNotify(new Event.Hint(Event.illegalMove,"duplicate hash"));
+                        return MoveResult.duplicateHash;
                     }
                 } else {
-                    Logging.mainLogger.severe(name+" "+where+" "+MoveResult.occupied);
-                    return MoveResult.occupied;
+                    Logging.mainLogger.severe(name+" "+MoveResult.notYourTurn);
+                    return MoveResult.notYourTurn;
                 }
-            } else Logging.mainLogger.severe(name+" "+"no current node!");
-            return MoveResult.unknown;
-        }
+            } else {
+                Logging.mainLogger.severe(name+" "+where+" "+MoveResult.occupied);
+                return MoveResult.occupied;
+            }
+        } else Logging.mainLogger.severe(name+" "+"no current node!");
+        return MoveResult.unknown;
     }
     public String generateAndMakeMove() { // finds first legal move
         Stone who=turn();
@@ -1200,7 +1196,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     private static void lookAtRoot() {
         Model model=new Model();
-        model.move(new MoveImpl(Stone.black,new Point()));
+        model.move(new Move2(MoveType.move,Stone.black,new Point()));
         System.out.println("root: "+model.root());
         System.out.println("current node: "+model.currentNode());
         System.out.println("children: "+model.currentNode().children);
@@ -1342,9 +1338,9 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         // problem with last move - it needs to be in sgf/gtp format?
         private void sgfPass() {
-            LegacyMove move=turn==Stone.black?LegacyMove.blackPass:LegacyMove.whitePass;
+            Move2 move=turn==Stone.black?Move2.blackPass:Move2.whitePass;
             lastMoveGTP=toGTPCoordinates(move,board.width(),board.depth());
-            lastColorGTP=move.color();
+            lastColorGTP=move.color;
             moves++;
             toggleTurn();
         }
