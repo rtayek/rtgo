@@ -616,92 +616,81 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         return null;
     }
-    void apply(DomainAction action) {
-        switch(action) {
-            case DomainAction.SetBoardSpec a -> {
-                // use existing topology/shape from state unless set separately
-                setRoot(a.width(),a.depth(),boardTopology(),boardShape());
-                setBoard(Board.factory.create(a.width(),a.depth(),boardTopology(),boardShape()));
-            }
-            case DomainAction.SetTopology a -> setBoardTopology(a.topology());
-            case DomainAction.SetShape a -> setBoardShape(a.shape());
-            case DomainAction.SetupAddStone a -> {
-                ensureBoard();
-                board().setAt(a.point(),a.color());
-            }
-            case DomainAction.SetupSetEdge a -> {
-                ensureBoard();
-                board().setAt(a.point(),Stone.edge);
-            }
-            case DomainAction.Move a -> {
-                ensureBoard();
-                if(a.point()==null) state.sgfPass();
-                else state.sgfMakeMove(a.color(),a.point());
-            }
-            case DomainAction.Pass a -> state.sgfPass();
-            case DomainAction.Resign a -> state.sgfResign(/* maybe color */);
-            case DomainAction.RecordResult a -> { /* metadata only for now */ }
-            case DomainAction.Metadata a -> { /* no-op */ }
-            default -> throw new IllegalArgumentException("Unexpected value: "+action);
-        }
-    }
     static record InterpretedNode(List<DomainAction> actions,List<SgfProperty> extras) {
         //
     }
     List<DomainAction> mapPropertyToDomainActions(SgfProperty property) {
-        P2 p2 = P2.which(property.p().id);
-        if (p2 == null) return List.of();
-
-        return switch (p2) {
-            case AB -> mapSetupAdds(Stone.black, property.list());
-            case AW -> mapSetupAdds(Stone.white, property.list());
-
-            case B  -> List.of(mapMoveOrPass(Stone.black, property.list().get(0)));
-            case W  -> List.of(mapMoveOrPass(Stone.white, property.list().get(0)));
-
-            case RG -> mapEdges(property.list());
-
-            case SZ -> List.of(mapSize(property.list().get(0)));
-
-            case C  -> mapComment(property.list().get(0));
-
-            case ZB -> List.of(new DomainAction.Resign(Stone.black));
-            case ZW -> List.of(new DomainAction.Resign(Stone.white));
-
-            case RE -> List.of(new DomainAction.RecordResult(property.list().get(0)));
-
+        P2 p2=P2.which(property.p().id);
+        if(p2==null) return List.of();
+        return switch(p2) {
+            case AB->mapSetupAdds(Stone.black,property.list());
+            case AW->mapSetupAdds(Stone.white,property.list());
+            case B->List.of(mapMoveOrPass(Stone.black,property.list().get(0)));
+            case W->List.of(mapMoveOrPass(Stone.white,property.list().get(0)));
+            case RG->mapEdges(property.list());
+            case SZ->List.of(mapSize(property.list().get(0)));
+            case C->mapComment(property.list().get(0));
+            case ZB->List.of(new DomainAction.Resign(Stone.black));
+            case ZW->List.of(new DomainAction.Resign(Stone.white));
+            case RE->List.of(new DomainAction.RecordResult(property.list().get(0)));
             // Keep metadata as metadata for now; apply() can mutate state like today.
-            case AP, FF, GM, HA, KM, BL, WL, RT -> List.of(new DomainAction.Metadata(p2, property.list()));
-
-            default -> List.of(new DomainAction.Metadata(p2, property.list()));
+            case AP,FF,GM,HA,KM,BL,WL,RT->List.of(new DomainAction.Metadata(p2,property.list()));
+            default->List.of(new DomainAction.Metadata(p2,property.list()));
         };
     }
-
-    private List<DomainAction> mapSetupAdds(Stone color, List<String> coords) {
+    private List<DomainAction> mapSetupAdds(Stone color,List<String> coords) {
         List<DomainAction> out=new ArrayList<>(coords.size());
         for(String s:coords) out.add(new DomainAction.SetupAddStone(color,parseSgfPoint(s)));
         return out;
     }
-
+    void apply(DomainAction action) {
+        switch(action) {
+            case DomainAction.SetBoardSpec a-> {
+                // use existing topology/shape from state unless set separately
+                setRoot(a.width(),a.depth(),boardTopology(),boardShape());
+                setBoard(Board.factory.create(a.width(),a.depth(),boardTopology(),boardShape()));
+            }
+            case DomainAction.SetTopology a->setBoardTopology(a.topology());
+            case DomainAction.SetShape a->setBoardShape(a.shape());
+            case DomainAction.SetupAddStone a-> {
+                ensureBoard();
+                board().setAt(a.point(),a.color());
+            }
+            case DomainAction.SetupSetEdge a-> {
+                ensureBoard();
+                board().setAt(a.point(),Stone.edge);
+            }
+            case DomainAction.Move a-> {
+                ensureBoard();
+                if(a.point()==null) state.sgfPass();
+                else state.sgfMakeMove(a.color(),a.point());
+            }
+            case DomainAction.Pass a->state.sgfPass();
+            case DomainAction.Resign a->state.sgfResign(/* maybe color */);
+            case DomainAction.RecordResult a-> {
+                /* metadata only for now */ }
+            case DomainAction.Metadata a-> {
+                /* no-op */ }
+            default->throw new IllegalArgumentException("Unexpected value: "+action);
+        }
+    }
     void do2(MNode node) {
-        state.node = node;
-        if (node == null) {
-            Logging.mainLogger.warning(name + " do with null!");
-            setChangedAndNotify(new Event.Hint(Event.nodeChanged, "do"));
+        state.node=node;
+        if(node==null) {
+            Logging.mainLogger.warning(name+" do with null!");
+            setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
             return;
         }
-
         try {
-            var actions = mapNodeToDomainActions(node);   // node-level mapping
-            for (var action : actions) apply(action);
-        } catch (Exception e) {
-            Logging.mainLogger.severe(name + " caught: " + e);
+            var actions=mapNodeToDomainActions(node); // node-level mapping
+            for(var action:actions) apply(action);
+        } catch(Exception e) {
+            Logging.mainLogger.severe(name+" caught: "+e);
             IOs.stackTrace(10);
-            setChangedAndNotify(new Event.Hint(Event.exception, "do"));
+            setChangedAndNotify(new Event.Hint(Event.exception,"do"));
             return;
         }
-
-        setChangedAndNotify(new Event.Hint(Event.nodeChanged, "do"));
+        setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
     }
     private List<DomainAction> mapNodeToDomainActions(MNode node) {
         List<DomainAction> actions=new ArrayList<>();
@@ -738,20 +727,23 @@ public class Model extends Observable { // model of a go game or problem forrest
         return Coordinates.fromSgfCoordinates(coord,depth);
     }
     void do_(MNode node) { // set node and execute the sgf
-        state.node=node;
-        if(node!=null) {//
-            for(int i=0;i<node.sgfProperties.size();i++) {
-                try {
-                    System.out.println("node: "+node.sgfProperties.get(i));
-                    processProperty(node.sgfProperties.get(i));
-                } catch(Exception e) {
-                    Logging.mainLogger.severe(name+"1 caught: "+e);
-                    IOs.stackTrace(10);
-                    setChangedAndNotify(new Event.Hint(Event.exception,"do"));
+        if(true) do2(node); // new way
+        else {
+            state.node=node;
+            if(node!=null) {//
+                for(int i=0;i<node.sgfProperties.size();i++) {
+                    try {
+                        System.out.println("node: "+node.sgfProperties.get(i));
+                        processProperty(node.sgfProperties.get(i));
+                    } catch(Exception e) {
+                        Logging.mainLogger.severe(name+"1 caught: "+e);
+                        IOs.stackTrace(10);
+                        setChangedAndNotify(new Event.Hint(Event.exception,"do"));
+                    }
                 }
-            }
-        } else Logging.mainLogger.warning(name+" "+"do with null!");
-        setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
+            } else Logging.mainLogger.warning(name+" "+"do with null!");
+            setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
+        }
     }
     void push() { // see if we can eliminate copying the board
         Board copy=board()!=null?board().copy():null;
