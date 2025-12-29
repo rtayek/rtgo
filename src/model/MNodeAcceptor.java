@@ -47,7 +47,7 @@ public interface MNodeAcceptor {
         void visit(MNode node) {
             stack.push(node);
             acceptor.accept(node,this);
-            if(node!=null) for(MNode child:node.children) visit(child);
+            if(node!=null) for(MNode child:node.children()) visit(child);
             stack.pop();
         }
         MNodeAcceptor acceptor;
@@ -67,8 +67,8 @@ public interface MNodeAcceptor {
     // http://www.csse.monash.edu.au/~lloyd/tildeProgLang/PL-Block/
     public static class PrintAcceptor implements MNodeAcceptor {
         @Override public void accept(MNode node,Traverser traverser) {
-            Logging.mainLogger.info(node+" "+node.sgfProperties.size()+" properties. ");
-            for(SgfProperty property:node.sgfProperties) Logging.mainLogger.info(property.p().getClass().getName()+" ");
+            Logging.mainLogger.info(node+" "+node.sgfProperties().size()+" properties. ");
+            for(SgfProperty property:node.sgfProperties()) Logging.mainLogger.info(property.p().getClass().getName()+" ");
             Logging.mainLogger.info(""+" "+"");
         }
     }
@@ -108,6 +108,6 @@ public interface MNodeAcceptor {
         public final List<MNode> ancestors=new ArrayList<>();
         public MNode found;
         public static BiPredicate<MNode,MNode> equalsPredicate=(x,y)->x.equals(y);
-        public static BiPredicate<MNode,MNode> labelPredicate=(x,y)->x.label.equals(y.label);
+        public static BiPredicate<MNode,MNode> labelPredicate=(x,y)->x.label().equals(y.label());
     }
 }

@@ -22,7 +22,7 @@ import utilities.MyJApplet;
     
      */
     @Override void addChildren(DefaultMutableTreeNode treeNode,MNode node) {
-        if(node!=null) for(MNode child:node.children) {
+        if(node!=null) for(MNode child:node.children()) {
             Node2 child2=new Node2(child,treeNode);
             DefaultMutableTreeNode childTreeNode=new DefaultMutableTreeNode(child2);
             treeNode.add(childTreeNode);

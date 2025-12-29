@@ -30,12 +30,12 @@ import utilities.*;
         MNode root=MNode.toGeneralTree(games);
         // this mnay not be present
         // check the add new root flag in mnode.
-        if(root!=null) { SgfProperty property=root.sgfProperties.get(0); assertEquals(P.RT,property.p()); }
+        if(root!=null) { SgfProperty property=root.sgfProperties().get(0); assertEquals(P.RT,property.p()); }
     }
     @Test public void testSaveMultupleGames() {
         Model model=new Model();
         model.restore(new StringReader(expectedSgf));
-        boolean hasMultipleGames=model.root().children.size()>1;
+        boolean hasMultipleGames=model.root().children().size()>1;
         String sgfString=model.save();
         boolean containsRTNode=sgfString.contains("RT[Tgo root]");
         // when games.right!=null ==> multiple games
@@ -49,7 +49,7 @@ import utilities.*;
         // ignoring for now as it is slow
         // seems to be working for multiple games
         MNode root=MNode.restore(new StringReader(expectedSgf));
-        boolean hasMultipleGames=root!=null&&root.children.size()>1;
+        boolean hasMultipleGames=root!=null&&root.children().size()>1;
         assertNotNull(root);
         List<MNode> list1=MakeList.toList(root);
         List<MNode> list2=MakeList.toList(root);

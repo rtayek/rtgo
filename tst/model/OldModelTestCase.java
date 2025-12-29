@@ -262,7 +262,7 @@ public class OldModelTestCase {
         if(model.board()!=null) {
             int expected=model.board().id();
             model.push();
-            model.do_(model.currentNode().children.get(0));
+            model.do_(model.currentNode().children().get(0));
             assertNotEquals(expected,model.board().id());
             model.pop(); 
             // fails because do2 does not do a push  

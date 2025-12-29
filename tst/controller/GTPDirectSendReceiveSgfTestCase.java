@@ -73,7 +73,7 @@ import utilities.*;
     @Test public void testSendSgfToModel() throws Exception {
         Model model=new Model();
         String actualSgf=sendSgfToModel(expectedSgf,model);
-        assertTrue(model.currentNode().children.size()>0);
+        assertTrue(model.currentNode().children().size()>0);
         assertTrue(Navigate.down.canDo(model));
         //System.out.println(model);
         actualSgf=SgfNode.options.prepareSgf(actualSgf);

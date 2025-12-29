@@ -18,7 +18,7 @@ class Node2 extends MNode { // why did i make this?
     Node2(MNode parent,DefaultMutableTreeNode treeNode) {
         super(parent);
         this.treeNode=treeNode;
-        sgfProperties.addAll(parent.sgfProperties);
+        sgfProperties().addAll(parent.sgfProperties());
     }
     @Override public String toString() {
         String s=super.toString();
@@ -135,7 +135,7 @@ class Node2 extends MNode { // why did i make this?
         return tree;
     }
     void addChildren(DefaultMutableTreeNode treeNode,MNode node) {
-        if(node!=null) for(MNode child:node.children) {
+        if(node!=null) for(MNode child:node.children()) {
             DefaultMutableTreeNode childTreeNode=new DefaultMutableTreeNode(child);
             treeNode.add(childTreeNode);
             addChildren(childTreeNode,child);

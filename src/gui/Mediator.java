@@ -260,7 +260,7 @@ class Mediator implements Observer,ActionListener {
                     SgfProperty property=new SgfProperty(P.C,list);
                     // comment may not be handled correctly.
                     // doc says text, so why the list?
-                    root.sgfProperties.add(0,property);
+                    root.sgfProperties().add(0,property);
                     lastLoadDirectory=file.getParentFile();
                     lastOpenFile=file;
                 }

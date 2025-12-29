@@ -32,12 +32,12 @@ public class SgfNodeTestCase {
         node.setFlags();
         node.checkFlags();
         MNode mNode=MNode.toGeneralTree(node);
-        for(MNode child:mNode.children) {
+        for(MNode child:mNode.children()) {
             System.out.println(child);
             child.setFlags();
             child.checkFlags();
-            assertTrue(child.hasAMoveType);
-            assertTrue(child.hasAMove);
+            assertTrue(child.hasAMoveType());
+            assertTrue(child.hasAMove());
         }
     }
     @Test public void testHasAMoveTypeFlag() {
@@ -48,10 +48,10 @@ public class SgfNodeTestCase {
         assertTrue(node.hasAMoveType);
         assertFalse(node.hasAMove);
         MNode mNode=MNode.toGeneralTree(node);
-        for(MNode child:mNode.children) {
+        for(MNode child:mNode.children()) {
             child.setFlags();
-            assertTrue(child.hasAMoveType);
-            assertFalse(child.hasAMove);
+            assertTrue(child.hasAMoveType());
+            assertFalse(child.hasAMove());
         }
     }
     @Test public void testBothFlagsFalse() {
@@ -62,15 +62,15 @@ public class SgfNodeTestCase {
         assertFalse(node.hasAMoveType);
         assertFalse(node.hasAMove);
         MNode mNode=MNode.toGeneralTree(node);
-        assertFalse(mNode.hasAMoveType);
-        assertFalse(mNode.hasAMove);
+        assertFalse(mNode.hasAMoveType());
+        assertFalse(mNode.hasAMove());
     }
     @Test public void testConstructor() { SgfNode sgfNode=new SgfNode(); sgfNode.sgfProperties=new ArrayList<>(); }
     @Test public void testRT() {
         MNode mRoot=new MNode(null);
         try {
             SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
-            mRoot.sgfProperties.add(property);
+            mRoot.sgfProperties().add(property);
         } catch(Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

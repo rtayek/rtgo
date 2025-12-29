@@ -17,10 +17,10 @@ public class TreeViewTestCase {
         P p=P.B;
         String sgfCoordinates="aa";
         SgfProperty property=new SgfProperty(p,Arrays.asList(new String[] {sgfCoordinates}));
-        node.sgfProperties.add(property);
+        node.sgfProperties().add(property);
         Logging.mainLogger.info("MNode node: "+node);
         Node2 node2=new Node2(node,null);
         Logging.mainLogger.info("MNode node2 "+node2);
-        Logging.mainLogger.info(node2.sgfProperties.toString());
+        Logging.mainLogger.info(node2.sgfProperties().toString());
     }
 }

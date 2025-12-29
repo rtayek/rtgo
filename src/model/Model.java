@@ -1,9 +1,7 @@
 package model;
-import model.MoveHelper;
 import static model.MoveHelper.*;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
-import static sgf.Parser.restoreSgf;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.Socket;
@@ -16,10 +14,7 @@ import equipment.*;
 import equipment.Board.*;
 import io.*;
 import io.IOs;
-import model.LegacyMove.*;
 import model.Move2.MoveType;
-import static model.MoveHelper.*;
-import model.MoveHelper;
 import server.NamedThreadGroup.NamedThread;
 import sgf.*;
 import utilities.*;
@@ -115,13 +110,13 @@ public class Model extends Observable { // model of a go game or problem forrest
         MNode root=root();
         boolean found=hasRT(root);
         // add new root if we don't already have one.
-        if(!found) { root=new MNode(null); root.children.add(root()); }
+        if(!found) { root=new MNode(null); root.children().add(root()); }
         boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
         return ok;
     }
     public static boolean hasRT(MNode root) {
         boolean found=false;
-        for(SgfProperty p:root.sgfProperties) { if(p.p().equals(P.RT)) { found=true; break; } }
+        for(SgfProperty p:root.sgfProperties()) { if(p.p().equals(P.RT)) { found=true; break; } }
         return found;
     }
     public String save() {
@@ -142,7 +137,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         String string=model.save();
         restore(new StringReader(string));
     }
-    public static boolean canDelete(Model model) { return model.currentNode().parent!=null; }
+    public static boolean canDelete(Model model) { return model.currentNode().parent()!=null; }
     public static File insureExtension(File file,String desiredExtension) {
         String extension=getExtension(file);
         if(extension==null||!extension.equalsIgnoreCase("sgf"))
@@ -151,7 +146,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     void checkForLittleGolem(MNode node) {
         boolean isTorus=false;
-        for(SgfProperty property:node.sgfProperties) for(String string:property.list())
+        for(SgfProperty property:node.sgfProperties()) for(String string:property.list())
             if(string.contains("Toroidal")||(state.isFromLittleGolem=string.contains("littlegolem.com"))) {
                 isTorus=true;
                 break;
@@ -182,7 +177,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         // this is where we probably need to insure that there us a board.
         // or make sure some other stuff is setup if this is the root.
         //
-        if(root.children.size()>1) Logging.mainLogger.info("more than one game!");
+        if(root.children().size()>1) Logging.mainLogger.info("more than one game!");
         if(root!=null) checkForLittleGolem(root);
         Logging.mainLogger.config(name+" "+"doing root: "+root);
         do_(root);
@@ -208,7 +203,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     static void addProperty(MNode node,P p,List<String> strings) {
         SgfProperty property=new SgfProperty(p,strings);
-        node.sgfProperties.add(property);
+        node.sgfProperties().add(property);
     }
     private static void addSgfRegion_(int depth,MNode newRoot,List<Point> points) {
         if(points.size()>0) {
@@ -421,8 +416,8 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void setChangedAndNotify(Object object) { setChanged(); notifyObservers(object); }
     void addChildWithOneProperty(MNode child,P p,String string) {
         SgfProperty property=new SgfProperty(p,Arrays.asList(new String[] {string}));
-        child.sgfProperties.add(property);
-        currentNode().children.add(child);
+        child.sgfProperties().add(property);
+        currentNode().children().add(child);
     }
     public Stone turn() { return state.turn; }
     public MoveResult moveAndPlaySound(Stone color,String GtpCoordinates,int width) {
@@ -492,7 +487,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             P p=turn()==Stone.black?P.B:P.W;
             String sgfCoordinates=""; // or tt?
             addChildWithOneProperty(child,p,sgfCoordinates);
-            down_(currentNode().children.size()-1);
+            down_(currentNode().children().size()-1);
             // maybe still needs to move
         } else Logging.mainLogger.severe(name+" "+"no current node for pass!");
     }
@@ -505,8 +500,8 @@ public class Model extends Observable { // model of a go game or problem forrest
             Stone other=turn().otherColor();
             Character winner=other.name().toUpperCase().charAt(0);
             SgfProperty property=new SgfProperty(P.RE,Arrays.asList(new String[] {winner+" Resign"}));
-            child.sgfProperties.add(property);
-            down_(currentNode().children.size()-1);
+            child.sgfProperties().add(property);
+            down_(currentNode().children().size()-1);
         } else Logging.mainLogger.severe(name+" "+"no current node for resign!");
     }
     public boolean checkAction(Role role,What action) {
@@ -565,7 +560,7 @@ public class Model extends Observable { // model of a go game or problem forrest
                     P p=color==Stone.black?P.B:P.W;
                     String sgfCoordinates=Coordinates.toSgfCoordinates(point,board().depth());
                     addChildWithOneProperty(child,p,sgfCoordinates);
-                    down_(currentNode().children.size()-1); // might be a variation
+                    down_(currentNode().children().size()-1); // might be a variation
                     if(!isduplicateHash()) {
                         return MoveResult.legal;
                     } else {
@@ -618,7 +613,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             return;
         }
         try {
-            List<DomainAction> actions=mapNodeToDomainActions(node); // node-level mapping
+            List<DomainAction> actions=DomainAction.mapNodeToDomainActions(this,node); // node-level mapping
             for(DomainAction action:actions) action.apply(this);
         } catch(Exception e) {
             Logging.mainLogger.severe(name+" caught: "+e);
@@ -628,26 +623,17 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
     }
-    List<DomainAction> mapPropertyToDomainActions(SgfProperty property) {
-        return ModelHelper.mapPropertyToDomainActions(this,property);
-    }
-    private List<DomainAction> mapNodeToDomainActions(MNode node) {
-        List<DomainAction> actions=new ArrayList<>();
-        if(node==null) return actions;
-        for(SgfProperty property:node.sgfProperties) actions.addAll(mapPropertyToDomainActions(property));
-        return actions;
-    }
     int depthFromSgf() { return state.depthFromSgf; }
     void do_(MNode node) { // set node and execute the sgf
-        final boolean useNewWay=true;
+        final boolean useNewWay=false;
         if(useNewWay) do2(node); // new way
         else {
             state.node=node;
             if(node!=null) {//
-                for(int i=0;i<node.sgfProperties.size();i++) {
+                for(int i=0;i<node.sgfProperties().size();i++) {
                     try {
-                        System.out.println("node: "+node.sgfProperties.get(i));
-                        ModelHelper.processProperty(this,state,node.sgfProperties.get(i));
+                        System.out.println("node: "+node.sgfProperties().get(i));
+                        ModelHelper.processProperty(this,state,node.sgfProperties().get(i));
                     } catch(Exception e) {
                         Logging.mainLogger.severe(name+"1 caught: "+e);
                         IOs.stackTrace(10);
@@ -684,7 +670,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         if(Navigate.up.canDo(this)) {
             MNode node=currentNode();
             up();
-            if(!currentNode().children.remove(node)) throw new RuntimeException("oops");
+            if(!currentNode().children().remove(node)) throw new RuntimeException("oops");
             // need to enable the navigation controls
             setChangedAndNotify(new Event.Hint(Event.nodeChanged,"delete"));
         } else Logging.mainLogger.warning(name+" "+"delete - can not do this!");
@@ -701,19 +687,19 @@ public class Model extends Observable { // model of a go game or problem forrest
     public void down_(Integer indexOfChild) {
         if(Navigate.down.canDoNoCheck(this)) {
             push();
-            do_(currentNode().children.get(indexOfChild));
+            do_(currentNode().children().get(indexOfChild));
         } else Logging.mainLogger.warning(name+" "+"down - can not do this!");
     }
     public void down(Integer indexOfChild) {
         if(Navigate.down.canDo(this)) {
             push();
-            do_(currentNode().children.get(indexOfChild));
+            do_(currentNode().children().get(indexOfChild));
         } else Logging.mainLogger.warning(name+" "+"down - can not do this!");
     }
     public void right() { // will become a pop(); do();
         if(Navigate.right.canDo(this)) {
-            MNode parent=currentNode().parent;
-            List<MNode> children=parent.children;
+            MNode parent=currentNode().parent();
+            List<MNode> children=parent.children();
             int me=children.indexOf(currentNode());
             if(stack.empty()) throw new RuntimeException("stack is empty!");
             pop();
@@ -723,8 +709,8 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     public void left() {
         if(Navigate.left.canDo(this)) {
-            MNode parent=currentNode().parent;
-            List<MNode> children=parent.children;
+            MNode parent=currentNode().parent();
+            List<MNode> children=parent.children();
             int me=children.indexOf(currentNode());
             if(stack.empty()) throw new RuntimeException("stack is empty!");
             pop();
@@ -918,7 +904,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         String s="";
         if(hasABoard()) { s=board().toString(); }
         s+="current node: "+currentNode().toString();
-        s+=" "+currentNode().children;
+        s+=" "+currentNode().children();
         return s;
     }
     public boolean goToMNode(MNode target) {
@@ -946,11 +932,11 @@ public class Model extends Observable { // model of a go game or problem forrest
             // or ?
             if(!currentNode().equals(target)) for(int i=1;i<list.size();i++) {
                 ancester=list.get(i);
-                int index=currentNode().children.indexOf(ancester);
+                int index=currentNode().children().indexOf(ancester);
                 if(index>=0) down(index);
                 else {
                     Logging.mainLogger.warning(name+" "+"at "+currentNode()+", can not find ancester "+ancester
-                            +" in children: "+currentNode().children);
+                            +" in children: "+currentNode().children());
                     return false;
                 }
             }
@@ -1098,7 +1084,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         model.move(new Move2(MoveType.move,Stone.black,new Point()));
         System.out.println("root: "+model.root());
         System.out.println("current node: "+model.currentNode());
-        System.out.println("children: "+model.currentNode().children);
+        System.out.println("children: "+model.currentNode().children());
         model.save(new OutputStreamWriter(System.out));
         System.out.println();
         //if(true) return;
@@ -1299,7 +1285,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     public static void main(String[] args) {
         Model model=new Model();
         System.out.println(model.root());
-        System.out.println(model.root().parent);
+        System.out.println(model.root().parent());
         System.out.println(model.currentNode());
         model.setRoot(5,5);
         strangeGame(model);

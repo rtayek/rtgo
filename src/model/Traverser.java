@@ -15,7 +15,7 @@ class Traverser { // half of a visitor
         if(node==null) return;
         stack.push(node);
         //acceptor.accept(node,this);
-        for(MNode child:node.children) visit(child);
+        for(MNode child:node.children()) visit(child);
         stack.pop();
     }
     Stack<MNode> stack() { return stack; }

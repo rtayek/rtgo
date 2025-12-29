@@ -118,7 +118,7 @@ public class GamePanel extends JPanel {
         MNode found=null;
         MNode node=mediator.model.currentNode();
         String target=Coordinates.toSgfCoordinates(closest,board.depth());
-        for(MNode child:node.children) for(SgfProperty property:child.sgfProperties)
+        for(MNode child:node.children()) for(SgfProperty property:child.sgfProperties())
             if(mediator.model.turn().equals(Stone.black)&&property.p().equals(P.B)
                     ||mediator.model.turn().equals(Stone.white)&&property.p().equals(P.W)) {
                         System.out.println("found child move property: "+property);

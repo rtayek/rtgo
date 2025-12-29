@@ -12,31 +12,31 @@ public enum Navigate { // move more code here?
             case top:
             case up:
             case delete: // recently added
-                boolean hasAParent=model.currentNode().parent!=null;
+                boolean hasAParent=model.currentNode().parent()!=null;
                 if(hasAParent) {
-                    List<SgfProperty> properties=model.currentNode().parent.sgfProperties;
+                    List<SgfProperty> properties=model.currentNode().parent().sgfProperties();
                     if(properties.size()>0) {
-                        boolean parentIsRT=hasAParent&&model.currentNode().parent.sgfProperties.get(0).p().equals(P.RT);
+                        boolean parentIsRT=hasAParent&&model.currentNode().parent().sgfProperties().get(0).p().equals(P.RT);
                     }
                 }
                 return hasAParent; //&&!parentIsRT;
             // breaks gui, no up!
             case bottom:
             case down:
-                return model.currentNode().children.size()>0;
+                return model.currentNode().children().size()>0;
             case right: // move to right sibling
-                MNode parent=model.currentNode().parent;
+                MNode parent=model.currentNode().parent();
                 if(parent!=null) {
-                    List<MNode> children=parent.children;
+                    List<MNode> children=parent.children();
                     int me=children.indexOf(model.currentNode());
                     int siblings=children.size();
                     return me<siblings-1;
                 }
                 break;
             case left: // move to left sibling
-                parent=model.currentNode().parent;
+                parent=model.currentNode().parent();
                 if(parent!=null) {
-                    List<MNode> children=parent.children;
+                    List<MNode> children=parent.children();
                     int me=children.indexOf(model.currentNode());
                     return me>0;
                 }

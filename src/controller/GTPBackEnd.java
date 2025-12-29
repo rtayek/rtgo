@@ -421,7 +421,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                     if(label!=null) {
                         // go to the specified node
                         MNode remote=new MNode(null);
-                        remote.label=label;
+                        remote.setLabel(label);
                         MNode root=model.root();
                         MNodeFinder finder=MNodeFinder.find(remote,root,labelPredicate);
                         System.out.println(finder.ancestors);

@@ -242,15 +242,22 @@ public class MNode {
         root=MNode.restore(new StringReader(expected));
         ok=MNode.save(new PrintWriter(System.out),root,standardIndent);
     }
-    public Long label;
-    public Integer data;
-    public Integer id=++ids;
-    public final MNode parent;
-    public ArrayList<MNode> children=new ArrayList<>();
+    public boolean hasAMove() { return hasAMove; }
+    public ArrayList<MNode> children() { return children; }
+    public boolean hasAMoveType() { return hasAMoveType; }
+    public Long label() { return label; }
+    public void setLabel(Long label) { this.label=label; }
+    public List<SgfProperty> sgfProperties() { return sgfProperties; }
+    public MNode parent() { return parent; }
+    private Long label;
+    private Integer data;
+    private final Integer id=++ids;
+    private final MNode parent;
+    private final ArrayList<MNode> children=new ArrayList<>();
     //public /*final*/ boolean hasAMove,hasAMoveType;
-    boolean hasAMove,hasAMoveType,hasASetupType;
-    public final List<SgfProperty> sgfProperties=new ArrayList<>();
+    private boolean hasAMove,hasAMoveType,hasASetupType;
+    private final List<SgfProperty> sgfProperties=new ArrayList<>();
     // maybe these could be/should immutable?
-    public static boolean ignoreMoveAndSetupFlags=true; // was false
-    public static int ids;
+    private static boolean ignoreMoveAndSetupFlags=true; // was false
+    private static int ids;
 }
