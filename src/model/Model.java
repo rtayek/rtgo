@@ -95,6 +95,11 @@ public class Model extends Observable { // model of a go game or problem forrest
     public enum Reason { ok, notYourTurn, notYourColor; }
     public Model() { this(""); }
     public Model(String name) {
+        String useLegacyProperty=System.getProperty("legacy");
+        if(useLegacyProperty!=null&&useLegacyProperty.equalsIgnoreCase("true")) {
+            parserLogger.config("using legacy move!");
+            this.useLegacyMove=true;
+        }
         //if(name.contains("19")) Logging.mainLogger.severe("frog model has 19 in name.");
         this.name=name;
         setRoot();
@@ -625,8 +630,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     int depthFromSgf() { return state.depthFromSgf; }
     void do_(MNode node) { // set node and execute the sgf
-        final boolean useNewWay=true;
-        if(useNewWay) do2(node); // new way
+        if(useLegacyMove) do2(node); // new way
         else {
             state.node=node;
             if(node!=null) {//
@@ -1343,6 +1347,9 @@ public class Model extends Observable { // model of a go game or problem forrest
     public Histogram histogram=new Histogram(10,0,10);
     public transient long gameId; // temporary
     public final long id=++ids;
-    public boolean stopWaiting=false;
+    public boolean stopWaiting;
     static long ids;
+    public boolean useLegacyMove;
+
+    
 }
