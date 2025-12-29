@@ -16,6 +16,7 @@ import io.*;
 import io.IOs;
 import model.Move2.MoveType;
 import server.NamedThreadGroup.NamedThread;
+import model.formats.sgf.SgfDomainActionMapper;
 import sgf.*;
 import utilities.*;
 public class Model extends Observable { // model of a go game or problem forrest
@@ -628,7 +629,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
     }
-    int depthFromSgf() { return state.depthFromSgf; }
+      public int depthFromSgf() { return state.depthFromSgf; }
     void do_(MNode node) { // set node and execute the sgf
         if(useLegacyMove) do2(node); // new way
         else {

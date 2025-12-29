@@ -13,6 +13,7 @@ import equipment.Point;
 import equipment.Stone;
 import equipment.Board.Shape;
 import io.Logging;
+import model.formats.sgf.SgfDomainActionMapper;
 import sgf.*;
 import utilities.Utilities;
 import static io.IOs.noIndent;

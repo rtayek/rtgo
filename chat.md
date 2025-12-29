@@ -1,191 +1,115 @@
-I can show you a **package layout** immediately. For the “describe the properties” part, I need to re-open your current source to be exact (your uploaded tar has expired again on my side), so below I’ll give you (a) the SGF property taxonomy you’re already dealing with, and (b) a structure that keeps “properties” from infecting the engine—while staying compatible with what you’ve built.
+Keeping things in `model` for a while is a sensible “baby step,” as long as you enforce **boundaries by type**, not by folder name. You can get most of the architectural benefit now, then physically move packages later when the dust settles.
 
----
+Also: yes—**doing tic-tac-toe soon is a good idea**, but in a very specific, minimal way.
 
-## Package layout (incremental, low-risk, keeps tests green)
+## 1) “Keep it in model for now” without losing separation
 
-Goal: **Engine and model do not import `sgf.*` or `gtp.*`**, while SGF/GTP adapters can still produce/consume your `DomainAction` and `GameNode`.
-
-### A. Core engine (no SGF/GTP imports)
+Use **subpackages** under `model` to create boundaries while keeping everything “in one place”:
 
 ```
-core/
-  api/
-    GamePlugin.java
-    GameSession.java
-    EngineAdapter.java
-
+model/
   engine/
-    DomainAction.java           // sealed + action records, NO sgf imports
-    DomainApplier.java          // optional choke point; tiny step
-    EngineAction.java           // marker
-    ConfigAction.java           // marker
-    MetadataAction.java         // marker
+    DomainAction.java
+    GameNode.java
+    NodeAnnotations.java
+    Model.java
 
-  model/
-    GameNode.java               // your engine tree node, no sgf imports
-    NodeAnnotations.java        // replace sgf types with RawProperty (below)
-    RawProperty.java            // record RawProperty(String id, List<String> values)
-    Model.java                  // board/state + apply(engine actions)
+  formats/
+    sgf/
+      SgfToDomainActionMapper.java
+      DomainActionToSgfWriter.java   // later
+      RawProperty.java               // or keep in engine/
+    gtp/
+      GtpMoveCodec.java              // later
 
-  board/                        // optional name; could be equipment/
-    Board.java
-    Stone.java
-    Point.java
-    Topology.java
-    Shape.java
-```
-
-### B. Format adapters (where SGF/GTP is allowed)
-
-```
-adapters/
-  sgf/
-    SgfProperty.java
-    SgfNode.java / MNode.java
-    SgfParser.java
-    SgfWriter.java
-    SgfToDomainActionMapper.java     // SGF → List<DomainAction> + extras
-    DomainActionToSgfWriter.java     // optional later
-
-  gtp/
-    GtpClient.java / FrontEnd.java / BackEnd.java
-    GtpMoveCodec.java               // Move2 ↔ string, etc.
-    GtpToDomainActionMapper.java    // optional
-```
-
-### C. Go game plugin (domain logic, but engine-facing)
-
-```
-games/
   go/
-    GoPlugin.java
-    GoRules.java / GoEngine.java      // uses core.model + equipment
-    GoMove2.java                      // if you have a new move type
-    GoRenderer.java
-    GoRolePolicy.java
+    GoDomainRules.java               // if you need go-only helpers
+
+  util/
+    ModelHelper.java                 // transitional glue, but keep it thin
 ```
 
-### D. UI and CLI
+Key rule: **`model.engine.*` must not import `sgf.*`**.
+Even if `formats/sgf` is still inside `model`, the dependency direction is clean:
 
-```
-ui/
-  swing/
-    Main.java
-    GamePanel.java
-    Mediator.java
-    TreeView.java
-cli/
-  CliMain.java
-server/
-  GoServer.java
-```
+* `model.formats.sgf` → `model.engine`
+* not the other way around
 
-### Minimal “tiny step” move to get there
+That gives you “one place” without the “everything depends on everything” problem.
 
-You don’t have to move everything at once. The smallest change that enforces architecture:
+### Practical baby step you can do immediately
 
-1. Move **SGF mapping** out of `DomainAction` into:
+* Keep `DomainAction.applyTo(Model)` where it is (fine for now).
+* Move only the SGF mapping methods out of `DomainAction` into:
 
-* `adapters.sgf.SgfToDomainActionMapper`
+  * `model.formats.sgf.SgfToDomainActionMapper`
 
-2. Change `NodeAnnotations` to stop referencing SGF classes:
+No functional change; you just stop importing SGF types inside the engine surface.
 
-* `List<RawProperty>` rather than `List<SgfProperty>`
+## 2) When is a good time to do tic-tac-toe?
 
-That single change eliminates almost all `sgf.*` leakage into the engine.
+**Soon, but tiny.** The right moment is:
 
----
+> As soon as `GameNode + DomainAction + Model.apply(...)` compiles cleanly without SGF participation.
 
-## “We have a lot of properties floating around” — what they are
+You are basically there.
 
-You’re dealing with *three* different “property” concepts that easily get conflated:
+### What tic-tac-toe is for (in your project)
 
-### 1) SGF properties (file format properties)
+Not “features.” It’s an **architecture test**:
 
-These are key/value(s) pairs in an SGF node: `ID[values...]`
+* Can you run a full game without SGF?
+* Can your “engine actions” be game-agnostic?
+* Does your plugin/session boundary make sense?
+* Does the CLI select a plugin by id cleanly?
 
-**Where they belong:** `adapters.sgf.*`
+### Minimal TTT scope (1–2 evenings, not a new project)
 
-**Examples you already handle:**
+Do *only* this:
 
-* **Moves:** `B[dd]`, `W[pq]`, pass as `B[]` / `W[]`
-* **Setup stones:** `AB[aa][bb]`, `AW[...]`
-* **Board size:** `SZ[19]` or `SZ[19:17]`
-* **Game metadata:** `GM[1]` (Go), `FF[4]` (format), `AP[...]` (app)
-* **Rules-ish metadata:** `KM[6.5]`, `HA[2]`
-* **Timing:** `BL[...]`, `WL[...]`
-* **Comments / annotations:** `C[...]`
-* **Result:** `RE[...]`
-* **Regions / markup:** you have `RG[...]` and some private ones
-* **Private properties:** you mentioned `ZB`, `ZW`, maybe `RT`—your app-specific keys
+1. `games.ttt.TttPlugin` with an id (`"ttt"`)
+2. `TttState` with a 3×3 array
+3. `TttMove` as `(row, col)` (plus optional `pass` if you want symmetry, but not needed)
+4. A renderer that prints the board
+5. A CLI loop that plays two humans locally (no network, no SGF)
 
-These are not “engine domain actions.” They are **serialization inputs**.
+No AI. No server. No file formats.
 
-### 2) Engine domain actions (your internal semantic commands)
+### When *not* to do TTT yet
 
-These should be a **small closed set** your engine understands.
+If you are still actively changing:
 
-**Where they belong:** `core.engine.*`
+* how `Model` stores current state,
+* how you represent moves,
+* how apply/do2 is structured,
 
-Typical split (as you’ve already been doing):
+then do **Step 1 only**: a compiling `TttPlugin` skeleton that does nothing but identify itself. That still buys separation.
 
-* **EngineAction**: `PlayMove`, `Pass`, `Resign`, `AddStone`, `SetEdge`, etc.
-* **ConfigAction**: `SetBoardSize`, `SetTopology`, `SetShape`
-* **MetadataAction**: `Comment`, `ApplicationTag`, `Result`, `UnknownProperty`
+## 3) A “baby steps” sequence that keeps you moving
 
-These are what `Model.apply(...)` consumes.
+1. **Freeze engine API surface** (even if it lives under `model/`)
 
-### 3) Extras / annotations (unapplied SGF properties you want to preserve)
+   * `DomainAction` (engine only)
+   * `GameNode`
+   * `NodeAnnotations` (prefer raw properties, but can wait)
+   * `Model.apply(...)`
 
-This is your “don’t lose SGF data” bucket.
+2. **Move SGF mapping behind a façade**
 
-**Where they belong:** `core.model.NodeAnnotations` but **as raw data**, not SGF classes.
+   * `SgfToDomainActionMapper` in `model.formats.sgf`
+   * `Model` calls the mapper; does not interpret SGF
 
-That’s why I recommend:
+3. **Create TTT as a plugin that uses only engine types**
 
-```java
-record RawProperty(String id, List<String> values) {}
-```
+   * If this is easy, your boundaries are working.
+   * If this is painful, the pain is telling you exactly where coupling remains.
 
-So you can store *exactly what SGF contained* without coupling the model to SGF parsing types.
+## One important operational note
 
----
+I can’t currently re-open your uploaded tar files in this session because they’ve expired on my side. If you want me to tailor the subpackage names and identify the exact files that should move (e.g., the SGF mapping methods currently sitting in `DomainAction`), please re-upload `code7.tar.gz` once more.
 
-## Practical taxonomy: SGF properties → which bucket?
+If you don’t want to re-upload, paste just the headers (package + imports) of:
 
-This is the mental model you and your twin need to stay sane:
-
-### A) Properties that map to EngineAction (affect board/state)
-
-* `B`, `W` (move or pass)
-* `AB`, `AW` (setup stones)
-* `RG` (if treated as board mask/edge)
-* `ZB`, `ZW` (your resign markers)
-
-### B) Properties that map to ConfigAction (configure the engine)
-
-* `SZ` (board dimensions)
-* your embedded topology/shape markers (currently in `C[...]` with prefixes)
-
-### C) Properties that should become MetadataAction or Extras
-
-* `FF`, `GM`, `AP`, `KM`, `HA`, `BL`, `WL`, `RE`, normal `C[...]`
-* Any property you don’t interpret yet
-
-If you want the engine completely “SGF-agnostic,” then even these should *not* become `MetadataAction`—they should become **Extras** (RawProperty list). But that’s a later call; your current middle ground is fine.
-
----
-
-## Tiny next step I recommend you do next
-
-1. Create `core.model.RawProperty`
-2. Change `NodeAnnotations` to `List<RawProperty>`
-3. In SGF adapter code, convert `SgfProperty → RawProperty` when attaching annotations
-4. Move SGF mapping out of `DomainAction` into `adapters.sgf.SgfToDomainActionMapper`
-
-This is small, local, and will reduce “properties floating around” immediately.
-
----
-
-If you re-upload the current tar **one more time**, I’ll enumerate the *actual* property IDs you have in your `P2` enum / parser tables and classify each one into (EngineAction / ConfigAction / Metadata / Extras) so you have a definitive mapping list for the project.
+* `model.DomainAction`
+* `model.ModelHelper`
+  and I can still tell you exactly where the dependency boundary is leaking and how to fix it with minimal edits.

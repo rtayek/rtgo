@@ -7,7 +7,7 @@ import java.util.List;
 
 import model.DomainAction;
 import model.Model;
-import model.SgfDomainActionMapper;
+import model.formats.sgf.SgfDomainActionMapper;
 import org.junit.Test;
 
 public class ExtraPropertiesTestCase {

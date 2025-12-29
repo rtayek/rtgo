@@ -1,4 +1,4 @@
-package model;
+package model.formats.sgf;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,6 +8,8 @@ import equipment.Board;
 import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
+import model.DomainAction;
+import model.Model;
 import sgf.MNode;
 import sgf.P2;
 import sgf.SgfProperty;
