@@ -1,115 +1,216 @@
-Yes, I still recommend the **3-way split**, and what you have in the current tar is already heading in exactly the right direction.
+Yes — I still recommend the **3-way split of DomainAction**, and given where you are now, it’s the *right* time to lock it in. What you’ve done already (moving `processProperty`, shrinking legacy `Move`, introducing sub-interfaces) is exactly the momentum you want.
 
-## 1) Do I still recommend a 3-way split of DomainAction?
+Below is a **small, concrete recommendation** you can hand directly to your “evil twin” and implement incrementally without destabilizing tests.
 
-Yes—because it lets you keep the **engine inner loop** tight while still round-tripping “everything SGF said” without infecting the model with SGF concerns.
+---
 
-A practical split that matches your current code is:
+## 1. The 3-way DomainAction split (still recommended)
 
-1. **Engine actions (state mutation)**
-   Things that change the *game position / rules state*.
+The split is **not arbitrary**; it matches *three fundamentally different responsibilities* that were previously entangled inside `Model.do_()` and SGF parsing.
 
-   * Play / Pass / Resign
-   * Setup stones (AB/AW)
-   * Board edges / cutouts (RG) *if you model them as board state*
-   * Capture resolution etc. (already internal to your go logic)
+### 1.1 Core split
 
-2. **Configuration actions (board spec / topology / shape)**
-   Things that change “what kind of board are we on,” not a move.
+```java
+interface DomainAction {
+    void apply(Model model);
+}
+```
 
-   * SZ, topology, shape, regions-as-geometry, etc.
+Now split into **three sub-interfaces**:
 
-3. **Metadata actions (no-op to engine)**
-   Everything else that should survive round-trip but should not touch gameplay.
+```java
+interface StateAction extends DomainAction {
+    // mutates game state but not the board
+}
 
-   * FF, GM, KM, HA, BL/WL, AP, C comments (unless you deliberately interpret some “private comment protocol”), unknown properties, etc.
+interface BoardAction extends DomainAction {
+    // mutates board contents
+}
 
-In your current `DomainAction`, you effectively already have:
+interface MetaAction extends DomainAction {
+    // annotations, comments, metadata, round-trip info
+}
+```
 
-* Engine-ish (`Move`, `Pass`, `Resign`, `SetupAddStone`, `SetupSetEdge`)
-* Config-ish (`SetBoardSpec`, `SetTopology`, `SetShape`)
-* Metadata-ish (`Metadata`, `RecordResult` (currently metadata-only))
+Why this still holds:
 
-That is good. If you want to make the split *explicit* without changing behavior, the cleanest low-risk step is:
+| Action kind     | Examples                                     | Belongs where    |
+| --------------- | -------------------------------------------- | ---------------- |
+| **StateAction** | move number, player to move, pass, resign    | Engine semantics |
+| **BoardAction** | place stone, clear point, mark edge/region   | Board semantics  |
+| **MetaAction**  | comments, application tags, unused SGF props | Not engine       |
 
-* Keep `DomainAction` sealed.
-* Introduce **marker subinterfaces**:
+This gives you **compile-time clarity** and lets you later route actions differently (e.g., skip MetaActions in headless play).
 
-  * `sealed interface EngineAction extends DomainAction permits ...`
-  * `sealed interface ConfigAction extends DomainAction permits ...`
-  * `sealed interface MetadataAction extends DomainAction permits ...`
-* Then your apply path can be:
+---
 
-  * engine applies only `EngineAction`
-  * configuration applies only `ConfigAction`
-  * metadata is stored only (never applied)
+## 2. What no longer belongs in `Model` (now)
 
-This will make it much harder for SGF “random stuff” to leak back into the inner loop later.
+You asked what should *leave* the model. At this stage, the rule is simple:
 
-## 2) Recommendation to Codex: “unapplied SGF properties stored alongside nodes”
+> **If it does not directly mutate engine state or board state, it should not live in `Model`.**
 
-You already implemented the essence of it:
+### Explicitly migrate out:
 
-* `sgf.MNode` has `extraProperties` plus `addExtraProperty()` and you include extras in round-trip output (your `toBinaryTree()` appears to append `extraProperties` after `sgfProperties`).
-* `DomainAction.mapNodeToDomainActions()` moves unknown/unhandled SGF properties out of `sgfProperties()` and into `extraProperties()`.
-* `ModelHelper.toGameNode()` builds `NodeAnnotations` from `node.extraProperties()`.
+1. **SGF property decoding**
 
-So the concrete recommendation to your evil twin is:
+   * `P2`, `SgfProperty`, parsing logic
+   * Already moving → good
 
-1. **Make “extras/unapplied” strictly lossless and strictly inert**
+2. **SGF → semantics mapping**
 
-   * Never interpret `extraProperties` in the engine.
-   * Never drop them.
-   * Round-trip serialization must always emit: `sgfProperties + extraProperties` (which you’ve basically done).
+   * `processProperty`
+   * Replace with:
 
-2. **Decide one canonical storage location**
+     ```java
+     List<DomainAction> actions = sgfInterpreter.map(property);
+     ```
 
-   * Either:
+3. **Round-trip preservation**
 
-     * Keep extras on `MNode` only (source-of-truth for SGF round-trip), and `NodeAnnotations` just mirrors it when you convert to `GameNode`.
-   * Or:
+   * Extra SGF properties
+   * Comments not affecting play
+   * Store on node, not in model state
 
-     * Move the source-of-truth to `GameNode.annotations.unapplied` once you’ve fully decoupled from SGF trees.
-   * For now, your current “extras live on `MNode`” approach is ideal: minimal disruption, preserves tests.
+4. **GTP formatting / coordinate conversion**
 
-3. **Widen “extras” beyond unknown properties**
+   * Already partially moved → finish this
+   * Model should not know GTP exists
 
-   * Today you move properties with `p2 == null` to extras.
-   * Next low-risk improvement: also move “known but not mapped” properties to extras (instead of `Metadata`), *if* you want metadata to be SGF-only.
-   * Or keep your current `Metadata(P2, values)` as “structured extras.” Both are defensible—just don’t apply it in the engine.
+What stays in `Model`:
 
-4. **Add one guardrail test (you basically did)**
+* `apply(DomainAction)`
+* Board creation
+* State stack
+* Tree navigation (but not SGF semantics)
 
-   * A test that loads SGF with a property you don’t support (or don’t map), runs through model conversion/round-trip, and asserts the property survives byte-for-byte (or structurally).
-   * If you want it stronger: assert ordering (SGF property order sometimes matters for picky tools).
+---
 
-That’s the tiny step that keeps you honest while you rip SGF out of the model.
+## 3. Recommendation for “unapplied SGF properties” (your quoted item)
 
-## 3) What does not belong in the Model anymore?
+Here is a **minimal, safe design** that preserves *all* SGF information without polluting the engine.
 
-Given where you are (tests passing, inner loop matters), I would draw a hard boundary:
+### 3.1 Store extras on the node, not the model
 
-**Model should own:**
+In `MNode` (or equivalent):
 
-* Current position / board reference
-* Variation navigation (parent/children pointers) *in whatever node structure you decide*
-* Applying *engine actions* to mutate state
-* Minimal eventing needed by UI (but ideally via an adapter)
+```java
+final class NodeExtras {
+    private final List<SgfProperty> unapplied = new ArrayList<>();
 
-**Model should not own (or should be on a “containment leash”):**
+    void add(SgfProperty p) {
+        unapplied.add(p);
+    }
 
-* SGF parsing/serialization (`Parser`, `SgfProperty`, etc.)
-* SGF interpretation rules (mapping SGF properties to actions)
-* GTP protocol formatting/parsing
-* Server/network concerns
-* UI concerns (Swing widgets, view state)
-* Disk I/O
+    List<SgfProperty> all() {
+        return List.copyOf(unapplied);
+    }
+}
+```
 
-You’ve already moved `processProperty` out; that is exactly the right kind of extraction. The next “temporary but valuable” move is:
+And in `MNode`:
 
-* Keep `DomainAction.applyTo(model)` for now if you must (you said you temporarily moved apply there), **but treat it as a staging area**.
-* Ultimately you want `model.apply(EngineAction)` and a separate `Interpreter` that produces `List<DomainAction>` from SGF nodes.
+```java
+private NodeExtras extras = new NodeExtras();
 
-If you want, I can point to the next **low-risk extraction** in your current tar (based on what you already have): the mapping path `DomainAction.mapPropertyToDomainActions()` is now the “SGF interpreter nucleus.” The model should call it, but should not *contain* it.
+public NodeExtras extras() {
+    return extras;
+}
+```
 
-If you paste (or point me to) the new test you added (filename), I can tell you whether it’s covering the right failure mode (lossless extras, ordering, or both).
+### 3.2 Interpreter responsibility
+
+Your SGF interpreter does this:
+
+```java
+List<DomainAction> actions = map(property);
+
+if (actions.isEmpty()) {
+    node.extras().add(property);
+}
+```
+
+That’s it.
+
+### Why this works
+
+* **Round-trip safety**: nothing is lost
+* **Engine purity**: model never sees SGF
+* **Future extensibility**: later you can interpret more properties
+* **Testable**: extras are deterministic and inspectable
+
+---
+
+## 4. About having non-SGF game nodes (you are right)
+
+You are absolutely right to want:
+
+> “our own game nodes that do not necessarily require any sgf”
+
+The architectural rule:
+
+* **GameNode** = engine tree
+* **SgfNode** = serialization / interchange format
+
+Mapping layer:
+
+```
+SgfNode ──► DomainActions ──► GameNode
+GameNode ──► DomainActions ──► SgfNode
+```
+
+You are *already halfway there* with DomainAction.
+
+This is what allows:
+
+* multiple game formats later
+* different board topologies
+* AI training without SGF baggage
+
+---
+
+## 5. Tiny next step (as requested)
+
+Since you said “just a tiny step”, here is the smallest useful move:
+
+> **Make `apply` live outside Model, temporarily**
+
+Create:
+
+```java
+final class DomainApplier {
+    static void apply(Model model, DomainAction action) {
+        action.apply(model);
+    }
+}
+```
+
+Then replace calls inside `Model.do2()`.
+
+This:
+
+* breaks dependency cycles
+* makes Model thinner
+* is fully reversible
+* requires no test rewrites
+
+---
+
+## Summary for your evil twin
+
+You can literally send this:
+
+> Keep the 3-way DomainAction split (State / Board / Meta).
+> Move SGF semantics entirely into an interpreter that produces DomainActions.
+> Store unapplied SGF properties on nodes as extras for round-trip safety.
+> The Model should only apply actions — never decode SGF or GTP.
+> As a small step, move `apply` out of Model into a helper.
+
+You are not “starting over” — you are **excavating the engine from 25 years of sediment**, and the structure you’re building is sound.
+
+When you’re ready, the next big payoff is:
+
+* **TTT plugin using the same DomainAction pipeline**
+* or **a pure engine test with zero SGF involved**
+
+Both will validate the architecture immediately.
