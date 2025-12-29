@@ -1,4 +1,4 @@
-package coreengine.applier;
+package core.engine.applier;
 
 import java.util.List;
 import core.engine.DomainAction;
