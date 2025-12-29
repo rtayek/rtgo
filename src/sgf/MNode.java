@@ -27,7 +27,7 @@ public class MNode {
         }
     }
     @Override public int hashCode() {
-        return Objects.hash(sgfProperties);
+        return Objects.hash(sgfProperties,extraProperties);
         // remember to fix this when we move to generics
     }
     @Override public boolean equals(Object obj) {
@@ -35,7 +35,7 @@ public class MNode {
         if(obj==null) return false;
         if(getClass()!=obj.getClass()) return false;
         MNode other=(MNode)obj;
-        return Objects.equals(sgfProperties,other.sgfProperties);
+        return Objects.equals(sgfProperties,other.sgfProperties)&&Objects.equals(extraProperties,other.extraProperties);
     }
     boolean checkFlags() {
         boolean ok=true;
@@ -62,7 +62,10 @@ public class MNode {
                 tail=newRight;
             }
         }
-        SgfNode node=new SgfNode(sgfProperties,null,left); // first child
+        List<SgfProperty> allProps=new ArrayList<>(sgfProperties.size()+extraProperties.size());
+        allProps.addAll(sgfProperties);
+        allProps.addAll(extraProperties);
+        SgfNode node=new SgfNode(allProps,null,left); // first child
         return node;
     }
     private static MNode toGeneralTree(SgfNode node,MNode grandParent) {
@@ -172,6 +175,7 @@ public class MNode {
         StringBuffer stringBuffer=new StringBuffer(";");
         if(data!=null) stringBuffer.append("("+data+")");
         for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
+        for(Iterator<SgfProperty> i=extraProperties.iterator();i.hasNext();) stringBuffer.append(i.next().toString());
         return stringBuffer.toString();
     }
     public static Collection<SgfNode> findPathToNode(MNode target,SgfNode root) {
@@ -248,6 +252,8 @@ public class MNode {
     public Long label() { return label; }
     public void setLabel(Long label) { this.label=label; }
     public List<SgfProperty> sgfProperties() { return sgfProperties; }
+    public List<SgfProperty> extraProperties() { return extraProperties; }
+    public void addExtraProperty(SgfProperty property) { extraProperties.add(property); }
     public MNode parent() { return parent; }
     private Long label;
     private Integer data;
@@ -257,6 +263,7 @@ public class MNode {
     //public /*final*/ boolean hasAMove,hasAMoveType;
     private boolean hasAMove,hasAMoveType,hasASetupType;
     private final List<SgfProperty> sgfProperties=new ArrayList<>();
+    private final List<SgfProperty> extraProperties=new ArrayList<>();
     // maybe these could be/should immutable?
     private static boolean ignoreMoveAndSetupFlags=true; // was false
     private static int ids;

@@ -1,6 +1,7 @@
 package model;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 import equipment.*;
 import equipment.Coordinates;
 import equipment.Board.Shape;
@@ -86,7 +87,16 @@ sealed interface DomainAction permits DomainAction.SetBoardSpec, DomainAction.Se
     static List<DomainAction> mapNodeToDomainActions(Model model,MNode node) {
         List<DomainAction> actions=new ArrayList<>();
         if(node==null) return actions;
-        for(SgfProperty property:node.sgfProperties()) actions.addAll(mapPropertyToDomainActions(model,property));
+        for(Iterator<SgfProperty> it=node.sgfProperties().iterator();it.hasNext();) {
+            SgfProperty property=it.next();
+            P2 p2=P2.which(property.p().id);
+            if(p2==null) {
+                it.remove();
+                node.addExtraProperty(property);
+                continue;
+            }
+            actions.addAll(mapPropertyToDomainActions(model,property));
+        }
         return actions;
     }
 

@@ -1,3 +1,4 @@
+pass legacy switch from gradle as env variable to junit
 git config --global http.sslverify "false"
 make the keys work in the gui! rubout and home/end etc.
 maybe find an interface for model. note: model is am observable.

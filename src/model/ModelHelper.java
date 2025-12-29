@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 import equipment.Board;
 import equipment.Coordinates;
@@ -26,6 +27,23 @@ public final class ModelHelper {
     }
 
     private ModelHelper() {}
+
+    static GameNode toGameNode(Model model,sgf.MNode node) { return toGameNode(model,node,null); }
+    private static GameNode toGameNode(Model model,sgf.MNode node,GameNode parent) {
+        if(node==null) return null;
+        List<DomainAction> actions=DomainAction.mapNodeToDomainActions(model,node);
+        List<SgfProperty> extras=new ArrayList<>(node.extraProperties());
+        NodeAnnotations annotations=extras.isEmpty()?NodeAnnotations.empty():
+                new NodeAnnotations(extras,List.of());
+        List<GameNode> children=new ArrayList<>(node.children().size());
+        GameNode current=new GameNode(actions,annotations,children);
+        current.parent=parent;
+        for(sgf.MNode child:node.children()) {
+            GameNode c=toGameNode(model,child,current);
+            if(c!=null) children.add(c);
+        }
+        return current;
+    }
 
     static void processProperty(Model model,Model.State state,SgfProperty property) {
         // need a way to convert this/these to gtp?
