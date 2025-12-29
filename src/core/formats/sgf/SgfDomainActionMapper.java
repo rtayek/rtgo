@@ -1,15 +1,14 @@
-package model.formats.sgf;
+package core.formats.sgf;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import core.engine.DomainAction;
 import equipment.Board;
 import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
 import model.Model;
-import model.engine.DomainAction;
 import sgf.MNode;
 import sgf.P2;
 import sgf.SgfProperty;

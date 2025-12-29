@@ -1,4 +1,4 @@
-package model.engine;
+package core.engine;
 
 import java.util.List;
 import equipment.Board;

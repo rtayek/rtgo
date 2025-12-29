@@ -6,9 +6,9 @@ import java.io.StringReader;
 import java.util.List;
 
 import model.Model;
-import model.engine.DomainAction;
-import model.formats.sgf.SgfDomainActionMapper;
 import org.junit.Test;
+import core.engine.DomainAction;
+import core.formats.sgf.SgfDomainActionMapper;
 
 public class ExtraPropertiesTestCase {
     @Test public void unknownPropertiesArePreserved() {

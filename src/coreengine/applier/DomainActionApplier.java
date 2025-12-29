@@ -1,7 +1,7 @@
-package model.engine.applier;
+package coreengine.applier;
 
 import java.util.List;
-import model.engine.DomainAction;
+import core.engine.DomainAction;
 import model.Model;
 
 /**
