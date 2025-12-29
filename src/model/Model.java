@@ -618,7 +618,7 @@ public class Model extends Observable { // model of a go game or problem forrest
             return;
         }
         try {
-            List<DomainAction> actions=DomainAction.mapNodeToDomainActions(this,node); // node-level mapping
+            List<DomainAction> actions=SgfDomainActionMapper.mapNodeToDomainActions(this,node); // node-level mapping
             new SgfModelApplier(this).applyAll(actions);
         } catch(Exception e) {
             Logging.mainLogger.severe(name+" caught: "+e);

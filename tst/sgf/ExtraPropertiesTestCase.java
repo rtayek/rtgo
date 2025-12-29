@@ -7,7 +7,7 @@ import java.util.List;
 
 import model.DomainAction;
 import model.Model;
-import model.ModelHelper;
+import model.SgfDomainActionMapper;
 import org.junit.Test;
 
 public class ExtraPropertiesTestCase {
@@ -30,10 +30,10 @@ public class ExtraPropertiesTestCase {
 
         Model model=new Model();
 
-        DomainAction.mapNodeToDomainActions(model,root); // mutates extraProperties
+        SgfDomainActionMapper.mapNodeToDomainActions(model,root); // mutates extraProperties
         assertEquals(List.of(keepRoot),root.extraProperties());
 
-        DomainAction.mapNodeToDomainActions(model,child);
+        SgfDomainActionMapper.mapNodeToDomainActions(model,child);
         assertEquals(List.of(keepChild),child.extraProperties());
     }
 }

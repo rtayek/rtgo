@@ -31,10 +31,12 @@ public final class ModelHelper {
     static GameNode toGameNode(Model model,sgf.MNode node) { return toGameNode(model,node,null); }
     private static GameNode toGameNode(Model model,sgf.MNode node,GameNode parent) {
         if(node==null) return null;
-        List<DomainAction> actions=DomainAction.mapNodeToDomainActions(model,node);
+        List<DomainAction> actions=SgfDomainActionMapper.mapNodeToDomainActions(model,node);
         List<SgfProperty> extras=new ArrayList<>(node.extraProperties());
-        NodeAnnotations annotations=extras.isEmpty()?NodeAnnotations.empty():
-                new NodeAnnotations(extras,List.of());
+        List<RawProperty> rawExtras=new ArrayList<>(extras.size());
+        for(SgfProperty p:extras) rawExtras.add(new RawProperty(p.p().id,p.list()));
+        NodeAnnotations annotations=rawExtras.isEmpty()?NodeAnnotations.empty():
+                new NodeAnnotations(rawExtras,List.of());
         List<GameNode> children=new ArrayList<>(node.children().size());
         GameNode current=new GameNode(actions,annotations,children);
         current.parent=parent;
