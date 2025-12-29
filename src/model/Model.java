@@ -1135,12 +1135,6 @@ public class Model extends Observable { // model of a go game or problem forrest
             // should copy everything that we need?
             return state;
         }
-        static void removeCapturedStones(Board board,List<Block> blocks) {
-            for(Block block:blocks) {
-                Logging.mainLogger.fine(""+" "+"removing "+block);
-                for(Point point:block.points()) board.setAt(point,Stone.vacant);
-            }
-        }
         private void adjustPrisonerCount(Block block,int sign) {
             switch(block.color()) {
                 case black:
@@ -1162,7 +1156,6 @@ public class Model extends Observable { // model of a go game or problem forrest
         private void adjustPrisonerCountsForRemovedCapturedStones(List<Block> captured) {
             adjustPrisonerCounts(captured,1);
         }
-        private void addStoneToBoard(Stone stone,Point point) { board.setAt(point.x,point.y,stone); }
         private void toggleTurn() { turn=turn.otherColor(); }
         void sgfResign() { // make sure this is correct
             Move2 move=turn==Stone.black?Move2.blackResign:Move2.whiteResign;
@@ -1188,13 +1181,13 @@ public class Model extends Observable { // model of a go game or problem forrest
             // check for pass?
             if(stone.equals(Stone.vacant)) throw new RuntimeException("bad move");
             if(board.at(point)!=Stone.vacant) Logging.mainLogger.severe("sgf is moving onan occupied point: "+point);
-            addStoneToBoard(stone,point);
+            board.setAt(point.x,point.y,stone);
             lastMoveGTP=Coordinates.toGtpCoordinateSystem(point,board.width(),board.depth());
             lastColorGTP=stone;
             // find opponents blocks on adjacent intersections
             // need to find them all so we can check for in atari
             capturedBlocks=Block.findAdjacentCapturedOpponentsBlocks(board,point,stone);
-            removeCapturedStones(board,capturedBlocks);
+            board.setTo(Stone.vacant,capturedBlocks);
             if(capturedBlocks.size()>0); // Audio.playCaptureSound();
             Block fromThisMove=Block.find(board,point);
             if(fromThisMove.liberties()==0) { //can we assume capturedBlocks.size()==0
@@ -1222,11 +1215,11 @@ public class Model extends Observable { // model of a go game or problem forrest
             if(board==null) { Logging.mainLogger.warning(""+" "+"board is null in unmake!"); return; }
             if(capturedBlocks!=null) for(Block block:capturedBlocks) {
                 Stone who=block.color();
-                for(Point point:block.points()) addStoneToBoard(who,point);
+                board.setTo(who,block);
             }
             if(selfCaptured!=null) {
                 Stone who=selfCaptured.color();
-                for(Point point:selfCaptured.points()) addStoneToBoard(who,point);
+                board.setTo(who,selfCaptured);
             }
             board.setAt(at,Stone.vacant);
             adjustPrisonerCountsForRestoredCapturedStones(capturedBlocks);
