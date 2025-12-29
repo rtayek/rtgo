@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import java.io.StringReader;
 import java.util.List;
 
-import model.DomainAction;
 import model.Model;
+import model.engine.DomainAction;
 import model.formats.sgf.SgfDomainActionMapper;
 import org.junit.Test;
 

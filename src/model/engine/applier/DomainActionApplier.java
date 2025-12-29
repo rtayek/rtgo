@@ -1,13 +1,16 @@
-package model;
+package model.engine.applier;
+
 import java.util.List;
+import model.engine.DomainAction;
+import model.Model;
 
 /**
- * Applies DomainActions to a Model. Keeps Model free of SGF/GTP decoding.
+ * Applies DomainActions to a Model. Keeps Model free of decoding concerns.
  */
-public class SgfModelApplier {
+public class DomainActionApplier {
     private final Model model;
 
-    public SgfModelApplier(Model model) { this.model=model; }
+    public DomainActionApplier(Model model) { this.model=model; }
 
     public void apply(DomainAction action) { DomainAction.applyTo(action,model); }
     public void applyAll(List<DomainAction> actions) {

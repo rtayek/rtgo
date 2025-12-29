@@ -15,8 +15,10 @@ import equipment.Board.*;
 import io.*;
 import io.IOs;
 import model.Move2.MoveType;
-import server.NamedThreadGroup.NamedThread;
+import model.engine.DomainAction;
+import model.engine.applier.DomainActionApplier;
 import model.formats.sgf.SgfDomainActionMapper;
+import server.NamedThreadGroup.NamedThread;
 import sgf.*;
 import utilities.*;
 public class Model extends Observable { // model of a go game or problem forrest
@@ -407,13 +409,13 @@ public class Model extends Observable { // model of a go game or problem forrest
         Logging.mainLogger.info("appending comment: "+string);
         if(string!=null&&!string.isEmpty()) addProperty(currentNode(),P.C,string);
     }
-    void sgfPassAction() { state.sgfPass(); }
-    void sgfResignAction() { state.sgfResign(); /* color ignored for now */ }
+    public void sgfPassAction() { state.sgfPass(); }
+    public void sgfResignAction() { state.sgfResign(); /* color ignored for now */ }
     public String lastMoveGTP() { // what about pass?
         return state.lastMoveGTP;
     }
     public Stone lastColorGTP() { return state.lastColorGTP; }
-    void sgfMakeMove(Stone stone,Point point) { // only called by tests
+    public void sgfMakeMove(Stone stone,Point point) { // only called by tests
         state.sgfMakeMove(stone,point);
     }
     void sgfUnmakeMove(Point at) { // only called by tests
@@ -620,7 +622,7 @@ public class Model extends Observable { // model of a go game or problem forrest
         }
         try {
             List<DomainAction> actions=SgfDomainActionMapper.mapNodeToDomainActions(this,node); // node-level mapping
-            new SgfModelApplier(this).applyAll(actions);
+            new DomainActionApplier(this).applyAll(actions);
         } catch(Exception e) {
             Logging.mainLogger.severe(name+" caught: "+e);
             IOs.stackTrace(10);

@@ -1,12 +1,13 @@
-package model;
+package model.engine;
 
 import java.util.List;
 import equipment.Board;
 import equipment.Point;
 import equipment.Stone;
+import model.Model;
 
 /**
- * Domain-level actions. SGF mapping is handled elsewhere.
+ * Domain-level actions. SGF mapping lives in format adapters.
  */
 public sealed interface DomainAction permits DomainAction.EngineAction, DomainAction.ConfigAction, DomainAction.MetadataAction {
     // Marker subtypes to clarify intent (no behavior change)
@@ -27,7 +28,7 @@ public sealed interface DomainAction permits DomainAction.EngineAction, DomainAc
     // optional: FF/GM/HA/KM/AP etc as extras (no-op for core)
     record Metadata(Object tag,List<String> values) implements MetadataAction {}
 
-    default void apply(Model model) { applyTo(this,model); }
+    default void apply(model.Model model) { applyTo(this,model); }
 
     static void applyTo(DomainAction action,Model model) {
         switch(action) {
