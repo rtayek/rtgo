@@ -5,7 +5,7 @@ import java.util.*;
 import model.Interfaces.Persistance;
 import utilities.Range;
 public class OptionsABC implements Persistance { // an instance of options.
-    public class Option<T extends Enum<T>,R> { // an instance of one option.
+    public class Option<T extends Enum<T>,R extends Comparable<R>> { // an instance of one option.
         // should this be abstract?
         // no!
         // change T or N or Name?
@@ -47,7 +47,7 @@ public class OptionsABC implements Persistance { // an instance of options.
         // subclass to get option with a widget.
         // or ?
     } // end of inner option class.
-    @SuppressWarnings("unchecked") public <T extends Enum<T>,R> Option<T,R> get(T name) {
+    @SuppressWarnings("unchecked") public <T extends Enum<T>,R extends Comparable<R>> Option<T,R> get(T name) {
         return (Option<T,R>)map.get(name);
     }
     public Option<?,?> getOption(Enum<?> name) { return map.get(name); }

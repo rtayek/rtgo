@@ -9,14 +9,14 @@ import model.Interfaces.*;
 import utilities.Range;
 // we need a clas in between options abc and this class.
 abstract class WidgetOptions extends OptionsABC implements Widgets {
-    public abstract class WidgetOption<T extends Enum<T>,R>extends Option<T,R> implements Widget {
+    public abstract class WidgetOption<T extends Enum<T>,R extends Comparable<R>>extends Option<T,R> implements Widget {
         public WidgetOption(T t,Object defaultValue,Range<R> range) { super(t,defaultValue,range); }
     }
     JComponent jComponent;
 }
 public class SpinnerOptions extends WidgetOptions {
     Class<Parameters> c=Parameters.class; // hack
-    public class SpinnerOption<T extends Enum<T>,R>extends WidgetOption<T,R> {
+    public class SpinnerOption<T extends Enum<T>,R extends Comparable<R>>extends WidgetOption<T,R> {
         public SpinnerOption(T t,Object defaultValue,Range<R> range,JSpinner jSpinner,String tooltipText,
                 KeyStroke keyStroke) {
             super(t,defaultValue,range);

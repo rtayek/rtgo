@@ -625,7 +625,7 @@ public class Model extends Observable { // model of a go game or problem forrest
     }
     int depthFromSgf() { return state.depthFromSgf; }
     void do_(MNode node) { // set node and execute the sgf
-        final boolean useNewWay=false;
+        final boolean useNewWay=true;
         if(useNewWay) do2(node); // new way
         else {
             state.node=node;

@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
-public class Range<T> {
+public class Range<T extends Comparable<T>> {
     static class Ranges extends TreeSet<Range<?>> {
         // add  and and or
         // how about not?
