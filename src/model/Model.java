@@ -100,8 +100,9 @@ public class Model extends Observable { // model of a go game or problem forrest
     public Model(String name) {
         String useLegacyProperty=System.getProperty("legacy");
         if(useLegacyProperty!=null&&useLegacyProperty.equalsIgnoreCase("true")) {
-            parserLogger.config("using legacy move!");
-            System.out.println("using legacy move!");
+            Logging.mainLogger.config("using legacy move!");
+            Logging.mainLogger.severe(useLegacyProperty);
+            System.out.println("using legacy move im model!");
             this.useLegacyMove=true;
         }
         //if(name.contains("19")) Logging.mainLogger.severe("frog model has 19 in name.");

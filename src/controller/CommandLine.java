@@ -173,16 +173,12 @@ public class CommandLine {
     void startup() { for(String command:startup) process(command); }
     public static void main(String[] arguments) throws IOException {
         System.out.println(Init.first);
-        CommandLine commandLine=new CommandLine();
         Logging.useColor=false;
-        LogManager.getLogManager().reset();
-        Logger logger=Logger.getLogger(commandLine.getClass().getName());
-        System.out.println("logger level: "+logger.getLevel());
-        Handler handler=new ConsoleHandler();
-        logger.addHandler(handler);
-        System.out.println("handler level: "+handler.getLevel());
-        logger.info("message");
-
+        // Initialize logging before constructing the model so early messages are captured.
+        Logging.setUpLogging();
+        Logging.setLevels(Level.CONFIG);
+        CommandLine commandLine=new CommandLine();
+        Logging.mainLogger.config("constructed command line: "+commandLine);
         commandLine.startup();
         commandLine.run();
     }
