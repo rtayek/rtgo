@@ -9,11 +9,10 @@ import model.Model;
 /**
  * Domain-level actions. SGF mapping lives in format adapters.
  */
-public sealed interface DomainAction permits DomainAction.EngineAction, DomainAction.ConfigAction, DomainAction.MetadataAction {
+public sealed interface DomainAction permits DomainAction.EngineAction, DomainAction.ConfigAction {
     // Marker subtypes to clarify intent (no behavior change)
     sealed interface EngineAction extends DomainAction permits SetupAddStone, SetupSetEdge, Move, Pass, Resign {}
     sealed interface ConfigAction extends DomainAction permits SetBoardSpec, SetTopology, SetShape {}
-    sealed interface MetadataAction extends DomainAction permits RecordResult, Metadata {}
 
     record SetBoardSpec(int width,int depth) implements ConfigAction {} // creates board using current state.topology/state.shape
     record SetTopology(Board.Topology topology) implements ConfigAction {}
@@ -23,10 +22,6 @@ public sealed interface DomainAction permits DomainAction.EngineAction, DomainAc
     record Move(Stone color,Point point) implements EngineAction {}
     record Pass(Stone color) implements EngineAction {}
     record Resign(Stone color) implements EngineAction {}
-    // optional: keep RE but do not apply to core game end
-    record RecordResult(String result) implements MetadataAction {}
-    // optional: FF/GM/HA/KM/AP etc as extras (no-op for core)
-    record Metadata(Object tag,List<String> values) implements MetadataAction {}
 
     default void apply(model.Model model) { applyTo(this,model); }
 
@@ -61,10 +56,6 @@ public sealed interface DomainAction permits DomainAction.EngineAction, DomainAc
             }
             case DomainAction.Pass a->model.sgfPassAction();
             case DomainAction.Resign a->model.sgfResignAction();
-            case DomainAction.RecordResult a-> {
-                /* metadata only for now */ }
-            case DomainAction.Metadata a-> {
-                /* no-op */ }
             default->throw new IllegalArgumentException("Unexpected value: "+action);
         }
     }

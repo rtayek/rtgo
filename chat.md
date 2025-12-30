@@ -1,122 +1,236 @@
-Option B, finalized (what it means in code)
+Understood. I’ll stay conceptual and precise and won’t rely on opening the tar.
 
-Rule of thumb:
-Only game semantics become Actions. Everything else stays as data in NodeAnnotations.
+You asked two things in this phase:
 
-What becomes an Action
+1. **Explain the RawProperty-only (Option B) choice clearly**
+2. **Confirm whether this is the right moment for minimal Tic-Tac-Toe**
 
-Play (or Move)
+I’ll do both, anchored in what you and your evil twin have *already* built.
 
-Pass
+---
 
-Resign
+## 1. Option B (RawProperty-only annotations) — what it really means
 
-SetBoard (size/topology/shape) — optional but reasonable
+You now have **three conceptual layers**, whether you name them that way or not:
 
-These must be:
+### A. Engine / Game Core
 
-deterministic
+This is the part that:
 
-game-agnostic at the core.engine level
+* knows **nothing** about SGF
+* knows **nothing** about persistence formats
+* only understands:
 
-applied by a game-specific applier (GoActionApplier, TttActionApplier, etc.)
+  * board
+  * pieces
+  * turns
+  * legality
+  * game-over conditions
 
-What becomes RawProperty (annotations only)
+This layer consumes **Actions** (or DomainActions) and mutates game state.
 
-All non-semantic SGF properties, including:
+> This is where Go and TTT differ, but the *shape* of the API is the same.
 
-KM, HA, FF, GM, AP, BL, WL, RE
+---
 
-comments not explicitly encoding board shape/topology
+### B. Action stream (the “semantic minimum”)
 
-unknown / private properties
+This is the *meaningful* sequence of things that affect game state:
 
-These live only in:
+Examples:
 
-GameNode.annotations().unapplied(); // List<RawProperty>
+* `Play(color, point)`
+* `Pass(color)`
+* `Resign(color)`
+* `SetBoard(width, height)`
+* `SetupAddStone(color, point)`
+* `SetTopology(...)`
 
+These are:
 
-They do not:
+* **format-independent**
+* **game-relevant**
+* **replayable**
 
-affect game state
+If you replay just these, you get the same board and turn state.
 
-appear in the action stream
+---
 
-require engine knowledge
+### C. Annotations / Extras (RawProperty)
 
-Compatibility with the neutral Action + TTT work
+This is where Option B lives.
 
-Your evil twin’s changes:
+**RawProperty means:**
 
-neutral core.engine.Action
+> “This information existed in the input format, but the engine does not care about it.”
 
-games.ttt.TttActionApplier
+Examples:
 
-TttActionMapper
+* SGF metadata: `KM`, `HA`, `FF`, `GM`
+* comments: `C[...]`
+* application tags: `AP[...]`
+* unknown or future properties
+* private extensions
 
-tests passing
+These are:
 
-This is fully compatible with Option B, provided that:
+* **lossless**
+* **round-trippable**
+* **engine-agnostic**
+* **stored per node**
 
-SGF mappers never emit Action.Metadata
+They live in:
 
-Action.Metadata (if kept) is treated as optional and unused by SGF
+```
+NodeAnnotations
+  └── List<RawProperty>
+```
 
-TTT continues to reject unsupported actions (already good design)
+They do **not** become Actions.
 
-You are not throwing away that work—you’re simply choosing that SGF is not a producer of metadata actions.
+---
 
-Small, safe next step (recommended)
+### Why *not* `DomainAction.Metadata` for SGF?
 
-Once you re-upload the tar, I recommend exactly this baby step:
+That was the trade-off sentence you asked about. Here it is in plain terms:
 
-Locate the SGF → action mapping class (e.g. SgfDomainActionMapper)
+#### If you use `DomainAction.Metadata`:
 
-Remove / comment out any creation of:
+Pros:
 
-DomainAction.Metadata
+* Easy to surface komi, handicap, comments in UI
+* Looks “uniform” with other actions
 
-Action.Metadata
+Cons:
 
-Replace that logic with:
+* Metadata starts flowing through the engine
+* Every applier must ignore it
+* Easy to accidentally depend on it
+* Harder to support multiple formats cleanly
 
-nodeAnnotations.unapplied().add(new RawProperty(id, values));
+#### If you use **RawProperty only** (Option B):
 
+Pros:
 
-Ensure only one place owns extras:
+* Engine remains pure
+* SGF stays at the boundary
+* Format adapters own interpretation
+* Easy to support other formats later (JSON, PGN-like, etc.)
 
-GameNode.annotations
+Cons:
 
-not SGF nodes + annotations both
+* UI must *ask annotations* instead of *listening to actions*
 
-This should:
+For a 25-year-old project being modernized, **Option B is the safer long-term choice**.
 
-preserve round-trip tests
+And importantly:
 
-not break TTT
+> **Option B does NOT prevent you from interpreting metadata later.**
+> You can always add a *view-level* interpreter that reads RawProperty and displays komi, comments, etc.
 
-not affect core game semantics
+You just don’t *force* it into the engine.
 
-make multi-game support cleaner
+---
 
-About Tic-Tac-Toe timing
+## 2. Does this conflict with what your evil twin just did?
 
-You were right to do TTT now. It has already paid off by:
+Short answer: **No. It complements it.**
 
-forcing game-agnostic actions
+What your evil twin added:
 
-validating that SGF ≠ model
+> “Introduced neutral core.engine.Action (Play, Pass, Resign, SetBoard, Metadata)”
 
-proving that apply logic belongs outside the model
+You can reconcile this cleanly:
 
-Once SGF → RawProperty is clean, TTT becomes the reference implementation for how little a game needs to participate in the engine.
+### Recommendation
 
-codex:
+* **Keep `Action.Play`, `Action.Pass`, `Action.Resign`, `Action.SetBoard`**
+* **Do NOT generate `Action.Metadata` from SGF**
+* Allow `Action.Metadata` to exist for:
 
-hanges made:
+  * UI events
+  * logging
+  * debugging
+  * non-persistent flows
 
-TttActionMapper.java: validate moves against a provided TttSpec, rejecting off-board coordinates.
-TttActionApplier.java: exhaustive switch over all Action variants with clear rejections for unsupported types.
-TttState.java: encapsulated state fields, added safe accessors and defensive copy helpers.
-TttPlugin.java: updated to use new state accessors and defensive mark copying.
-TttActionApplierTest.java: updated for mapper signature, added metadata rejection test.
+In other words:
+
+* SGF → `RawProperty`
+* Engine → `Action`
+* UI → may interpret either
+
+That keeps both designs intact without churn.
+
+---
+
+## 3. Is this the right time for Tic-Tac-Toe?
+
+Yes. This is actually *perfect timing*.
+
+TTT is valuable **now** because:
+
+* It has **no SGF**
+* It has **no setup stones**
+* It has **no metadata**
+* It has **no exotic topology**
+
+So it forces these questions:
+
+* Can the engine run without SGF?
+* Can Actions be truly generic?
+* Can GameNode exist without format baggage?
+* Does ModelHelper accidentally depend on SGF?
+
+If TTT works cleanly:
+
+* your separation is real
+* not accidental
+
+If TTT feels awkward:
+
+* you’ve found remaining coupling early
+
+That’s exactly why it’s a good “honesty test”.
+
+---
+
+## 4. Baby-step guidance (very important)
+
+You said you want **small steps** and to keep things **temporarily in model**.
+
+That’s wise.
+
+### Next *very small* steps I recommend (in order):
+
+1. **Stop producing `Action.Metadata` from SGF**
+
+   * SGF mapper returns:
+
+     * `List<Action>` (engine only)
+     * `List<RawProperty>` (annotations)
+2. **Ensure Model.do2 / apply loop never sees RawProperty**
+
+   * Only Actions go through it
+3. **TTT never sees RawProperty at all**
+
+   * That’s your sanity check
+4. **Leave UI interpretation for later**
+
+   * No rush
+
+No renames, no package explosions yet.
+
+---
+
+## Bottom line
+
+* Option B (RawProperty only) is the *correct architectural choice* for where you are now.
+* It does not conflict with the new Action path.
+* TTT is exactly the right canary at this stage.
+* You are no longer “refactoring blindly”; you’re converging on a real engine boundary.
+
+When you’re ready, the *next* conversation can be:
+
+> “What *still* does not belong in Model anymore?”
+
+And that’s where the really satisfying cleanup begins.
