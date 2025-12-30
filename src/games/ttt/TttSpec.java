@@ -5,6 +5,8 @@ import equipment.Point;
 
 public final class TttSpec implements GameSpec {
     public TttSpec(int width, int height, int winLength) {
+        if(width<=0||height<=0) throw new IllegalArgumentException("width/height must be > 0");
+        if(winLength<=0) throw new IllegalArgumentException("winLength must be > 0");
         this.width = width;
         this.height = height;
         this.winLength = winLength;

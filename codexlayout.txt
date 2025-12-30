@@ -1,0 +1,24 @@
+core/
+  engine/         # actions, appliers, GameNode, NodeAnnotations, RawProperty
+  api/            # GamePlugin, Renderer, RolePolicy, GameState, etc.
+  formats/sgf/    # SGF → core actions + raw props
+  util/           # truly shared helpers/logging wrappers
+
+go/
+  rules/          # Go game logic/state: board state, liberties/captures, ko, scoring stubs, Go-specific moves
+  board/          # equipment (Board, Stone, Coordinates, Point, Block, etc.) if you keep it separate
+  model/          # Model/Move2 and Go orchestration that isn’t pure rules
+  adapters/       # Go SGF/GTP mappers or other Go-specific codecs
+  controller/     # Go entrypoints: CommandLine, GTP glue/server wiring
+  gui/            # Swing UI, simplegui, view components
+  io/             # Go-specific IO helpers
+  tests/          # Go-focused tests (model, controller, gui, sgf, equipment, io, etc.)
+
+ttt/
+  rules/          # Tic-tac-toe state/spec/moves, win detection
+  adapters/       # TttActionMapper, TttActionApplier, codecs
+  ui/             # TttRenderer or any TTT UI
+  controller/     # Only if you add TTT-specific entrypoints (CLI/server); otherwise omit
+  tests/          # TTT tests
+
+(app/, resources/, build/ stay at root for wiring/config/docs.)

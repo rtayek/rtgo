@@ -1,0 +1,284 @@
+Understood. Since you want to **stay in one project** and focus on **`src/` package structure**, here is a **clean, disciplined top-level package layout** that fits exactly what you have been doing (DomainAction split, SGF pushed out, TTT added, legacy Go still present), without forcing premature modularization.
+
+I’ll give you:
+
+1. A **recommended `src/` package tree**
+2. What *belongs* in each package (and what does not)
+3. How this aligns with what you and your “evil twin” already implemented
+4. Where Tic-Tac-Toe fits *now*, not later
+
+---
+
+## 1. Recommended `src/` Package Layout (Top Levels)
+
+```text
+src/
+ ├─ core/                  ← framework & orchestration (game-agnostic)
+ │   ├─ engine/
+ │   ├─ session/
+ │   ├─ plugin/
+ │   └─ cli/
+ │
+ ├─ model/                 ← core game model abstractions (NO SGF)
+ │   ├─ engine/
+ │   ├─ tree/
+ │   └─ util/
+ │
+ ├─ formats/               ← external representations (SGF, GTP, etc.)
+ │   ├─ sgf/
+ │   └─ gtp/
+ │
+ ├─ games/                 ← actual games (Go, TTT, future games)
+ │   ├─ go/
+ │   └─ ttt/
+ │
+ ├─ ui/                    ← rendering only (CLI, GUI, text)
+ │
+ └─ legacy/                ← temporary quarantine
+```
+
+This keeps **one project**, but gives you **clear fault lines**.
+
+---
+
+## 2. What Goes Where (Very Explicit)
+
+### `core/` — “The framework”
+
+**No game rules, no SGF, no boards**
+
+```text
+core/
+ ├─ engine/
+ │   ├─ Action              // game-agnostic actions (Play, Pass, SetBoard)
+ │   └─ ActionApplier       // interface only
+ │
+ ├─ session/
+ │   └─ GameSession         // orchestration, turn handling
+ │
+ ├─ plugin/
+ │   └─ GamePlugin          // plugin discovery, IDs
+ │
+ └─ cli/
+     └─ CliMain
+```
+
+If it *knows* whether a move is legal → **wrong package**.
+
+---
+
+### `model/` — “Pure domain model”
+
+This is where you already did the hardest work.
+
+```text
+model/
+ ├─ engine/
+ │   ├─ DomainAction        // game-semantic actions
+ │   ├─ GameNode            // tree node with actions + annotations
+ │   ├─ NodeAnnotations    // RawProperty only (Option B)
+ │   └─ RawProperty
+ │
+ ├─ tree/
+ │   ├─ GameTree
+ │   └─ Traversal helpers
+ │
+ └─ util/
+     └─ ModelHelper
+```
+
+**Rules**:
+
+* No SGF classes
+* No GTP strings
+* No parsing
+* No UI
+
+You are already *very close* to this.
+
+---
+
+### `formats/` — “Foreign languages”
+
+Everything that smells like SGF or GTP lives here.
+
+```text
+formats/
+ ├─ sgf/
+ │   ├─ SgfDomainActionMapper
+ │   ├─ SgfParserAdapter
+ │   └─ SgfSerializerAdapter
+ │
+ └─ gtp/
+     ├─ GtpMoveCodec
+     └─ GtpCommandMapper
+```
+
+**Key rule**:
+
+> Nothing in `model/` or `games/` imports `formats.*`.
+
+You already achieved this with:
+
+* `SgfDomainActionMapper`
+* `RawProperty` annotations
+
+That was the right move.
+
+---
+
+### `games/` — “Actual games”
+
+Each game is *self-contained*.
+
+```text
+games/
+ ├─ go/
+ │   ├─ GoState
+ │   ├─ GoRules
+ │   ├─ GoActionApplier
+ │   ├─ GoPlugin
+ │   └─ GoRenderer
+ │
+ └─ ttt/
+     ├─ TttSpec
+     ├─ TttState
+     ├─ TttMove
+     ├─ TttActionApplier
+     ├─ TttPlugin
+     └─ TttRenderer
+```
+
+This directly supports:
+
+* Multi-game future
+* Clean testing
+* No SGF leakage
+
+TTT is **perfectly timed** right now because it:
+
+* Exercises the action pipeline
+* Forces you to keep the core honest
+* Has no SGF baggage
+
+---
+
+### `ui/` — “Rendering only”
+
+No rules, no state mutation.
+
+```text
+ui/
+ ├─ cli/
+ └─ gui/
+```
+
+Renderers *consume state*, never change it.
+
+---
+
+### `legacy/` — “Temporary quarantine”
+
+This is critical psychologically and architecturally.
+
+```text
+legacy/
+ ├─ move/
+ ├─ sgf/
+ └─ adapters/
+```
+
+Anything you *intend to delete* but can’t yet goes here.
+This prevents accidental reuse.
+
+---
+
+## 3. How This Aligns With What You Already Did
+
+You already have:
+
+* `model.engine.DomainAction` ✔
+* `model.engine.GameNode` ✔
+* `NodeAnnotations + RawProperty` ✔
+* `formats.sgf.SgfDomainActionMapper` ✔
+* `games.ttt.*` ✔
+* Legacy move slowly dying ✔
+
+What remains is **mostly relocation**, not redesign.
+
+Your architecture is already *correct* — it just needs **spatial clarity**.
+
+---
+
+## 4. About the Evil Twin’s Suggestions (Short Verdict)
+
+All four suggestions were sound. In particular:
+
+* **Encapsulating `TttSpec`** → yes, do it
+* **Move validation inside `TttMove.Place`** → yes
+* **Renderer helper** → cosmetic but worthwhile
+* **Killing `Action.Metadata`** → aligns perfectly with Option B
+
+With Option B (RawProperty-only), you can eventually:
+
+```text
+core.engine.Action
+  ├─ Play
+  ├─ Pass
+  ├─ Resign
+  └─ SetBoard
+```
+
+…and **nothing else**.
+
+That is the clean end state.
+
+---
+
+## 5. When to Do Tic-Tac-Toe Work?
+
+**Now** was the correct time.
+**Continue until:**
+
+* No Go-specific logic leaks into core
+* TTT tests pass without touching SGF
+* Action pipeline is stable
+
+Then stop and return to Go.
+
+---
+
+## Bottom Line
+
+You are no longer “refactoring blindly”.
+You are **architecting deliberately**.
+
+Your next best steps are:
+
+1. Finish relocating packages to this layout
+2. Delete or quarantine remaining legacy move code
+3. Keep SGF strictly in `formats/`
+4. Let TTT be the canary
+
+If you want, next we can:
+
+* Do a **diff-style mapping** from your current `src/` tree to this layout
+* Or define **hard package rules** (what may import what) as comments or ArchUnit tests
+
+codex's reply:
+
+I like this layout. It matches the boundaries we’ve been enforcing:
+core is orchestration-only, model is SGF-free domain, 
+formats holds all external mappings, games are self-contained,
+ UI is rendering-only, and legacy is quarantined.
+
+Small refinements to keep in mind:
+
+Consider whether “model” vs “core” needs both layers; 
+if you keep both, make “core” the runtime/framework,
+“model” the domain algebra (actions, nodes, tree),
+and keep imports flowing core→model→games, never the reverse.
+
+Keep formats one-way: formats → core/model/games; nothing in model/games imports formats.*.
+Legacy quarantine is worth doing early to avoid accidental reuse.
+If you want, I can map current packages into this structure with minimal moves/renames as a first pass.
