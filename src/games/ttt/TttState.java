@@ -29,8 +29,14 @@ public final class TttState implements GameState {
         return true;
     }
 
-    public final TttSpec spec;
-    public final TttMark[] marks;
-    public final TttMark toPlay;
-    public final TttOutcome outcome;
+    public TttSpec spec() { return spec; }
+    public TttMark toPlay() { return toPlay; }
+    public TttOutcome outcome() { return outcome; }
+    public TttMark markAtIndex(int idx) { return marks[idx]; }
+    public TttMark[] marksCopy() { return marks.clone(); }
+
+    private final TttSpec spec;
+    private final TttMark[] marks;
+    private final TttMark toPlay;
+    private final TttOutcome outcome;
 }
