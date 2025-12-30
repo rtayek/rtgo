@@ -1,6 +1,7 @@
 package games.ttt;
 
 import core.api.*;
+import games.ttt.TttRenderer;
 
 public final class TttPlugin implements GamePlugin<TttState, TttMove, TttSpec> {
 
@@ -16,7 +17,7 @@ public final class TttPlugin implements GamePlugin<TttState, TttMove, TttSpec> {
 
     @Override
     public TttState initialState(TttSpec spec) {
-        TttMark[] marks = new TttMark[spec.width * spec.height];
+        TttMark[] marks = new TttMark[spec.width() * spec.height()];
         for (int i = 0; i < marks.length; i++) marks[i] = TttMark.empty;
         return new TttState(spec, marks, TttMark.x, TttOutcome.ongoing);
     }
@@ -31,8 +32,8 @@ public final class TttPlugin implements GamePlugin<TttState, TttMove, TttSpec> {
             return ApplyResult.rejected(state, "unknown move type");
         }
 
-        int x = place.point.x;
-        int y = place.point.y;
+        int x = place.point().x;
+        int y = place.point().y;
 
         if (!state.isOnBoard(x, y)) return ApplyResult.rejected(state, "off board");
         int idx = state.index(x, y);
@@ -64,23 +65,7 @@ public final class TttPlugin implements GamePlugin<TttState, TttMove, TttSpec> {
 
     private final MoveCodec<TttMove> codec = new TttMoveCodec();
 
-    private final Renderer<TttState> renderer = state -> {
-        StringBuilder sb = new StringBuilder();
-        sb.append("TicTacToe ").append(state.spec().width).append("x").append(state.spec().height)
-          .append(" win=").append(state.spec().winLength).append("\n");
-        sb.append("toPlay=").append(state.toPlay()).append(" outcome=").append(state.outcome()).append("\n\n");
-
-        for (int y = 0; y < state.spec().height; y++) {
-            for (int x = 0; x < state.spec().width; x++) {
-                TttMark m = state.at(x, y);
-                char c = m == TttMark.empty ? '.' : (m == TttMark.x ? 'X' : 'O');
-                sb.append(c);
-                if (x + 1 < state.spec().width) sb.append(' ');
-            }
-            sb.append('\n');
-        }
-        return sb.toString();
-    };
+    private final Renderer<TttState> renderer = TttRenderer::render;
 
     private final RolePolicy<TttState, TttMove> rolePolicy = (actor, role, state, move) -> {
         if (!(move instanceof TttMove.Place)) return Permission.deny("unknown move type");
@@ -95,9 +80,9 @@ public final class TttPlugin implements GamePlugin<TttState, TttMove, TttSpec> {
     };
 
     private static TttOutcome evaluateOutcome(TttSpec spec, TttMark[] marks) {
-        int w = spec.width;
-        int h = spec.height;
-        int k = spec.winLength;
+        int w = spec.width();
+        int h = spec.height();
+        int k = spec.winLength();
 
         if (k <= 1) return TttOutcome.draw; // degenerate, treat as done
 

@@ -1,10 +1,12 @@
 package controller;
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 import equipment.Board.*;
 import equipment.Point;
 import gui.*;
 import io.*;
+import io.Logging;
 import model.*;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
@@ -172,6 +174,15 @@ public class CommandLine {
     public static void main(String[] arguments) throws IOException {
         System.out.println(Init.first);
         CommandLine commandLine=new CommandLine();
+        Logging.useColor=false;
+        LogManager.getLogManager().reset();
+        Logger logger=Logger.getLogger(commandLine.getClass().getName());
+        System.out.println("logger level: "+logger.getLevel());
+        Handler handler=new ConsoleHandler();
+        logger.addHandler(handler);
+        System.out.println("handler level: "+handler.getLevel());
+        logger.info("message");
+
         commandLine.startup();
         commandLine.run();
     }

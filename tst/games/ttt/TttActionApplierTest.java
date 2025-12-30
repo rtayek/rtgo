@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import core.api.ApplyResult;
 import core.engine.Action;
 import equipment.Point;
-import java.util.List;
 import org.junit.Test;
 
 public class TttActionApplierTest {
@@ -22,9 +21,9 @@ public class TttActionApplierTest {
     }
 
     @Test public void mapperRoundTrip() {
-        TttMove move=new TttMove.Place(new Point(1,2));
         TttSpec spec=plugin.defaultSpec();
-        Action action=TttActionMapper.toAction(move,spec);
+        TttMove move=TttMove.Place.of(spec,new Point(1,2));
+        Action action=TttActionMapper.toAction(move);
         assertTrue(action instanceof Action.Play);
         ApplyResult<TttState> result=applier.apply(plugin.initialState(spec),action);
         assertTrue(result.accepted);
@@ -34,13 +33,6 @@ public class TttActionApplierTest {
     @Test public void unsupportedActionRejected() {
         TttState state=plugin.initialState(plugin.defaultSpec());
         ApplyResult<TttState> result=applier.apply(state,new Action.Pass(null));
-        assertFalse(result.accepted);
-    }
-
-    @Test public void metadataActionRejected() {
-        TttState state=plugin.initialState(plugin.defaultSpec());
-        Action.Metadata metadata=new Action.Metadata("note", List.of("hello"));
-        ApplyResult<TttState> result=applier.apply(state,metadata);
         assertFalse(result.accepted);
     }
 }

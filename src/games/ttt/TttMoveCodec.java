@@ -21,7 +21,7 @@ public final class TttMoveCodec implements MoveCodec<TttMove> {
     @Override
     public String format(TttMove move) {
         if (move instanceof TttMove.Place place) {
-            return place.point.x + " " + place.point.y;
+            return place.point().x + " " + place.point().y;
         }
         return move.toString();
     }

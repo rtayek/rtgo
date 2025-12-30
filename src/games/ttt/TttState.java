@@ -11,11 +11,11 @@ public final class TttState implements GameState {
     }
 
     public int index(int x, int y) {
-        return y * spec.width + x;
+        return y * spec.width() + x;
     }
 
     public boolean isOnBoard(int x, int y) {
-        return x >= 0 && y >= 0 && x < spec.width && y < spec.height;
+        return spec.isOnBoard(x,y);
     }
 
     public TttMark at(int x, int y) {

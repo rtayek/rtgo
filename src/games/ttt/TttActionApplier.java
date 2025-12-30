@@ -13,13 +13,12 @@ public final class TttActionApplier {
     public ApplyResult<TttState> apply(TttState state,Action action) {
         return switch(action) {
             case Action.Play play -> {
-                TttMove move=new TttMove.Place(new Point(play.x(),play.y()));
+                TttMove move=TttMove.Place.of(state.spec(),new Point(play.x(),play.y()));
                 yield plugin.applyMove(state,move);
             }
             case Action.Pass pass -> ApplyResult.rejected(state,"pass not supported in tic-tac-toe");
             case Action.Resign resign -> ApplyResult.rejected(state,"resign not supported in tic-tac-toe");
             case Action.SetBoard setBoard -> ApplyResult.rejected(state,"dynamic board config not supported in tic-tac-toe");
-            case Action.Metadata metadata -> ApplyResult.rejected(state,"metadata actions are ignored in tic-tac-toe");
         };
     }
 }

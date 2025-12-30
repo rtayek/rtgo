@@ -38,7 +38,7 @@ public class Logging {
                 handler.setFormatter(formatter);
                 logger.addHandler(handler);
                 Handler handler2;
-                boolean what=false;
+                boolean what=true;
                 if(what) try {
                     File dir=new File("logs");
                     if(!dir.exists()) dir.mkdirs();
@@ -154,7 +154,7 @@ public class Logging {
         log(parserLogger);
          */
     }
-    static boolean useColor=true;
+    public static boolean useColor=true;
     static final int maxThreadNameLength=12;
     public static final Level initialLoggingLevel=Level.WARNING;
     public static final Set<String> loggerNames=new TreeSet<>();
