@@ -63,7 +63,7 @@ public final class TttPlugin implements GamePlugin<TttState, TttMove, TttSpec> {
         return rolePolicy;
     }
 
-    private final MoveCodec<TttMove> codec = new TttMoveCodec();
+    private final MoveCodec<TttMove> codec = new TttMoveCodec(defaultSpec());
 
     private final Renderer<TttState> renderer = TttRenderer::render;
 

@@ -4,6 +4,15 @@ import core.api.MoveCodec;
 import equipment.Point;
 
 public final class TttMoveCodec implements MoveCodec<TttMove> {
+    private final TttSpec spec;
+
+    public TttMoveCodec() {
+        this(TttSpec.standard3x3());
+    }
+
+    public TttMoveCodec(TttSpec spec) {
+        this.spec=spec;
+    }
 
     @Override
     public TttMove parse(String text) {
@@ -15,7 +24,7 @@ public final class TttMoveCodec implements MoveCodec<TttMove> {
 
         int x = Integer.parseInt(parts[0]);
         int y = Integer.parseInt(parts[1]);
-        return new TttMove.Place(new Point(x, y));
+        return TttMove.Place.of(spec,new Point(x, y));
     }
 
     @Override
