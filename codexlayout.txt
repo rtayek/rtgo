@@ -1,24 +1,37 @@
-core/
-  engine/         # actions, appliers, GameNode, NodeAnnotations, RawProperty
-  api/            # GamePlugin, Renderer, RolePolicy, GameState, etc.
-  formats/sgf/    # SGF → core actions + raw props
-  util/           # truly shared helpers/logging wrappers
+This layout looks good and aligns with Option B. I’d make one decision early: put the “engine algebra” (Action/DomainAction, GameNode, NodeAnnotations, RawProperty) in one place—core.engine—and drop the duplicate “model.engine” idea. That keeps imports simple and avoids “where does this go?” debates.
 
-go/
-  rules/          # Go game logic/state: board state, liberties/captures, ko, scoring stubs, Go-specific moves
-  board/          # equipment (Board, Stone, Coordinates, Point, Block, etc.) if you keep it separate
-  model/          # Model/Move2 and Go orchestration that isn’t pure rules
-  adapters/       # Go SGF/GTP mappers or other Go-specific codecs
-  controller/     # Go entrypoints: CommandLine, GTP glue/server wiring
-  gui/            # Swing UI, simplegui, view components
-  io/             # Go-specific IO helpers
-  tests/          # Go-focused tests (model, controller, gui, sgf, equipment, io, etc.)
+The import rules you stated are the right guardrails:
 
-ttt/
-  rules/          # Tic-tac-toe state/spec/moves, win detection
-  adapters/       # TttActionMapper, TttActionApplier, codecs
-  ui/             # TttRenderer or any TTT UI
-  controller/     # Only if you add TTT-specific entrypoints (CLI/server); otherwise omit
-  tests/          # TTT tests
+formats → core/games only
+games → core, never the reverse
+UI reads state, never owns rules
+The target tree you showed is exactly what I’d standardize on:
 
-(app/, resources/, build/ stay at root for wiring/config/docs.)
+
+src/
+  core/
+    api/
+    engine/
+      applier/
+    formats/
+      sgf/
+      gtp/
+    util/
+  games/
+    go/
+      rules/
+      adapters/
+      render/
+      ui/swing/
+    ttt/
+      rules/
+      adapters/
+      render/
+  ui/
+    cli/
+    swing/
+  legacy/
+
+And to stay honest with RawProperty-only: 
+keep SGF/GTP adapters emitting only real engine actions plus RawProperty;
+ don’t reintroduce Action.Metadata into the apply path.

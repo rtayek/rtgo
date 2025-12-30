@@ -1,97 +1,108 @@
-Your proposed layout is directionally solid: it draws a clean line between (a) game-agnostic “engine/API” concerns, (b) game implementations (Go, TTT), and (c) UI / transport / file formats as adapters. With one important adjustment for a single-project codebase:
+I can’t re-open or enumerate your latest tar right now: the previously uploaded archive(s) have expired on my side. If you want an exact “`ls`-style” listing of *your current* tree, please re-upload the current `code7.tar.gz` (or paste the output of `find src -maxdepth 4 -type d | sort` / `tree -d -L 4 src` from your machine).
 
-* Prefer **packages** like `core.*` and `games.*` over creating new **top-level source folders** like `go/` and `ttt/` under `src/`.
-* In other words, keep `src/` as the single source root, and express structure via package names.
+That said, I *can* evaluate the proposal on its merits, and I think your evil twin’s layout is directionally correct and consistent with the boundaries you’ve been enforcing.
 
-That avoids Gradle/Eclipse sourceSet churn and keeps refactors mechanical.
+## Assessment of the proposed `src/` package layout
 
-## Recommended `src/` package structure (single project)
+### What I agree with (keep)
 
-### 1) Core (game-agnostic)
+* **`games/<id>/...`** as the unit of modularity is right. It forces “game-self-contained” thinking and makes TTT genuinely useful as a separation test.
+* **`core/formats/sgf`** as the *adapter* boundary is right, *if and only if* it emits **core actions + RawProperty** and does not leak SGF types downstream.
+* **A dedicated `ui/cli` host** package is right: plugin selection, session wiring, and command routing should live there, not in any game.
+* **`legacy/...` quarantine** is absolutely worth doing early. It is the cheapest way to prevent regression-by-import.
 
-Use **`core.*`** as the stable base:
+### The one part I would tighten
 
-* `core.api`
-  Public-facing plugin surface: `GamePlugin`, `GameSession`, `Renderer`, `RolePolicy`, `GameState`, codecs, etc.
-* `core.engine`
-  Game-agnostic execution substrate: `Action` (or `DomainAction`), appliers, `GameNode`, `NodeAnnotations`, `RawProperty`, traversal utilities.
-  (If you keep a single “neutral” action model, it belongs here.)
-* `core.engine.applier`
-  `DomainActionApplier` / `ActionApplier` interfaces + shared wiring.
-* `core.formats.sgf`
-  SGF boundary: `SgfDomainActionMapper` that converts **SGF → (core actions + RawProperty extras)**.
-* `core.util`
-  Truly shared helpers only (no “misc dump”). Logging wrappers, tiny collections utils, etc.
+Right now the proposal has both **`core/engine`** *and* optionally **`model/engine`**. That split can be clean, but it’s also where projects go to die from “where does X belong?” debates.
 
-This is where your “Option B: RawProperty-only annotations” lives most naturally: keep **all non-core SGF data** as `RawProperty` stored in `NodeAnnotations`, produced only by format adapters (`core.formats.sgf`), never by engine code.
+My recommendation: **pick one “engine algebra” home** and make it boring.
 
-### 2) Games
+* If you want “core is framework, model is algebra”: put `Action/DomainAction`, `GameNode`, `NodeAnnotations`, `RawProperty` in **`model.engine`** and keep `core.*` as runtime wiring (plugins, sessions, applier interfaces).
+* If you want “core owns the algebra”: fold it all into **`core.engine`** and delete `model.engine` entirely.
 
-Use **`games.<id>.*`** packages:
+Either is fine. The only bad option is “both, forever.”
 
-* `games.go.rules`
-  Pure Go rules/state transitions that do not know about SGF/GTP/GUI.
-* `games.go.adapters`
-  Go-specific mapping/codec edges (GTP, Go-specific SGF interpretations if any remain).
-* `games.go.render`
-  CLI/ASCII renderer (and possibly GUI renderer façade).
-* `games.go.ui.swing` (optional)
-  Swing UI bits *if* you keep them Go-specific; otherwise put generic UI under `ui.swing`.
-* `games.go`
-  `GoPlugin`, wiring, factories.
+Given you explicitly chose **Option B: RawProperty-only**, I’d lean toward **putting the algebra in `core.engine`** unless you have a strong reason to keep a separate “model layer.” You already have “games as domains”; a second “model domain” layer can become redundant.
 
-And similarly:
+### Rule of imports (non-negotiable)
 
-* `games.ttt.rules`
-* `games.ttt.adapters` (your `TttActionMapper`, `TttActionApplier`)
-* `games.ttt.render`
-* `games.ttt` (`TttPlugin`)
+These three rules keep the architecture from collapsing:
 
-This keeps the “multi-game support” honest: each game owns its rule set, and adapters are explicitly not core.
+1. **`formats.*` is outbound only**
+   `formats.* → core.* / games.*`
+   Never `games.* → formats.*`, never `core.engine → formats.*`.
 
-### 3) UI / transports / legacy
+2. **Games depend on core, not vice-versa**
+   `games.* → core.api/core.engine`
+   Never `core.* → games.*`.
 
-* `ui.swing`
-  App-level Swing, shared widgets, “host shell” UI. If your current GUI is mostly Go-specific, start with `ui.swing` anyway and migrate later.
-* `cli`
-  The top-level CLI host that selects a plugin by id and delegates.
-* `formats.*` (optional)
-  If you later add JSON/PGN/etc, keep them outside games unless they truly are game-specific.
+3. **UI depends on core + games, but never contains rules**
+   Rendering is read-only from state; state mutation happens via actions/appliers.
 
-## How this maps to your existing “too many packages”
+## A concrete “ls-style” tree (what I’d standardize on)
 
-Without needing to change behavior:
+Here’s what I would show as the “target” directory list (directories only), in the style you asked for:
 
-* `equipment.*` → either `games.go.rules.board.*` **or** `core.board.*`
-  If you genuinely intend other games to reuse it, promote it to `core.board`. If it’s Go-shaped (liberties, captures, ko-ish assumptions), keep it under Go.
-* `model.*` → split:
+```
+src/
+  core/
+    api/
+    engine/
+      applier/
+    formats/
+      sgf/
+      gtp/
+    util/
+  games/
+    go/
+      rules/
+      adapters/
+      render/
+      ui/
+        swing/
+    ttt/
+      rules/
+      adapters/
+      render/
+  ui/
+    cli/
+    swing/
+  legacy/
+```
 
-  * “engine-ish” parts → `core.engine.*`
-  * “Go orchestration” → `games.go.*`
-  * Any remaining “app model” glue → `ui.*` or `cli.*`
-* `sgf.*` → `core.formats.sgf.*` (parsing/tree types)
-  But keep “SGF is a file format” out of game rules and out of `core.engine`.
-* `controller.*`, `server.*`, `gtp.*` → `games.go.adapters.gtp.*` (or `transports.gtp.*` if you generalize later)
-* `io.*` → usually `core.util` (if generic) or `games.go.*` (if Go-only)
-* `tree.*` → likely `core.util.tree` or `core.formats.sgf` depending on what it really represents.
+Notes:
 
-## About your proposed layout snippet
+* I moved `core/formats/sgf` under `core/formats/` so SGF and GTP can sit side-by-side as “format adapters.”
+* I left `ui/swing` as a place for shared shell/widgets; game-specific Swing panels stay under `games/*/ui/swing`.
 
-Your proposed tree is conceptually fine, but I would express it like this **as packages**:
+## How this interacts with Option B (RawProperty-only)
 
-* `core.engine` / `core.api` / `core.formats.sgf` / `core.util`
-* `games.go.rules` / `games.go.adapters` / `games.go.render` / `games.go.ui.swing`
-* `games.ttt.rules` / `games.ttt.adapters` / `games.ttt.render`
+If you go RawProperty-only, then:
 
-That yields the same intent with less structural friction.
+* **Do not keep `Action.Metadata` as a general-purpose escape hatch** in the engine path. If you keep it, it should be *UI-only*, not part of “apply-to-state” flows. Otherwise every applier grows a junk drawer and you lose exhaustiveness.
+* SGF mapping should produce:
 
-## When to do Tic-Tac-Toe work
+  * `Action.Play/Pass/Resign/SetBoard...` (the true domain-affecting subset), plus
+  * `RawProperty` stored in `NodeAnnotations.unapplied` for everything else.
 
-If TTT already exists and tests pass, you’re at the right time. The next useful “keep us honest” step is not adding features, but ensuring your host surfaces are truly game-agnostic:
+That matches your goal: “preserve data without contaminating the engine.”
 
-* CLI chooses plugin by id (already underway).
-* Core action/application path is neutral.
-* SGF stays in `core.formats.sgf`, and *extras* are **RawProperty annotations only**.
+## On the evil twin’s specific bullets about TTT
 
-TTT is the canary: if you have to import `sgf.*` or Go board types to get TTT to work, your boundaries are still leaky.
+All four suggestions are reasonable; I’d prioritize them in this order:
 
+1. **Move coordinate validation to `TttMove.Place` (or its factory)**
+   This keeps “invalid move” semantics in one place and reduces mapper/applier duplication.
+
+2. **If `Action.Metadata` is not needed for core flows, delete or quarantine it**
+   This supports your Option B choice and keeps appliers exhaustively handled.
+
+3. **Encapsulate `TttSpec` and align it with `TttState` getters**
+   Minor hygiene, but it prevents “spec as a public struct” drift.
+
+4. **Renderer helper in `TttPlugin`**
+   Fine, but cosmetic; do it when you touch rendering anyway.
+
+---
+
+If you re-upload the current tar, I’ll produce the *actual* `src/` folder structure “like `ls`” from your project, and I’ll also point out any boundary violations (imports crossing the wrong direction, SGF types leaking into games, etc.).
