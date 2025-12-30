@@ -32,10 +32,9 @@ public final class SgfDomainActionMapper {
             case C->mapComment(property.list().get(0));
             case ZB->List.of(new DomainAction.Resign(Stone.black));
             case ZW->List.of(new DomainAction.Resign(Stone.white));
-            case RE->List.of(new DomainAction.RecordResult(property.list().get(0)));
-            // Keep metadata as metadata for now; apply() can mutate state like today.
-            case AP,FF,GM,HA,KM,BL,WL,RT->List.of(new DomainAction.Metadata(p2,property.list()));
-            default->List.of(new DomainAction.Metadata(p2,property.list()));
+            case RE->List.of(); // preserve as raw extras instead
+            // All other properties become raw annotations (no actions)
+            default->List.of();
         };
     }
 
@@ -45,7 +44,13 @@ public final class SgfDomainActionMapper {
         for(Iterator<SgfProperty> it=node.sgfProperties().iterator();it.hasNext();) {
             SgfProperty property=it.next();
             try {
-                actions.addAll(mapPropertyToDomainActions(model,property));
+                List<DomainAction> mapped=mapPropertyToDomainActions(model,property);
+                if(mapped.isEmpty()) {
+                    it.remove();
+                    node.addExtraProperty(property);
+                } else {
+                    actions.addAll(mapped);
+                }
             } catch(IllegalArgumentException e) { // unknown property id -> preserve as extra
                 it.remove();
                 node.addExtraProperty(property);
@@ -93,8 +98,9 @@ public final class SgfDomainActionMapper {
         } else if(comment.startsWith(Model.sgfBoardShape)) {
             String shapeString=comment.substring(Model.sgfBoardShape.length());
             actions.add(new DomainAction.SetShape(Board.Shape.valueOf(shapeString)));
+        } else {
+            return List.of(); // treat normal comments as raw extras
         }
-        actions.add(new DomainAction.Metadata(P2.C,List.of(comment)));
         return actions;
     }
 

@@ -31,7 +31,8 @@ public class ExtraPropertiesTestCase {
         Model model=new Model();
 
         SgfDomainActionMapper.mapNodeToDomainActions(model,root); // mutates extraProperties
-        assertEquals(List.of(keepRoot),root.extraProperties());
+        // Comment is now treated as an unmapped property and preserved as an extra.
+        assertEquals(List.of(new SgfProperty(P.C,List.of("hello")),keepRoot),root.extraProperties());
 
         SgfDomainActionMapper.mapNodeToDomainActions(model,child);
         assertEquals(List.of(keepChild),child.extraProperties());
