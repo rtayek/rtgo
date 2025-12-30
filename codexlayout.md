@@ -1,37 +1,16 @@
-This layout looks good and aligns with Option B. I’d make one decision early: put the “engine algebra” (Action/DomainAction, GameNode, NodeAnnotations, RawProperty) in one place—core.engine—and drop the duplicate “model.engine” idea. That keeps imports simple and avoids “where does this go?” debates.
+(in response to chatgpt.md
 
-The import rules you stated are the right guardrails:
+This is a solid target. It captures the key boundaries and keeps everything in one source root. The only nits to keep in mind:
 
-formats → core/games only
-games → core, never the reverse
-UI reads state, never owns rules
-The target tree you showed is exactly what I’d standardize on:
+Pick one home for the “engine algebra” (Action, GameNode, NodeAnnotations, RawProperty). Your tree puts it in core/engine, which is good—just don’t also keep a parallel “model” layer elsewhere.
 
+Keep the import rules strict:
 
-src/
-  core/
-    api/
-    engine/
-      applier/
-    formats/
-      sgf/
-      gtp/
-    util/
-  games/
-    go/
-      rules/
-      adapters/
-      render/
-      ui/swing/
-    ttt/
-      rules/
-      adapters/
-      render/
-  ui/
-    cli/
-    swing/
-  legacy/
+formats.* → core/games; never the reverse.
+games.* → core.*; never core.* → games.*.
+ui.* reads state, doesn’t contain rules.
+The double “sgf” (core/formats/sgf vs formats/sgf) is fine as long as core/formats/sgf is just the mapper (SGF → actions/raw props) and the parser/types live in formats/sgf.
 
-And to stay honest with RawProperty-only: 
-keep SGF/GTP adapters emitting only real engine actions plus RawProperty;
- don’t reintroduce Action.Metadata into the apply path.
+Legacy quarantine is good; use it early to avoid accidental reuse.
+
+Otherwise, this layout should make multi-game support and Option B (RawProperty-only) much clearer to everyone working in the codebase.
