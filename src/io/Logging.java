@@ -57,8 +57,9 @@ public class Logging {
         File dir=new File("logs");
         if(dir.exists()) {
             String[] filenames=dir.list();
+            System.out.println("deleting "+filenames.length+" files");
             for(String filename:filenames) {
-                System.out.println("deleting: "+filename);
+                //System.out.println("deleting: "+filename);
                 boolean file=new File(filename).delete();
                 System.out.println(file);
             }

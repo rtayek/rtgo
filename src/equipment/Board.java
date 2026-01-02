@@ -260,7 +260,7 @@ class BoardFactory implements Board.Factory {
     @Override public Board create(int n,Topology type) { return create(n,n,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology type) { return create(width,depth,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology topeology,Shape shape) {
-        System.out.println("factory is crearing board.");
+        //System.out.println("factory is crearing board.");
         BoardImpl boardImpl=null;
         if(topeology.equals(Topology.diamond)) if(shape.equals(Shape.programmer)) {
             Logging.mainLogger.severe(topeology+" "+shape+"is illegal combination");
