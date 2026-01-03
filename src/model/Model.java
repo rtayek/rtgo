@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.logging.Level;
 //import org.junit.rules.ExpectedException;
 import audio.Audio;
 import controller.Command;
@@ -16,7 +17,6 @@ import core.formats.sgf.SgfDomainActionMapper;
 import equipment.*;
 import equipment.Board.*;
 import io.*;
-import io.IOs;
 import model.Move2.MoveType;
 import server.NamedThreadGroup.NamedThread;
 import sgf.*;
@@ -1459,7 +1459,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		public Integer widthFromSgf=Board.standard;
 		public Integer depthFromSgf=Board.standard;
 	}
-	public static void main(String[] args) {
+	private static void normal() {
 		Model model=new Model();
 		System.out.println(model.root());
 		System.out.println(model.root().parent());
@@ -1473,6 +1473,55 @@ public class Model extends Observable { // model of a go game or problem forrest
 		System.out.println(model);
 		Command.doTGOSend("manyFacesTwoMovesAtA1AndR16");
 		System.out.println(model);
+	}
+	private static void dtrt(Model model) {
+		System.out.println("using: "+model.useOldWay);
+		model.ensureBoard();
+		model.move(Stone.black,"A1",model.board().width());
+		// model.move(Stone.white,"A2",model.board().width());
+		// System.out.println(model);
+		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
+		Stone color=model.board().at(point);
+		System.out.println("color at A1: "+color);
+		if(!color.equals(Stone.black)) {
+			System.out.println("expected black at A1, got "+color);
+		}
+		StringWriter stringWriter=new StringWriter();
+		boolean ok=model.save(stringWriter);
+		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
+		final String expected=stringWriter.toString();
+		System.out.println("expected: "+expected);
+		if(!color.equals(Stone.black)) {
+			System.out.println("expected black at A1, got "+color);
+		}
+		Model m=new Model("",true);
+		point=Coordinates.fromGtpCoordinateSystem("A1",19);
+		color=m.board().at(point);
+		System.out.println("color at A1: "+color);
+		if(!color.equals(Stone.black)) {
+			System.out.println("expected black at A1, got "+color);
+		}
+		if(true) return;
+		// assertEquals(Stone.black,color);
+		// this test passes but there is no stone there!
+		m.restore(new StringReader(expected));
+		stringWriter=new StringWriter();
+		m.save(stringWriter);
+		final String actual=stringWriter.toString();
+		System.out.println("actual: "+actual);
+	}
+	public static void main(String[] args) {
+		// normal();
+		Logging.setUpLogging();
+		Logging.setLevels(Level.OFF);
+		Model model=new Model();
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&");
+		model=new Model("",true);
+		dtrt(model);
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&");
+		model=new Model("",false);
+		dtrt(model);
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&");
 	}
 	public int verbosity;
 	// move stuff like type, shape, and band to parameter

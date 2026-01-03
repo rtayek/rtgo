@@ -1,5 +1,4 @@
 package equipment;
-//import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.util.*;
 import equipment.Board.*;
@@ -199,6 +198,7 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
         Topology topology=Topology.normal;
         for(Shape shape:Shape.values()) {
             Model model=new Model();
+            // get mdel out of this code
             model.setBoardTopology(Topology.normal);
             model.setBoardShape(shape);
             model.setRoot(width,depth,topology,shape);

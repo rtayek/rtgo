@@ -61,7 +61,7 @@ public class Logging {
             for(String filename:filenames) {
                 //System.out.println("deleting: "+filename);
                 boolean file=new File(filename).delete();
-                System.out.println(file);
+                //System.out.println(file);
             }
         }
     }
