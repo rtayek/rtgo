@@ -1,3 +1,12 @@
+
+man tests failing. 
+commit 668e86c82d7d732c57be6d9bb96cad9fd1e6b329 (HEAD)
+commit cf7c98216c174fc5ec051bb73fcaa8fbc727cbe6
+old way wprks at the earlier one
+noth ways break on the latter one.
+error is that the domain logic calls setRoot() which clears the stack.
+not sure what causes the old way to fail.
+
 pass legacy switch from gradle as env variable to junit
 git config --global http.sslverify "false"
 make the keys work in the gui! rubout and home/end etc.
