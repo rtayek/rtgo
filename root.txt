@@ -1,0 +1,16 @@
+Logging.mainLogger.info("restored, root: "+m.root().toString());
+
+sgf is a binary tree (at least my version is).
+if the binary tree is a forest then converion to a multiway is problematic.
+sgf text -> binary tree -> multiway tree -> model.setRoot()
+model.root() -> multiway tree -> binary tree -> sgf text
+
+my RT node is called a sentinal.
+
+new model does not have an RT node.
+
+model.save converts to binary tree and then to sgf.
+save will  add a null node before the root if 
+if the current root does not have the RT property.
+sometimes the binary tree is a forest,
+so when save() turns this into sgf format

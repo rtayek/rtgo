@@ -126,25 +126,33 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public void ensureBoard() {
 		if(board()==null) {
-			System.out.println("ensuring that we have a board.");
+			// System.out.println("ensuring that we have a board.");
 			Board board=Board.factory.create(state.widthFromSgf,state.depthFromSgf,boardTopology(),boardShape());
 			setBoard(board);
 		}
 	}
 	public boolean save(Writer writer) {
 		MNode root=root();
-		boolean found=hasRT(root);
+		boolean found=hasRT(root); // sentinel
 		// add new root if we don't already have one.
 		if(!found) {
 			root=new MNode(null);
 			root.children().add(root());
-		}
+			Logging.mainLogger.info("added null root");	
+			// how are we going to know if we added this?
+		} else Logging.mainLogger.info("root has RT");
 		boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
 		return ok;
 	}
 	public static boolean hasRT(MNode root) {
 		boolean found=false;
 		for(SgfProperty p:root.sgfProperties()) {
+			if(p.p().equals(P.RT)) {
+				found=true;
+				break;
+			}
+		}
+		for(SgfProperty p:root.extraProperties()) {
 			if(p.p().equals(P.RT)) {
 				found=true;
 				break;
@@ -159,10 +167,11 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public void restore(Reader reader) {
 		if(reader==null) {
-			System.out.println("restoring model from null reader!");
-			Logging.mainLogger.config("restoring model from null reader!");
+			Logging.mainLogger.info("restoring model from null reader!");
 		}
 		MNode games=MNode.restore(reader);
+		Logging.mainLogger.info("restored root"+games);
+		
 		setRoot(games);
 	}
 	public Model(Model model,String name) { // copy constructor
@@ -217,7 +226,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.mainLogger.config(name+" "+"doing root: "+root);
 		do_(root);
 		if(board()==null) {
-			Logging.mainLogger.warning("board is null after do root; creating one from stored size/topology/shape");
+			Logging.mainLogger.fine("board is null after do root; creating one from stored size/topology/shape");
 			ensureBoard();
 		} else Logging.mainLogger.fine("board is not null after do root.");
 		// maybe do a second do_() in some cases?
@@ -753,7 +762,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(node!=null) {//
 			for(int i=0;i<node.sgfProperties().size();i++) {
 				try {
-					System.out.println("node: "+node.sgfProperties().get(i));
+					Logging.mainLogger.info("executing node: "+node.sgfProperties().get(i));
 					ModelHelper.processProperty(this,state,node.sgfProperties().get(i));
 				} catch(Exception e) {
 					Logging.mainLogger.severe(name+"1 caught: "+e);
@@ -766,9 +775,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	void do_(MNode node) { // set node and execute the sgf
 		if(useOldWay) Logging.mainLogger.warning("using old way");
-		else Logging.mainLogger.warning("using new way");
+		else Logging.mainLogger.info("using new way");
 		if(useOldWay) executeNode(node);
-		else domain(node); 
+		else domain(node);
 	}
 	void push() { // see if we can eliminate copying the board
 		Board copy=board()!=null?board().copy():null;
@@ -1474,9 +1483,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 		System.out.println(model);
 	}
 	private static void dtrt(Model model) {
-		System.out.println("using: "+model.useOldWay);
 		model.ensureBoard();
-		//model.move(Stone.black,"A1",model.board().width()); // lets see what no moves does.
+		// model.move(Stone.black,"A1",model.board().width()); // lets see what
+		// no moves does.
 		// model.move(Stone.white,"A2",model.board().width());
 		// System.out.println(model);
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
@@ -1500,7 +1509,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(!color.equals(Stone.black)) {
 			System.out.println("expected black at A1, got "+color);
 		}
-		//if(true) return;
+		// if(true) return;
 		// assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
 		m.restore(new StringReader(expected));
@@ -1514,7 +1523,14 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// normal();
 		Logging.setUpLogging();
 		Logging.setLevels(Level.OFF);
-		Model model=new Model();
+		Model model=new Model("",true);
+		StringWriter x=new StringWriter();
+		model.save(x);
+		System.out.println("new way: "+x.toString());
+		model=new Model("",false);
+		x=new StringWriter();
+		model.save(x);
+		System.out.println("old way: "+x.toString());
 		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&");
 		model=new Model("",true);
 		dtrt(model);
@@ -1573,5 +1589,5 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public final long id=++ids;
 	public boolean stopWaiting;
 	static long ids;
-	public boolean useOldWay; // check env!
+	public boolean useOldWay=true; // check env!
 }

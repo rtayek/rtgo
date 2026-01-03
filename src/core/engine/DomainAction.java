@@ -28,7 +28,7 @@ public sealed interface DomainAction permits DomainAction.EngineAction, DomainAc
     static void applyTo(DomainAction action,Model model) {
         switch(action) {
             case DomainAction.SetBoardSpec a-> {
-                model.setRoot(a.width(),a.depth(),model.boardTopology(),model.boardShape());
+                //model.setRoot(a.width(),a.depth(),model.boardTopology(),model.boardShape());
                 model.setBoard(Board.factory.create(a.width(),a.depth(),model.boardTopology(),model.boardShape()));
             }
             case DomainAction.SetTopology a-> {

@@ -8,13 +8,25 @@ import utilities.MyTestWatcher;
 public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testModelRT0() throws Exception {
-        Model model=new Model();
+        Model model=new Model("",true);
         model.restore(new StringReader(expectedSgf));
         StringWriter stringWriter=new StringWriter();
         boolean ok=model.save(stringWriter);
         assertTrue(ok);
         String actualSgf=stringWriter.toString();
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
+        assertEquals(key.toString(),expectedSgf,actualSgf);
+    }
+    @Test public void testModelRT0NewWay() throws Exception {
+        Model model=new Model("",false);
+        model.restore(new StringReader(expectedSgf));
+        StringWriter stringWriter=new StringWriter();
+        boolean ok=model.save(stringWriter);
+        assertTrue(ok);
+        String actualSgf=stringWriter.toString();
+        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testModelRestoreAndSave() throws Exception {
@@ -76,6 +88,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
             model.restore(new StringReader(expectedSgf2));
             String actualSgf=model.save();
             if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+            // fails with (;RT[Tgo root];FF[4]GM[1]AP[RTGO]C[comment];B[as])
             assertEquals(key.toString(),expectedSgf2,actualSgf);
         } catch(Exception e) {
             fail("'"+key+"' caught: "+e);

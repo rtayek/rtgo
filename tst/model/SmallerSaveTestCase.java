@@ -1,61 +1,44 @@
 package model;
 import static org.junit.Assert.*;
+//import static org.junit.Assert.assertTrue;
 import java.io.*;
+import java.util.logging.Level;
 import org.junit.*;
 import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
+import io.Logging;
 import utilities.MyTestWatcher;
 // (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
 public class SmallerSaveTestCase {
 	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-	
+	private String dtrt(Model m) {
+		m.restore(new StringReader(sgf));
+		Logging.mainLogger.info("restored, root: "+m.root().toString());
+		boolean hasRT=Model.hasRT(m.root());
+		assertTrue(Model.hasRT(m.root()));
+		// it does not have a root because the new way did no execute it.
+		// hasRT does no see it because it only looks at sgf roperties and does not look at a extra properties. 
+		StringWriter stringWriter=new StringWriter();
+		m.save(stringWriter);
+		final String actual=stringWriter.toString();
+		Logging.mainLogger.info("saved: "+actual);
+		return actual;
+	}
+	// @Test public void atestNothing() throws IOException {}
 	@Test public void testNoMoves() throws IOException {
-		Model m=new Model("",false);
-		m.restore(new StringReader(sgf));
-		System.out.println(m);
-		StringWriter stringWriter=new StringWriter();
-		m.save(stringWriter);
-		final String actual=stringWriter.toString();
-		assertEquals(actual,sgf);
+		Logging.setLevels(Level.INFO);
+		Model m=new Model("new way",false);
+		final String actual=dtrt(m);
+		assertEquals(sgf,actual);
 	}
-	@Test public void testNoMovesTheOldWay() throws IOException {
-		Model m=new Model("",true);
-		m.restore(new StringReader(sgf));
-		StringWriter stringWriter=new StringWriter();
-		m.save(stringWriter);
-		final String actual=stringWriter.toString();
-		assertEquals(actual,sgf);
-	}
-	@Test public void testA1A2() throws IOException {
-		Model m=new Model("",false);
-		m.restore(new StringReader(sgf));
-		System.out.println(m);
-		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
-		Stone color=m.board().at(point)	;
-		assertEquals(Stone.black,color);
-		
-		//StringWriter stringWriter=new StringWriter();
-		//m.save(stringWriter);
-		//final String actual=stringWriter.toString();
-		//assertEquals(actual,sgf);
-	}
-	@Test public void testA1A2TheOldWay() throws IOException {
-		Model m=new Model("",true);
-		m.restore(new StringReader(sgf));
-		System.out.println(m);
-		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
-		Stone color=m.board().at(point)	;
-		assertEquals(Stone.black,color);
-		
-		//StringWriter stringWriter=new StringWriter();
-		//m.save(stringWriter);
-		//final String actual=stringWriter.toString();
-		//assertEquals(actual,sgf);
+	@Test public void testNOneovesTheOldWay() throws IOException {
+		Logging.setLevels(Level.INFO);
+		Model m=new Model("old way",true);
+		final String actual=dtrt(m);
+		assertEquals(sgf,actual);
 	}
 	// @Test public void testA1A2restored() throws IOException {}
 	final String sgf="(;FF[4]GM[1]AP[RTGO]C[comment];B[as])";
-
-
 	String foo="(;B[as];W[ar])";
 }
