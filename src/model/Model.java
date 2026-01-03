@@ -1589,5 +1589,5 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public final long id=++ids;
 	public boolean stopWaiting;
 	static long ids;
-	public boolean useOldWay=true; // check env!
+	public boolean useOldWay; // check env!
 }
