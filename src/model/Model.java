@@ -726,8 +726,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		int d=board().depth();
 		setBoard(Board.factory.create(w,d,boardTopology(),boardShape()));
 	}
-	void do2(MNode node) {
-		Logging.mainLogger.warning("using new way");
+	void domain(MNode node) {
 		state.node=node;
 		if(node==null) {
 			Logging.mainLogger.warning(name+" do with null!");
@@ -749,27 +748,27 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public int depthFromSgf() {
 		return state.depthFromSgf;
 	}
+	private void executeNode(MNode node) {
+		state.node=node;
+		if(node!=null) {//
+			for(int i=0;i<node.sgfProperties().size();i++) {
+				try {
+					System.out.println("node: "+node.sgfProperties().get(i));
+					ModelHelper.processProperty(this,state,node.sgfProperties().get(i));
+				} catch(Exception e) {
+					Logging.mainLogger.severe(name+"1 caught: "+e);
+					IOs.stackTrace(10);
+					setChangedAndNotify(new Event.Hint(Event.exception,"do"));
+				}
+			}
+		} else Logging.mainLogger.warning(name+" "+"do with null!");
+		setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
+	}
 	void do_(MNode node) { // set node and execute the sgf
 		if(useOldWay) Logging.mainLogger.warning("using old way");
 		else Logging.mainLogger.warning("using new way");
-		if(!useOldWay) do2(node); // new way
-		else {
-			if(useOldWay) Logging.mainLogger.warning("using old way");
-			state.node=node;
-			if(node!=null) {//
-				for(int i=0;i<node.sgfProperties().size();i++) {
-					try {
-						System.out.println("node: "+node.sgfProperties().get(i));
-						ModelHelper.processProperty(this,state,node.sgfProperties().get(i));
-					} catch(Exception e) {
-						Logging.mainLogger.severe(name+"1 caught: "+e);
-						IOs.stackTrace(10);
-						setChangedAndNotify(new Event.Hint(Event.exception,"do"));
-					}
-				}
-			} else Logging.mainLogger.warning(name+" "+"do with null!");
-			setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
-		}
+		if(useOldWay) executeNode(node);
+		else domain(node); 
 	}
 	void push() { // see if we can eliminate copying the board
 		Board copy=board()!=null?board().copy():null;
@@ -1477,7 +1476,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	private static void dtrt(Model model) {
 		System.out.println("using: "+model.useOldWay);
 		model.ensureBoard();
-		model.move(Stone.black,"A1",model.board().width());
+		//model.move(Stone.black,"A1",model.board().width()); // lets see what no moves does.
 		// model.move(Stone.white,"A2",model.board().width());
 		// System.out.println(model);
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
@@ -1501,14 +1500,15 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(!color.equals(Stone.black)) {
 			System.out.println("expected black at A1, got "+color);
 		}
-		if(true) return;
+		//if(true) return;
 		// assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
 		m.restore(new StringReader(expected));
 		stringWriter=new StringWriter();
 		m.save(stringWriter);
 		final String actual=stringWriter.toString();
-		System.out.println("actual: "+actual);
+		System.out.println("expected: "+expected);
+		System.out.println("actual  : "+actual);
 	}
 	public static void main(String[] args) {
 		// normal();
@@ -1573,5 +1573,5 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public final long id=++ids;
 	public boolean stopWaiting;
 	static long ids;
-	public boolean useOldWay=false; // check env!
+	public boolean useOldWay; // check env!
 }
