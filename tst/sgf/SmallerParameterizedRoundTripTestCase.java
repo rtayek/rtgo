@@ -32,7 +32,7 @@ import utilities.*;
     @Parameters public static Collection<Object[]> parameters() {
         Set<Object> objects=new LinkedHashSet<>();
         //objects.addAll(sgfDataKeySet());
-        String dir="sgf";
+        String dir=Parser.sgfPath;
         dir="ogs";
         if(true) { // all files in dir and subdirectoroes.
             objects.addAll(Parser.sgfFiles(dir));

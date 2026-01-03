@@ -114,7 +114,7 @@ class Traverser {
     public static void main(String[] args) {
         SgfAcceptor sgfAcceptor=new SgfPrintAcceptor();
         Traverser traverser=new Traverser(sgfAcceptor);
-        File dir=new File("sgf");
+        File dir=new File(sgfPath);
         System.out.println("||||");
         File file=new File(dir,"1635215-056-rtayek-Sighris.sgf");
         SgfNode games=restoreSgf(IOs.toReader(file));

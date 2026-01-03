@@ -26,7 +26,7 @@ import utilities.*;
                 "reallyEmpty","emptyWithSemicolon","twoEmptyWithSemicolon",};
         // use variable names above
         File[] files=new File[filenames.length];
-        for(int i=0;i<filenames.length;i++) files[i]=new File("sgf",filenames[i]);
+        for(int i=0;i<filenames.length;i++) files[i]=new File(Parser.sgfPath,filenames[i]);
         List<Object> objects=new ArrayList<>(Arrays.asList((Object[])(files)));
         //List<Object> objects=Arrays.asList((Object[])(files));
         System.out.println(objects.iterator().next().getClass().getName());

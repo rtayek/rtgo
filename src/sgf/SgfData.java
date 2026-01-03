@@ -29,17 +29,17 @@ public class SgfData {
 		System.out.println(badSgfFiles.size()+" bad sgf files.");
 		objects.addAll(badSgfFiles);
 
-		String sgfDir="sgf";
+		String sgfDir=Parser.sgfPath;
 		Collection<Object> sgf=sgfFiles(sgfDir);
 		System.out.println(sgf.size()+" in "+sgfDir);
 		objects.addAll(sgf);
 		
-		String ogsDir="ogs";
+		String ogsDir=Parser.ogsPath;
 		Collection<Object> ogs=sgfFiles(ogsDir);
 		System.out.println(ogs.size()+" in "+ogsDir);
 		objects.addAll(ogs);
 
-		String strangeDir="strangesgf";
+		String strangeDir=Parser.strangePath;
 		Collection<Object> strange=sgfFiles(strangeDir);
 		System.out.println(strange.size()+" in "+strangeDir);
 		objects.addAll(strange);

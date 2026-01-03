@@ -47,7 +47,7 @@ public class RoundTripTestCase {
         //checkFile(new File(filename));
     }
     @Test public void testVariation() throws IOException {
-        File file=new File("sgf","variation.sgf");
+        File file=new File(Parser.sgfPath,"variation.sgf");
         checkReader(IOs.toReader(file));
         StringBuffer sb=new StringBuffer();
         fromFile(sb,file);

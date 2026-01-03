@@ -242,17 +242,24 @@ public class Parser {
 				} else if(file.isDirectory()) {
 					collectSgfFiles(objects,file.listFiles());
 				} else System.out.println("strange: "+file);
-		} else System.out.println("files is null!");
+		} else {
+			throw new RuntimeException("ollectSgfFiles: files is null!");
+			// System.out.println("files is null!");
+		}
 	}
 	private static void collectSgfFiles(String dir,Set<Object> objects) {
 		System.out.println(new File(dir));
 		File[] files=new File(dir).listFiles();
-		if(files!=null); // System.out.println("has "+files.length+" files.");
-		else System.out.println("files is null!");
-		collectSgfFiles(objects,files);
+		if(files!=null) {
+			// System.out.println("has "+files.length+" files.");}
+			collectSgfFiles(objects,files);
+		} else System.out.println(dir+" is empty in collectSgfFiles!");
 	}
+	public static String sgfPath="data/sgf";
+	public static String strangePath="data/strangesgf";
+	public static String ogsPath="data/ogs";
 	public static Collection<Object> sgfFiles() {
-		return sgfFiles("sgf");
+		return sgfFiles(sgfPath);
 	}
 	public static Collection<Object> sgfFiles(String dir) {
 		Set<Object> objects=new LinkedHashSet<>();

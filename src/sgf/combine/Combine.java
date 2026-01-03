@@ -74,7 +74,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
         return combined;
     }
     static final boolean atHome=true;
-    public static final File pathToHere=new File("sgf");// new
+    public static final File pathToHere=new File(sgfPath);// new
     // do not put a ./ in front of the "sgf"!
     // File(atHome?"i:/ray/workspace/sgf2":"c:/ray/root/com/tayek/games/go/sgf");
     static final String pathToOldGames="sgf/old";
