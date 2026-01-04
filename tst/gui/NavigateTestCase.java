@@ -5,6 +5,7 @@ import java.io.File;
 import org.junit.*;
 import io.IOs;
 import model.*;
+import sgf.Parser;
 import utilities.MyTestWatcher;
 public class NavigateTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -24,7 +25,7 @@ public class NavigateTestCase {
     }
     @Test public void testExampleAfterOneDown() {
         String filename="ff4_ex.sgf";
-        File file=new File("sgf",filename);
+        File file=new File(Parser.sgfPath,filename);
         model.restore(IOs.toReader(file));
         down.do_(model);
         Boolean canDo=up.canDo(model);
