@@ -3,7 +3,7 @@ import java.util.*;
 import controller.*;
 import controller.Command;
 import equipment.*;
-import static model.MoveHelper.*;
+import static model.LegacyMoveHelper.*;
 // maybe have a type of move that is setup or ?
 public interface LegacyMove {
     String name();

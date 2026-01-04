@@ -1,5 +1,5 @@
 package model;
-import static model.MoveHelper.*;
+import static model.LegacyMoveHelper.*;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
 import java.awt.geom.Point2D;

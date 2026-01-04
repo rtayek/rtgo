@@ -1,6 +1,6 @@
 package model;
-import model.MoveHelper;
-import static model.MoveHelper.*;
+import model.LegacyMoveHelper;
+import static model.LegacyMoveHelper.*;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;

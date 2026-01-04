@@ -272,7 +272,8 @@ public class SgfNode {
             SgfProperty property=i.next();
             P p=property.p();
             if(p instanceof LegacyMove&&(p==P.B||p==P.W)) {
-                moves++;
+            	// the above can never happen nor could it ever happen.
+            	// check the code in earlier versions and see if it was a P.Move               moves++;
                 if(true) throw new RuntimeException("&&&&&&&&&&&&&&&&&");
                 if(property.equals(move)) {
                     holder.left=this;

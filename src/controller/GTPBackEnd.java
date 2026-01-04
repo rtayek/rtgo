@@ -1,6 +1,6 @@
 package controller;
-import model.MoveHelper;
-import static model.MoveHelper.*;
+import model.LegacyMoveHelper;
+import static model.LegacyMoveHelper.*;
 import static io.Init.first;
 import static model.MNodeAcceptor.MNodeFinder.labelPredicate;
 import static sgf.HexAscii.*;

@@ -1,6 +1,6 @@
 package controller;
-import model.MoveHelper;
-import static model.MoveHelper.*;
+import model.LegacyMoveHelper;
+import static model.LegacyMoveHelper.*;
 
 import static controller.GTPBackEnd.sleep2;
 import static io.Init.first;
