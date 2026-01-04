@@ -3,19 +3,13 @@ import java.util.*;
 import equipment.Board.Topology;
 import io.Logging;
 import utilities.Pair;
-public class Block {
-    Block(Board board,Point point,boolean[][] processed) {
-        this.who=board.at(point);
-        points=new ArrayList<Point>();
-        grow(point,board,processed);
-        liberties=countLiberties(board);
-    }
-    Block(Board board,int x,int y,boolean[][] processed) { this(board,new Point(x,y),processed); }
-    public int liberties() { return liberties_; }
+public record Block(Stone who,List<Point> points,int liberties) {
+    public Block(Board board,Point point,boolean[][] processed) { this(build(board,point,processed)); }
+    public Block(Board board,int x,int y,boolean[][] processed) { this(board,new Point(x,y),processed); }
+    private Block(BlockData data) { this(data.who(),List.copyOf(data.points()),data.liberties()); }
     public Stone color() { return who; }
-    public List<Point> points() { return Collections.unmodifiableList(points); }
     @Override public String toString() {
-        return "block: "+who+" "+points.size()+" stone(s), "+liberties_+" liberties"+points;
+        return "block: "+who+" "+points.size()+" stone(s), "+liberties+" liberties"+points;
     }
     public static Point modulo(Point point,Board board) { // only works for dx of 1!
         // or maybe i should just use modulo in each case and allow for dx >1?
@@ -48,37 +42,45 @@ public class Block {
         Point wrapped=modulo(point,board);
         return !board.isOnBoard(wrapped);
     }
-    private void grow(Point point,Board board,boolean[][] processed) {
+    private static BlockData build(Board board,Point point,boolean[][] processed) {
+        List<Point> collected=new ArrayList<Point>();
+        Stone color=board.at(point);
+        grow(point,board,processed,color,collected);
+        int liberties=countLiberties(board,collected);
+        return new BlockData(color,collected,liberties);
+    }
+    private static void grow(Point point,Board board,boolean[][] processed,Stone color,List<Point> collected) {
         if(!board.topology().equals(Topology.normal)) point=modulo(point,board);
         if(!board.isOnBoard(point)) return;
         if(!processed[point.x][point.y]) {
-            Stone who=board.at(point.x,point.y);
+            Stone whoOnBoard=board.at(point.x,point.y);
             // maybe i can/should generate a set of liberties as we go?
-            if(who.equals(this.who)||who.equals(Stone.vacant)||who.equals(Stone.edge)) processed[point.x][point.y]=true;
+            if(whoOnBoard.equals(color)||whoOnBoard.equals(Stone.vacant)||whoOnBoard.equals(Stone.edge)) processed[point.x][point.y]=true;
             // try always setting processed=true. -- was a really bad idea!
-            if(who==this.who) {
-                points.add(point);
+            if(whoOnBoard==color) {
+                collected.add(point);
                 List<Point> neighbors=Neighborhood.neighbor4s(point);
-                for(Point p:neighbors) grow(p,board,processed);
+                for(Point p:neighbors) grow(p,board,processed,color,collected);
             }
         }
     }
-    private void count(Point point,Board board,boolean[][] processed) {
+    private static int count(Point point,Board board,boolean[][] processed) {
         if(!board.topology().equals(Topology.normal)) point=modulo(point,board);
         if(board.isOnBoard(point)&&!processed[point.x][point.y]) { // checking not process will unsure tha we do not count liberties more than once.
-            if(board.at(point.x,point.y)==Stone.vacant) liberties_++;
             processed[point.x][point.y]=true;
+            return board.at(point.x,point.y)==Stone.vacant ? 1 : 0;
         }
+        return 0;
     }
-    int countLiberties(Board board) {
-        liberties_=0;
+    private static int countLiberties(Board board,List<Point> points) {
+        int liberties=0;
         boolean[][] processed=new boolean[board.width()][board.depth()];
         for(int k=0;k<points.size();k++) {
             Point p=points.get(k);
             List<Point> neighbors=Neighborhood.neighbor4s(p);
-            for(Point point:neighbors) count(point,board,processed);
+            for(Point point:neighbors) liberties+=count(point,board,processed);
         }
-        return liberties_;
+        return liberties;
     }
     static Block find(Board b,boolean[][] processed,int x,int y) {
         Block block=new Block(b,x,y,processed);
@@ -160,8 +162,5 @@ public class Block {
         }
         return pair;
     }
-    private final Stone who;
-    private int liberties;
-    private int liberties_;
-    private final List<Point> points;
+    private static record BlockData(Stone who,List<Point> points,int liberties) {}
 }
