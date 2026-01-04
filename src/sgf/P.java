@@ -98,7 +98,7 @@ public abstract class P {
     public static final P1 RG=new NoType("RG","123-","Region","- (Go)","list of point");
     public static final P1 RO=new GameInfo("RO","1234","Round","game-info","simpletext");
     public static final P1 RR=new GameInfo("RR","1234","Round","game-info","simpletext"); // what is this?
-    public static final P1 RT=new Root("RT","1234","Tgo Root","Root","simpletext"); // my MNode root?
+    public static final P1 RT=new Root("RT","1234","Tgo Root","Root","simpletext"); // uses as sentinel for trees.	
     public static final P1 RU=new GameInfo("RU","--34","Rules","game-info","simpletext");
     public static final P1 SC=new NoType("SC","123-","Secure stones","-","list of point");
     public static final P1 SE=new NoType("SE","--3-","Selftest moves","-","list of point");

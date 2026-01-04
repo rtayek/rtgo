@@ -114,24 +114,24 @@ public class MNode {
 		}
 		SgfNode extra=new SgfNode();
 		extra.left=node; // might be null
-		MNode extraMNode=new MNode(null);
+		MNode sentenel=new MNode(null);
 		// 1/21/23
 		// maybe we don't need and extra node if we already have one?
 		// maybe this can not happen?
-		try { // does this really need a try?
+		// apparently there is a way and we ar not doing it now.
+		try {
 			SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
-			// add a property or comment indicating restored.
-			extraMNode.sgfProperties.add(property);
+			sentenel.sgfProperties.add(property);
 			Logging.mainLogger.info("toGeneralTree() added RT property to extra root node");
 		} catch(Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-		extraMNode.data=extraMNode.id; // just so it's not null
+		sentenel.data=sentenel.id; // just so it's not null
 		// System.out.println("new root and children: "+mRoot+"
 		// "+mRoot.children);
-		@SuppressWarnings("unused") MNode mNode=toGeneralTree(extra.left,extraMNode);
-		return extraMNode;
+		@SuppressWarnings("unused") MNode mNode=toGeneralTree(extra.left,sentenel);
+		return sentenel;
 	}
 	public List<MNode> lca(MNode current,MNode target) {
 		// another find in sgf!

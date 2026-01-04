@@ -6,7 +6,7 @@ old way wprks at the earlier one
 noth ways break on the latter one.
 error is that the domain logic calls setRoot() which clears the stack.
 not sure what causes the old way to fail.
-
+12/15/25 started using chatgpt a lot.
 pass legacy switch from gradle as env variable to junit
 git config --global http.sslverify "false"
 make the keys work in the gui! rubout and home/end etc.

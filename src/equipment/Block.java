@@ -163,5 +163,5 @@ public class Block {
     private final Stone who;
     private int liberties;
     private int liberties_;
-    private List<Point> points;
+    private final List<Point> points;
 }

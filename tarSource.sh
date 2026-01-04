@@ -29,7 +29,9 @@ tar -czf "$out" \
   --exclude='./.ruff_cache' \
   --exclude='./.venv' \
   --exclude-vcs   \
-  --exclude='./sgf' \
-  --exclude='./strangesgf' \
+  --exclude='./data' \
+  --exclude='./logs' \
+  --exclude='./resources' \
+  --exclude='./lib' \
   .
 echo "Wrote $out"
