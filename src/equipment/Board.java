@@ -102,7 +102,7 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
     //default Stone at(String string) { return at(,); }
     default void setAt(Point point,Stone color) { setAt(point.x,point.y,color); }
     default void setAt(int x,int y,Stone color) { setAt(index(x,y),color); }
-    default void setTo(Stone color,Block block) { for(Point point:block.points()) setAt(point,Stone.vacant); }
+    default void setTo(Stone color,Block block) { for(Point point:block.points()) setAt(point,color); }
     default void setTo(Stone color,List<Block> blocks) {
         for(Block block:blocks) {
             Logging.mainLogger.fine("removing "+block);

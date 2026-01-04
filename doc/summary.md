@@ -1,5 +1,3 @@
-Below is a **handoff-ready project summary** in the format you asked for. This is written so another chat engine (or future-you) can pick up context quickly without replaying the entire history.
-
 ---
 
 ## Context
@@ -112,12 +110,3 @@ A minimal **Tic-Tac-Toe (TTT)** implementation was added in parallel to keep abs
    * Should long-running tests be isolated?
 
 ---
-
-If you want, next we can:
-
-* Produce a **one-page architecture diagram**
-* Generate a **checklist for root cleanup**
-* Write a **migration guide for legacy Move → DomainAction**
-* Lock down **import rules** (who is allowed to depend on whom)
-
-Just say which direction you want to go.

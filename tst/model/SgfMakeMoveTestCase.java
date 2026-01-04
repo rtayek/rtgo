@@ -10,12 +10,12 @@ import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
 import utilities.MyTestWatcher;
-public class SgfMoveTestCase {
+public class SgfMakeMoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     // maybe add pass and resign?
-    @Test public void testMake() {
+    @Test public void testSgfMakMovee() {
         Stone color=Stone.black;
         Point point=new Point(0,0);
         String expected=Coordinates.toGtpCoordinateSystem(point,model.board().width(),model.board().depth());
@@ -27,7 +27,7 @@ public class SgfMoveTestCase {
         assertEquals(1,model.moves());
         assertEquals(expected,model.lastMoveGTP());
     }
-    @Test public void testUnmake() {
+    @Test public void testSgfUnmakeMove() {
         Point point=new Point(0,0);
         Stone expected=model.board().at(point);
         model.sgfMakeMove(Stone.black,point);
