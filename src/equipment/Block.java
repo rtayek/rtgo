@@ -13,30 +13,31 @@ public record Block(Stone who,List<Point> points,int liberties) {
     }
     public static Point modulo(Point point,Board board) { // only works for dx of 1!
         // or maybe i should just use modulo in each case and allow for dx >1?
-        Point maybeWrapped=new Point(point);
+        int x=point.x;
+        int y=point.y;
         switch(board.topology()) { // how to do mobius and klein bottle?
             // mobius - overflow/underflow gets mirrored
             // maybe both gets us a klein bottle?
             case normal:
                 break;
             case horizontalCylinder:
-                if(maybeWrapped.x==-1) maybeWrapped.x=board.width()-1;
-                else if(maybeWrapped.x==board.width()) maybeWrapped.x=0;
+                if(x==-1) x=board.width()-1;
+                else if(x==board.width()) x=0;
                 break;
             case verticalCylinder:
-                if(maybeWrapped.y==-1) maybeWrapped.y=board.depth()-1;
-                else if(maybeWrapped.y==board.depth()) maybeWrapped.y=0;
+                if(y==-1) y=board.depth()-1;
+                else if(y==board.depth()) y=0;
                 break;
             case torus:
-                if(maybeWrapped.y==-1) maybeWrapped.y=board.depth()-1;
-                else if(maybeWrapped.y==board.depth()) maybeWrapped.y=0;
-                if(maybeWrapped.x==-1) maybeWrapped.x=board.width()-1;
-                else if(maybeWrapped.x==board.width()) maybeWrapped.x=0;
+                if(y==-1) y=board.depth()-1;
+                else if(y==board.depth()) y=0;
+                if(x==-1) x=board.width()-1;
+                else if(x==board.width()) x=0;
                 break;
             case diamond:
                 break;
         }
-        return maybeWrapped;
+        return new Point(x,y);
     }
     public static boolean isOffTheBoard(Point point,Board board) {
         Point wrapped=modulo(point,board);
@@ -116,18 +117,13 @@ public record Block(Stone who,List<Point> points,int liberties) {
     }
     public static ArrayList<Block> findAdjacentCapturedOpponentsBlocks(Board board,Point at,Stone stone) {
         List<Point> neighbor4s=Neighborhood.neighbor4s(at);
-        for(Iterator<Point> iterator=neighbor4s.iterator();iterator.hasNext();) {
-            Point point=iterator.next();
-            if(!board.topology().equals(Topology.normal)) { // change the (x,y) in
-                // the list!
-                Point wrapped=modulo(point,board);
-                point.x=wrapped.x;
-                point.y=wrapped.y;
-            }
-            if(!board.isOnBoard(point)) iterator.remove();
+        ArrayList<Point> adjusted=new ArrayList<>(neighbor4s.size());
+        for(Point point:neighbor4s) {
+            Point adjustedPoint=board.topology().equals(Topology.normal)?point:modulo(point,board);
+            if(board.isOnBoard(adjustedPoint)) adjusted.add(adjustedPoint);
         }
         ArrayList<Block> capturedBlocks=new ArrayList<>(4);
-        for(Point point:neighbor4s) if(board.at(point).equals(stone.otherColor())) {
+        for(Point point:adjusted) if(board.at(point).equals(stone.otherColor())) {
             Block block=find(board,point);
             if(block!=null&&block.liberties()==0) capturedBlocks.add(block);
         }
@@ -135,18 +131,13 @@ public record Block(Stone who,List<Point> points,int liberties) {
     }
     public static ArrayList<Block> findAdjacentOpponentsBlocksInAtari(Board board,Point at,Stone stone) {
         List<Point> neighbor4s=Neighborhood.neighbor4s(at);
-        for(Iterator<Point> iterator=neighbor4s.iterator();iterator.hasNext();) {
-            Point point=iterator.next();
-            if(!board.topology().equals(Topology.normal)) { // change the (x,y) in
-                // the list!
-                Point wrapped=modulo(point,board);
-                point.x=wrapped.x; // change the values in the list
-                point.y=wrapped.y; // change the values in the list
-            }
-            if(!board.isOnBoard(point)) iterator.remove();
+        ArrayList<Point> adjusted=new ArrayList<>(neighbor4s.size());
+        for(Point point:neighbor4s) {
+            Point adjustedPoint=board.topology().equals(Topology.normal)?point:modulo(point,board);
+            if(board.isOnBoard(adjustedPoint)) adjusted.add(adjustedPoint);
         }
         ArrayList<Block> blocksInAtari=new ArrayList<>(4);
-        for(Point point:neighbor4s) if(board.at(point).equals(stone.otherColor())) {
+        for(Point point:adjusted) if(board.at(point).equals(stone.otherColor())) {
             Block block=find(board,point);
             if(block!=null&&block.liberties()==1) blocksInAtari.add(block);
         }

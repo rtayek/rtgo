@@ -1361,9 +1361,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 				throw new RuntimeException("board is null!");
 			}
 			// check for pass?
-			if(stone.equals(Stone.vacant)) throw new RuntimeException("bad move");
-			if(board.at(point)!=Stone.vacant) Logging.mainLogger.severe("sgf is moving onan occupied point: "+point);
-			board.setAt(point.x,point.y,stone);
+            if(stone.equals(Stone.vacant)) throw new RuntimeException("bad move");
+            if(board.at(point)!=Stone.vacant) Logging.mainLogger.severe("sgf is moving onan occupied point: "+point);
+            board.setAt(point.x,point.y,stone);
 			lastMoveGTP=Coordinates.toGtpCoordinateSystem(point,board.width(),board.depth());
 			lastColorGTP=stone;
 			// find opponents blocks on adjacent intersections
