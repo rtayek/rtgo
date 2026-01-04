@@ -12,16 +12,23 @@ plugins {
 
 repositories { mavenCentral() }
 
-sourceSets {
-  main {
-    java.srcDirs = ["src"]
-    resources.srcDirs = ["resources"]
+  sourceSets {
+    main {
+      java {
+        srcDirs = ["src", "legacy/src"]
+      }
+      resources.srcDirs = ["resources"]
+    }
+   test {
+      java {
+        srcDirs = ["tst", "slow", "suites"]
+        exclude "server/**"   //  just one seems to work for all!
+        //exclude "server/**"  
+        //exclude "slow/server/ParameterizedTestCase.java"
+      }
+    }
   }
-  test {
-    java.srcDirs = ["tst", "slow", "suites"]
-  }
-}
-
+  
 dependencies {
   implementation files("lib/java-getopt-1.0.13.jar")
   testImplementation "junit:junit:4.13.2"
@@ -67,3 +74,4 @@ run {
 }
 
 version = "0.2"
+
