@@ -15,20 +15,15 @@ public class SaveTestCase {
 		model.move(Stone.black,"A1",model.board().width());
 		//System.out.println(model);
 		//model.move(Stone.white,"A2",model.board().width());
-		StringWriter stringWriter=new StringWriter();
-		boolean ok=model.save(stringWriter);
-		assertTrue("save fails",ok);
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
-		final String expected=stringWriter.toString();
+		final String expected=ModelTestIo.save(model);
 		System.out.println("expected: "+expected);
 		Model m=new Model("",false);
-		m.restore(new StringReader(expected));
+		ModelTestIo.restore(m,expected);
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
 		Stone color=m.board().at(point)	;
 		//assertEquals(Stone.black,color);
-		stringWriter=new StringWriter();
-		m.save(stringWriter);
-		final String actual=stringWriter.toString();
+		final String actual=ModelTestIo.save(m);
 		System.out.println("actual: "+actual);
 		assertEquals(actual,expected);
 		// is failing because the new way is not putting in ;RT[Tgo root 
@@ -40,21 +35,16 @@ public class SaveTestCase {
 		model.move(Stone.black,"A1",model.board().width());
 		//model.move(Stone.white,"A2",model.board().width());
 		//System.out.println(model);
-		StringWriter stringWriter=new StringWriter();
-		boolean ok=model.save(stringWriter);
-		assertTrue("save fails",ok);
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
-		final String expected=stringWriter.toString();
+		final String expected=ModelTestIo.save(model);
 		System.out.println("expected: "+expected);
 		Model m=new Model("",true);
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
 		Stone color=m.board().at(point)	;
 		//assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
-		m.restore(new StringReader(expected));
-		stringWriter=new StringWriter();
-		m.save(stringWriter);
-		final String actual=stringWriter.toString();
+		ModelTestIo.restore(m,expected);
+		final String actual=ModelTestIo.save(m);
 		System.out.println("actual: "+actual);
 		assertEquals(actual,expected);
 	}

@@ -19,20 +19,19 @@ public class RoundTripTestCase {
     public static void checkReader(Reader r) throws IOException {
         // looks like a double round trup?
         // do we need this?
-        StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=ModelHelper.modelRoundTrip(r,stringWriter);
-        String expected=stringWriter.toString();
-        Reader reader=new StringReader(expected);
-        stringWriter=new StringWriter();
-        // does round trip belong here?
-        games=ModelHelper.modelRoundTrip(reader,stringWriter);
-        String actual=stringWriter.toString();
+        String expected=modelRoundTripToString(r);
+        String actual=modelRoundTripToString(new StringReader(expected));
         try {
             r.close();
         } catch(IOException e) {
             Logging.mainLogger.severe("caught: "+e);
         }
         assertEquals(expected,actual);
+    }
+    private static String modelRoundTripToString(Reader reader) {
+        StringWriter stringWriter=new StringWriter();
+        @SuppressWarnings("unused") MNode games=ModelHelper.modelRoundTrip(reader,stringWriter);
+        return stringWriter.toString();
     }
     @Test public void testOneMove() throws IOException {
         String sgfString=getSgfData("oneMoveAtA1");

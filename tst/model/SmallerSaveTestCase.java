@@ -10,15 +10,13 @@ import utilities.MyTestWatcher;
 public class SmallerSaveTestCase {
 	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
 	private String dtrt(Model m) {
-		m.restore(new StringReader(sgf));
+		ModelTestIo.restore(m,sgf);
 		Logging.mainLogger.info("restored, root: "+m.root().toString());
 		boolean hasRT=Model.hasRT(m.root());
 		assertTrue(Model.hasRT(m.root()));
 		// it does not have a root because the new way did no execute it.
 		// hasRT does no see it because it only looks at sgf roperties and does not look at a extra properties. 
-		StringWriter stringWriter=new StringWriter();
-		m.save(stringWriter);
-		final String actual=stringWriter.toString();
+		final String actual=ModelTestIo.save(m);
 		Logging.mainLogger.info("saved: "+actual);
 		return actual;
 	}

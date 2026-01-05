@@ -332,22 +332,10 @@ public class SgfNode {
         return true;
     }
     private static SgfNode sgfRestoreAndSave(Reader reader,Writer writer) {
-        if(reader==null) return null;
-        SgfNode games=restoreSgf(reader);
-        if(games!=null) games.saveSgf(writer,noIndent);
-        String actual=writer.toString();
-        int p=parentheses(actual);
-        if(p!=0) System.out.println("actual parentheses count: "+p);
-        //if(p!=0) throw new RuntimeException("actual parentheses count: "+p);
-        return games;
+        return SgfRoundTrip.restoreAndSave(reader,writer);
     }
     public static String sgfRestoreAndSave(String expectedSgf) { //restore and save
-        if(expectedSgf==null) return null;
-        StringWriter stringWriter=new StringWriter();
-        StringReader stringReader=new StringReader(expectedSgf);
-        SgfNode games=sgfRestoreAndSave(stringReader,stringWriter);
-        String actualSgf=stringWriter.toString();
-        return actualSgf;
+        return SgfRoundTrip.restoreAndSave(expectedSgf);
     }
     // lets try to make everyone use this one
     // except for maybe a restore then a save and a restore.
@@ -356,28 +344,10 @@ public class SgfNode {
     // apr 23
     // maybe rename to restoreSave and saveRestore?
     public static SgfNode sgfSaveAndRestore(SgfNode expected,StringWriter stringWriter) {
-        SgfNode actualSgf=null;
-        if(expected!=null) {
-            expected.saveSgf(stringWriter,noIndent);
-            String sgf=stringWriter.toString();
-            actualSgf=restoreSgf(new StringReader(sgf));
-        }
-        return actualSgf;
+        return SgfRoundTrip.saveAndRestore(expected,stringWriter);
     }
     public static boolean sgfRoundTripTwice(Reader original) {
-        Writer writer=new StringWriter();
-        sgfRestoreAndSave(original,writer);
-        String expected=writer.toString(); // cannonical form?
-        writer=new StringWriter();
-        //roundTrip();
-        SgfNode games=restoreSgf(new StringReader(expected));
-        if(games!=null) games.saveSgf(writer,noIndent);
-        // allow null for now (11/8/22).
-        String actual=writer.toString();
-        if(!actual.equals(expected)) {
-            parserLogger.severe(actual+"!="+original);
-            return false;
-        } else return true;
+        return SgfRoundTrip.roundTripTwice(original);
     }
     /*
     (;FF[4]C[root](;C[a];C[b](;C[c])

@@ -1,7 +1,6 @@
 package sgf;
 import static org.junit.Assert.assertEquals;
 import static sgf.Parser.*;
-import static sgf.SgfNode.sgfRestoreAndSave;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -25,12 +24,12 @@ import utilities.*;
 	}
 	@After public void tearDown() throws Exception {}
 	@Test public void testCannonical() {
-		String expectedSgf=sgfRestoreAndSave(originalSgf);
-		String actualSgf=sgfRestoreAndSave(expectedSgf);
+		String expectedSgf=SgfRoundTrip.restoreAndSave(originalSgf);
+		String actualSgf=SgfRoundTrip.restoreAndSave(expectedSgf);
 		assertEquals(key.toString(),expectedSgf,actualSgf);
 	}
 	@Test public void testMultipleGames() { // how does it do that?
-		String expectedSgf=sgfRestoreAndSave(originalSgf);
+		String expectedSgf=SgfRoundTrip.restoreAndSave(originalSgf);
 		// assertFalse(expectedSgf.contains(P.RT.toString()));
 		// why would we expect this?
 	}

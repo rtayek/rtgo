@@ -1,7 +1,6 @@
 package sgf;
 import static org.junit.Assert.*;
 import static sgf.Parser.restoreSgf;
-import static sgf.SgfNode.*;
 import java.io.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
@@ -32,12 +31,12 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
         SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
         StringWriter stringWriter=new StringWriter();
-        SgfNode actualSgf=sgfSaveAndRestore(expected,stringWriter);
+        SgfNode actualSgf=SgfRoundTrip.saveAndRestore(expected,stringWriter);
         if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
     }
     @Test public void testSgfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
-        String actualSgf=sgfRestoreAndSave(expectedSgf);
+        String actualSgf=SgfRoundTrip.restoreAndSave(expectedSgf);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         if(actualSgf.length()==expectedSgf.length()+1) if(actualSgf.endsWith(")")) {
             System.out.println(key+"removing extra ')' "+actualSgf.length());
@@ -61,13 +60,13 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     @Test public void testRSgfoundTripeTwice() throws Exception {
         if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
         StringReader reader=expectedSgf!=null?new StringReader(expectedSgf):null;
-        boolean isOk=sgfRoundTripTwice(reader);
+        boolean isOk=SgfRoundTrip.roundTripTwice(reader);
         assertTrue(key.toString(),isOk);
     }
     @Test public void testSgfCannonical() {
         if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
-        String actualSgf=sgfRestoreAndSave(expectedSgf);
-        String actual2=sgfRestoreAndSave(actualSgf);
+        String actualSgf=SgfRoundTrip.restoreAndSave(expectedSgf);
+        String actual2=SgfRoundTrip.restoreAndSave(actualSgf);
         assertEquals(key.toString(),actualSgf,actual2);
     }
 }

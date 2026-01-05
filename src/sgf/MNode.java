@@ -171,16 +171,10 @@ public class MNode {
 		return true; // for now
 	}
 	public static MNode mNodeRoundTrip(StringReader stringReader,StringWriter stringWriter) {
-		MNode root=MNode.restore(stringReader);
-		boolean ok=MNode.save(stringWriter,root,noIndent);
-		if(!ok) System.out.println("not ok!");
-		return root;
+		return SgfRoundTrip.mNodeRoundTrip(stringReader,stringWriter,SgfRoundTrip.MNodeSaveMode.standard);
 	}
 	public static MNode mNodeDirectRoundTrip(StringReader stringReader,StringWriter stringWriter) {
-		MNode root=MNode.restore(stringReader);
-		String actual=saveDirectly(root);
-		stringWriter.write(actual);
-		return root;
+		return SgfRoundTrip.mNodeRoundTrip(stringReader,stringWriter,SgfRoundTrip.MNodeSaveMode.direct);
 	}
 	public static MNode quietLoad(Reader reader) {
 		PrintStream old=System.out;

@@ -1,6 +1,5 @@
 package sgf;
 import static org.junit.Assert.assertEquals;
-import static sgf.MNode.mNodeRoundTrip;
 import java.io.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
@@ -13,7 +12,7 @@ public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTri
         if(expectedSgf!=null) {
             StringReader stringReader=new StringReader(expectedSgf);
             StringWriter stringWriter=new StringWriter();
-            MNode root=mNodeRoundTrip(stringReader,stringWriter);
+            MNode root=SgfRoundTrip.mNodeRoundTrip(stringReader,stringWriter,SgfRoundTrip.MNodeSaveMode.standard);
             actualSgf=stringWriter.toString();
         }
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
@@ -26,7 +25,7 @@ public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTri
         if(expectedSgf!=null) {
             StringReader stringReader=new StringReader(expectedSgf);
             StringWriter stringWriter=new StringWriter();
-            MNode root=MNode.mNodeDirectRoundTrip(stringReader,stringWriter);
+            MNode root=SgfRoundTrip.mNodeRoundTrip(stringReader,stringWriter,SgfRoundTrip.MNodeSaveMode.direct);
             actualSgf=stringWriter.toString();
         }
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);

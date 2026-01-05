@@ -1,6 +1,5 @@
 package model;
 import static org.junit.Assert.*;
-import static sgf.SgfNode.sgfRestoreAndSave;
 import java.io.*;
 import org.junit.*;
 import sgf.*;
@@ -30,7 +29,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testModelRestoreAndSave() throws Exception {
-        String actualSgf=sgfRestoreAndSave(expectedSgf);
+        String actualSgf=SgfRoundTrip.restoreAndSave(expectedSgf);
         // then it does a restore and a save.
         // this one looks more complicated than is necessary.
         //the round trip above could be package if we removed it.
@@ -50,7 +49,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
     }
     @Test public void testLongRoundTrip() throws Exception {
         StringWriter stringWriter=new StringWriter();
-        MNode games=ModelHelper.modelRoundTrip(expectedSgf!=null?new StringReader(expectedSgf):null,stringWriter);
+        MNode games=ModelHelper.modelRoundTrip(expectedSgf,stringWriter,ModelHelper.ModelSaveMode.sgfNode);
         String actualSgf=expectedSgf!=null?stringWriter.toString():null;
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
@@ -69,7 +68,8 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
     }
     @Test public void testLongRoundTrip21() throws Exception {
         StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=ModelHelper.modelRoundTrip2(expectedSgf,stringWriter);
+        @SuppressWarnings("unused") MNode games=ModelHelper.modelRoundTrip(expectedSgf,stringWriter,
+                ModelHelper.ModelSaveMode.sgfNodeChecked);
         String actualSgf=stringWriter.toString();
         if(expectedSgf==null) actualSgf=null; // hack for now
         System.out.println("ex: "+expectedSgf);
