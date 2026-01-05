@@ -6,7 +6,6 @@ import org.junit.*;
 import equipment.*;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
-import model.LegacyMove.MoveImpl;
 import sgf.*;
 import utilities.MyTestWatcher;
 public class IllegalMoveTestCase {

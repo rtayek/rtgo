@@ -3,7 +3,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import audio.Audio;
 import utilities.MyTestWatcher;
 public class GetAudioResourceAsStreamTestCase {

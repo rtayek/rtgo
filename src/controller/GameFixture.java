@@ -1,6 +1,4 @@
 package controller;
-import model.LegacyMoveHelper;
-import static model.LegacyMoveHelper.*;
 
 import static controller.GTPBackEnd.sleep2;
 import static io.Init.first;
@@ -13,8 +11,7 @@ import io.*;
 import io.IOs.*;
 import io.IOs.End.Holder;
 import model.*;
-import model.LegacyMove.MoveImpl;
-import model.Move2.MoveType;
+import static model.Move2.*;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 import utilities.*;

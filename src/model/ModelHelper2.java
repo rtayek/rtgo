@@ -1,6 +1,8 @@
 package model;
+import java.util.ArrayList;
 import java.util.List;
 import controller.BothEnds;
+import controller.Command;
 import controller.GTPBackEnd;
 import controller.GTPFrontEnd;
 import controller.Response;
@@ -56,6 +58,14 @@ public class ModelHelper2 {
 		getMovesAndPush(both.frontEnd,original,oneAtATime);
 		return model;
 	}
+    public static List<String> toGTPMoves(List<Move2> moves,int width,int depth) {
+        List<String> commands=new ArrayList<>();
+        for(Move2 move:moves) { // how about pass and resign?
+            String string=Command.play.name()+" "+move.color+" "+Move2.toGTPCoordinates(move,width,depth);
+            commands.add(string);
+        }
+        return commands;
+    }
 	public static void main(String[] args) {
 		Model original=new Model();
 		original.setRoot(5,5);

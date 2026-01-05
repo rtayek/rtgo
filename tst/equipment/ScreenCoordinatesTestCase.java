@@ -2,7 +2,6 @@ package equipment;
 import static org.junit.Assert.assertEquals;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import model.Model;
 import utilities.MyTestWatcher;
 public class ScreenCoordinatesTestCase {

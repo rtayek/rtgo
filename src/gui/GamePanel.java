@@ -1,13 +1,7 @@
 package gui;
 import java.awt.*;
-import java.awt.Dialog.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.event.*;
-import java.awt.font.TextAttribute;
 import java.awt.geom.Point2D;
-import java.awt.im.InputMethodHighlight;
-import java.awt.image.*;
-import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import javax.swing.*;

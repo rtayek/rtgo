@@ -2,7 +2,6 @@ package sgf;
 import static sgf.Parser.*;
 import java.io.StringReader;
 import java.util.*;
-import javax.sound.midi.Sequence;
 import io.Init;
 public class SgfFiles {
     public static void main(String[] arguments) {

@@ -1,112 +1,128 @@
 ---
 
+# RTGO / Multi-Game Engine – Project README (for Future-Me)
+
 ## Context
 
-This project is a long-running refactor and architectural cleanup of a Java game framework originally centered around **Go (Baduk)** with heavy **SGF** and **GTP** integration. The original codebase tightly coupled SGF parsing, game state mutation, move logic, UI updates, and persistence inside a monolithic `Model` and `Move` hierarchy.
+This project is a long-lived Java codebase (originating ~25 years ago) that began as a Go (baduk) application and has been progressively refactored into a **multi-game engine** with Go and Tic-Tac-Toe (TTT) as concrete implementations. The original architecture tightly coupled the model to SGF parsing, legacy Move hierarchies, and UI/IO concerns. Recent work has focused on **systematically decoupling domain logic from file formats (SGF, GTP), UI, and transport**, while preserving exact SGF round-trip fidelity.
 
-Over time, this has been reworked into a **layered, decoupled architecture**:
+The central refactor introduces a **game-agnostic action pipeline**:
 
-* A **core / engine layer** that understands *game-agnostic domain actions* (play, pass, resign, setup, configuration).
-* **Format adapters** (SGF, GTP) that *map external representations* into those domain actions.
-* **Game-specific implementations** (Go, Tic-Tac-Toe) that apply actions to game state.
-* A tree-based model that can still **round-trip SGF losslessly**, including unknown or unhandled properties.
+* External formats (SGF, later GTP/networking) are mapped to **neutral domain actions**.
+* Actions are applied to game state via **game-specific appliers**.
+* All non-semantic or unsupported SGF properties are preserved verbatim as annotations to guarantee lossless round-tripping.
 
-A major theme has been **separating SGF from the model** while still preserving *exact round-trip fidelity*. SGF nodes are now interpreted into actions plus annotations, instead of directly mutating model state. A sentinel SGF property (`RT`) is used as a no-op root marker, matching legacy behavior.
-
-A minimal **Tic-Tac-Toe (TTT)** implementation was added in parallel to keep abstractions honest and avoid Go-specific leakage.
+A minimal Tic-Tac-Toe implementation was added in parallel to keep abstractions honest and prevent Go-specific leakage into the core.
 
 ---
 
-## Goals
+## Goals (Current Focus)
 
-* Finish stabilizing the **DomainAction-based execution path** so it exactly matches legacy behavior.
-* Preserve **exact SGF round-trip fidelity** (no added, removed, or reordered properties).
-* Eliminate remaining uses of the **legacy Move class** in inner loops.
-* Finalize the **package layout** so responsibilities are clear and enforceable.
-* Clean up the **project root** (too many top-level folders / cruft).
-* Keep Go and TTT both working as first-class games using the same core engine.
+* Finish **decoupling SGF from the core model** while preserving exact SGF round-trip behavior.
+* Eliminate remaining **legacy Move** usage in inner loops.
+* Stabilize the **DomainAction → Applier** pipeline so Go and TTT both use it cleanly.
+* Clean up **project root cruft** and converge on a sane `src/` package structure.
+* Keep changes incremental (“baby steps”), with tests passing at each step.
 
 ---
 
-## Non-goals / Constraints
+## Non-Goals / Constraints
 
-* **No behavior changes** to existing Go logic unless required for correctness.
-* **No loss of SGF information**, even for properties not currently interpreted.
-* **Java only**, no Kotlin/Scala.
-* Deterministic, testable behavior is required (many unit tests already exist).
-* Networking (client/server, GTP servers) is **treated as an adapter layer** and is not being expanded right now.
-* Not splitting into multiple Gradle/Maven projects yet — staying in one project for now.
-* Performance optimizations are secondary to correctness and clarity.
+* **Not** rewriting the project or changing observable Go behavior.
+* **Not** losing *any* SGF information (round-trip must be byte-stable modulo formatting).
+* **Not** committing to client/server or networking yet (treated as adapters, deferred).
+* **Not** prematurely optimizing or generalizing beyond Go + TTT.
+* Hard constraints:
+
+  * Java (current toolchain already in use).
+  * Deterministic execution.
+  * Eclipse-friendly refactoring (used heavily).
+  * Tests are the specification.
 
 ---
 
 ## Current State
 
-### What exists and works
+### What Exists and Works
 
-* **DomainAction system** (sealed interfaces / records) representing:
+* **Core action model**:
 
-  * Engine actions (Move, Pass, Resign, Setup, etc.)
-  * Config actions (SetBoardSpec, SetTopology, SetShape)
-* **DomainActionApplier** applies actions to the model instead of SGF directly mutating it.
-* **SGF → DomainAction mapping** lives in `core.formats.sgf.SgfDomainActionMapper`.
-* **RawProperty + NodeAnnotations** preserve unhandled SGF properties for lossless round-trip.
-* **GameNode tree** represents SGF structure without SGF types leaking into the engine.
-* **RT property** acts as a sentinel root; executing it is a no-op (matching legacy `do_()`).
-* **Tic-Tac-Toe game** implemented using the same action pipeline:
+  * Neutral `DomainAction` (or `Action`) hierarchy.
+  * Game-specific appliers (Go, TTT).
+* **SGF boundary split**:
 
-  * TTT rules/state
-  * TTT action mapper + applier
-  * Tests pass
-* Most unit tests pass; failures have been traced and fixed by reverting problematic commits.
+  * `SgfDomainActionMapper` converts SGF → actions + preserved extras.
+  * `RawProperty` / `NodeAnnotations` store unapplied SGF properties losslessly.
+* **Game tree**:
 
-### What was fixed recently
+  * SGF-free `GameNode` tree holding actions + annotations.
+  * Sentinel root node (`RT`) used as a no-op anchor (historically implicit).
+* **Tic-Tac-Toe**:
 
-* Incorrect use of `setRoot()` inside domain action execution (was clearing state incorrectly).
-* Accidental introduction of extra `RT` nodes due to not checking **extra properties**.
-* Ensured first node execution semantics match legacy behavior.
-* Restored SGF comment handling to avoid breaking round-trip.
+  * Minimal but real implementation.
+  * Uses the same action pipeline as Go.
+  * Tests pass and validate abstraction boundaries.
+* **Go**:
 
-### What is fragile or unresolved
+  * Board logic, captures, topology/shape handling still intact.
+  * Legacy move usage mostly eliminated.
+* Most unit tests pass; a few timeout-related tests are known and understood.
 
-* SGF handling is still **easy to break** if mapping decisions change (e.g., treating comments as actions vs extras).
-* Some timeout-related test failures remain (likely infrastructure / threading).
-* Project root is cluttered (≈67 items).
-* Package boundaries are conceptually clear but not fully enforced everywhere.
-* Networking / GTP code still exists but is partially legacy.
+### What Was Tricky / Recently Fixed
+
+* A regression where the new action path:
+
+  * Called `setRoot()` too eagerly (clearing stacks).
+  * Mishandled the SGF root/sentinel (`RT`) causing extra nodes.
+* Root cause: mixing “apply actions” with “reset model” semantics.
+* Fix involved reverting several commits and re-aligning with old `do_()` semantics:
+
+  * Executing the sentinel node must be a no-op.
+  * Root creation must be explicit and rare.
 
 ---
 
-## Open Questions / Next Steps
+## Open Questions / Next Things to Work On
 
-1. **Package layout finalization**
+1. **Finalize SGF handling policy**
 
-   * Should `core/engine` fully absorb `model/engine`, or keep them separate?
-   * Where should legacy code live long-term (`legacy/` quarantine)?
+   * Temporarily *not* doing “Option B” (RawProperty-only) everywhere.
+   * Possibly re-introduce limited `Metadata` actions for critical properties.
+   * Decide which SGF properties are *semantic* vs *purely archival*.
 
-2. **SGF policy**
+2. **DomainAction responsibilities**
 
-   * Which SGF properties (if any) should *ever* become DomainActions vs always RawProperty?
-   * Is it acceptable to treat everything except a minimal core as annotations?
+   * Should `SetBoardSpec` ever call `setRoot()`?
+   * Or should root creation be fully external (loader/controller only)?
 
-3. **RT sentinel**
+3. **Project structure cleanup**
 
-   * Is `RT` the best long-term sentinel, or should the engine treat root as implicit?
-   * Should sentinel handling be centralized?
+   * Reduce the 60+ items at project root.
+   * Decide final `src/` layout (core / games / formats / ui / legacy).
+   * Quarantine remaining legacy code explicitly.
 
-4. **Project root cleanup**
+4. **Test stabilization**
 
-   * What can be deleted vs archived?
-   * How aggressively to move old folders into `legacy/`?
+   * Fix or reclassify timeout tests.
+   * Add more round-trip and cross-game sanity tests.
 
-5. **Client/server**
+5. **Networking (later)**
 
-   * When to reintroduce networking adapters?
-   * How to layer them cleanly above the core engine?
+   * Client/server as adapter layer only.
+   * Likely mirrors SGF/GTP approach (map → action → apply).
 
-6. **Testing**
+---
 
-   * Which timeout tests are real bugs vs environmental?
-   * Should long-running tests be isolated?
+## Design Principles (Implicit but Important)
+
+* **Lossless first**: never drop information at format boundaries.
+* **Actions over commands**: parse first, apply later.
+* **One-way dependencies**:
+
+  * formats → core → games
+  * never games → formats
+* **No domain logic in UI or IO**.
+* **Minimal abstractions, validated by TTT**.
+* **Refactor in small, reversible steps**.
 
 ---

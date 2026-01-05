@@ -3,7 +3,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.*;
 import org.junit.*;
-import org.junit.rules.TestRule;
 import utilities.MyTestWatcher;
 public class ConnectWithoutAcceptTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

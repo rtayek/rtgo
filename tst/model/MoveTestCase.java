@@ -1,12 +1,11 @@
 package model;
-import model.LegacyMoveHelper;
-import static model.LegacyMoveHelper.*;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
 import equipment.*;
 import io.Logging;
 import model.Model.*;
+import static model.Move2.*;
 import utilities.MyTestWatcher;
 public class MoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

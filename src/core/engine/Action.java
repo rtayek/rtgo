@@ -1,7 +1,5 @@
 package core.engine;
 
-import java.util.List;
-
 /**
  * Game-agnostic actions that higher-level games map to/from.
  * No dependency on game-specific types or models.

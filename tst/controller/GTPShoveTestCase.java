@@ -8,7 +8,6 @@ import java.io.StringReader;
 import java.util.List;
 import org.junit.*;
 import equipment.*;
-import game.Game;
 import model.*;
 import model.ModelHelper2;
 import utilities.MyTestWatcher;

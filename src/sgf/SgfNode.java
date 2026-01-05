@@ -5,10 +5,7 @@ import static sgf.Parser.*;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
-import javax.management.RuntimeErrorException;
 import io.*;
-import model.LegacyMove;
-import model.Move2;
 import tree.*;
 import utilities.Holder;
 import utilities.Iterators.Strings;
@@ -247,7 +244,7 @@ public class SgfNode {
         for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {
             SgfProperty property=i.next();
             P p=property.p();
-            if(p instanceof LegacyMove&&(p==P.B||p==P.W)) {
+            if(p.type.equals("move") &&(p==P.B||p==P.W)) { // was LegacyMove
                 moves++;
                 holder.left=this;
                 holder.sgfProperties.clear();
@@ -272,7 +269,7 @@ public class SgfNode {
         for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {
             SgfProperty property=i.next();
             P p=property.p();
-            if(p instanceof LegacyMove&&(p==P.B||p==P.W)) { // was LegacyMove
+            if(p.type.equals("move") &&(p==P.B||p==P.W)) { // was LegacyMove
             	// the above can never happen nor could it ever happen.
             	// check the code in earlier versions and see if it was a P.Move               moves++;
                 if(true) throw new RuntimeException("&&&&&&&&&&&&&&&&&");

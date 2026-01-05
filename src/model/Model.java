@@ -1,5 +1,4 @@
 package model;
-import static model.LegacyMoveHelper.*;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
 import java.awt.geom.Point2D;
@@ -14,10 +13,12 @@ import controller.GTPBackEnd;
 import core.engine.DomainAction;
 import core.engine.applier.DomainActionApplier;
 import core.formats.sgf.SgfDomainActionMapper;
+import static model.Move2.*;
 import equipment.*;
 import equipment.Board.*;
 import io.*;
 import model.Move2.MoveType;
+import static model.ModelHelper2.*;
 import server.NamedThreadGroup.NamedThread;
 import sgf.*;
 import utilities.*;

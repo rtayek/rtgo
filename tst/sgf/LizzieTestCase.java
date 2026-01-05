@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import utilities.MyTestWatcher;
 public class LizzieTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

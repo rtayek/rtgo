@@ -1,7 +1,6 @@
 package games.ttt;
 
 import core.api.*;
-import games.ttt.TttRenderer;
 
 public final class TttPlugin implements GamePlugin<TttState, TttMove, TttSpec> {
 

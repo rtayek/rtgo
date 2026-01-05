@@ -2,12 +2,10 @@ package sgf;
 
 import static org.junit.Assert.*;
 
-import java.io.StringReader;
 import java.util.List;
 
 import model.Model;
 import org.junit.Test;
-import core.engine.DomainAction;
 import core.formats.sgf.SgfDomainActionMapper;
 
 public class ExtraPropertiesTestCase {

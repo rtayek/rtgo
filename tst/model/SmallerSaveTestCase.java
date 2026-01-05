@@ -4,9 +4,6 @@ import static org.junit.Assert.*;
 import java.io.*;
 import java.util.logging.Level;
 import org.junit.*;
-import equipment.Coordinates;
-import equipment.Point;
-import equipment.Stone;
 import io.Logging;
 import utilities.MyTestWatcher;
 // (;FF[4]GM[1]AP[RTGO]C[comment];B[as])

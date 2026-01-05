@@ -85,6 +85,17 @@ check_forbidden_imports \
   "src/core/engine" \
   gui. simplegui.
 
+# Legacy quarantine: core/games must not depend on legacy.*
+check_forbidden_imports \
+  "core.* must not import legacy.*" \
+  "src/core" \
+  legacy.
+
+check_forbidden_imports \
+  "games.* must not import legacy.*" \
+  "src/games" \
+  legacy.
+
 # ------------------------------------------------------------------------------
 # Phase 1 rules (tighten architecture; expected to fail initially)
 # ------------------------------------------------------------------------------

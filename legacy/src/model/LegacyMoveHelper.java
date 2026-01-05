@@ -1,12 +1,6 @@
 package model;
-import java.util.*;
-import controller.*;
-import controller.Command;
 import equipment.*;
-import io.IOs.End.Holder;
-import io.Logging;
 import model.LegacyMove.*;
-import model.Move2.MoveType;
 public class LegacyMoveHelper {
     static Move2 toGameMove(LegacyMove legacy,int width,int depth) {
         //@Override public String toSGFCoordinates(int width,int depth) { return ""; }
@@ -66,43 +60,5 @@ public class LegacyMoveHelper {
             return Coordinates.toGtpCoordinateSystem(move.point(),width,depth);
         } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
     }
-    public static String toGTPCoordinates(Move2 move,int width,int depth) {
-        if(move.isPass()) {
-            return move.color.equals(Stone.black)?Move2.blackPass.name():Move2.whitePass.name();
-        } else if(move.isResign()) {
-            return move.color.equals(Stone.black)?Move2.blackResign.name():Move2.whiteResign.name();
-        } else if(move.isNull()) {
-            return "";
-        } else if(move.isMove()) {
-            return Coordinates.toGtpCoordinateSystem(move.point,width,depth);
-        } else throw new RuntimeException("unknown move type for gtp coordinates: "+move);
-    }
-    public static Move2 fromGTP(Stone color,String raw,int width,int depth) {
-        if(raw==null) return Move2.nullMove;
-        String string=raw.trim();
-        if(string.equals("")) {
-            System.out.println("string is: "+"\"\"");
-            return Move2.nullMove; // pass?
-        } else if(string.equalsIgnoreCase(gtpPassString)) {
-            if(color.equals(Stone.black)) return Move2.blackPass;
-            else if(color.equals(Stone.white)) return Move2.whitePass;
-            else throw new RuntimeException("pass bad color!");
-        } else if(string.equalsIgnoreCase(gtpResignString)) {
-            if(color.equals(Stone.black)) return Move2.blackResign;
-            else if(color.equals(Stone.white)) return Move2.whiteResign;
-            else throw new RuntimeException("resign bad color!");
-        }
-        Point point=Coordinates.fromGtpCoordinateSystem(string,width);
-        // check to see if point is on board? or at lease in range?
-        return new Move2(MoveType.move,color,point);
-    }
-    public static List<String> toGTPMoves(List<Move2> moves,int width,int depth) {
-        List<String> commands=new ArrayList<>();
-        for(Move2 move:moves) { // how about pass and resign?
-            String string=Command.play.name()+" "+move.color+" "+toGTPCoordinates(move,width,depth);
-            commands.add(string);
-        }
-        return commands;
-    }
-    public static String gtpPassString="pass",gtpResignString="resign";
+	public static String gtpPassString="pass",gtpResignString="resign";
 }

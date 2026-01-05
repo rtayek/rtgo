@@ -7,11 +7,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="bin/main" path="legacy/src">
-    <attributes>
-      <attribute name="gradle_scope" value="main"/>
-      <attribute name="gradle_used_by_scope" value="main,test"/>
-    </attributes>
-  </classpathentry>
+		<attributes>
+			<attribute name="gradle_scope" value="main"/>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry excluding="server/AbstractGoServerTestSuite.java" kind="src" output="bin/test" path="suites">
 		<attributes>
 			<attribute name="test" value="true"/>
@@ -35,6 +35,11 @@
 			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" output="bin/test" path="legacy/tst">
+		<attributes>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
@@ -43,5 +48,3 @@
 	</classpathentry>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>
-
-

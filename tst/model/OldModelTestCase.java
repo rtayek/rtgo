@@ -9,7 +9,6 @@ import equipment.Board.Topology;
 import io.IOs;
 import model.Model.*;
 import static model.Model.*;
-import model.LegacyMove.MoveImpl;
 import model.Move2.MoveType;
 import sgf.*;
 import utilities.MyTestWatcher;

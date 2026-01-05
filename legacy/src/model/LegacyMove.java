@@ -1,9 +1,6 @@
 package model;
 import java.util.*;
-import controller.*;
-import controller.Command;
 import equipment.*;
-import static model.LegacyMoveHelper.*;
 // maybe have a type of move that is setup or ?
 public interface LegacyMove {
     String name();
@@ -81,4 +78,5 @@ public interface LegacyMove {
         @Override public String toString() { return name(); }
     }
     // PASS & resign https://www.gnu.org/software/gnugo/gnugo_19.html
+    public static String gtpPassString="pass",gtpResignString="resign";
 }

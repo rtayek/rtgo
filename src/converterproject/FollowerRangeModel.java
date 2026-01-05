@@ -33,7 +33,6 @@ package converterproject;
  * Works in 1.1+Swing, 1.4, and all releases in between.
  * Used by the Converter example.
  */
-import javax.swing.*;
 import javax.swing.event.*;
 /**
  * Implements a model whose data is actually in another model (the

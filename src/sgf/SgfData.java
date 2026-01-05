@@ -6,7 +6,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import utilities.ParameterArray;
 public class SgfData {
 	// keep track of all sgf data keys and files.
 	// objects.addAll(sgfDataKeySet());

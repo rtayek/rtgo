@@ -1,6 +1,5 @@
 package core.engine;
 
-import java.util.List;
 import equipment.Board;
 import equipment.Point;
 import equipment.Stone;

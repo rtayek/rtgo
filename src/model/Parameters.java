@@ -1,7 +1,6 @@
 package model;
 import static utilities.Utilities.*;
 import java.io.File;
-import java.net.URL;
 import java.util.*;
 import equipment.Board;
 import equipment.Board.*;

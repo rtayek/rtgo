@@ -1,12 +1,9 @@
 package gui;
-import java.awt.Dimension;
 import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import io.IOs;
-import sgf.*;
 import utilities.MainGui;
 public class Plaf extends MainGui {
     public static String getLookAndFeelClassName(String nameSnippet) {

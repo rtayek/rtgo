@@ -1,6 +1,4 @@
 package controller;
-import model.LegacyMoveHelper;
-import static model.LegacyMoveHelper.*;
 import static io.Init.first;
 import static model.MNodeAcceptor.MNodeFinder.labelPredicate;
 import static sgf.HexAscii.*;
@@ -17,6 +15,7 @@ import io.IOs.*;
 import model.*;
 import model.MNodeAcceptor.MNodeFinder;
 import model.Model.*;
+import static model.Move2.*; 
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 import sgf.MNode;
