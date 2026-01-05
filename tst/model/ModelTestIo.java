@@ -1,5 +1,6 @@
 package model;
 import static org.junit.Assert.assertTrue;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 public final class ModelTestIo {
@@ -18,5 +19,13 @@ public final class ModelTestIo {
         boolean ok=model.save(stringWriter);
         assertTrue(message,ok);
         return stringWriter.toString();
+    }
+    public static String modelRoundTripToString(Reader reader) {
+        StringWriter stringWriter=new StringWriter();
+        ModelHelper.modelRoundTrip(reader,stringWriter);
+        return stringWriter.toString();
+    }
+    public static String modelRoundTripToString(String sgf) {
+        return modelRoundTripToString(new StringReader(sgf));
     }
 }

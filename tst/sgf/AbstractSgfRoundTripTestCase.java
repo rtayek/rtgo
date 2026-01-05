@@ -1,7 +1,5 @@
 package sgf;
 import static org.junit.Assert.*;
-import static sgf.Parser.restoreSgf;
-import java.io.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
 public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTestCase {
@@ -29,9 +27,8 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     @Test public void testSgfSaveAndRestore() throws Exception {
         // but does a restore first, then a deep equals on the trees.
         if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
-        SgfNode expected=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
-        StringWriter stringWriter=new StringWriter();
-        SgfNode actualSgf=SgfRoundTrip.saveAndRestore(expected,stringWriter);
+        SgfNode expected=SgfTestIo.restore(expectedSgf);
+        SgfNode actualSgf=SgfTestIo.saveAndRestore(expected);
         if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
     }
     @Test public void testSgfRoundTrip() throws Exception {
@@ -59,8 +56,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
         if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
-        StringReader reader=expectedSgf!=null?new StringReader(expectedSgf):null;
-        boolean isOk=SgfRoundTrip.roundTripTwice(reader);
+        boolean isOk=SgfTestIo.roundTripTwice(expectedSgf);
         assertTrue(key.toString(),isOk);
     }
     @Test public void testSgfCannonical() {

@@ -4,15 +4,14 @@ import java.io.*;
 import io.*;
 import sgf.SgfRoundTrip;
 import sgf.SgfNode;
+import sgf.SgfTestIo;
 public class CombineTest {
     static boolean testCombine(String name) {
         try {
             SgfNode combined=Combine.combine(name);
             if(combined!=null) {
                 System.err.println("combined");
-                Writer writer=new StringWriter();
-                combined.saveSgf(writer,standardIndent);
-                System.err.println(writer.toString());
+                System.err.println(SgfTestIo.save(combined,standardIndent));
                 System.err.println();
             }
         } catch(Exception e) {

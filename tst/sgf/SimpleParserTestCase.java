@@ -20,9 +20,7 @@ public class SimpleParserTestCase {
         return node;
     }
     void print(SgfNode node) {
-        StringWriter stringWriter=new StringWriter();
-        node.saveSgf(stringWriter,noIndent);
-        System.out.println("saved sgf node "+stringWriter.toString());
+        System.out.println("saved sgf node "+SgfTestIo.save(node,noIndent));
         System.out.println("----------------");
     }
     SgfNode sample() { // maybe use redbean example?
@@ -47,9 +45,7 @@ public class SimpleParserTestCase {
     @Test public void testSample() {
         SgfNode root=sample();
         root.saveSgf(new OutputStreamWriter(System.out),noIndent);
-        StringWriter stringWriter=new StringWriter();
-        root.saveSgf(stringWriter,noIndent);
-        String expected=stringWriter.toString();
+        String expected=SgfTestIo.save(root,noIndent);
         String actual=SgfRoundTrip.restoreAndSave(expected);
         assertEquals(expected,actual);
     }

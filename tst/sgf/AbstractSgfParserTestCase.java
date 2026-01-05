@@ -3,7 +3,6 @@ import static org.junit.Assert.*;
 import static sgf.Parser.*;
 import static sgf.SgfNode.SgfOptions.containsQuotedControlCharacters;
 import static utilities.Utilities.implies;
-import java.io.StringReader;
 import org.junit.*;
 import io.IOs;
 import sgf.SgfNode.SgfOptions;
@@ -47,7 +46,7 @@ public abstract class AbstractSgfParserTestCase {
             if(!expectedSgf.endsWith(")")) System.out.println(key+" does not end with an close parenthesis");
             //fail(key+" does not end with an close parenthesis");
         } else if(!expectedSgf.equals("")) fail(key.toString()+" does not start with an open parenthesis");
-        games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
+        games=SgfTestIo.restore(expectedSgf);
     }
     @Test public void testHexAscii() {
         String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
@@ -62,7 +61,7 @@ public abstract class AbstractSgfParserTestCase {
             if(!expectedSgf.endsWith(")")) System.out.println(key+" sgf does not end with an close parenthesis");
             //fail(key+" does not end with an close parenthesis");
         } else if(!expectedSgf.equals("")) fail(key.toString()+" sgf does not start with an open parenthesis");
-        games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
+        games=SgfTestIo.restore(expectedSgf);
         if(games!=null) games.oldPreorderCheckFlags();
     }
     @Test public void testFlagsNew() {
@@ -70,7 +69,7 @@ public abstract class AbstractSgfParserTestCase {
             if(!expectedSgf.endsWith(")")) System.out.println(key+" sgf does not end with an close parenthesis");
             //fail(key+" does not end with an close parenthesis");
         } else if(!expectedSgf.equals("")) fail(key.toString()+" sgf does not start with an open parenthesis");
-        games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
+        games=SgfTestIo.restore(expectedSgf);
         if(games!=null) games.preorderCheckFlags();
     }
     boolean alwaysPrepare=false;

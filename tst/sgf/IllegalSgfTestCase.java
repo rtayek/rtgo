@@ -1,6 +1,5 @@
 package sgf;
 import static sgf.Parser.*;
-import java.io.StringReader;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -20,8 +19,7 @@ import utilities.MyTestWatcher;
     public IllegalSgfTestCase(String key) { this.key=key; }
     @Test public void testParse() throws Exception {
         String expectedSgf=getSgfData(key);
-        SgfNode games=null;
-        if(expectedSgf!=null) games=restoreSgf(new StringReader(expectedSgf));
+        SgfNode games=SgfTestIo.restore(expectedSgf);
         //assertNull(key.toString(),games); // allow null for now
     }
     String key;

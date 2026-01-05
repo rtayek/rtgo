@@ -2,11 +2,13 @@ package sgf;
 import static org.junit.Assert.assertEquals;
 import static sgf.Parser.getSgfData;
 import static utilities.Utilities.fromFile;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
 import org.junit.*;
 import io.*;
 import io.IOs;
-import model.ModelHelper;
+import model.ModelTestIo;
 import utilities.MyTestWatcher;
 // sgf file->sgf node tree->sgf tree->sgf string
 public class RoundTripTestCase {
@@ -20,7 +22,7 @@ public class RoundTripTestCase {
         // looks like a double round trup?
         // do we need this?
         String expected=modelRoundTripToString(r);
-        String actual=modelRoundTripToString(new StringReader(expected));
+        String actual=modelRoundTripToString(expected);
         try {
             r.close();
         } catch(IOException e) {
@@ -29,19 +31,20 @@ public class RoundTripTestCase {
         assertEquals(expected,actual);
     }
     private static String modelRoundTripToString(Reader reader) {
-        StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=ModelHelper.modelRoundTrip(reader,stringWriter);
-        return stringWriter.toString();
+        return ModelTestIo.modelRoundTripToString(reader);
+    }
+    private static String modelRoundTripToString(String sgf) {
+        return ModelTestIo.modelRoundTripToString(sgf);
     }
     @Test public void testOneMove() throws IOException {
         String sgfString=getSgfData("oneMoveAtA1");
-        checkReader(new StringReader(sgfString));
+        checkString(sgfString);
         //for(String filename:ParserTestCase.filenames)
         //checkFile(new File(filename));
     }
     @Test public void testTwoEmptyWithSemicolon() throws IOException {
         String sgfString=getSgfData("twoEmptyWithSemicolon");
-        checkReader(new StringReader(sgfString));
+        checkString(sgfString);
         //for(String filename:ParserTestCase.filenames)
         //checkFile(new File(filename));
     }
@@ -52,5 +55,10 @@ public class RoundTripTestCase {
         fromFile(sb,file);
         // now what should i do with string buffer?
         //
+    }
+    private static void checkString(String sgf) throws IOException {
+        String expected=modelRoundTripToString(sgf);
+        String actual=modelRoundTripToString(expected);
+        assertEquals(expected,actual);
     }
 }

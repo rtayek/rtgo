@@ -1,6 +1,5 @@
 package model;
 import static org.junit.Assert.assertNotNull;
-import java.io.StringReader;
 import java.util.Collection;
 import org.junit.*;
 import io.IOs;

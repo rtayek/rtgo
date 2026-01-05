@@ -8,7 +8,6 @@ import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import tree.G2.Generator;
 import utilities.Iterators.*;
 import utilities.MyTestWatcher;

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import sgf.SgfNode;
+import sgf.SgfTestIo;
 import utilities.MyTestWatcher;
 @Ignore @RunWith(Parameterized.class) public class ParameterizedCombineTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -34,9 +35,7 @@ import utilities.MyTestWatcher;
             SgfNode combined=Combine.combine(name);
             if(combined!=null) {
                 System.err.println("combined");
-                Writer writer=new StringWriter();
-                combined.saveSgf(writer,standardIndent);
-                System.err.println(writer.toString());
+                System.err.println(SgfTestIo.save(combined,standardIndent));
                 System.err.println();
             } else {
                 System.err.println("combine returns null!");

@@ -1,7 +1,6 @@
 package sgf;
 import static model.MNodeAcceptor.MNodeFinder .*;
 import static org.junit.Assert.*;
-import java.io.StringReader;
 import java.util.List;
 import org.junit.*;
 import model.MNodeAcceptor.*;
@@ -51,8 +50,8 @@ public class LabelMNodeTestCase {
     }
     String key="sgfExamleFromRedBean";
     String sgf=Parser.getSgfData(key);
-    MNode root1=MNode.restore(new StringReader(sgf));
-    MNode root2=MNode.restore(new StringReader(sgf));
+    MNode root1=SgfTestIo.restoreMNode(sgf);
+    MNode root2=SgfTestIo.restoreMNode(sgf);
     {
         MNode.label(root1,new Longs());
         MNode.label(root2,new Longs());

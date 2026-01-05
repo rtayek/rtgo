@@ -1,6 +1,5 @@
 package sgf;
 import static org.junit.Assert.assertEquals;
-import java.io.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
 public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTripTestCase {
@@ -8,26 +7,14 @@ public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTri
     @Test public void testMMNodeRoundTrip() throws Exception {
         int p=Parser.parentheses(expectedSgf);
         if(p!=0) System.out.println("ex bad parentheses: "+p);
-        String actualSgf=null;
-        if(expectedSgf!=null) {
-            StringReader stringReader=new StringReader(expectedSgf);
-            StringWriter stringWriter=new StringWriter();
-            MNode root=SgfRoundTrip.mNodeRoundTrip(stringReader,stringWriter,SgfRoundTrip.MNodeSaveMode.standard);
-            actualSgf=stringWriter.toString();
-        }
+        String actualSgf=SgfTestIo.mNodeRoundTrip(expectedSgf,SgfRoundTrip.MNodeSaveMode.standard);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         /*int*/ p=Parser.parentheses(actualSgf);
         if(p!=0) System.out.println("ac bad parentheses: "+p);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testMMNodeDirectRoundTrip() throws Exception {
-        String actualSgf=null;
-        if(expectedSgf!=null) {
-            StringReader stringReader=new StringReader(expectedSgf);
-            StringWriter stringWriter=new StringWriter();
-            MNode root=SgfRoundTrip.mNodeRoundTrip(stringReader,stringWriter,SgfRoundTrip.MNodeSaveMode.direct);
-            actualSgf=stringWriter.toString();
-        }
+        String actualSgf=SgfTestIo.mNodeRoundTrip(expectedSgf,SgfRoundTrip.MNodeSaveMode.direct);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         //Boolean ok=specialCases(actualSgf);
         //if(ok) return;

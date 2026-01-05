@@ -1,12 +1,10 @@
 package sgf;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
-import java.io.StringReader;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
 import model.ModelTestIo;
@@ -30,7 +28,7 @@ import utilities.*;
 	@After public void tearDown() throws Exception {}
 	@Test public void testThatGeneralTreeAlwaysHasRTProperty() {
 		// this will depend on whether the add new rot switch is on.
-		SgfNode games=restoreSgf(new StringReader(expectedSgf));
+        SgfNode games=SgfTestIo.restore(expectedSgf);
 		MNode root=MNode.toGeneralTree(games);
 		// this mnay not be present
 		// check the add new root flag in mnode.
@@ -56,7 +54,7 @@ import utilities.*;
 															// for now.
 		// ignoring for now as it is slow
 		// seems to be working for multiple games
-		MNode root=MNode.restore(new StringReader(expectedSgf));
+        MNode root=SgfTestIo.restoreMNode(expectedSgf);
 		boolean hasMultipleGames=root!=null&&root.children().size()>1;
 		assertNotNull(root);
 		List<MNode> list1=MakeList.toList(root);

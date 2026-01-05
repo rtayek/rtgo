@@ -1,12 +1,10 @@
 package sgf;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
-import java.io.StringReader;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import equipment.*;
 import model.Model;
 import utilities.*;
@@ -46,7 +44,7 @@ class Verifier extends SgfAcceptorImpl {
 	}
 	@Test public void testFinderWithSimple() {
 		String sgf=getSgfData("simpleWithVariations");
-		games=restoreSgf(new StringReader(sgf));
+		games=SgfTestIo.restore(sgf);
 		verify(games);
 	}
 	// move these out of this parameterized test case!
@@ -63,7 +61,7 @@ class Verifier extends SgfAcceptorImpl {
 	@Test public void testFinder() {
 		String string=getSgfData(key);
 		// File file=new File(Parser.map.get(key));
-		games=restoreSgf(new StringReader(string));
+		games=SgfTestIo.restore(string);
 		if(games!=null) verify(games);
 	}
 	SgfNode games;
