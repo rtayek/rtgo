@@ -16,14 +16,10 @@ public class IllegalMoveTestCase {
     }
     @Test public void testA1A2x() throws IOException {
         model.move(Stone.black,"A1",model.board().width());
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=MNode.save(stringWriter,model.currentNode(),null);
         // what does using current node here mean?
-        assertTrue(ok);
+        MNodeTestIo.save(model.currentNode());
         model.move(Stone.black,"A2",model.board().width());
-        stringWriter=new StringWriter();
-        ok=MNode.save(stringWriter,model.currentNode(),null);
-        assertTrue(ok);
+        MNodeTestIo.save(model.currentNode());
         model.up();
     }
     @Test public void testIsLegalMoveOnOccupoedPoint() {

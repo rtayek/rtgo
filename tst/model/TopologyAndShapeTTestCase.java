@@ -1,6 +1,5 @@
 package model;
 import static org.junit.Assert.*;
-import java.io.*;
 import org.junit.*;
 import equipment.*;
 import equipment.Board.*;
@@ -24,18 +23,13 @@ public class TopologyAndShapeTTestCase {
         System.out.println("topology: "+model.boardTopology());
         System.out.println("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue("save fails",ok);
-        final String expected=stringWriter.toString();
+        final String expected=ModelTestIo.save(model);
         Model m=new Model();
-        m.restore(new StringReader(expected));
+        ModelTestIo.restore(m,expected);
         m.ensureBoard();
         m.down(0); // need to execute the sgf
         assertNotNull(m.board());
-        stringWriter=new StringWriter();
-        m.save(stringWriter);
-        final String actual=stringWriter.toString();
+        final String actual=ModelTestIo.save(m);
         assertEquals(expected,actual);
     }
     @Test public void testsetRoot() {

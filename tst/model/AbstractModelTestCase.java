@@ -13,11 +13,11 @@ public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
         if(key==null) { System.out.println("key is null!"); return true; }
         String expectedSgf=Parser.getSgfData(key);
         Model original=new Model();
-        original.restore(new StringReader(expectedSgf));
+        ModelTestIo.restore(original,expectedSgf);
         boolean hasABoard=original.board()!=null;
         int n=Math.min(expectedSgf.length(),20);
         Model model=new Model();
-        model.restore(new StringReader(expectedSgf));
+        ModelTestIo.restore(model,expectedSgf);
         if(model.board()==null); // System.out.println("model has no board!");
         else System.out.println("model has a board!");
         Navigate.down.do_(model);

@@ -189,32 +189,20 @@ public class OldModelTestCase {
         // ac: (;RT[Tgo root];FF[4]GM[1]AP[RTGO]C[root]SZ[19])
         // similar to variations below.
         Model model=new Model();
-        model.restore(new StringReader(Parser.empty));
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue("first save fails",ok);
-        String expected=stringWriter.toString();
+        ModelTestIo.restore(model,Parser.empty);
+        String expected=ModelTestIo.save(model,"first save fails");
         Model copy=new Model(model,model.name);
-        stringWriter=new StringWriter();
-        ok=copy.save(stringWriter);
-        assertTrue("second save fails",ok);
-        String actual=stringWriter.toString();
+        String actual=ModelTestIo.save(copy,"second save fails");
         assertEquals(expected,actual);
     }
     @Test public void testCopyConstructorWithVariationOfAVariation() {
         // this is failing.
         // actual has 2 copyies of ;RT[Tgo root] in the first node?
         Model model=new Model();
-        model.restore(new StringReader(Parser.variationOfAVariation));
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue("first save fails",ok);
-        String expected=stringWriter.toString();
+        ModelTestIo.restore(model,Parser.variationOfAVariation);
+        String expected=ModelTestIo.save(model,"first save fails");
         Model copy=new Model(model,model.name);
-        stringWriter=new StringWriter();
-        ok=copy.save(stringWriter);
-        assertTrue("second save fails",ok);
-        String actual=stringWriter.toString();
+        String actual=ModelTestIo.save(copy,"second save fails");
         System.out.println("ex: "+expected);
         System.out.println("ac: "+actual);
         assertEquals(expected,actual);
@@ -276,12 +264,9 @@ public class OldModelTestCase {
         Model model=new Model();
         boolean hasRT=hasRT(model.root());
         assertFalse("should not have a P.RT.",hasRT);
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(ok);
-        String sgfString=stringWriter.toString();
+        String sgfString=ModelTestIo.save(model);
         model=new Model();
-        model.restore(new StringReader(sgfString));
+        ModelTestIo.restore(model,sgfString);
         hasRT=hasRT(model.root());
         assertTrue("should have a P.RT.",hasRT);
     }
@@ -290,12 +275,9 @@ public class OldModelTestCase {
         model.move(Stone.black,new Point());
         boolean hasRT=hasRT(model.root());
         assertFalse("should not have a P.RT.",hasRT);
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(ok);
-        String sgfString=stringWriter.toString();
+        String sgfString=ModelTestIo.save(model);
         model=new Model();
-        model.restore(new StringReader(sgfString));
+        ModelTestIo.restore(model,sgfString);
         hasRT=hasRT(model.root());
         assertTrue("should have a P.RT.",hasRT);
     }

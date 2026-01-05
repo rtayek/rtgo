@@ -9,6 +9,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
+import model.ModelTestIo;
 import utilities.*;
 @RunWith(Parameterized.class) public class CannonicalTestCase {
 	public CannonicalTestCase(Object key) {
@@ -38,11 +39,11 @@ import utilities.*;
 			assertEquals(P.RT,property.p());
 		}
 	}
-	@Test public void testSaveMultupleGames() {
-		Model model=new Model();
-		model.restore(new StringReader(expectedSgf));
-		boolean hasMultipleGames=model.root().children().size()>1;
-		String sgfString=model.save();
+    @Test public void testSaveMultupleGames() {
+        Model model=new Model();
+        ModelTestIo.restore(model,expectedSgf);
+        boolean hasMultipleGames=model.root().children().size()>1;
+        String sgfString=model.save();
 		boolean containsRTNode=sgfString.contains("RT[Tgo root]");
 		// when games.right!=null ==> multiple games
 		// amd we end up with an RT in the sgf!

@@ -2,7 +2,7 @@ package model;
 import static org.junit.Assert.assertEquals;
 import java.io.*;
 import org.junit.Test;
-import sgf.MNode;
+import sgf.SgfRoundTrip;
 public class BasicMoveTestCase {
     //fail("wait for move complete will hang!");
     //model.waitForMoveCompleteOnBoard(moves);
@@ -11,17 +11,12 @@ public class BasicMoveTestCase {
         model.move(Move2.blackMoveAtA1);
         moves=model.moves();
         model.move(expectedMove);
-        boolean ok=MNode.save(stringWriter,model.root(),null);
-        if(!ok) throw new RuntimeException();
         // do a round trip. yes it is, but we have the move to make
-        String expectedSgf=stringWriter.toString();
+        String expectedSgf=MNodeTestIo.save(model.root());
         actualMove=model.lastMove2();
-        MNode mNode=MNode.restore(new StringReader(expectedSgf));
-        StringWriter stringWriter2=new StringWriter();
-        // instead of new, maybe: https://stackoverflow.com/questions/3738095/how-do-you-empty-a-stringwriter-in-java
-        boolean ok2=MNode.save(stringWriter2,mNode,null);
-        if(!ok2) throw new RuntimeException();
-        String actualSgf2=stringWriter2.toString();
+        StringWriter stringWriter=new StringWriter();
+        SgfRoundTrip.mNodeRoundTrip(new StringReader(expectedSgf),stringWriter,SgfRoundTrip.MNodeSaveMode.standard);
+        String actualSgf2=stringWriter.toString();
         assertEquals(expectedSgf,actualSgf2);
     }
     @Test() public void testMoveAtA2() throws Exception {
@@ -48,5 +43,4 @@ public class BasicMoveTestCase {
     int width=model.board().width(),depth=model.board().depth();
     Move2 expectedMove,actualMove;
     int moves;
-    StringWriter stringWriter=new StringWriter();
 }

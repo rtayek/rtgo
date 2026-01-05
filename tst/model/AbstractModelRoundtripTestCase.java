@@ -8,22 +8,16 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testModelRT0() throws Exception {
         Model model=new Model("",true);
-        model.restore(new StringReader(expectedSgf));
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(ok);
-        String actualSgf=stringWriter.toString();
+        ModelTestIo.restore(model,expectedSgf);
+        String actualSgf=ModelTestIo.save(model);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testModelRT0NewWay() throws Exception {
         Model model=new Model("",false);
-        model.restore(new StringReader(expectedSgf));
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(ok);
-        String actualSgf=stringWriter.toString();
+        ModelTestIo.restore(model,expectedSgf);
+        String actualSgf=ModelTestIo.save(model);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
         assertEquals(key.toString(),expectedSgf,actualSgf);
@@ -38,11 +32,8 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         // failing probably due to add new root problem
         Model model=new Model();
         System.out.println("ex: "+expectedSgf);
-        model.restore(new StringReader(expectedSgf));
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(key.toString(),ok);
-        String actualSgf2=stringWriter.toString();
+        ModelTestIo.restore(model,expectedSgf);
+        String actualSgf2=ModelTestIo.save(model,key.toString());
         actualSgf2=SgfNode.options.removeUnwanted(actualSgf2);
         //Utilities.printDifferences(System.out,expectedSgf,actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf2);
@@ -58,10 +49,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         MNode root=MNode.restore(new StringReader(expectedSgf));
         Model model=new Model();
         model.setRoot(root);
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(key.toString(),ok);
-        String actualSgf=stringWriter.toString();
+        String actualSgf=ModelTestIo.save(model,key.toString());
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         if(!expectedSgf.equals(actualSgf)); //printDifferences(expected,actual);
         assertEquals(key.toString(),expectedSgf,actualSgf);
@@ -81,11 +69,11 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertFalse(expectedSgf.contains("\n"));
         try {
             Model model=new Model();
-            model.restore(new StringReader(expectedSgf));
+            ModelTestIo.restore(model,expectedSgf);
             String expectedSgf2=model.save();
             if(expectedSgf2!=null) expectedSgf2=SgfNode.options.prepareSgf(expectedSgf2);
             model=new Model();
-            model.restore(new StringReader(expectedSgf2));
+            ModelTestIo.restore(model,expectedSgf2);
             String actualSgf=model.save();
             if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
             // fails with (;RT[Tgo root];FF[4]GM[1]AP[RTGO]C[comment];B[as])
