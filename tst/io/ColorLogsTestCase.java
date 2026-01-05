@@ -17,7 +17,7 @@ public class ColorLogsTestCase {
     }
     @Test public void testLog() {
         for(String key:ColorLogs.map.keySet()) {
-            System.out.println(ColorLogs.color(key));
+            Logging.mainLogger.info(String.valueOf(ColorLogs.color(key)));
             Logging.mainLogger.severe(ColorLogs.color(key));
         }
     }

@@ -66,7 +66,6 @@ public class DuplexTestCase {
         frontEnd2.out.flush();
         Thread thread1=new Thread(frontEnd1);
         thread1.start();
-        System.out.flush();
         String s2=frontEnd2.in.readLine();
         assertEquals("bar",s2);
     }

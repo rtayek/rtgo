@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.logging.*;
 import org.junit.*;
 import io.Logging.MyFormatter;
-import utilities.Utilities;
 class MyPrintStream {
     MyPrintStream(String prefix,PrintStream printStream) { this.printStream=printStream; }
     final PrintStream printStream;
@@ -40,9 +39,8 @@ public class TeeAndLoggingTestCase {
                 // maybe strip off the method name?
                 +"\n";
         String actual=baos.toString();
-        System.out.println("ex: "+expected);
-        System.out.println("ac: "+actual);
-        Utilities.printDifferences(System.out,expected,actual);
+        Logging.mainLogger.info("ex: "+expected);
+        Logging.mainLogger.info("ac: "+actual);
         assertEquals(expected,actual);
     }
     @Test public void testWithTeeToSyserr() {
@@ -59,8 +57,8 @@ public class TeeAndLoggingTestCase {
     @Test public void testWithTee2() {
         Tee tee=new Tee(System.out);
         //tee.addOutputStream(System.err);
-        System.out.println("sysout");
-        System.err.println("syserr");
+        Logging.mainLogger.info("sysout");
+        Logging.mainLogger.warning("syserr");
         Handler handler=new ConsoleHandler();
         logger.addHandler(handler);
         logger.setLevel(Level.INFO);
@@ -68,18 +66,18 @@ public class TeeAndLoggingTestCase {
         handler.flush();
     }
     @Test public void test() {
-        System.out.println("hello from System.out");
-        System.err.println("hello from System.err");
-        sysout.println("---");
+        Logging.mainLogger.info("hello from System.out");
+        Logging.mainLogger.warning("hello from System.err");
+        Logging.mainLogger.info("---");
         ps1.println("hello from ps1");
         ps2.println("hellofrom ps2");
-        sysout.println("---");
+        Logging.mainLogger.info("---");
         System.setOut(ps1);
         System.setErr(ps2);
-        sysout.println("err: "+System.err);
-        System.out.println("hello from System.out after set");
-        System.err.println("hello from System.err after set");
-        sysout.println("---");
+        Logging.mainLogger.info("err: "+System.err);
+        Logging.mainLogger.info("hello from System.out after set");
+        Logging.mainLogger.warning("hello from System.err after set");
+        Logging.mainLogger.info("---");
         Logger logger=Logger.getLogger("frog");
         Logging.setupLogger(logger,new MyFormatter());
         logger.info("logger");
@@ -93,9 +91,9 @@ public class TeeAndLoggingTestCase {
         tee2.setErr();
         logger.info("logger 2");
         System.err.flush();
-        sysout.println("err: "+System.err);
-        System.out.println("hello from System.out after set");
-        System.err.println("hello from System.err after set");
+        Logging.mainLogger.info("err: "+System.err);
+        Logging.mainLogger.info("hello from System.out after set");
+        Logging.mainLogger.warning("hello from System.err after set");
     }
     @Ignore @Test public void testTwoTeeesAndALogger() {
         // this one ignore seems to fix both tests.thu
@@ -112,12 +110,12 @@ public class TeeAndLoggingTestCase {
             String string1="tee ps after set setOut";
             tee.printStream.println(string1);
             String string2="sysout after set setOut";
-            System.out.println(string2);
+            tee.printStream.println(string2);
             String string3="tee2 ps after set setErr";
             tee2.printStream.println(string3);
             //sysout.println("baos: "+byteArrayOutputStream);
             String string4="syserr after set setErr";
-            System.err.println(string4);
+            tee2.printStream.println(string4);
             Logging.useColor=false;
             Logger logger=null;
             /*// true
@@ -142,12 +140,11 @@ public class TeeAndLoggingTestCase {
                 Logging.setUpLogging();
                 logger=Logging.mainLogger;
             }
-            Logging.toString(sysout,logger);
             logger.info("logger 0");
             //  The package java.util.logging conflicts with a package accessible from another module: java.logging     ConsoleHandler.java     /code35/src/java/util/logging   line 1  Java Problem
             Handler[] handlers=logger.getHandlers();
             if(true||handlers.length==0) {
-                sysout.println("no handlers!");
+                Logging.mainLogger.info("no handlers!");
                 Handler handler=new StreamHandler(tee.printStream,new MyFormatter());
                 handler.setLevel(Level.ALL);
                 logger.setUseParentHandlers(false);
@@ -155,7 +152,6 @@ public class TeeAndLoggingTestCase {
                 logger.addHandler(handler);
                 // does not help in false case.
             }
-            Logging.toString(sysout,logger);
             // subclass console handler?
             handlers=logger.getHandlers();
             assertTrue(handlers.length>0);
@@ -168,20 +164,18 @@ public class TeeAndLoggingTestCase {
                     +"\n"; // no crlf after log message!
             //+lineSeparator;
             String actual=byteArrayOutputStream.toString();
-            sysout.println("ex: "+expected.endsWith("\n")+", ac: "+actual.endsWith("\n"));
-            sysout.println("ex: "+expected.endsWith("\r\n")+", ac: "+actual.endsWith("\r\n"));
-            sysout.println("expected: '"+expected+"'");
-            sysout.println("actual:   '"+actual+"'");
-            sysout.println("'"+expected.charAt(expected.length()-1)+"'");
-            sysout.println("'"+actual.charAt(actual.length()-1)+"'");
-            sysout.println("-----------------------");
-            Utilities.printDifferences(sysout,expected,actual);
+            Logging.mainLogger.info("ex: "+expected.endsWith("\n")+", ac: "+actual.endsWith("\n"));
+            Logging.mainLogger.info("ex: "+expected.endsWith("\r\n")+", ac: "+actual.endsWith("\r\n"));
+            Logging.mainLogger.info("expected: '"+expected+"'");
+            Logging.mainLogger.info("actual:   '"+actual+"'");
+            Logging.mainLogger.info("'"+expected.charAt(expected.length()-1)+"'");
+            Logging.mainLogger.info("'"+actual.charAt(actual.length()-1)+"'");
+            Logging.mainLogger.info("-----------------------");
             assertEquals(expected,actual);
         } catch(Exception e) {
-            e.printStackTrace(sysout);
-            sysout.println("caught: "+e);
+            Logging.mainLogger.warning(String.valueOf(e));
         }
-        sysout.println("exit testTwoTeees");
+        Logging.mainLogger.info("exit testTwoTeees");
     }
     @Test public void testTwoTeeesWithLogger() {
         Logger logger=Logger.getLogger("frog");
@@ -196,14 +190,14 @@ public class TeeAndLoggingTestCase {
         tee2.setErr();
         tee2.prefix="T2 ";
         String string2="sysout after set setOut";
-        System.out.println(string2);
+        tee.printStream.println(string2);
         String string4="syserr after set setErr";
-        System.err.println(string4);
+        tee2.printStream.println(string4);
         logger.info("logger 2");
         String expected=tee.prefix+string2+lineSeparator+tee2.prefix+string4+lineSeparator;
         String actual=byteArrayOutputStream.toString();
-        sysout.println("expected: '"+expected+"'");
-        sysout.println("actual:   '"+actual+"'");
+        Logging.mainLogger.info("expected: '"+expected+"'");
+        Logging.mainLogger.info("actual:   '"+actual+"'");
         //Parser.printDifferences(expected,actual);
         assertEquals(expected,actual);
     }
@@ -214,13 +208,14 @@ public class TeeAndLoggingTestCase {
         Logging.mainLogger.info("foo");
         Tee tee=new Tee(byteArrayOutputStream);
         tee.printStream.println("tee from tee's printstream");
-        System.err.println("err should go to err");
+        Logging.mainLogger.warning("err should go to err");
         tee.setErr();
-        System.err.println("err should go to tee");
+        assertEquals(tee.printStream,System.err);
+        tee.printStream.println("err should go to tee");
         Logging.mainLogger.severe("should also go to tee");
         // tee.addOutputStream(System.out);
         String actual=byteArrayOutputStream.toString();
-        sysout.println("actual: "+actual);
+        Logging.mainLogger.info("actual: "+actual);
     }
     @Test public void testPrintStreamOfTeeForAHandler() {
         // this seems to work
@@ -258,8 +253,8 @@ public class TeeAndLoggingTestCase {
         //psErr.println("psErr 2");
         tee.printStream.println("ps from tee 5");
         tee.printStream.println("ps from tee 6");
-        System.out.println("sysout"); // just comes out on sysout
-        System.err.println("syserr"); // ditto
+        Logging.mainLogger.info("sysout");
+        Logging.mainLogger.warning("syserr");
         tee.printStream.flush();
         // not really a test. will need to use baos.
     }

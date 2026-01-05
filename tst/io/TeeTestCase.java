@@ -29,9 +29,10 @@ public class TeeTestCase {
         //tee.addOutputStream(System.out);
         //tee.addOutputStream(System.err);
         tee.setOut();
+        assertEquals(tee.printStream,System.out);
         String string="tees print stream";
         String expected=tee.prefix+string+lineSeparator;
-        System.out.println(string); // should go to baos. yes, it does
+        tee.printStream.println(string);
         // if we add sysout and syserr
         // then it also shows up in sysout and syserr .
         String actual=byteArrayOutputStream.toString();
@@ -42,9 +43,10 @@ public class TeeTestCase {
     @Test public void testSetErr() {
         Tee tee=new Tee(byteArrayOutputStream);
         tee.setErr();
+        assertEquals(tee.printStream,System.err);
         String string="tees print stream";
         String expected=tee.prefix+string+lineSeparator;
-        System.err.println(string); // should go to baos
+        tee.printStream.println(string);
         String actual=byteArrayOutputStream.toString();
         //sysout.println("expected: '"+expected+"'");
         //sysout.println("actual:   '"+actual+"'");
@@ -65,14 +67,16 @@ public class TeeTestCase {
         Tee tee=new Tee(byteArrayOutputStream);
         tee.setOut();
         tee.setErr();
+        assertEquals(tee.printStream,System.out);
+        assertEquals(tee.printStream,System.err);
         //String string="tees print stream";
         String string="tees print stream";
         String expected=tee.prefix+string+lineSeparator;
         tee.printStream.println(string);
         String outStruig="new sysout after set setOut";
-        System.out.println(outStruig);
+        tee.printStream.println(outStruig);
         String errStrig="new syserr after set setErr";
-        System.err.println(errStrig);
+        tee.printStream.println(errStrig);
         expected+=tee.prefix+outStruig+lineSeparator+""+tee.prefix+errStrig+lineSeparator;
         String actual=byteArrayOutputStream.toString();
         //sysout.println("expected: '"+expected+"'");

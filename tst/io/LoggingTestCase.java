@@ -1,6 +1,7 @@
 package io;
 import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.logging.*;
 import org.junit.*;
 import io.Logging.MyFormatter;
@@ -19,18 +20,19 @@ public class LoggingTestCase {
     void checkHandlers() { // why do we need this?
         for(Handler handler:handlers) logger.removeHandler(handler);
         handlers=logger.getHandlers();
-        if(handlers.length>1) System.out.println("still has one handler!");
+        if(handlers.length>1) Logging.mainLogger.info("still has one handler!");
     }
     @Test public void testWithNoHandlers() {
-        Logging.toString(System.out,logger);
+        ByteArrayOutputStream out=new ByteArrayOutputStream();
+        Logging.toString(new PrintStream(out),logger);
         logger.info("info 1");
         // should no see any output
     }
     @Test public void testWithConsoleHandler() {
-        System.out.println("logger level: "+logger.getLevel());
+        Logging.mainLogger.info("logger level: "+logger.getLevel());
         Handler handler=new ConsoleHandler();
         logger.addHandler(handler);
-        System.out.println("handler level: "+handler.getLevel());
+        Logging.mainLogger.info("handler level: "+handler.getLevel());
         //Logging.toString(logger);
         logger.info("message");
         assertEquals(null,logger.getLevel());

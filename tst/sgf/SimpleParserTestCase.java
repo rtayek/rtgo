@@ -45,8 +45,8 @@ public class SimpleParserTestCase {
     }
     @Test public void testSample() {
         SgfNode root=sample();
-        root.saveSgf(new OutputStreamWriter(System.out),noIndent);
         String expected=SgfTestIo.save(root,noIndent);
+        Logging.mainLogger.info("sample sgf: "+expected);
         String actual=SgfRoundTrip.restoreAndSave(expected);
         assertEquals(expected,actual);
     }

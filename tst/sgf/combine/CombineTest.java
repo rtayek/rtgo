@@ -33,7 +33,5 @@ public class CombineTest {
         if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
         if(!testCombine("test.sgf")) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
         Logging.mainLogger.warning("done");
-        System.out.flush();
-        System.err.flush();
     }
 }
