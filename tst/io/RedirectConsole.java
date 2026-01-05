@@ -1,58 +1,58 @@
 package io;
-// this is not used, but i may be useful.
+// this is not used, but it may be useful.
 // so take a look at it sometime?
 import java.io.*;
 import java.util.logging.*;
 /**
  * Console redirection utility.
  *
- * Replaces system.out and system.err with
+ * Replaces console streams with
  * printstreams that log all writes when flushed.
  */
 public class RedirectConsole {
-    /** Logger to handle writes to system.err. */
-    private static final Logger SYSTEM_ERR_LOGGER=Logger.getLogger("system.err");
-    /** Logger to handle writes to system.out. */
-    private static final Logger SYSTEM_OUT_LOGGER=Logger.getLogger("system.out");
-    /** The previous system.err stream. */
-    private static PrintStream PREVIOUS_SYSTEM_ERR;
-    /** The previous system.out.stream. */
-    private static PrintStream PREVIOUS_SYSTEM_OUT;
+    /** Logger to handle writes to console err. */
+    private static final Logger CONSOLE_ERR_LOGGER=Logger.getLogger("console.err");
+    /** Logger to handle writes to console out. */
+    private static final Logger CONSOLE_OUT_LOGGER=Logger.getLogger("console.out");
+    /** The previous console err stream. */
+    private static PrintStream previousErr;
+    /** The previous console out stream. */
+    private static PrintStream previousOut;
     /**
-     * Redirect System.out and System.err to java.util.logging.Logger objects.
+     * Redirect console streams to java.util.logging.Logger objects.
      *
-     * System.out is redirected to logger "system.out". System.err is redirected
-     * to logger "system.err".
+     * Console out is redirected to logger "console.out". Console err is redirected
+     * to logger "console.err".
      *
      * Use the cancel method to undo this redirection.
      */
-    public static void redirect() {
-        if(PREVIOUS_SYSTEM_ERR!=null||PREVIOUS_SYSTEM_OUT!=null) { cancel(); }
-        PREVIOUS_SYSTEM_OUT=System.out;
-        System.setOut(new LoggerPrintStream("STDOUT",SYSTEM_OUT_LOGGER));
-        PREVIOUS_SYSTEM_ERR=System.err;
-        System.setErr(new LoggerPrintStream("STDERR",SYSTEM_ERR_LOGGER));
+    public static void redirect(ConsoleStreams console) {
+        if(previousErr!=null||previousOut!=null) { cancel(console); }
+        previousOut=console.out;
+        console.out=new LoggerPrintStream("STDOUT",CONSOLE_OUT_LOGGER);
+        previousErr=console.err;
+        console.err=new LoggerPrintStream("STDERR",CONSOLE_ERR_LOGGER);
     }
     /**
      * Undo a redirection previously setup using redirect().
      *
-     * Restores System.out and System.err to their state before redirect was
+     * Restores the console streams to their state before redirect was
      * called.
      */
-    public static void cancel() {
-        if(PREVIOUS_SYSTEM_OUT!=null) {
+    public static void cancel(ConsoleStreams console) {
+        if(previousOut!=null) {
             // flush any pending output
-            System.out.flush();
+            console.out.flush();
             // restore previous output stream
-            System.setOut(PREVIOUS_SYSTEM_OUT);
-            PREVIOUS_SYSTEM_OUT=null;
+            console.out=previousOut;
+            previousOut=null;
         }
-        if(PREVIOUS_SYSTEM_ERR!=null) {
+        if(previousErr!=null) {
             // flush any pending output
-            System.err.flush();
+            console.err.flush();
             // restore previous error stream
-            System.setErr(PREVIOUS_SYSTEM_ERR);
-            PREVIOUS_SYSTEM_ERR=null;
+            console.err=previousErr;
+            previousErr=null;
         }
     }
     /**

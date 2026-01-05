@@ -18,16 +18,25 @@ public class TeeAndLoggingTestCase {
         logger=Logger.getLogger(getClass().getName());
         handlers=logger.getHandlers();
         assertEquals(0,handlers.length); // remove this
+        baseOut=new PrintStream(new ByteArrayOutputStream(),true);
+        baseErr=new PrintStream(new ByteArrayOutputStream(),true);
+        console=new ConsoleStreams(baseOut,baseErr);
+        ps1=new PrintStream(new ByteArrayOutputStream(),true) {
+            @Override public void println(String x) { super.println("1 "+x); }
+        };
+        ps2=new PrintStream(new ByteArrayOutputStream(),true) {
+            @Override public void println(String x) { super.println("2 "+x); }
+        };
     }
     @After public void tearDown() throws Exception {
-        System.setOut(sysout); //
-        System.setErr(syserr);
+        console.out=baseOut;
+        console.err=baseErr;
         LogManager.getLogManager().reset();
     }
     @Ignore @Test public void testWithTeeToSysout() {
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         Tee tee=new Tee(baos);
-        //tee.addOutputStream(System.err); // works fine
+        //tee.addOutputStream(console.err); // works fine
         logger.setLevel(Level.INFO);
         logger.info("info 4");
         Handler handler=new StreamHandler(tee,new MyFormatter());
@@ -44,8 +53,8 @@ public class TeeAndLoggingTestCase {
         assertEquals(expected,actual);
     }
     @Test public void testWithTeeToSyserr() {
-        Tee tee=new Tee(System.err);
-        //tee.addOutputStream(System.err); // works fine
+        Tee tee=new Tee(console.err);
+        //tee.addOutputStream(console.err); // works fine
         logger.setLevel(Level.INFO);
         logger.info("info 5");
         Handler handler=new StreamHandler(tee,new MyFormatter());
@@ -55,10 +64,10 @@ public class TeeAndLoggingTestCase {
         handler.flush();
     }
     @Test public void testWithTee2() {
-        Tee tee=new Tee(System.out);
-        //tee.addOutputStream(System.err);
-        Logging.mainLogger.info("sysout");
-        Logging.mainLogger.warning("syserr");
+        Tee tee=new Tee(console.out);
+        //tee.addOutputStream(console.err);
+        Logging.mainLogger.info("console out");
+        Logging.mainLogger.warning("console err");
         Handler handler=new ConsoleHandler();
         logger.addHandler(handler);
         logger.setLevel(Level.INFO);
@@ -66,45 +75,45 @@ public class TeeAndLoggingTestCase {
         handler.flush();
     }
     @Test public void test() {
-        Logging.mainLogger.info("hello from System.out");
-        Logging.mainLogger.warning("hello from System.err");
+        Logging.mainLogger.info("hello from console.out");
+        Logging.mainLogger.warning("hello from console.err");
         Logging.mainLogger.info("---");
         ps1.println("hello from ps1");
         ps2.println("hellofrom ps2");
         Logging.mainLogger.info("---");
-        System.setOut(ps1);
-        System.setErr(ps2);
-        Logging.mainLogger.info("err: "+System.err);
-        Logging.mainLogger.info("hello from System.out after set");
-        Logging.mainLogger.warning("hello from System.err after set");
+        console.out=ps1;
+        console.err=ps2;
+        Logging.mainLogger.info("err: "+console.err);
+        Logging.mainLogger.info("hello from console.out after set");
+        Logging.mainLogger.warning("hello from console.err after set");
         Logging.mainLogger.info("---");
         Logger logger=Logger.getLogger("frog");
         Logging.setupLogger(logger,new MyFormatter());
         logger.info("logger");
         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        Tee tee=new Tee(byteArrayOutputStream);
-        tee.addOutputStream(System.out);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
+        tee.addOutputStream(console.out);
         tee.setOut();
         logger.info("logger 1");
-        Tee tee2=new Tee(byteArrayOutputStream);
-        tee2.addOutputStream(System.err);
+        TestTee tee2=new TestTee(byteArrayOutputStream,console);
+        tee2.addOutputStream(console.err);
         tee2.setErr();
         logger.info("logger 2");
-        System.err.flush();
-        Logging.mainLogger.info("err: "+System.err);
-        Logging.mainLogger.info("hello from System.out after set");
-        Logging.mainLogger.warning("hello from System.err after set");
+        console.err.flush();
+        Logging.mainLogger.info("err: "+console.err);
+        Logging.mainLogger.info("hello from console.out after set");
+        Logging.mainLogger.warning("hello from console.err after set");
     }
     @Ignore @Test public void testTwoTeeesAndALogger() {
         // this one ignore seems to fix both tests.thu
         // no, it can still fail, so ignoring it for now.
         try {
             // this seems to be working exactly the way i want.
-            Tee tee=new Tee(byteArrayOutputStream);
-            tee.addOutputStream(System.out);
+            TestTee tee=new TestTee(byteArrayOutputStream,console);
+            tee.addOutputStream(console.out);
             tee.setOut();
-            Tee tee2=new Tee(byteArrayOutputStream);
-            tee2.addOutputStream(System.err);
+            TestTee tee2=new TestTee(byteArrayOutputStream,console);
+            tee2.addOutputStream(console.err);
             tee2.setErr();
             tee2.prefix="T2 ";
             String string1="tee ps after set setOut";
@@ -113,7 +122,7 @@ public class TeeAndLoggingTestCase {
             tee.printStream.println(string2);
             String string3="tee2 ps after set setErr";
             tee2.printStream.println(string3);
-            //sysout.println("baos: "+byteArrayOutputStream);
+            //console.out.println("baos: "+byteArrayOutputStream);
             String string4="syserr after set setErr";
             tee2.printStream.println(string4);
             Logging.useColor=false;
@@ -155,7 +164,7 @@ public class TeeAndLoggingTestCase {
             // subclass console handler?
             handlers=logger.getHandlers();
             assertTrue(handlers.length>0);
-            // Handler handler=Logging.flushingStreamHandler(sysout);
+            // Handler handler=Logging.flushingStreamHandler(console.out);
             //logger.addHandler(handler);
             //logger.info("logger 1");
             String expected=tee.prefix+string1+lineSeparator+tee.prefix+string2+lineSeparator+tee2.prefix+string3
@@ -181,12 +190,12 @@ public class TeeAndLoggingTestCase {
         Logger logger=Logger.getLogger("frog");
         Logging.setupLogger(logger,new MyFormatter());
         logger.info("logger 0");
-        Tee tee=new Tee(byteArrayOutputStream);
-        tee.addOutputStream(System.out);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
+        tee.addOutputStream(console.out);
         tee.setOut();
-        Tee tee2=new Tee(byteArrayOutputStream);
+        TestTee tee2=new TestTee(byteArrayOutputStream,console);
         logger.info("logger 1");
-        tee2.addOutputStream(System.err);
+        tee2.addOutputStream(console.err);
         tee2.setErr();
         tee2.prefix="T2 ";
         String string2="sysout after set setOut";
@@ -206,21 +215,21 @@ public class TeeAndLoggingTestCase {
         Logging.setUpLogging();
         Logging.mainLogger.setLevel(Level.INFO);
         Logging.mainLogger.info("foo");
-        Tee tee=new Tee(byteArrayOutputStream);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
         tee.printStream.println("tee from tee's printstream");
-        Logging.mainLogger.warning("err should go to err");
+        Logging.mainLogger.warning("console err should go to err");
         tee.setErr();
-        assertEquals(tee.printStream,System.err);
+        assertEquals(tee.printStream,console.err);
         tee.printStream.println("err should go to tee");
         Logging.mainLogger.severe("should also go to tee");
-        // tee.addOutputStream(System.out);
+        // tee.addOutputStream(console.out);
         String actual=byteArrayOutputStream.toString();
         Logging.mainLogger.info("actual: "+actual);
     }
     @Test public void testPrintStreamOfTeeForAHandler() {
         // this seems to work
         // maybe add this to text area soon?
-        Tee tee=new Tee(System.out);
+        Tee tee=new Tee(console.out);
         Logging.mainLogger.setLevel(Level.ALL);
         Logging.mainLogger.severe("before handler was added 1");
         Handler handler=flushingStreamHandler(tee);
@@ -229,11 +238,9 @@ public class TeeAndLoggingTestCase {
         Logging.mainLogger.addHandler(handler);
         Logging.mainLogger.severe("after handler was added 1");
         tee.printStream.println("ps from tee 1");
-        tee.addOutputStream(new PrintStream(System.err));
+        tee.addOutputStream(console.err);
         tee.printStream.println("ps from tee 2");
         tee.printStream.flush();
-        //System.out.println("sysout"); // just comes out on sysout
-        //System.err.println("syserr"); // ditto
         // not really a test. will need to use baos.
         // 10/30/22 this may be ending badly?
         // maybe causing test verbose to fail
@@ -241,31 +248,29 @@ public class TeeAndLoggingTestCase {
     }
     @Test public void testAddSysoutAndSyserrToPrintStreamOfTee() throws InterruptedException {
         // this does not work. why not?
-        // tee replaces sysin and sysout.
-        Tee tee=new Tee(System.out);
+        // tee replaces console out and console err.
+        Tee tee=new Tee(console.out);
         tee.printStream.println("ps from tee 3");
-        Logging.mainLogger.severe("before adding sysout and syserr");
-        //tee.addOutputStream(System.out); // extra because tee is base on sysout
-        tee.addOutputStream(System.err);
-        Logging.mainLogger.severe("after adding sysout and syserr");
+        Logging.mainLogger.severe("before adding console out and console err");
+        //tee.addOutputStream(console.out); // extra because tee is based on console out
+        tee.addOutputStream(console.err);
+        Logging.mainLogger.severe("after adding console out and console err");
         tee.printStream.println("ps from tee 4");
         //psOut.println("psOut 2");
         //psErr.println("psErr 2");
         tee.printStream.println("ps from tee 5");
         tee.printStream.println("ps from tee 6");
-        Logging.mainLogger.info("sysout");
-        Logging.mainLogger.warning("syserr");
+        Logging.mainLogger.info("console out");
+        Logging.mainLogger.warning("console err");
         tee.printStream.flush();
         // not really a test. will need to use baos.
     }
     Logger logger;
     Handler[] handlers;
-    final PrintStream ps1=new PrintStream(System.out,true) {
-        @Override public void println(String x) { super.println("1 "+x); }
-    };
-    final PrintStream ps2=new PrintStream(System.err,true) {
-        @Override public void println(String x) { super.println("2 "+x); }
-    };
     ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-    private final PrintStream sysout=System.out,syserr=System.err;
+    ConsoleStreams console;
+    PrintStream baseOut;
+    PrintStream baseErr;
+    PrintStream ps1;
+    PrintStream ps2;
 }

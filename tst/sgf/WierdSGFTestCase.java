@@ -33,10 +33,6 @@ import utilities.MyTestWatcher;
         List<File> files=addFiles(null,strange);
         if(files.size()==0) fail("no files!");
         fail=false;
-        PrintStream old=System.err;
-        System.setErr(new PrintStream(new ByteArrayOutputStream()));
-        // forgot why i was doing this. maybe i need to
-        // change some of the logger stuff back to print on err.
         List<SgfNode> all=new ArrayList<>();
         for(File file:files) try {
             SgfNode games=restoreSgf(IOs.toReader(file));
@@ -44,7 +40,6 @@ import utilities.MyTestWatcher;
         } catch(Exception e) {
             Logging.mainLogger.info(this+" caught: "+e); //
         }
-        System.setErr(old);
         parserLogger.warning(all.size()+" games in "+strange);
     }
     boolean fail=true;

@@ -35,7 +35,6 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         ModelTestIo.restore(model,expectedSgf);
         String actualSgf2=ModelTestIo.save(model,key.toString());
         actualSgf2=SgfNode.options.removeUnwanted(actualSgf2);
-        //Utilities.printDifferences(System.out,expectedSgf,actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf2);
     }
     @Test public void testLongRoundTrip() throws Exception {

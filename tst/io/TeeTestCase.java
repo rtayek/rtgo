@@ -12,100 +12,93 @@ public class TeeTestCase {
     @Before public void setUp() throws Exception {
         byteArrayOutputStream.reset();
         LogManager.getLogManager().reset(); // can i really get rid of this?
+        baseOut=new PrintStream(new ByteArrayOutputStream(),true);
+        baseErr=new PrintStream(new ByteArrayOutputStream(),true);
+        console=new ConsoleStreams(baseOut,baseErr);
     }
-    @After public void tearDown() throws Exception { System.setOut(sysout); System.setErr(syserr); }
+    @After public void tearDown() throws Exception {
+        console.out=baseOut;
+        console.err=baseErr;
+    }
     @Test public void testTeesPrintStream() {
-        Tee tee=new Tee(byteArrayOutputStream);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
         String string="tees print stream";
         String expected=tee.prefix+string+lineSeparator;
         tee.printStream.println(string);
         String actual=byteArrayOutputStream.toString();
-        //sysout.println("expected: '"+expected+"'");
-        //sysout.println("actual:   '"+actual+"'");
         assertEquals(expected,actual);
     }
     @Test public void testSetOut() {
-        Tee tee=new Tee(byteArrayOutputStream);
-        //tee.addOutputStream(System.out);
-        //tee.addOutputStream(System.err);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
         tee.setOut();
-        assertEquals(tee.printStream,System.out);
+        assertEquals(tee.printStream,console.out);
         String string="tees print stream";
         String expected=tee.prefix+string+lineSeparator;
         tee.printStream.println(string);
-        // if we add sysout and syserr
-        // then it also shows up in sysout and syserr .
+        // if we add console out and console err
+        // then it also shows up in both.
         String actual=byteArrayOutputStream.toString();
-        //sysout.println("expected: '"+expected+"'");
-        //sysout.println("actual:   '"+actual+"'");
         assertEquals(expected,actual);
     }
     @Test public void testSetErr() {
-        Tee tee=new Tee(byteArrayOutputStream);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
         tee.setErr();
-        assertEquals(tee.printStream,System.err);
+        assertEquals(tee.printStream,console.err);
         String string="tees print stream";
         String expected=tee.prefix+string+lineSeparator;
         tee.printStream.println(string);
         String actual=byteArrayOutputStream.toString();
-        //sysout.println("expected: '"+expected+"'");
-        //sysout.println("actual:   '"+actual+"'");
         assertEquals(expected,actual);
     }
     @Test public void testVerbose() {
-        Tee tee=new Tee(byteArrayOutputStream);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
         tee.verbose=true;
         String string="foo";
         tee.printStream.println(string);
         String expected="0>"+tee.prefix+string+"0>"+lineSeparator; // second numeric prefix id from newline()
         String actual=byteArrayOutputStream.toString();
-        //sysout.println("expected: '"+expected+"'");
-        //sysout.println("actual:   '"+actual+"'");
         assertEquals(expected,actual);
     }
     @Test public void testTeeSetBoth() {
-        Tee tee=new Tee(byteArrayOutputStream);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
         tee.setOut();
         tee.setErr();
-        assertEquals(tee.printStream,System.out);
-        assertEquals(tee.printStream,System.err);
-        //String string="tees print stream";
+        assertEquals(tee.printStream,console.out);
+        assertEquals(tee.printStream,console.err);
         String string="tees print stream";
         String expected=tee.prefix+string+lineSeparator;
         tee.printStream.println(string);
-        String outStruig="new sysout after set setOut";
+        String outStruig="new console out after set";
         tee.printStream.println(outStruig);
-        String errStrig="new syserr after set setErr";
+        String errStrig="new console err after set";
         tee.printStream.println(errStrig);
         expected+=tee.prefix+outStruig+lineSeparator+""+tee.prefix+errStrig+lineSeparator;
         String actual=byteArrayOutputStream.toString();
-        //sysout.println("expected: '"+expected+"'");
-        //sysout.println("actual:   '"+actual+"'");
         assertEquals(expected,actual);
     }
     @Test public void testRestore() {
-        Tee tee=new Tee(byteArrayOutputStream);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
         tee.setOut();
         tee.setErr();
         tee.restoreErr();
         tee.restoreOut();
-        assertEquals(sysout,System.out);
-        assertEquals(syserr,System.err);
+        assertEquals(baseOut,console.out);
+        assertEquals(baseErr,console.err);
     }
     @Test public void testAddOutputStream() {
-        Tee tee=new Tee(byteArrayOutputStream);
+        TestTee tee=new TestTee(byteArrayOutputStream,console);
         ByteArrayOutputStream baosForOut=new ByteArrayOutputStream();
         PrintStream ps=new PrintStream(baosForOut);
-        System.setOut(ps);
-        tee.addOutputStream(System.out);
+        console.out=ps;
+        tee.addOutputStream(console.out);
         String string="tees print stream";
         String expected=tee.prefix+string+lineSeparator;
         tee.printStream.println(string);
         String actual=baosForOut.toString();
-        //sysout.println("expected: '"+expected+"'");
-        //sysout.println("actual:   '"+actual+"'");
         assertEquals(expected,actual);
     }
     ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-    private final PrintStream sysout=System.out,syserr=System.err;
+    ConsoleStreams console;
+    PrintStream baseOut;
+    PrintStream baseErr;
 }

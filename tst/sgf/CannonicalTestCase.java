@@ -60,7 +60,6 @@ import utilities.*;
 		assertNotNull(root);
 		List<MNode> list1=MakeList.toList(root);
 		List<MNode> list2=MakeList.toList(root);
-		// PrintStream x=System.out;
 		// System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
 		if(hasMultipleGames) {
 			// Logging.mainLogger.info(originalSgf);
