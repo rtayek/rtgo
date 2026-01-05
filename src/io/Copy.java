@@ -101,7 +101,7 @@ public class Copy implements Runnable {
         rw.run(useThread,true);
     }
     public static Writer sendAndReceive(String string,boolean useThread) throws IOException {
-        BufferedReader r=new BufferedReader(new StringReader(string));
+        BufferedReader r=IOs.toBufferedReader(string);
         Writer w=new StringWriter();
         sendAndReceive(useThread,r,w);
         return w;

@@ -2,7 +2,6 @@ package model;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ import io.Logging;
 import sgf.*;
 import utilities.Utilities;
 import static io.IOs.noIndent;
+import static io.IOs.toReader;
 import static sgf.Parser.restoreSgf;
 
 /**
@@ -206,16 +206,20 @@ public final class ModelHelper {
     }
 
     public static MNode modelRoundTrip(Reader reader,Writer writer) {
+        return modelRoundTrip(reader,writer,ModelSaveMode.sgfNode);
+    }
+    public static MNode modelRoundTrip(Reader reader,Writer writer,ModelSaveMode saveMode) {
+        if(reader==null) return null;
         StringBuffer sb=new StringBuffer();
         Utilities.fromReader(sb,reader);
-        return modelRoundTrip(sb.toString(),writer,ModelSaveMode.sgfNode);
+        return modelRoundTrip(sb.toString(),writer,saveMode);
     }
     public static MNode modelRoundTrip2(String expectedSgf,Writer writer) {
         return modelRoundTrip(expectedSgf,writer,ModelSaveMode.sgfNodeChecked);
     }
     public static MNode modelRoundTrip(String expectedSgf,Writer writer,ModelSaveMode saveMode) {
         if(expectedSgf==null) return null;
-        SgfNode games=restoreSgf(new StringReader(expectedSgf));
+        SgfNode games=restoreSgf(toReader(expectedSgf));
         if(games==null) return null;
         if(games.right!=null) System.out.println(" 2 more than one game!");
         if(saveMode==ModelSaveMode.sgfNodeChecked) {

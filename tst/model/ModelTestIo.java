@@ -1,12 +1,12 @@
 package model;
 import static org.junit.Assert.assertTrue;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.StringWriter;
+import io.IOs;
 public final class ModelTestIo {
     private ModelTestIo() {}
     public static void restore(Model model,String sgf) {
-        model.restore(new StringReader(sgf));
+        model.restore(IOs.toReader(sgf));
     }
     static String save(Model model) {
         StringWriter stringWriter=new StringWriter();
@@ -21,11 +21,19 @@ public final class ModelTestIo {
         return stringWriter.toString();
     }
     public static String modelRoundTripToString(Reader reader) {
+        return modelRoundTripToString(reader,ModelHelper.ModelSaveMode.sgfNode);
+    }
+    static String modelRoundTripToString(Reader reader,ModelHelper.ModelSaveMode saveMode) {
+        if(reader==null) return null;
         StringWriter stringWriter=new StringWriter();
-        ModelHelper.modelRoundTrip(reader,stringWriter);
+        ModelHelper.modelRoundTrip(reader,stringWriter,saveMode);
         return stringWriter.toString();
     }
     public static String modelRoundTripToString(String sgf) {
-        return modelRoundTripToString(new StringReader(sgf));
+        return modelRoundTripToString(sgf,ModelHelper.ModelSaveMode.sgfNode);
+    }
+    static String modelRoundTripToString(String sgf,ModelHelper.ModelSaveMode saveMode) {
+        if(sgf==null) return null;
+        return modelRoundTripToString(IOs.toReader(sgf),saveMode);
     }
 }

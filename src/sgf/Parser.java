@@ -286,7 +286,7 @@ public class Parser {
 			String sgf=getSgfData(key);
 			int p=parentheses(sgf);
 			if(p!=0) System.out.println("parentheses count: "+p);
-			SgfNode games=restoreSgf(new StringReader(sgf));
+			SgfNode games=restoreSgf(IOs.toReader(sgf));
 			if(games!=null) if(games.right!=null) {
 				many.add(key);
 				System.out.println(key+" has more than one game: "+games.right);
@@ -315,7 +315,7 @@ public class Parser {
 			System.out.println("key: "+key);
 			String expectedSgf=getSgfData(key);
 			expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
-			SgfNode games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
+			SgfNode games=expectedSgf!=null?restoreSgf(IOs.toReader(expectedSgf)):null;
 			if(games!=null) if(games.right!=null) System.out.println(key+" right: "+games.right);
 			// System.out.println(games);
 		}

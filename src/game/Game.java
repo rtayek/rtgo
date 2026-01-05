@@ -31,9 +31,7 @@ public class Game {
         if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
         recorder.restore(IOs.toReader(file));
-        StringWriter stringWriter=new StringWriter();
-        recorder.save(stringWriter);
-        String sgf=stringWriter.toString();
+        String sgf=recorder.save();
         sgf=HexAscii.encode(sgf.getBytes());
         String receiveCommand=Command.tgo_receive_sgf.name()+" "+sgf;
         Response response=game.recorderFixture.frontEnd.sendAndReceive(receiveCommand);

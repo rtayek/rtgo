@@ -178,7 +178,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public Model(Model model,String name) { // copy constructor
 		this.name=name;
 		String string=model.save();
-		restore(new StringReader(string));
+		restore(toReader(string));
 	}
 	public static boolean canDelete(Model model) {
 		return model.currentNode().parent()!=null;
@@ -1495,10 +1495,8 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(!color.equals(Stone.black)) {
 			System.out.println("expected black at A1, got "+color);
 		}
-		StringWriter stringWriter=new StringWriter();
-		boolean ok=model.save(stringWriter);
+		String expected=model.save();
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
-		final String expected=stringWriter.toString();
 		System.out.println("expected: "+expected);
 		if(!color.equals(Stone.black)) {
 			System.out.println("expected black at A1, got "+color);
@@ -1513,10 +1511,8 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// if(true) return;
 		// assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
-		m.restore(new StringReader(expected));
-		stringWriter=new StringWriter();
-		m.save(stringWriter);
-		final String actual=stringWriter.toString();
+		m.restore(toReader(expected));
+		final String actual=m.save();
 		System.out.println("expected: "+expected);
 		System.out.println("actual  : "+actual);
 	}
@@ -1525,13 +1521,11 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.setUpLogging();
 		Logging.setLevels(Level.OFF);
 		Model model=new Model("",true);
-		StringWriter x=new StringWriter();
-		model.save(x);
-		System.out.println("new way: "+x.toString());
+		String sgf=model.save();
+		System.out.println("new way: "+sgf);
 		model=new Model("",false);
-		x=new StringWriter();
-		model.save(x);
-		System.out.println("old way: "+x.toString());
+		sgf=model.save();
+		System.out.println("old way: "+sgf);
 		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&");
 		model=new Model("",true);
 		dtrt(model);

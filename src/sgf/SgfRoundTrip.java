@@ -1,11 +1,12 @@
 package sgf;
 import static io.IOs.noIndent;
+import static io.IOs.toReader;
 import static sgf.Parser.parentheses;
 import static sgf.Parser.restoreSgf;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.io.IOException;
 import static io.Logging.parserLogger;
 /**
  * Shared round-trip helpers for SGF and MNode flows.
@@ -28,8 +29,8 @@ public final class SgfRoundTrip {
     public static String restoreAndSave(String expectedSgf) {
         if(expectedSgf==null) return null;
         StringWriter stringWriter=new StringWriter();
-        StringReader stringReader=new StringReader(expectedSgf);
-        restoreAndSave(stringReader,stringWriter);
+        Reader reader=toReader(expectedSgf);
+        restoreAndSave(reader,stringWriter);
         return stringWriter.toString();
     }
     public static SgfNode saveAndRestore(SgfNode expected,StringWriter stringWriter) {
@@ -37,7 +38,7 @@ public final class SgfRoundTrip {
         if(expected!=null) {
             expected.saveSgf(stringWriter,noIndent);
             String sgf=stringWriter.toString();
-            actualSgf=restoreSgf(new StringReader(sgf));
+            actualSgf=restoreSgf(toReader(sgf));
         }
         return actualSgf;
     }
@@ -46,7 +47,7 @@ public final class SgfRoundTrip {
         restoreAndSave(original,writer);
         String expected=writer.toString(); // cannonical form?
         writer=new StringWriter();
-        SgfNode games=restoreSgf(new StringReader(expected));
+        SgfNode games=restoreSgf(toReader(expected));
         if(games!=null) games.saveSgf(writer,noIndent);
         // allow null for now (11/8/22).
         String actual=writer.toString();
@@ -56,13 +57,17 @@ public final class SgfRoundTrip {
         }
         return true;
     }
-    public static MNode mNodeRoundTrip(StringReader stringReader,StringWriter stringWriter,MNodeSaveMode saveMode) {
-        MNode root=MNode.restore(stringReader);
+    public static MNode mNodeRoundTrip(Reader reader,Writer writer,MNodeSaveMode saveMode) {
+        MNode root=MNode.restore(reader);
         if(saveMode==MNodeSaveMode.direct) {
             String actual=MNode.saveDirectly(root);
-            stringWriter.write(actual);
+            try {
+                writer.write(actual);
+            } catch(IOException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-            boolean ok=MNode.save(stringWriter,root,noIndent);
+            boolean ok=MNode.save(writer,root,noIndent);
             if(!ok) System.out.println("not ok!");
         }
         return root;

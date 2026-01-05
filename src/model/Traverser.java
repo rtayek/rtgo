@@ -25,7 +25,7 @@ class Traverser { // half of a visitor
         MNodeAcceptor acceptor=new MNodeAcceptor.PrintAcceptor();
         Traverser traverser=new Traverser(acceptor);
         String expectedSgf=getSgfData("simpleWithVariations");
-        SgfNode games_=restoreSgf(new StringReader(expectedSgf));
+        SgfNode games_=restoreSgf(IOs.toReader(expectedSgf));
         if(games_!=null) if(games_.right!=null) System.out.println(" 2 more than one game!");
         MNode games=MNode.toGeneralTree(games_);
         traverser.visit(games);
@@ -37,7 +37,7 @@ class Traverser { // half of a visitor
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         expectedSgf=getSgfData("oneMoveAtA1");
-        games_=restoreSgf(new StringReader(expectedSgf));
+        games_=restoreSgf(IOs.toReader(expectedSgf));
         games=MNode.toGeneralTree(games_);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
@@ -49,7 +49,7 @@ class Traverser { // half of a visitor
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         expectedSgf=getSgfData("empty");
-        games_=restoreSgf(new StringReader(expectedSgf));
+        games_=restoreSgf(IOs.toReader(expectedSgf));
         Logging.mainLogger.warning(file+" "+games_);
         games=MNode.toGeneralTree(games_);
         Logging.mainLogger.warning(file+" "+games);

@@ -1,7 +1,6 @@
 package controller;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
-import java.io.StringReader;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -28,7 +27,7 @@ import utilities.*;
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();
-        original.restore(new StringReader(expectedSgf));
+        ModelTestIo.restore(original,expectedSgf);
         String sendCommand=Command.tgo_send_sgf.name();
         GTPBackEnd gtpBackEnd=new GTPBackEnd(sendCommand,original);
         gtpBackEnd.useHexAscii=useHexAscii;

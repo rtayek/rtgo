@@ -1,6 +1,6 @@
 package sgf;
+import static io.IOs.toReader;
 import static sgf.Parser.*;
-import java.io.StringReader;
 import java.util.*;
 import io.Init;
 public class SgfFiles {
@@ -19,7 +19,7 @@ public class SgfFiles {
                 System.out.println(" bad parentheses: "+p);
                 throw new RuntimeException(key+" bad parentheses: "+p);
             }
-            SgfNode games=expectedSgf!=null?restoreSgf(new StringReader(expectedSgf)):null;
+            SgfNode games=expectedSgf!=null?restoreSgf(toReader(expectedSgf)):null;
             games.preorderCheckFlags();
             String s="";
             if(games.hasASetupType) s+='S';

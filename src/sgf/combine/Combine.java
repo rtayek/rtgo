@@ -85,7 +85,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
                 // not clear what this is doing other than parsing and printing.
                 // whatever it is may not belong here.
                 System.err.println("key: "+key);
-                SgfNode games=restoreSgf(new StringReader(getSgfData(key)));
+                SgfNode games=restoreSgf(IOs.toReader(getSgfData(key)));
                 System.err.println("game ************");
                 if(games!=null) {
                     OutputStreamWriter outputStreamWriter=new OutputStreamWriter(System.err);

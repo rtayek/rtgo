@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.IntStream;
 import javax.lang.model.SourceVersion;
+import io.IOs;
 import io.Logging;
 public class Utilities {
     public boolean isLineFeedOrCarriageReturn(Character character) {
@@ -159,7 +160,7 @@ public class Utilities {
         }
     }
     static List<String> getDataThatMayHaveLineFeeds(final String[] data) {
-        final BufferedReader r=new BufferedReader(new StringReader(cat(data))); // mes1
+        final BufferedReader r=IOs.toBufferedReader(cat(data)); // mes1
         // ha/ line feeds!
         return toStrings(r);
     }

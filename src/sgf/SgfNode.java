@@ -366,7 +366,7 @@ public class SgfNode {
     acdfgj
      */
     public static String preorderRouundTrip(String expectedSgf) throws IOException {
-        SgfNode games=restoreSgf(new StringReader(expectedSgf));
+        SgfNode games=restoreSgf(toReader(expectedSgf));
         if(games!=null) System.out.println(games.right);
         else System.out.println("'"+expectedSgf+"'");
         StringWriter stringWriter=new StringWriter();
@@ -420,7 +420,7 @@ public class SgfNode {
                 String expectedSgf=getSgfData(key);
                 expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
                 //System.out.println("expeced sgf "+expectedSgf);
-                SgfNode games=restoreSgf(new StringReader(expectedSgf));
+                SgfNode games=restoreSgf(toReader(expectedSgf));
                 if(false) {
                     System.out.print(key);
                     if(games!=null) if(games.right!=null) System.out.print(" 2");
@@ -447,7 +447,7 @@ public class SgfNode {
             System.out.println(key);
             String expectedSgf=getSgfData(key);
             System.out.println(expectedSgf);
-            SgfNode games=restoreSgf(new StringReader(expectedSgf));
+            SgfNode games=restoreSgf(toReader(expectedSgf));
             StringWriter stringWriter=new StringWriter();
             games.saveSgf(stringWriter,standardIndent);
             String actualSgf=stringWriter.toString();

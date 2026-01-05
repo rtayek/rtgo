@@ -1,8 +1,8 @@
 package model;
 import static org.junit.Assert.assertEquals;
-import java.io.*;
 import org.junit.Test;
 import sgf.SgfRoundTrip;
+import sgf.SgfTestIo;
 public class BasicMoveTestCase {
     //fail("wait for move complete will hang!");
     //model.waitForMoveCompleteOnBoard(moves);
@@ -14,9 +14,7 @@ public class BasicMoveTestCase {
         // do a round trip. yes it is, but we have the move to make
         String expectedSgf=MNodeTestIo.save(model.root());
         actualMove=model.lastMove2();
-        StringWriter stringWriter=new StringWriter();
-        SgfRoundTrip.mNodeRoundTrip(new StringReader(expectedSgf),stringWriter,SgfRoundTrip.MNodeSaveMode.standard);
-        String actualSgf2=stringWriter.toString();
+        String actualSgf2=SgfTestIo.mNodeRoundTrip(expectedSgf,SgfRoundTrip.MNodeSaveMode.standard);
         assertEquals(expectedSgf,actualSgf2);
     }
     @Test() public void testMoveAtA2() throws Exception {

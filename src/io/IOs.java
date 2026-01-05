@@ -60,8 +60,8 @@ public class IOs {
     public static class End implements Stopable { // one end of a 2-way pipe
         public End(BufferedReader in,Writer out) { this.in=in; this.out=out; this.socket=null; }
         public End(Socket socket) { this.in=in_(socket); this.out=out_(socket); this.socket=socket; }
-        public End(String string,Writer out) { this(new BufferedReader(new StringReader(string)),out); }
-        public End(String string) { this(new BufferedReader(new StringReader(string)),new StringWriter()); }
+        public End(String string,Writer out) { this(toBufferedReader(string),out); }
+        public End(String string) { this(toBufferedReader(string),new StringWriter()); }
         public Socket socket() { return socket; }
         public boolean send(String string) { return false; }
         public String receive() { return null; }
@@ -421,6 +421,12 @@ public class IOs {
             }
         }
         return reader;
+    }
+    public static Reader toReader(String string) {
+        return new StringReader(string);
+    }
+    public static BufferedReader toBufferedReader(String string) {
+        return new BufferedReader(new StringReader(string));
     }
     public static Writer toWriter(File file) {
         Writer writer=null;

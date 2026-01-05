@@ -1,6 +1,5 @@
 package game;
 import static org.junit.Assert.assertEquals;
-import java.io.StringReader;
 import java.util.List;
 import org.junit.*;
 import model.MNodeAcceptor.MakeList;
@@ -21,7 +20,7 @@ public class GoToNodeTesCase {
         //String sgfString=Parser.sgfExamleFromRedBean;
         System.out.println(sgfString);
         // maybe add a test that uses restore
-        MNode root=MNode.quietLoad(new StringReader(sgfString));
+        MNode root=SgfTestIo.quietLoadMNode(sgfString);
         model.setRoot(root);
         List<MNode> list1=MakeList.toList(root);
         System.out.println(list1);

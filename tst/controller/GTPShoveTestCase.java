@@ -4,7 +4,6 @@ package controller;
 // shove a tree of games to remote model.
 import static org.junit.Assert.*;
 import static sgf.Parser.getSgfData;
-import java.io.StringReader;
 import java.util.List;
 import org.junit.*;
 import equipment.*;
@@ -59,7 +58,7 @@ public class GTPShoveTestCase {
     @Test public void testRestoreAndShoveMainLineDirect() throws Exception {
         String sgf=getSgfData("simpleWithVariations");
         Model original=new Model();
-        original.restore(new StringReader(sgf));
+        ModelTestIo.restore(original,sgf);
         original.bottom();
         Model model=ModelHelper2.pushGTPMovesToCurrentStateDirect(original,false);
         assertTrue(model.board().isEqual(original.board()));

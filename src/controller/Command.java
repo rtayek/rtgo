@@ -1,7 +1,7 @@
 package controller;
-import java.io.StringReader;
 import java.util.EnumSet;
 import equipment.Stone;
+import io.IOs;
 import model.Model;
 import sgf.Parser;
 // maybe move all of the gtp stuff into it's own package?
@@ -54,7 +54,7 @@ public enum Command { // should implement some interface? (probably)
     public static void doTGOSend(String key) {
         String expectedSgf=Parser.getSgfData(key);
         Model original=new Model();
-        original.restore(new StringReader(expectedSgf));
+        original.restore(IOs.toReader(expectedSgf));
         original.bottom();
         String command=Command.tgo_send_sgf.name();
         String response=null;

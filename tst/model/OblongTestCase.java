@@ -1,6 +1,6 @@
 package model;
 import static sgf.Parser.getSgfData;
-import java.io.*;
+import java.io.File;
 import org.junit.*;
 import equipment.Board;
 import sgf.*;
@@ -11,8 +11,7 @@ public class OblongTestCase {
     }
     @After public void tearDown() throws Exception {}
     @Test public void test() {
-        StringReader stringReader=new StringReader(expectedSgf);
-        MNode games=MNode.restore(stringReader);
+        MNode games=SgfTestIo.restoreMNode(expectedSgf);
         //System.out.println("root: "+games);
         //System.out.println("children: "+games.children);
         model=new Model("oblong");

@@ -42,7 +42,7 @@ public class GTPBackEnd implements Runnable,Stopable {
     }
     public GTPBackEnd(String command,Model model) { // for testing
         // makes a back end that will read the command.
-        this(new End(new BufferedReader(new StringReader(command)),new StringWriter()),model);
+        this(new End(command,new StringWriter()),model);
     }
     public NamedThread startGTP(long id) { // starts with a new thread each time.
         if(IOs.currentThreadIsTimeLimited())
@@ -447,7 +447,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 Logging.mainLogger.config("received encoded sgf: "+sgfString);
                 if(useHexAscii) sgfString=decodeToString(sgfString);
                 Logging.mainLogger.config("decoded sgf: "+sgfString);
-                model.restore(new StringReader(sgfString));
+                model.restore(IOs.toReader(sgfString));
                 ok=send(okCharacter,message.id,"");
                 break;
             case tgo_send_sgf:

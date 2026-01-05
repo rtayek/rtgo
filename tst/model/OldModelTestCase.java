@@ -1,7 +1,7 @@
 package model;
 import static org.junit.Assert.*;
 import static sgf.Parser.getSgfData;
-import java.io.*;
+import java.io.File;
 import java.util.*;
 import org.junit.*;
 import equipment.*;
@@ -244,7 +244,7 @@ public class OldModelTestCase {
         // hangs when ignore is remove from test go to node!
         String key="manyFacesTwoMovesAtA1AndR16";
         String sgfString=getSgfData(key);
-        MNode root=MNode.quietLoad(new StringReader(sgfString));
+        MNode root=SgfTestIo.quietLoadMNode(sgfString);
         model.setRoot(root);
         if(model.board()!=null) {
             int expected=model.board().id();

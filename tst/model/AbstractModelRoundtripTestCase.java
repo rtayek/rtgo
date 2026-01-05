@@ -1,6 +1,5 @@
 package model;
 import static org.junit.Assert.*;
-import java.io.*;
 import org.junit.*;
 import sgf.*;
 import utilities.MyTestWatcher;
@@ -39,14 +38,12 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertEquals(key.toString(),expectedSgf,actualSgf2);
     }
     @Test public void testLongRoundTrip() throws Exception {
-        StringWriter stringWriter=new StringWriter();
-        MNode games=ModelHelper.modelRoundTrip(expectedSgf,stringWriter,ModelHelper.ModelSaveMode.sgfNode);
-        String actualSgf=expectedSgf!=null?stringWriter.toString():null;
+        String actualSgf=ModelTestIo.modelRoundTripToString(expectedSgf,ModelHelper.ModelSaveMode.sgfNode);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testModelRestoreAndSave1() throws Exception {
-        MNode root=MNode.restore(new StringReader(expectedSgf));
+        MNode root=SgfTestIo.restoreMNode(expectedSgf);
         Model model=new Model();
         model.setRoot(root);
         String actualSgf=ModelTestIo.save(model,key.toString());
@@ -55,11 +52,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testLongRoundTrip21() throws Exception {
-        StringWriter stringWriter=new StringWriter();
-        @SuppressWarnings("unused") MNode games=ModelHelper.modelRoundTrip(expectedSgf,stringWriter,
-                ModelHelper.ModelSaveMode.sgfNodeChecked);
-        String actualSgf=stringWriter.toString();
-        if(expectedSgf==null) actualSgf=null; // hack for now
+        String actualSgf=ModelTestIo.modelRoundTripToString(expectedSgf,ModelHelper.ModelSaveMode.sgfNodeChecked);
         System.out.println("ex: "+expectedSgf);
         System.out.println("ac: "+actualSgf);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);

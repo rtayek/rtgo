@@ -121,7 +121,7 @@ class Traverser {
         traverser.visit(games);
         System.out.println("||||");
         String sgfString=getSgfData("oneMoveAtA1");
-        games=restoreSgf(new StringReader(sgfString));
+        games=restoreSgf(IOs.toReader(sgfString));
         traverser.visit(games);
     }
     SgfAcceptor acceptor;

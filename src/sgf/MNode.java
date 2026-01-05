@@ -170,11 +170,11 @@ public class MNode {
 		}
 		return true; // for now
 	}
-	public static MNode mNodeRoundTrip(StringReader stringReader,StringWriter stringWriter) {
-		return SgfRoundTrip.mNodeRoundTrip(stringReader,stringWriter,SgfRoundTrip.MNodeSaveMode.standard);
+	public static MNode mNodeRoundTrip(Reader reader,Writer writer) {
+		return SgfRoundTrip.mNodeRoundTrip(reader,writer,SgfRoundTrip.MNodeSaveMode.standard);
 	}
-	public static MNode mNodeDirectRoundTrip(StringReader stringReader,StringWriter stringWriter) {
-		return SgfRoundTrip.mNodeRoundTrip(stringReader,stringWriter,SgfRoundTrip.MNodeSaveMode.direct);
+	public static MNode mNodeDirectRoundTrip(Reader reader,Writer writer) {
+		return SgfRoundTrip.mNodeRoundTrip(reader,writer,SgfRoundTrip.MNodeSaveMode.direct);
 	}
 	public static MNode quietLoad(Reader reader) {
 		PrintStream old=System.out;
@@ -234,7 +234,7 @@ public class MNode {
 	}
 	public static MNode restoreRedBean() {
 		String expectedSgf=Parser.sgfExamleFromRedBean;
-		MNode mNode=restore(new StringReader(expectedSgf));
+		MNode mNode=restore(toReader(expectedSgf));
 		return mNode;
 	}
 	public static String saveDirectly(MNode mNode) {
@@ -265,11 +265,11 @@ public class MNode {
 		// lookAtRoot();
 		String oneGame="(;GM[1];B[as];B[at])";
 		System.out.println(oneGame);
-		MNode root=MNode.restore(new StringReader(oneGame));
+		MNode root=MNode.restore(toReader(oneGame));
 		boolean ok=MNode.save(new PrintWriter(System.out),root,standardIndent);
 		String expected=getSgfData("smartgo43");
 		System.out.println(expected);
-		root=MNode.restore(new StringReader(expected));
+		root=MNode.restore(toReader(expected));
 		ok=MNode.save(new PrintWriter(System.out),root,standardIndent);
 	}
 	public boolean hasAMove() {
