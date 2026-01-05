@@ -1,4 +1,5 @@
 package sample;
+import io.Logging;
 public class Join {
     static class theThread extends Thread {
         public final static int THREADPASS=0;
@@ -8,14 +9,14 @@ public class Join {
         public int status() { return _status; }
         public theThread() { _status=THREADFAIL; }
         @Override public void run() {
-            System.out.print("Thread: Entered\n");
+            Logging.mainLogger.info("Thread: Entered\n");
             try {
                 while(!done) {
-                    System.out.print("Thread: Looping or long running request\n");
+                    Logging.mainLogger.info("Thread: Looping or long running request\n");
                     try {
                         Thread.sleep(1000);
                     } catch(InterruptedException e) {
-                        System.out.print("Thread: Join run() sleep interrupted\n");
+                        Logging.mainLogger.info("Thread: Join run() sleep interrupted\n");
                     }
                 }
             } catch(ThreadDeath d) {
@@ -25,30 +26,30 @@ public class Join {
         boolean done;
     }
     public static void main(String argv[]) {
-        System.out.println(Thread.activeCount());
-        System.out.print("Entered the testcase\n");
-        System.out.print("Create a thread\n");
+        Logging.mainLogger.info(String.valueOf(Thread.activeCount()));
+        Logging.mainLogger.info("Entered the testcase\n");
+        Logging.mainLogger.info("Create a thread\n");
         theThread t=new theThread();
-        System.out.print("Start the thread\n");
+        Logging.mainLogger.info("Start the thread\n");
         t.start();
-        System.out.print("Wait a bit until we 'realize' the thread needs to be canceled\n");
+        Logging.mainLogger.info("Wait a bit until we 'realize' the thread needs to be canceled\n");
         try {
             Thread.sleep(3000);
         } catch(InterruptedException e) {
-            System.out.print("Join main sleep interrupted\n");
+            Logging.mainLogger.info("Join main sleep interrupted\n");
         }
         t.done=true;
         ;
-        System.out.print("Wait for the thread to complete\n");
+        Logging.mainLogger.info("Wait for the thread to complete\n");
         try {
             t.join();
         } catch(InterruptedException e) {
-            System.out.print("Join interrupted\n");
+            Logging.mainLogger.info("Join interrupted\n");
         }
-        System.out.print("Thread status indicates it was canceled\n");
-        if(t.status()!=theThread.THREADCANCELED) { System.out.print("Unexpected thread status\n"); }
-        System.out.print(t.status());
-        System.out.print("Testcase completed\n");
-        System.out.println(Thread.activeCount());
+        Logging.mainLogger.info("Thread status indicates it was canceled\n");
+        if(t.status()!=theThread.THREADCANCELED) { Logging.mainLogger.info("Unexpected thread status\n"); }
+        Logging.mainLogger.info(String.valueOf(t.status()));
+        Logging.mainLogger.info("Testcase completed\n");
+        Logging.mainLogger.info(String.valueOf(Thread.activeCount()));
     }
 }

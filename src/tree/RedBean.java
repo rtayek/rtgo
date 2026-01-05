@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import static tree.MNode.print;
 import java.util.*;
 import tree.G2.Generator;
@@ -61,22 +62,22 @@ public class RedBean {
     }
     public static void example() { // https://www.red-bean.com/sgf/var.html
         Node<Character> bRoot=binary();
-        System.out.println("coded binary sample");
+        Logging.mainLogger.info("coded binary sample");
         boolean relabel=false;
         G2.print(bRoot,"");
         if(relabel) {
             Characters i=new Characters();
             Node.<Character> relabel(bRoot,i); // since i uses 'r' for the root.
-            System.out.println("after relabel");
+            Logging.mainLogger.info("after relabel");
             G2.print(bRoot,"");
         }
-        System.out.println("coded mway sample");
+        Logging.mainLogger.info("coded mway sample");
         MNode<Character> mRoot=mway();
         print(mRoot,"",true);
         if(relabel) {
             Characters i=new Characters();
             MNode.<Character> relabel(mRoot,i); // since i uses 'r' for the root.
-            System.out.println("after relabel");
+            Logging.mainLogger.info("after relabel");
             print(mRoot,"",true);
         }
         // since mway to binary seems to work,
@@ -92,15 +93,15 @@ public class RedBean {
     public static void main(String[] arguments) {
         //example();
         Node<Character> bRoot=binary();
-        System.out.println(G2.pPrint(bRoot));
-        System.out.println("red bean:");
+        Logging.mainLogger.info(String.valueOf(G2.pPrint(bRoot)));
+        Logging.mainLogger.info("red bean:");
         Node<String> redBean=readBean();
-        if(!encoded.equals(redBean.encoded)) System.out.println("badness!");
-        System.out.println(G2.pPrint(redBean));
+        if(!encoded.equals(redBean.encoded)) Logging.mainLogger.info("badness!");
+        Logging.mainLogger.info(String.valueOf(G2.pPrint(redBean)));
         Characters i=new Characters();
         Node.<Character> relabel(bRoot,i); // since i uses 'r' for the root.
-        System.out.println("after relabel");
-        System.out.println(G2.pPrint(bRoot));
+        Logging.mainLogger.info("after relabel");
+        Logging.mainLogger.info(String.valueOf(G2.pPrint(bRoot)));
         // looks like the print out the same!
         // r(a(b(c()(d(e))))(f(g(h(i))(j)))) is correct.
     }

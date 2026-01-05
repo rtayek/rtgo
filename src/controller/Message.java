@@ -32,7 +32,7 @@ public class Message {
                 arguments[1]=stripped.substring(hack+Command.tgo_receive_sgf.name().length());
                 arguments[1]=strip(arguments[1]);
                 // now we have problems with a bunch of line feeds
-                Logging.mainLogger.info(this.toString());
+                Logging.mainLogger.info(String.valueOf(this.toString()));
             }
         }
     }

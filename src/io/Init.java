@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
@@ -13,12 +14,12 @@ public enum Init {
         //IO.stackTrace(10);
         if(once) return;
         else once=true;
-        if(verbose) System.out.println("4 once initialize");
+        if(verbose) Logging.mainLogger.info("4 once initialize");
         String forground=System.getProperty("foreground");
-        if(verbose) System.out.println("fotreground: "+forground);
+        if(verbose) Logging.mainLogger.info("fotreground: "+forground);
         ColorLogs.blackOrWhite=forground==null?ColorLogs.color_BLACK:ColorLogs.color_WHITE;
         Sequence.blackOrWhite=forground!=null?Sequence.black:Sequence.white;
-        if(verbose) System.out.println("blackOrWhite: "+Sequence.blackOrWhite);
+        if(verbose) Logging.mainLogger.info("blackOrWhite: "+Sequence.blackOrWhite);
         LogManager.getLogManager().reset();
         // maybe omit this stuff below?
         if(true) {
@@ -26,25 +27,25 @@ public enum Init {
             Logging.setLevels(Logging.initialLoggingLevel); // do this last or level is null!
             Logging.parserLogger.setLevel(defaultParserLoggerLevel);
         }
-        //System.out.println(Parameters.topologies);
-        System.out.println("once");
+        //Logging.mainLogger.info(Parameters.topologies);
+        Logging.mainLogger.info("once");
     }
     private void restoreSystmeIO() { System.setOut(out); System.setErr(err); }
     public void twice() {
         once();
-        if(verbose) System.out.println("5 enter twice()");
+        if(verbose) Logging.mainLogger.info("5 enter twice()");
         et.reset();
-        if(verbose) System.out.println("exit twice()");
+        if(verbose) Logging.mainLogger.info("exit twice()");
     }
     public abstract static class Main {
         public static void main(String[] argument) {
-            if(verbose) System.out.println("1.5 Init.Main.main(), first: "+first); // needs to be here
+            if(verbose) Logging.mainLogger.info("1.5 Init.Main.main(), first: "+first); // needs to be here
         }
         static {
-            if(verbose) System.out.println("1 Init.Main.main static init");
+            if(verbose) Logging.mainLogger.info("1 Init.Main.main static init");
         }
         static {
-            if(verbose) System.out.println("static init Init.Main");
+            if(verbose) Logging.mainLogger.info("static init Init.Main");
         }
     }
     private Init() {
@@ -66,8 +67,8 @@ public enum Init {
     // put this stuff below into the named thread class.
     // and keep this init code as small as possible.
     public void initiaizeTests() {
-        System.out.println("suit contols: "+first.suiteControls);
-        System.out.println("wrapup counter: "+counter);
+        Logging.mainLogger.info("suit contols: "+first.suiteControls);
+        Logging.mainLogger.info("wrapup counter: "+counter);
         if(suiteControls) return;
         // should i get initial ids here?
         ++counter;
@@ -75,28 +76,28 @@ public enum Init {
     }
     public void wrapupTests_() {
         wasWrapupTestsCalled=true;
-        System.out.println("wrapup tests");
-        System.out.println("highest named threads id: "+NamedThreadGroup.ids);
-        System.out.println(NamedThreadGroup.allNamedThreads.size()+"/"+NamedThreadGroup.ids);
+        Logging.mainLogger.info("wrapup tests");
+        Logging.mainLogger.info("highest named threads id: "+NamedThreadGroup.ids);
+        Logging.mainLogger.info(NamedThreadGroup.allNamedThreads.size()+"/"+NamedThreadGroup.ids);
         NamedThreadGroup.printNamedThreads(NamedThreadGroup.allNamedThreads,"all",false);
         IOs.printThreads(IOs.activeThreads(),"active at end",false);
         GTPBackEnd.sleep2(2); // was 10
         NamedThreadGroup.removeAllTerminated();
-        System.out.println("highest named threads id: "+NamedThreadGroup.ids);
-        System.out.println(NamedThreadGroup.allNamedThreads.size()+"/"+NamedThreadGroup.ids);
+        Logging.mainLogger.info("highest named threads id: "+NamedThreadGroup.ids);
+        Logging.mainLogger.info(NamedThreadGroup.allNamedThreads.size()+"/"+NamedThreadGroup.ids);
         NamedThreadGroup.printNamedThreads(NamedThreadGroup.allNamedThreads,"all",false);
         IOs.printThreads(IOs.activeThreads(),"active at end",false);
     }
     public synchronized void wrapupTests() {
         boolean printMore=false;
-        if(printMore) { IOs.stackTrace(3); System.out.println("wrapup counter: "+counter+", max counter: "+maxCounter); }
+        if(printMore) { IOs.stackTrace(3); Logging.mainLogger.info("wrapup counter: "+counter+", max counter: "+maxCounter); }
         if(wasWrapupTestsCalled) Logging.mainLogger.severe("duplicate call to wrapup");
         if(suiteControls) return;
         else {
-            if(--counter>0) { System.out.println("counter: "+counter+" not wrapping up"); return; }
-            System.out.println("not returning");
+            if(--counter>0) { Logging.mainLogger.info("counter: "+counter+" not wrapping up"); return; }
+            Logging.mainLogger.info("not returning");
         }
-        System.out.println("counter: "+counter);
+        Logging.mainLogger.info("counter: "+counter);
         wrapupTests_();
     }
     public void saveTestsRun(String fileName) {
@@ -113,21 +114,21 @@ public enum Init {
     public void lastPrint() {
         NamedThreadGroup.printThraedsAtEnd();
         int n=NamedThreadGroup.printNamedThreadGroups(true);
-        System.out.println(n);
+        Logging.mainLogger.info(String.valueOf(n));
         IOs.printThreads(IOs.activeThreads(),"last",true);
-        System.out.println("tests run: "+first.testsRun);
+        Logging.mainLogger.info("tests run: "+first.testsRun);
     }
     public static void init(String[] argument) {
-        System.out.println("1.5 Init.Main.main(), first: "+first); // needs to be here
+        Logging.mainLogger.info("1.5 Init.Main.main(), first: "+first); // needs to be here
     }
     public static void main(String[] args) {
-        System.out.println("enter Init.main()");
-        //System.out.println(first);
+        Logging.mainLogger.info("enter Init.main()");
+        //Logging.mainLogger.info(first);
         first.initiaizeTests();
         first.initiaizeTests();
         first.wrapupTests();
         first.wrapupTests();
-        System.out.println("exit Init.main()");
+        Logging.mainLogger.info("exit Init.main()");
     }
     public final Et et=new Et();
     public int counter;
@@ -145,7 +146,7 @@ public enum Init {
     public boolean once;
     static boolean verbose=false;
     static {
-        if(verbose) System.out.println("? Init.main static init");
+        if(verbose) Logging.mainLogger.info("? Init.main static init");
     }
     public static final String notTerminated="notTerminated";
     static int maxCounter;

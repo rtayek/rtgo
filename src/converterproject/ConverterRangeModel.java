@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package converterproject;
+import io.Logging;
 /*
  * Works in 1.1+Swing, 1.4, and all releases in between.
  * Used by the Converter example.
@@ -56,7 +57,7 @@ public class ConverterRangeModel implements BoundedRangeModel {
     public void setMaximum(int newMaximum) { setRangeProperties(value,extent,minimum,newMaximum,isAdjusting); }
     public int getMinimum() { return (int)minimum; }
     public void setMinimum(int newMinimum) {
-        System.out.println("In ConverterRangeModel setMinimum");
+        Logging.mainLogger.info("In ConverterRangeModel setMinimum");
         //Do nothing.
     }
     public int getValue() { return (int)getDoubleValue(); }

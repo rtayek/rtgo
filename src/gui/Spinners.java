@@ -93,9 +93,9 @@ public class Spinners {
             @Override public void setValuesInWidgetsFromCurrentValues() { // maybe bogus?
                 // no, move above to new spinnes (not spinner optiomns).
                 for(SpinnerWithAnEnum<?> button:buttons()) {
-                    System.out.println(button.t);
+                    Logging.mainLogger.info(String.valueOf(button.t));
                     boolean ok=button.setValueInWidgetFromCurrentValue();
-                    if(!ok) System.out.println("not ok!");
+                    if(!ok) Logging.mainLogger.info("not ok!");
                 }
             }
             // make sure these below work correctly (like parameters)
@@ -104,7 +104,7 @@ public class Spinners {
             @Override public void setCurrentValuesFromProperties(Properties properties) {
                 for(SpinnerWithAnEnum<?> button:buttons()) if(properties.containsKey(button.t.name()))
                     button.currentValue=button.fromString(properties.getProperty(button.t.name()));
-                else System.out.println("can not find property: "+button.t.name()+" in "+properties);
+                else Logging.mainLogger.info("can not find property: "+button.t.name()+" in "+properties);
             }
             @Override public void setPropertiesFromCurrentValues(Properties properties) {
                 for(SpinnerWithAnEnum<?> parameter:buttons())
@@ -113,7 +113,7 @@ public class Spinners {
             @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
                 Properties properties=new Properties();
                 load(properties,propertiesFilename);
-                System.out.println("loaded: "+properties);
+                Logging.mainLogger.info("loaded: "+properties);
                 setCurrentValuesFromProperties(properties);
             }
             @Override public void storeCurrentValuesInPropertiesFile(String filename) {

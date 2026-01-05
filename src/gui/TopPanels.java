@@ -42,7 +42,7 @@ public class TopPanels {
             // work here
             LayoutManager oldLayoutManage=getLayout();
             // old layout is FlowLayout!
-            System.out.println(this+" old layout: "+oldLayoutManage);
+            Logging.mainLogger.info(this+" old layout: "+oldLayoutManage);
             //LayoutManager layoutManager=new BoxLayout(this,BoxLayout.X_AXIS);
             //setLayout(layoutManager);
             if(mediator.useSpinnerOptions) {
@@ -71,7 +71,7 @@ public class TopPanels {
             // move this inside spinners?
             // make thsi an instance method
             boolean ok=button.setValueInWisget(value);
-            if(!ok) System.out.println(value+" is not ok!");
+            if(!ok) Logging.mainLogger.info(value+" is not ok!");
             Properties properties=new Properties();
             // looks like loadropertiesFromCurrentValues()?
             // yes. but this is for spinner with an enum?
@@ -178,7 +178,7 @@ public class TopPanels {
                         abstractButton.setEnabled(Navigate.valueOf(name()).canDo(model));
                     } else Logging.mainLogger.info(model.name+" "+"enable can not find "+this);
                 } catch(IllegalArgumentException e) {
-                    System.out.println("caught: "+e);
+                    Logging.mainLogger.info("caught: "+e);
                 }
             }
             static Navigate find(KeyStroke keyStroke) {

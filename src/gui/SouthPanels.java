@@ -42,7 +42,7 @@ public class SouthPanels {
             this.mediator=mediator;
             LayoutManager oldLayoutManage=getLayout();
             // old layout is FlowLayout!
-            System.out.println("old layout: "+oldLayoutManage);
+            Logging.mainLogger.info("old layout: "+oldLayoutManage);
             //LayoutManager layoutManager=new BoxLayout(this,BoxLayout.X_AXIS);
             //setLayout(layoutManager);
             for(MyEnums enums:MyEnums.values()) {

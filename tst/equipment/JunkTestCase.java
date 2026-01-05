@@ -12,7 +12,7 @@ public class JunkTestCase {
     @After public void tearDown() throws Exception {}
     @Test public void testTopology() {
         for(Topology topology:Topology.values()) if(!topology.equals(Topology.diamond)) {
-            System.out.println("=== testing topology: "+topology+" ===");
+            Logging.mainLogger.info("=== testing topology: "+topology+" ===");
             board=Board.factory.create(n,topology);
             String[] names=new String[] {"uL","uR","lL","lR"};
             Point[] points=new Point[] {board.uL(),board.uR(),board.lL(),board.lR()};
@@ -22,11 +22,11 @@ public class JunkTestCase {
             for(Point point:points) board.setAt(point,Stone.black);
             Map<String,Block> map2=new LinkedHashMap<>();
             for(String name:map.keySet()) {
-                System.out.println(name+" at "+map.get(name));
+                Logging.mainLogger.info(name+" at "+map.get(name));
                 map2.put(name,
                         new Block(board,map.get(name).x,map.get(name).y,new boolean[board.width()][board.depth()]));
             }
-            for(String name:map.keySet()) System.out.println(name+" "+map.get(name)+" "+map2.get(name));
+            for(String name:map.keySet()) Logging.mainLogger.info(name+" "+map.get(name)+" "+map2.get(name));
             for(String name:map.keySet()) {
                 Block actual=map2.get(name);
                 Pair<Integer,Integer> expected=expectedMap.get(topology);

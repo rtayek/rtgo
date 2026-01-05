@@ -1,4 +1,5 @@
 package x;
+import io.Logging;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,7 @@ enum P2 { // looks like the only thing i need this for is so i can switch
     // on it!
     AB,AE;
     public enum Types { p11, p12; }
-    P2() { p=P.idToP.get(name()); if(p==null) System.out.println("can not find p for "+name()); type=type(p); }
+    P2() { p=P.idToP.get(name()); if(p==null) Logging.mainLogger.info("can not find p for "+name()); type=type(p); }
     static Types type(P p) {
         if(p instanceof P11) return Types.p11;
         else if(p instanceof P12) return Types.p12;
@@ -48,22 +49,22 @@ public class X {
         if(p2!=null) {
             switch(p2) {
                 case AB:
-                    System.out.println(p2);
+                    Logging.mainLogger.info(String.valueOf(p2));
                     break;
                 case AE:
-                    System.out.println(p2);
+                    Logging.mainLogger.info(String.valueOf(p2));
                     break;
             }
-        } else System.out.println("p2 is null!");
+        } else Logging.mainLogger.info("p2 is null!");
     }
     public static void main(String[] args) {
         P p=P.AB;
         Property property=new Property(p,Arrays.asList(new String[] {}));
-        System.out.println(property);
+        Logging.mainLogger.info(String.valueOf(property));
         processProperty(p);
         p=P.AE;
         property=new Property(p,Arrays.asList(new String[] {}));
-        System.out.println(property);
+        Logging.mainLogger.info(String.valueOf(property));
         processProperty(p);
     }
 }

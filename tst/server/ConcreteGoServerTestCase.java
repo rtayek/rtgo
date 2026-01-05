@@ -1,4 +1,5 @@
 package server;
+import io.Logging;
 import org.junit.*;
 import org.junit.runner.*;
 import io.IOs;
@@ -10,33 +11,33 @@ public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
         serverPort=IOs.anyPort;
         super.setUp();
     }
-    @Override @After public void tearDown() throws Exception { System.out.println("teardown"); super.tearDown(); }
+    @Override @After public void tearDown() throws Exception { Logging.mainLogger.info("teardown"); super.tearDown(); }
     public static void main(String[] args) throws Exception {
         // run a few test methods
         JUnitCore junit=new JUnitCore();
         Class<ConcreteGoServerTestCase> clazz=ConcreteGoServerTestCase.class;
         String method="test";
-        System.out.println("get request");
+        Logging.mainLogger.info("get request");
         Request request=Request.method(clazz,method);
-        System.out.println(request);
+        Logging.mainLogger.info(String.valueOf(request));
         String method3="adasdsd";
-        System.out.println("get request");
+        Logging.mainLogger.info("get request");
         Request request3=Request.method(clazz,method3);
-        System.out.println(request3);
+        Logging.mainLogger.info(String.valueOf(request3));
         Result result=junit.run(request);
-        System.out.println("result: "+result);
-        System.out.println("was successful: "+result.wasSuccessful());
+        Logging.mainLogger.info("result: "+result);
+        Logging.mainLogger.info("was successful: "+result.wasSuccessful());
         Class<ConcreteGoServerTestCase> clazz2=ConcreteGoServerTestCase.class;
         String method2="testPlayOneMove";
         Request request2=Request.method(clazz2,method2);
         Result result2=junit.run(request2);
-        System.out.println(method2+" "+result2.wasSuccessful());
+        Logging.mainLogger.info(method2+" "+result2.wasSuccessful());
         NamedThreadGroup.stopAllStopables();
-        System.out.println(NamedThreadGroup.printNamedThreadGroups(true));
+        Logging.mainLogger.info(String.valueOf(NamedThreadGroup.printNamedThreadGroups(true)));
         Thread.sleep(10);
-        System.out.println("|||");
-        System.out.println(NamedThreadGroup.printNamedThreadGroups(true));
-        System.out.println("exit");
+        Logging.mainLogger.info("|||");
+        Logging.mainLogger.info(String.valueOf(NamedThreadGroup.printNamedThreadGroups(true)));
+        Logging.mainLogger.info("exit");
         NamedThreadGroup.printThraedsAtEnd();
     }
 }

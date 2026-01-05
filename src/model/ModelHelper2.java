@@ -35,7 +35,7 @@ public class ModelHelper2 {
 	// gtpMoves.add(0,command);
 	public static void getMovesAndPush(GTPFrontEnd frontEnd,Model model,boolean oneAtATime) {
 		List<String> gtpMoves=model.gtpMovesToCurrentState();
-		System.out.println("gtp moves: "+gtpMoves);
+		Logging.mainLogger.info("gtp moves: "+gtpMoves);
 		if(oneAtATime) {
 			for(String gtpMove:gtpMoves) {
 				Response response=frontEnd.sendAndReceive(gtpMove);
@@ -72,12 +72,12 @@ public class ModelHelper2 {
 		original.move(Stone.black,new Point());
 		original.move(Stone.white,new Point(1,1));
 		Model model=pushGTPMovesToCurrentStateDirect(original,false);
-		if(!model.board().isEqual(original.board())) System.out.println("fail!");
+		if(!model.board().isEqual(original.board())) Logging.mainLogger.info("fail!");
 		Model model2=pushGTPMovesToCurrentStateDirect(original,true);
-		if(!model2.board().isEqual(original.board())) System.out.println("fail!");
+		if(!model2.board().isEqual(original.board())) Logging.mainLogger.info("fail!");
 		Model model3=pushGTPMovesToCurrentStateBoth(original,true);
-		if(!model3.board().isEqual(original.board())) System.out.println("fail!");
+		if(!model3.board().isEqual(original.board())) Logging.mainLogger.info("fail!");
 		Model model4=pushGTPMovesToCurrentStateBoth(original,false);
-		if(!model4.board().isEqual(original.board())) System.out.println("fail!");
+		if(!model4.board().isEqual(original.board())) Logging.mainLogger.info("fail!");
 	}
 }

@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static io.Logging.parserLogger;
 import java.io.File;
 import io.IOs;
@@ -12,10 +13,10 @@ public class FixSgf {
     void run(File directory) {
         String[] x=directory.list((dir,name)->name.endsWith(".sgf")&&!name.startsWith("fixed"));
         for(String name:x) {
-            System.out.println("start: "+name);
+            Logging.mainLogger.info("start: "+name);
             String name2=name.substring(name.length()-23);
             fix(new File(directory,name),new File(directory,"fixed"+name2));
-            System.out.println("end: "+name);
+            Logging.mainLogger.info("end: "+name);
             //break;
         }
         //new FixSgf().run(null,null);

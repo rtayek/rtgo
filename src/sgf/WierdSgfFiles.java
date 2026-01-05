@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static utilities.Utilities.fromFile;
 import java.io.*;
 public class WierdSgfFiles {
@@ -11,10 +12,10 @@ public class WierdSgfFiles {
             if(file.exists()) {
                 long n=file.length();
                 if(!line.contains("SGF_DEFECT+WEIRD_FILES")) if(n<100) {
-                    System.out.println(n+" "+file+" ");
+                    Logging.mainLogger.info(n+" "+file+" ");
                     StringBuffer stringBuffer=new StringBuffer();
                     fromFile(stringBuffer,file);
-                    System.out.println("'"+stringBuffer+"'");
+                    Logging.mainLogger.info("'"+stringBuffer+"'");
                 }
             }
         }

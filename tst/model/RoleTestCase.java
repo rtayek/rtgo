@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import equipment.*;
@@ -87,7 +88,7 @@ public class RoleTestCase {
         Move2 move=new Move2(MoveType.move,Stone.white,point);
         model.setRole(Role.playBlack);
         boolean ok=model.checkAction(model.role(),What.move);
-        System.out.println("ok: "+ok);
+        Logging.mainLogger.info("ok: "+ok);
         if(!ok) throw new RuntimeException("check fails!");
         MoveResult moveResult=model.move(move);
         assertEquals(MoveResult.notYourTurn,moveResult);

@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static sgf.Parser.getSgfData;
 import java.io.File;
 import org.junit.*;
@@ -12,19 +13,19 @@ public class OblongTestCase {
     @After public void tearDown() throws Exception {}
     @Test public void test() {
         MNode games=SgfTestIo.restoreMNode(expectedSgf);
-        //System.out.println("root: "+games);
-        //System.out.println("children: "+games.children);
+        //Logging.mainLogger.info("root: "+games);
+        //Logging.mainLogger.info("children: "+games.children);
         model=new Model("oblong");
         model.setRoot(games); // does this really trash everything correctly?
         Board board=model.board();
-        //if(board!=null) System.out.println("board is "+board.width()+"x"+board.depth());
-        //else System.out.println("board is null");
-        //System.out.println("before down");
+        //if(board!=null) Logging.mainLogger.info("board is "+board.width()+"x"+board.depth());
+        //else Logging.mainLogger.info("board is null");
+        //Logging.mainLogger.info("before down");
         model.down(0);
-        //System.out.println("after down");
+        //Logging.mainLogger.info("after down");
         board=model.board();
-        //if(board!=null) System.out.println("board is "+board.width()+"x"+board.depth());
-        //else System.out.println("board is null");
+        //if(board!=null) Logging.mainLogger.info("board is "+board.width()+"x"+board.depth());
+        //else Logging.mainLogger.info("board is null");
     }
     String expectedSgf;
     SgfNode games;

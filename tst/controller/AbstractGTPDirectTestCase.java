@@ -153,7 +153,7 @@ public abstract class AbstractGTPDirectTestCase {
         Command command=Command.boardsize;
         String response=new GTPBackEnd(command.name()+" "+n,directModel).runCommands(directJustRun);
         Response actual=Response.response(response);
-        if(!actual.isOk()) System.out.println(response);
+        if(!actual.isOk()) Logging.mainLogger.info(String.valueOf(response));
         assertTrue(actual.isOk());
         assertEquals(directModel.board().width(),n);
         assertEquals(directModel.board().depth(),n);
@@ -214,7 +214,7 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testGtpPlayBlackA1() throws Exception {
         String response=new GTPBackEnd("play black A1",directModel).runCommands(directJustRun);
         Response actual=Response.response(response);
-        System.out.println(response);
+        Logging.mainLogger.info(String.valueOf(response));
         assertTrue(actual.isOk());
         assertEquals(Stone.black,directModel.board().at(0,0));
         // traverse model and shove from front end?
@@ -252,7 +252,7 @@ public abstract class AbstractGTPDirectTestCase {
         directModel.ensureBoard();
         Point point=new Point(0,0);
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
-        System.out.println("noI: "+noI);
+        Logging.mainLogger.info("noI: "+noI);
         String commands=Command.play.name()+" Black "+noI+'\n'+Command.play.name()+" White A1"+'\n';
         // this has 2 commands
         String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
@@ -300,8 +300,8 @@ public abstract class AbstractGTPDirectTestCase {
             Response[] responses=send(commands,directJustRun);
             Logging.mainLogger.info(responses.length+" responses.");
             Logging.mainLogger.info(""+responses);
-            System.out.println(responses[0]);
-            System.out.println(responses[1]);
+            Logging.mainLogger.info(String.valueOf(responses[0]));
+            Logging.mainLogger.info(String.valueOf(responses[1]));
             assertTrue(responses[0].isOk());
             assertTrue(responses[1].isBad());
         } else {
@@ -386,7 +386,7 @@ public abstract class AbstractGTPDirectTestCase {
         assertFalse(actual.isOk());
     }
     public static void main(String[] args) {
-        System.out.println(Init.first);
+        Logging.mainLogger.info(String.valueOf(Init.first));
         first.suiteControls=true;
         JUnitCore jUnitCore=new JUnitCore();
         jUnitCore.run(GTPDirectTestSuite.class);

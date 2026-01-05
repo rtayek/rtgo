@@ -25,7 +25,7 @@ public class GoServer implements Runnable,Stopable {
         // between the next two socket connections - hack
         GameFixture game=new GameFixture(recorder);
         game.setupFrontEnds(blackFrontEnd,whiteFrontEnd);
-        System.out.println("after setup server side.");
+        Logging.mainLogger.info("after setup server side.");
         // we may always want everything except the board size?
         return game;
     }
@@ -62,7 +62,7 @@ public class GoServer implements Runnable,Stopable {
         Holders holders=Holders.create(port);
         if(port==IOs.noPort) addConnection(holders.first.front); // duplex
         if(port==IOs.noPort) addConnection(holders.second.front); // duplex
-        if(connections.size()<2) System.out.println("1 waiting for a game");
+        if(connections.size()<2) Logging.mainLogger.info("1 waiting for a game");
         GameFixture game=waitForAGame(); // let server consume the connections and create a game.
         game.blackFixture.setupBackEnd(holders.first.back,game.blackName(),game.id);
         game.whiteFixture.setupBackEnd(holders.second.back,game.whiteName(),game.id);
@@ -158,7 +158,7 @@ public class GoServer implements Runnable,Stopable {
     }
     boolean anyInterruptions() { return Thread.currentThread().isInterrupted()||namedThread.isInterrupted(); }
     GameFixture waitForAGame() {
-        //System.out.println("waiting for a game at: "+first.et);
+        //Logging.mainLogger.info("waiting for a game at: "+first.et);
         GameFixture game=null;
         while(games.size()<1&&!anyInterruptions()) Thread.yield();
         if(anyInterruptions()) {
@@ -169,7 +169,7 @@ public class GoServer implements Runnable,Stopable {
             game=games.iterator().next(); // remove from server
             // not really removed , this game is still in the list.
         }
-        //System.out.println("got a game at: "+first.et);
+        //Logging.mainLogger.info("got a game at: "+first.et);
         return game;
     }
     public static void playSillyGame(int port) throws Exception {
@@ -199,8 +199,8 @@ public class GoServer implements Runnable,Stopable {
         return serverIsRunning;
     }
     public static void main(String[] arguments) throws Exception,InterruptedException {
-        System.out.println(Init.first);
-        System.out.println("Level: "+Logging.mainLogger.getLevel());
+        Logging.mainLogger.info(String.valueOf(Init.first));
+        Logging.mainLogger.info("Level: "+Logging.mainLogger.getLevel());
         int n=arguments==null?0:arguments.length;
         if(true) {
             try {

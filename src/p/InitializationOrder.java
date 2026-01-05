@@ -1,25 +1,26 @@
 package p;
+import io.Logging;
 interface InitializationOrder {
     abstract static class First {
         static {
-            System.out.println(1+" First reference second");
-            System.out.println(Second.second);
+            Logging.mainLogger.info(1+" First reference second");
+            Logging.mainLogger.info(String.valueOf(Second.second));
         }
-        public static void main(String[] args) { System.out.println("?"); }
+        public static void main(String[] args) { Logging.mainLogger.info("?"); }
     }
     enum Second {
         second;
-        Second() { System.out.println(2+" construct second"); }
-        public static void main(String[] args) { System.out.println("?"); }
+        Second() { Logging.mainLogger.info(2+" construct second"); }
+        public static void main(String[] args) { Logging.mainLogger.info("?"); }
         static {
-            System.out.println("3 Second::main()");
+            Logging.mainLogger.info("3 Second::main()");
         }
     }
     static class Fifth extends First {
-        public static void main(String[] args) { System.out.println(5); }
+        public static void main(String[] args) { Logging.mainLogger.info(String.valueOf(5)); }
         static { // force enum second initialization from any main class.
-            System.out.println("4");
+            Logging.mainLogger.info("4");
         }
     }
-    public static void main(String[] args) { System.out.println("? InitialzationOrder.main"); }
+    public static void main(String[] args) { Logging.mainLogger.info("? InitialzationOrder.main"); }
 }

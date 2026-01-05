@@ -1,4 +1,5 @@
 package x;
+import io.Logging;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -25,7 +26,7 @@ public class EchoClient {
             buffer.clear();
             client.read(buffer);
             response=new String(buffer.array()).trim();
-            System.out.println("response="+response);
+            Logging.mainLogger.info("response="+response);
             buffer.clear();
         } catch(IOException e) {
             e.printStackTrace();

@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static sgf.Parser.*;
 import java.util.*;
 import org.junit.*;
@@ -14,7 +15,7 @@ import utilities.MyTestWatcher;
         for(String key:Parser.illegalSgfKeys) parameterArrays.add(new Object[] {key});
         return parameterArrays;
     }
-    @Before public void setUp() throws Exception { System.out.println(key); }
+    @Before public void setUp() throws Exception { Logging.mainLogger.info(String.valueOf(key)); }
     @After public void tearDown() throws Exception {}
     public IllegalSgfTestCase(String key) { this.key=key; }
     @Test public void testParse() throws Exception {

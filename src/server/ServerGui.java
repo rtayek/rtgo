@@ -60,7 +60,7 @@ public class ServerGui extends MainGui implements ActionListener { // this is th
         void action(Black.Buttons button) {
             // should this action code be in the panel or here in the meduator?
             Logging.mainLogger.info("go server "+"click: "+button.name());
-            System.out.println(button.name());
+            Logging.mainLogger.info(String.valueOf(button.name()));
             switch(button) {
                 // top and bottom are probably not meaningful here.
                 // maybe use the fact that some of the enum names are the same
@@ -136,7 +136,7 @@ public class ServerGui extends MainGui implements ActionListener { // this is th
         void action(White.Buttons button) {
             // should this action code be in the panel or here in the meduator?
             Logging.mainLogger.info("go server "+"click: "+button.name());
-            System.out.println(button.name());
+            Logging.mainLogger.info(String.valueOf(button.name()));
             switch(button) {
                 // top and bottom are probably not meaningful here.
                 // maybe use the fact that some of the enum names are the same
@@ -226,7 +226,7 @@ public class ServerGui extends MainGui implements ActionListener { // this is th
         gui.Main.listComponentsIn(frame().getContentPane(),null,false);
     }
     public static void addTextView(TextView textView) {
-        System.out.println("add text view");
+        Logging.mainLogger.info("add text view");
         Logging.mainLogger.info("before tee");
         Tee tee=new Tee(System.out);
         tee.addOutputStream(textView.taOutputStream);

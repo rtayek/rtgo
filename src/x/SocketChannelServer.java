@@ -1,4 +1,5 @@
 package x;
+import io.Logging;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
@@ -20,7 +21,7 @@ public class SocketChannelServer {
             buffer.clear();
         }
         fileChannel.close();
-        System.out.println("File Sent");
+        Logging.mainLogger.info("File Sent");
         server.close();
     }
     static final String filename="temp.txt";

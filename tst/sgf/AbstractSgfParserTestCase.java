@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
 import static sgf.SgfNode.SgfOptions.containsQuotedControlCharacters;
@@ -14,11 +15,11 @@ public abstract class AbstractSgfParserTestCase {
             // consolidate so we only have one of these?
             expectedSgf=SgfNode.options.prepareSgf(expectedSgf); // move this stuff to round trip?
             if(SgfNode.options.removeLineFeed) if(expectedSgf.contains("\n)")) {
-                System.out.println("lf badness");
+                Logging.mainLogger.info("lf badness");
                 System.exit(0);
             }
             if(containsQuotedControlCharacters(key,expectedSgf)) {
-                System.out.println(key+" contains quoted control characters.");
+                Logging.mainLogger.info(key+" contains quoted control characters.");
                 expectedSgf=SgfOptions.removeQuotedControlCharacters(expectedSgf);
             }
         }
@@ -30,11 +31,11 @@ public abstract class AbstractSgfParserTestCase {
         expectedSgf=getSgfData(key);
         if(expectedSgf==null) { if(false) throw new RuntimeException("key: "+key+" returns nul!"); return; }
         int p=Parser.parentheses(expectedSgf);
-        if(p!=0) { System.out.println(" bad parentheses: "+p); throw new RuntimeException(key+" bad parentheses: "+p); }
+        if(p!=0) { Logging.mainLogger.info(" bad parentheses: "+p); throw new RuntimeException(key+" bad parentheses: "+p); }
         if(alwaysPrepare) prepare();
     }
     @Test public void testKey() throws Exception {
-        if(!(key!=null||expectedSgf!=null)) { System.out.println("key!=null||expectedSgf!=null"); IOs.stackTrace(10); }
+        if(!(key!=null||expectedSgf!=null)) { Logging.mainLogger.info("key!=null||expectedSgf!=null"); IOs.stackTrace(10); }
         assertTrue(key!=null||expectedSgf!=null);
         // not currently failing except for one null key.
         // this only happens when all of the model tests are run together.
@@ -43,7 +44,7 @@ public abstract class AbstractSgfParserTestCase {
     }
     @Test public void testParse() throws Exception {
         if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
-            if(!expectedSgf.endsWith(")")) System.out.println(key+" does not end with an close parenthesis");
+            if(!expectedSgf.endsWith(")")) Logging.mainLogger.info(key+" does not end with an close parenthesis");
             //fail(key+" does not end with an close parenthesis");
         } else if(!expectedSgf.equals("")) fail(key.toString()+" does not start with an open parenthesis");
         games=SgfTestIo.restore(expectedSgf);
@@ -58,7 +59,7 @@ public abstract class AbstractSgfParserTestCase {
     }
     @Test public void testFlags() {
         if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
-            if(!expectedSgf.endsWith(")")) System.out.println(key+" sgf does not end with an close parenthesis");
+            if(!expectedSgf.endsWith(")")) Logging.mainLogger.info(key+" sgf does not end with an close parenthesis");
             //fail(key+" does not end with an close parenthesis");
         } else if(!expectedSgf.equals("")) fail(key.toString()+" sgf does not start with an open parenthesis");
         games=SgfTestIo.restore(expectedSgf);
@@ -66,7 +67,7 @@ public abstract class AbstractSgfParserTestCase {
     }
     @Test public void testFlagsNew() {
         if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
-            if(!expectedSgf.endsWith(")")) System.out.println(key+" sgf does not end with an close parenthesis");
+            if(!expectedSgf.endsWith(")")) Logging.mainLogger.info(key+" sgf does not end with an close parenthesis");
             //fail(key+" does not end with an close parenthesis");
         } else if(!expectedSgf.equals("")) fail(key.toString()+" sgf does not start with an open parenthesis");
         games=SgfTestIo.restore(expectedSgf);

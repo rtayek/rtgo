@@ -17,7 +17,7 @@ import io.Logging;
     }
     public static void main(String[] args) throws Exception {
         final LogPanel logPanel=new LogPanel();
-        System.out.println(Logging.loggerNames);
+        Logging.mainLogger.info(String.valueOf(Logging.loggerNames));
         for(String name:Logging.loggerNames) {
             JPanel panel=new JPanel();
             Box box=Box.createVerticalBox();

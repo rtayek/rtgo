@@ -58,8 +58,8 @@ public class ABothTestCase {
     }
     BothEnds both;
     static {
-        System.out.println("static init a both test case.");
-        System.out.println(first);
+        Logging.mainLogger.info("static init a both test case.");
+        Logging.mainLogger.info(String.valueOf(first));
     }
     static final int timeout=0; // maybe get rid of this eventually?
 }

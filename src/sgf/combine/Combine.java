@@ -1,4 +1,5 @@
 package sgf.combine;
+import io.Logging;
 import static io.IOs.standardIndent;
 import static sgf.Parser.*;
 import java.io.*;
@@ -8,33 +9,33 @@ import sgf.*;
 public class Combine { // the purpose of this class is to combine two sgf files
     static SgfNode combine_(SgfNode annotated,SgfNode current) {
         if(annotated==null) return null;
-        System.err.println("walk old");
+        Logging.mainLogger.warning("walk old");
         SgfNode holder=new SgfNode();
         holder.sgfProperties=new ArrayList<>(1);
         SgfNode.moves=0;
         annotated.lastMove(holder);
-        if(holder.left==null) { System.err.println("no moves in first variation"); return null; }
-        if(holder.sgfProperties.isEmpty()) { System.err.println("no move property found"); return null; }
+        if(holder.left==null) { Logging.mainLogger.warning("no moves in first variation"); return null; }
+        if(holder.sgfProperties.isEmpty()) { Logging.mainLogger.warning("no move property found"); return null; }
         // holder.left has the node from the annotated game
         SgfNode old=holder.left;
         SgfProperty move=holder.sgfProperties.get(0);
         holder.sgfProperties.clear();
         SgfNode.moves=0;
         boolean found=current.findMove(holder,move);
-        if(found) System.err.println("found");
+        if(found) Logging.mainLogger.warning("found");
         else {
-            System.err.println("not found");
+            Logging.mainLogger.warning("not found");
             return null;
         }
-        System.err.println("node in annotated is: "+old);
-        System.err.println("moved number="+SgfNode.moves);
-        System.err.println("annotated.right is: "+old.right);
-        System.err.println("annotated.left is: "+old.left);
+        Logging.mainLogger.warning("node in annotated is: "+old);
+        Logging.mainLogger.warning("moved number="+SgfNode.moves);
+        Logging.mainLogger.warning("annotated.right is: "+old.right);
+        Logging.mainLogger.warning("annotated.left is: "+old.left);
         SgfNode branch=holder.left;
-        System.err.println("node current is: "+branch);
-        System.err.println("moved number="+SgfNode.moves);
-        System.err.println("branch.right is: "+branch.right);
-        System.err.println("branch.left is: "+branch.left);
+        Logging.mainLogger.warning("node current is: "+branch);
+        Logging.mainLogger.warning("moved number="+SgfNode.moves);
+        Logging.mainLogger.warning("branch.right is: "+branch.right);
+        Logging.mainLogger.warning("branch.left is: "+branch.left);
         // for now just replace?
         SgfNode oldLeft=old.left; // this is the last move, so this link must be
         // to a variation of the last move, so save
@@ -45,32 +46,32 @@ public class Combine { // the purpose of this class is to combine two sgf files
         if(branch.right!=null) throw new RuntimeException("branch.right!=null");
         old.right=branch.right;
         old.right=oldLeft; // preserve first variation
-        System.err.println("combined");
+        Logging.mainLogger.warning("combined");
         return annotated;
     }
     static SgfNode combine(final String name) {
-        System.err.println("process: "+name);
+        Logging.mainLogger.warning("process: "+name);
         //Parser parser=new Parser();
         File file=new File(new File(pathToOldGames,"annotated"),name);
         Reader reader=IOs.toReader(file);
         if(reader==null) throw new RuntimeException(file+" has null reader!");
         SgfNode annotated=restoreSgf(reader);
-        System.err.println("annotated: "+name);
+        Logging.mainLogger.warning("annotated: "+name);
         PrintStream out=new PrintStream(System.err,true);
         Writer writer=new PrintWriter(out);
         annotated.saveSgf(writer,standardIndent);
-        System.err.println();
+        Logging.mainLogger.warning("");
         SgfNode current=restoreSgf(IOs.toReader(new File(pathToOldGames,name)));
-        System.err.println("current: "+name);
+        Logging.mainLogger.warning("current: "+name);
         current.saveSgf(writer,standardIndent);
-        System.err.println();
-        System.err.println("end of current: "+name);
+        Logging.mainLogger.warning("");
+        Logging.mainLogger.warning("end of current: "+name);
         if(annotated==null&&current==null) return null;
         if(annotated==null) return current;
         if(current==null) return annotated; /* maybe return null to avoid unecessary io? */
-        System.err.println("got both");
+        Logging.mainLogger.warning("got both");
         SgfNode combined=combine_(annotated,current);
-        System.err.println("exit combine");
+        Logging.mainLogger.warning("exit combine");
         return combined;
     }
     static final boolean atHome=true;
@@ -84,20 +85,20 @@ public class Combine { // the purpose of this class is to combine two sgf files
             for(Object key:Parser.sgfDataKeySet()) {
                 // not clear what this is doing other than parsing and printing.
                 // whatever it is may not belong here.
-                System.err.println("key: "+key);
+                Logging.mainLogger.warning("key: "+key);
                 SgfNode games=restoreSgf(IOs.toReader(getSgfData(key)));
-                System.err.println("game ************");
+                Logging.mainLogger.warning("game ************");
                 if(games!=null) {
                     OutputStreamWriter outputStreamWriter=new OutputStreamWriter(System.err);
                     games.saveSgf(outputStreamWriter,standardIndent);
                 }
-                System.err.println();
+                Logging.mainLogger.warning("");
             }
         } catch(Exception e) {
-            System.err.println("in main()");
+            Logging.mainLogger.warning("in main()");
             e.printStackTrace();
         }
-        if(true) System.err.println("************************************");
+        if(true) Logging.mainLogger.warning("************************************");
     }
     public static final String sgfOutputFilename="sgfOutput.txt";
 }

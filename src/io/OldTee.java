@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import java.io.*;
 import java.util.*;
 public class OldTee extends FilterOutputStream /* make this into a writer or make a version for writers */ { // tee utility
@@ -32,9 +33,9 @@ public class OldTee extends FilterOutputStream /* make this into a writer or mak
         try {
             tee.addOutputStream(new FileOutputStream(file.toString(),true));
         } catch(IOException e) {
-            System.out.println(e);
+            Logging.mainLogger.info(String.valueOf(e));
         }
-        System.out.println("tee'd");
+        Logging.mainLogger.info("tee'd");
     }
     Vector<OutputStream> streams=new Vector<OutputStream>();
 }

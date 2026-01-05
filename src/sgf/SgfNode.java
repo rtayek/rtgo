@@ -43,13 +43,13 @@ public class SgfNode {
                 while(string.contains(" \r")) string=string.replaceAll(" \r","\r");
                 while(string.contains("\r ")) string=string.replaceAll("\r ","\r");
                 string=string.replaceAll("\r","");
-                if(string.contains("\r")) { System.out.println(string); System.exit(1); ; }
+                if(string.contains("\r")) { Logging.mainLogger.info(string); System.exit(1); ; }
             }
             if(removeLineFeed) {
                 while(string.contains(" \n")) string=string.replaceAll(" \n","\n");
                 while(string.contains("\n ")) string=string.replaceAll("\n ","\n");
                 string=string.replaceAll("\n","");
-                if(string.contains("\n")) { System.out.println(string); System.exit(1); ; }
+                if(string.contains("\n")) { Logging.mainLogger.info(string); System.exit(1); ; }
             }
             if(removeTrailingLineFeed) if(string.endsWith("\n")) string=string.substring(0,string.length()-1);
             return string;
@@ -84,7 +84,7 @@ public class SgfNode {
         if(properties!=null) this.sgfProperties.addAll(properties);
         setFlags();
         boolean ok=checkFlags();
-        if(!ok) System.out.println("node has move and setup type properties!");
+        if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
     }
     public void setFlags() {
         // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
@@ -98,7 +98,7 @@ public class SgfNode {
         boolean ok=true;
         if(hasAMoveType&&hasASetupType) {
             parserLogger.severe("node has move and setup type properties!");
-            System.out.println("node has move and setup type properties!");
+            Logging.mainLogger.info("node has move and setup type properties!");
             if(!ignoreMoveAndSetupFlags) { IOs.stackTrace(10); System.exit(1); }
             ok=false;
         }
@@ -129,12 +129,12 @@ public class SgfNode {
     void preorderCheckFlags() {
         SearhingFunction searhingFunction=new SearhingFunction();
         preorder(searhingFunction);
-        if(searhingFunction.done) { System.out.println(searhingFunction.target+" is bad"); }
+        if(searhingFunction.done) { Logging.mainLogger.info(searhingFunction.target+" is bad"); }
     }
     void oldPreorderCheckFlags() {
         setFlags();
         boolean ok=checkFlags();
-        if(!ok) System.out.println("node has move and setup type properties!");
+        if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
         if(left!=null) left.oldPreorderCheckFlags();
         if(right!=null) { right.oldPreorderCheckFlags(); }
     }
@@ -143,7 +143,7 @@ public class SgfNode {
         sgfProperties.add(property);
         setFlags();
         boolean ok=checkFlags();
-        if(!ok) System.out.println("node has move and setup type properties!");
+        if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
     }
     private SgfNode lastSibling_(Holder<Integer> h) {
         SgfNode node=null,last=this;
@@ -166,19 +166,19 @@ public class SgfNode {
     protected SgfNode lastDescendant() { return lastDescendant_(new Holder<Integer>(0)); }
     void addSibling(SgfNode node) {
         // if(right==null) { right=node;
-        // System.err.println("added node "+node.id+" as first sibling of node
+        // Logging.mainLogger.warning("added node "+node.id+" as first sibling of node
         // "+this.id);
         // return; }
         SgfNode last=lastSibling();
         last.right=node;
-        // System.err.println("added node "+node.id+" as sibling of node
+        // Logging.mainLogger.warning("added node "+node.id+" as sibling of node
         // "+this.id);
     }
     private SgfNode lastChild() { return left==null?null:left.lastSibling(); }
     private void addDescendant(SgfNode node) {
         SgfNode last=lastDescendant();
         last.left=node;
-        // System.err.println("added node "+node.id+" as desendent of node
+        // Logging.mainLogger.warning("added node "+node.id+" as desendent of node
         // "+last.id);
     }
     private int children() {
@@ -189,13 +189,13 @@ public class SgfNode {
     }
     private void addChild(SgfNode node) {
         // if(left==null)
-        // System.err.println("added node "+node.id+" as first child of node
+        // Logging.mainLogger.warning("added node "+node.id+" as first child of node
         // "+this.id);
         if(left==null) { left=node; return; }
         SgfNode last=left.lastSibling();
         if(last==null) throw new RuntimeException("last is null in addChild");
         last.right=node;
-        // System.err.println("added node "+node.id+" as child of node
+        // Logging.mainLogger.warning("added node "+node.id+" as child of node
         // "+this.id);
     }
     @Override public String toString() {
@@ -208,7 +208,7 @@ public class SgfNode {
         indent.in();
         writer.write(this.toString());
         setFlags();
-        if(!checkFlags()) System.out.println("");
+        if(!checkFlags()) Logging.mainLogger.info("");
         if(left!=null) {
             if(left.right!=null) writer.write(indent.indent()+'(');
             left.saveSgf_(writer,indent);
@@ -367,65 +367,65 @@ public class SgfNode {
      */
     public static String preorderRouundTrip(String expectedSgf) throws IOException {
         SgfNode games=restoreSgf(toReader(expectedSgf));
-        if(games!=null) System.out.println(games.right);
-        else System.out.println("'"+expectedSgf+"'");
+        if(games!=null) Logging.mainLogger.info(String.valueOf(games.right));
+        else Logging.mainLogger.info("'"+expectedSgf+"'");
         StringWriter stringWriter=new StringWriter();
         games.preorderSaveSgf(stringWriter,noIndent);
         String actualSgf=stringWriter.toString();
         return actualSgf;
     }
     public static void main(String[] args) throws IOException {
-        System.err.println(Init.first);
+        Logging.mainLogger.warning(String.valueOf(Init.first));
         if(true) {
             Logging.setUpLogging();
-            System.out.println(parserLogger.getLevel());
+            Logging.mainLogger.info(String.valueOf(parserLogger.getLevel()));
             Set<Object> objects=new LinkedHashSet<>();
             objects.addAll(sgfDataKeySet());
             //objects.addAll(sgfFiles());
             for(Object key:objects) {
                 if(true) {
-                    System.out.println("key: "+key+" <<<<<<");
+                    Logging.mainLogger.info("key: "+key+" <<<<<<");
                     Node<Character> redBean=RedBean.binary();
-                    System.out.println("hand coded binary has "+Node.count(redBean)+" nodes.");
-                    System.out.println(G2.pPrint(redBean));
-                    //System.out.println("r(a(b(c()(d(e))))(f(g(h(i))(j))))");
+                    Logging.mainLogger.info("hand coded binary has "+Node.count(redBean)+" nodes.");
+                    Logging.mainLogger.info(String.valueOf(G2.pPrint(redBean)));
+                    //Logging.mainLogger.info("r(a(b(c()(d(e))))(f(g(h(i))(j))))");
                     Iterator<String> i=new Strings();
                     String ex=getSgfData(key);
                     ex=SgfNode.options.prepareSgf(ex);
-                    System.out.println("expected sgf "+ex);
+                    Logging.mainLogger.info("expected sgf "+ex);
                     MNode mNode=MNode.restoreRedBean();
                     String direct=MNode.saveDirectly(mNode);
-                    System.out.println("direct       "+direct);
-                    if(ex.equals(direct)) System.out.println("are equal!");
+                    Logging.mainLogger.info("direct       "+direct);
+                    if(ex.equals(direct)) Logging.mainLogger.info("are equal!");
                     Node<String> string=tree.Node.reLabelCopy(redBean,i);
-                    //System.out.println(Node.count(string)+" nodes.");
-                    //System.out.println("strings\n"+G2.pPrint(string));
+                    //Logging.mainLogger.info(Node.count(string)+" nodes.");
+                    //Logging.mainLogger.info("strings\n"+G2.pPrint(string));
                     ArrayList<String> labels=new ArrayList<>();
                     String encoded=Node.encode(string,labels);
-                    //System.out.println("red bean encoded: "+encoded);
-                    //System.out.println(labels.size()+" old labels:\n"+labels);
+                    //Logging.mainLogger.info("red bean encoded: "+encoded);
+                    //Logging.mainLogger.info(labels.size()+" old labels:\n"+labels);
                     ArrayList<String> newLabels=new ArrayList<>();
                     char l='`';
                     for(String label:labels) newLabels.add(new String(";C["+(l++)+"]"));
-                    //System.out.println(newLabels.size()+" new labels:\n"+newLabels);
+                    //Logging.mainLogger.info(newLabels.size()+" new labels:\n"+newLabels);
                     Node<String> relabelled=Node.decode(encoded,newLabels);
                     relabelled.data=";FF[4]C[root]";
-                    System.out.println("relabelled:   "+G2.pPrint(relabelled));
+                    Logging.mainLogger.info("relabelled:   "+G2.pPrint(relabelled));
                     // relabeled sorta looks like ogs files. check this out!
                     String expected=getSgfData(key); // same as ex above?
                     expected=SgfNode.options.prepareSgf(expected);
-                    //System.out.println("expected:\n"+expected);
-                    System.out.println("end of key: "+key+">>>>>>");
+                    //Logging.mainLogger.info("expected:\n"+expected);
+                    Logging.mainLogger.info("end of key: "+key+">>>>>>");
                 }
                 String expectedSgf=getSgfData(key);
                 expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
-                //System.out.println("expeced sgf "+expectedSgf);
+                //Logging.mainLogger.info("expeced sgf "+expectedSgf);
                 SgfNode games=restoreSgf(toReader(expectedSgf));
                 if(false) {
-                    System.out.print(key);
-                    if(games!=null) if(games.right!=null) System.out.print(" 2");
-                    else System.out.print(" 1");
-                    else System.out.print(" 0");
+                    Logging.mainLogger.info(String.valueOf(key));
+                    if(games!=null) if(games.right!=null) Logging.mainLogger.info(" 2");
+                    else Logging.mainLogger.info(" 1");
+                    else Logging.mainLogger.info(" 0");
                 }
                 String preorderSsgf=null;
                 if(games!=null) {
@@ -433,10 +433,10 @@ public class SgfNode {
                     games.preorderSaveSgf(stringWriter,noIndent);
                     preorderSsgf=stringWriter.toString();
                 }
-                System.out.println("expeced sgf  "+expectedSgf);
-                System.out.println("preordered   "+preorderSsgf);
+                Logging.mainLogger.info("expeced sgf  "+expectedSgf);
+                Logging.mainLogger.info("preordered   "+preorderSsgf);
                 boolean ok=expectedSgf.equals(preorderSsgf);
-                if(!ok) System.out.println(" "+ok);
+                if(!ok) Logging.mainLogger.info(" "+ok);
                 if(true) break;
             }
             return;
@@ -444,15 +444,15 @@ public class SgfNode {
         Set<String> keys=new LinkedHashSet<>(
                 List.of("comments1","twoEmptyWithSemicolon","smartgo4","twosmallgamesflat","smartgo42"));
         for(Object key:Parser.sgfDataKeySet()) {
-            System.out.println(key);
+            Logging.mainLogger.info(String.valueOf(key));
             String expectedSgf=getSgfData(key);
-            System.out.println(expectedSgf);
+            Logging.mainLogger.info(String.valueOf(expectedSgf));
             SgfNode games=restoreSgf(toReader(expectedSgf));
             StringWriter stringWriter=new StringWriter();
             games.saveSgf(stringWriter,standardIndent);
             String actualSgf=stringWriter.toString();
-            System.out.println(actualSgf);
-            System.out.println("------------");
+            Logging.mainLogger.info(String.valueOf(actualSgf));
+            Logging.mainLogger.info("------------");
         }
     }
     public ArrayList<SgfProperty> sgfProperties;

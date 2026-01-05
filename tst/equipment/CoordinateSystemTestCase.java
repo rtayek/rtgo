@@ -56,7 +56,7 @@ public class CoordinateSystemTestCase {
             assertEquals(n,board.width());
             assertEquals(n,board.depth());
             Point point=new Point(board.width(),board.depth());
-            System.out.println(point);
+            Logging.mainLogger.info(String.valueOf(point));
                     
         }
     }

@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static org.junit.Assert.*;
 import java.util.*;
 import org.junit.*;
@@ -33,7 +34,7 @@ public class SgfNodeTestCase {
         node.checkFlags();
         MNode mNode=MNode.toGeneralTree(node);
         for(MNode child:mNode.children()) {
-            System.out.println(child);
+            Logging.mainLogger.info(String.valueOf(child));
             child.setFlags();
             child.checkFlags();
             assertTrue(child.hasAMoveType());
@@ -76,6 +77,6 @@ public class SgfNodeTestCase {
             throw new RuntimeException(e);
         }
         SgfNode sgfNode=mRoot.toBinaryTree();
-        System.out.println(sgfNode);
+        Logging.mainLogger.info(String.valueOf(sgfNode));
     }
 }

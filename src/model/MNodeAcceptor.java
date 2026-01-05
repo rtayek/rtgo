@@ -29,7 +29,7 @@ interface Acceptor<T extends Enumeration<T>> {
         // aparently not used.
         // renamed because of a name collision.
         @Override public void accept(T t,Traverser<T> traverser) {
-            Logging.mainLogger.info(t.toString());
+            Logging.mainLogger.info(String.valueOf(t.toString()));
             // maybe if enumeration just goes over children?
             // this is confused!
             //for(Property property:node.properties) Logging.mainLogger.info(property.p().getClass().getName()+" ");
@@ -86,7 +86,7 @@ public interface MNodeAcceptor {
                         // ancestors.add(node); // add in the target!
                         // why aren't we adding in the target
                     } else Logging.mainLogger.warning(""+" "+"found another: "+found+" "+node);
-            } else System.out.println("in accept node is null!");
+            } else Logging.mainLogger.info("in accept node is null!");
         }
         static MNodeFinder find(MNode target,MNode games,MNodeFinder finder) {
             Traverser traverser=new Traverser(finder);

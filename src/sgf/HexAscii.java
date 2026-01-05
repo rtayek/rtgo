@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import java.util.*;
 public class HexAscii {
     static char encode(byte nybble) {
@@ -11,7 +12,7 @@ public class HexAscii {
         else {
             if(c=='\n') throw new RuntimeException("it's a line feed!");
             else {
-                System.out.println("it's a : "+c);
+                Logging.mainLogger.info("it's a : "+c);
                 throw new RuntimeException(Integer.valueOf(c)+" it's not a line feed!");
             }
             //throw new RuntimeException("'"+c+"' is not in [0-9a-f]");
@@ -28,7 +29,7 @@ public class HexAscii {
             char c1=encode((byte)(bite>>4&0x0f));
             char c2=encode((byte)(bite&0x0f));
             String twoCharacters=""+c1+c2;
-            if(twoCharacters.contains("\n")) System.out.println("encoded a line feed!");
+            if(twoCharacters.contains("\n")) Logging.mainLogger.info("encoded a line feed!");
             if(!legalSet.contains(twoCharacters)) throw new RuntimeException();
             stringBuffer.append(twoCharacters);
         }
@@ -53,20 +54,20 @@ public class HexAscii {
             String string=HexAscii.encode(expected);
             byte[] actual=HexAscii.decode(string);
             String string2=HexAscii.encode(actual);
-            if(!string.equals(string2)) System.out.println(string+"!="+string2);
-            System.out.print('"'+string+"\",");
+            if(!string.equals(string2)) Logging.mainLogger.info(string+"!="+string2);
+            Logging.mainLogger.info('"'+string+"\",");
         }
-        System.out.println();
+        Logging.mainLogger.info("");
     }
     public static void main(String[] args) {
         //generateLegalHexAscii();
-        System.out.println(legalSet);
+        Logging.mainLogger.info(String.valueOf(legalSet));
         String expected="(;)(;)";
-        System.out.println(expected);
+        Logging.mainLogger.info(String.valueOf(expected));
         String encoded=encode(expected);
-        System.out.println(encoded);
+        Logging.mainLogger.info(String.valueOf(encoded));
         String decoded=decodeToString(encoded);
-        System.out.println(decoded);
+        Logging.mainLogger.info(String.valueOf(decoded));
     }
     public static final char[] ascii=new char[] {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
     public static String[] legal=new String[] {"00","01","02","03","04","05","06","07","08","09","0a","0b","0c","0d",

@@ -63,8 +63,8 @@ import utilities.MyTestWatcher;
                 assertEquals(2,lowerRight.liberties());
                 break;
             case horizontalCylinder:
-                System.out.println(board);
-                System.out.println("uL: "+uL+" "+upperLeft);
+                Logging.mainLogger.info(String.valueOf(board));
+                Logging.mainLogger.info("uL: "+uL+" "+upperLeft);
                 int expected;
                 expected=board.width()==3?3:4;
                 assertEquals(expected,upperLeft.liberties());
@@ -87,7 +87,7 @@ import utilities.MyTestWatcher;
                 assertEquals(expected,lowerRight.liberties());
                 break;
             case diamond:
-                System.out.println(board);
+                Logging.mainLogger.info(String.valueOf(board));
                 expected=board.width()==3?0:1;
                 assertEquals(expected,upperLeft.liberties());
                 assertEquals(expected,upperRight.liberties());

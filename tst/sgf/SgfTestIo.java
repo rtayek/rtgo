@@ -1,8 +1,8 @@
 package sgf;
 import java.io.Reader;
-import java.io.StringWriter;
 import io.Indent;
 import io.IOs;
+import io.TestIo;
 public final class SgfTestIo {
     private SgfTestIo() {}
     public static SgfNode restore(Reader reader) {
@@ -19,23 +19,18 @@ public final class SgfTestIo {
     }
     public static String mNodeRoundTrip(String sgf,SgfRoundTrip.MNodeSaveMode saveMode) {
         if(sgf==null) return null;
-        StringWriter writer=new StringWriter();
-        SgfRoundTrip.mNodeRoundTrip(IOs.toReader(sgf),writer,saveMode);
-        return writer.toString();
+        return TestIo.writeToString(writer->SgfRoundTrip.mNodeRoundTrip(IOs.toReader(sgf),writer,saveMode));
     }
     public static String save(SgfNode node,Indent indent) {
         if(node==null) return null;
-        StringWriter writer=new StringWriter();
-        node.saveSgf(writer,indent);
-        return writer.toString();
+        return TestIo.writeToString(writer->node.saveSgf(writer,indent));
     }
     public static String save(SgfNode node) {
         return save(node,IOs.noIndent);
     }
     public static SgfNode saveAndRestore(SgfNode expected) {
         if(expected==null) return null;
-        StringWriter writer=new StringWriter();
-        return SgfRoundTrip.saveAndRestore(expected,writer);
+        return SgfRoundTrip.saveAndRestore(expected);
     }
     public static boolean roundTripTwice(String sgf) {
         if(sgf==null) return true;

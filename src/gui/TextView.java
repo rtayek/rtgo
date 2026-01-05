@@ -21,8 +21,8 @@ import io.Tee;
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 textView.teardownTeest();
-                System.out.println("closing");
-                System.err.println("closing");
+                Logging.mainLogger.info("closing");
+                Logging.mainLogger.warning("closing");
             }
         });
         frame.getContentPane().add(textView);
@@ -41,9 +41,9 @@ import io.Tee;
     }
     void teardownTeest() { tee.restoreOut(); tee2.restoreErr(); }
     private void printStuuff() {
-        //System.out.println("System.out");
+        //Logging.mainLogger.info("System.out");
         tee.printStream.println("tee ps");
-        //System.err.println("System.err");
+        //Logging.mainLogger.warning("System.err");
         tee2.printStream.println("tee2 ps");
     }
     public static void main(String[] args) throws InterruptedException,IOException {

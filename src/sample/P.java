@@ -1,4 +1,5 @@
 package sample;
+import io.Logging;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -7,7 +8,7 @@ public class P {
     boolean load_(InputStream in) throws IOException {
         boolean rc=false;
         if(in!=null) { properties.load(in); in.close(); rc=true; }
-        System.out.println(method(3)+" returns: "+rc);
+        Logging.mainLogger.info(method(3)+" returns: "+rc);
         return rc;
     }
     boolean load(String name) throws IOException {
@@ -33,9 +34,9 @@ public class P {
         } else return load_(null);
     }
     void run() throws IOException {
-        System.out.println("with file: sample/p.properties");
+        Logging.mainLogger.info("with file: sample/p.properties");
         for(String filename:filenames) {
-            System.out.println("filename: "+filename);
+            Logging.mainLogger.info("filename: "+filename);
             new P().load(filename);
             new P().loadcl(filename);
             new P().loadurl(filename);

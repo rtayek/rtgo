@@ -43,14 +43,14 @@ class MyShowingListener implements HierarchyListener {
     public MyShowingListener(JComponent jc) { component=jc; }
     @Override public void hierarchyChanged(HierarchyEvent e) {
         if((e.getChangeFlags()&HierarchyEvent.SHOWING_CHANGED)>0&&component.isShowing()) {
-            System.out.println("hierarchy changed");
+            Logging.mainLogger.info("hierarchy changed");
             Logging.mainLogger.config("Showing: "+e.paramString());
         }
     }
 }
 public class GamePanel extends JPanel {
     GamePanel(double boardHeightInPixels,Mediator mediator) {
-        System.out.println("wnter game panel constructor");
+        Logging.mainLogger.info("wnter game panel constructor");
         // need to make this so i don't have to roll up a new one every time a
         // move is made.
         // maybe just put the code below into an init() method?
@@ -90,7 +90,7 @@ public class GamePanel extends JPanel {
             }
         });
         addHierarchyListener(new MyShowingListener(this));
-        System.out.println("end game panel init");
+        Logging.mainLogger.info("end game panel init");
     }
     public void cursor(Stone who) {
         switch(who) {
@@ -115,12 +115,12 @@ public class GamePanel extends JPanel {
         for(MNode child:node.children()) for(SgfProperty property:child.sgfProperties())
             if(mediator.model.turn().equals(Stone.black)&&property.p().equals(P.B)
                     ||mediator.model.turn().equals(Stone.white)&&property.p().equals(P.W)) {
-                        System.out.println("found child move property: "+property);
+                        Logging.mainLogger.info("found child move property: "+property);
                         if(property.list().get(0).equals(target)) { // assume
                             // first
                             // and
                             // only?
-                            System.out.println("found move! "+property);
+                            Logging.mainLogger.info("found move! "+property);
                             found=child;
                             break;
                         }
@@ -147,14 +147,14 @@ public class GamePanel extends JPanel {
             if(found!=null) {
                 Logging.mainLogger.info(mediator.model.name+" "+"found child node, goig to it.");
                 boolean ok=mediator.model.goToMNode(found);
-                if(!ok) System.out.println("go to node fails!");
+                if(!ok) Logging.mainLogger.info("go to node fails!");
             } else {
                 // String move=Coordinates.toGtpCoordinateSystem(closest,
                 // board.depth());
                 // Model.Move move=new Model.MoveImpl(closest);
                 // need to check role and legality here!
                 boolean ok=mediator.model.checkAction(role,What.move);
-                if(!ok) { System.out.println("not ok: "+role+" move"); Toast.toast("Move is no ok!"); }
+                if(!ok) { Logging.mainLogger.info("not ok: "+role+" move"); Toast.toast("Move is no ok!"); }
                 MoveResult wasLegal=mediator.model.moveAndPlaySound(mediator.model.turn(),closest);
                 if(wasLegal==MoveResult.legal&&mediator.model.inAtari()) Audio.play(Sound.atari);
             }
@@ -224,13 +224,13 @@ public class GamePanel extends JPanel {
     }
     void initialize(double boardHeightInPixels) {
         if(mediator==null) {
-            System.out.println("game panel initialize board is null!");
+            Logging.mainLogger.info("game panel initialize board is null!");
             Logging.mainLogger.warning("mediator is null!");
             return;
         }
         board=mediator.model.board(); // maybe the board should be a parameter?
         if(board==null) {
-            System.out.println("game panel initialize board is null!");
+            Logging.mainLogger.info("game panel initialize board is null!");
             Logging.mainLogger.warning("board is null!");
             return;
         }
@@ -293,7 +293,7 @@ public class GamePanel extends JPanel {
             // break;
         }
         black=blackStone(dx,dy,getBackground());
-        System.out.println("blac: "+black);
+        Logging.mainLogger.info("blac: "+black);
         white=whiteStone(dx,dy,getBackground());
         edge=edgeStone(dx,dy,getBackground());
         Dimension d=new Dimension(boardWidth+2*dx,boardDepth+2*dy);
@@ -310,11 +310,11 @@ public class GamePanel extends JPanel {
         setBackground(color);
         Point point=new Point();
         Toolkit toolkit=Toolkit.getDefaultToolkit();
-        System.out.println(black);
+        Logging.mainLogger.info(String.valueOf(black));
         if(black!=null) blackCursor=toolkit.createCustomCursor(black,point,"black");
-        else System.err.println("black stone imahe is null!");
+        else Logging.mainLogger.warning("black stone imahe is null!");
         if(white!=null) whiteCursor=toolkit.createCustomCursor(white,point,"white");
-        else System.err.println("white stone imahe is null!");
+        else Logging.mainLogger.warning("white stone imahe is null!");
     }
     Point2D.Float toBoardCoordinates(Point screen,int depth) {
         return Coordinates.toBoardCoordinates(screen,pUpperLeft,dp,depth);
@@ -478,11 +478,11 @@ public class GamePanel extends JPanel {
     @Override public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(board==null) {
-            System.out.println("board is null in paint component.");
+            Logging.mainLogger.info("board is null in paint component.");
             Logging.mainLogger.warning("board is null!");
             g.drawString("no board",10,10);
         } else {
-            System.out.println("board is not null in paint component.");
+            Logging.mainLogger.info("board is not null in paint component.");
             Color color=g.getColor();
             for(Line line:lines) line.paint(g);
             if(board.starPoints()!=null) for(int i=0;i<board.starPoints().size();i++) {

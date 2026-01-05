@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import equipment.*;
@@ -10,12 +11,12 @@ public class LibertiesTestCase {
         Model model=new Model();
         Board board=Board.factory.create(9,9,Topology.normal,Shape.normal);
         model.setBoard(board);
-        System.out.println(
+        Logging.mainLogger.info(
         model.state().widthFromSgf+" "+
         model.state().depthFromSgf);
 
         // we need to actually do the sgf for the above
-        System.out.println(model);
+        Logging.mainLogger.info(String.valueOf(model));
         int width=model.board().width();
         // one place uses depth. find and fix.
         MoveResult moveResult=null;
@@ -31,7 +32,7 @@ public class LibertiesTestCase {
         model.move(Stone.white,"E8",width);
         model.move(Stone.black,"C5",width);
         model.move(Stone.white,"D9",width);
-        System.out.println(model);
+        Logging.mainLogger.info(String.valueOf(model));
         Point point=Coordinates.fromGtpCoordinateSystem("C9",width);
         Block block=Block.find(model.board(),point);
         assertEquals(2,block.liberties());

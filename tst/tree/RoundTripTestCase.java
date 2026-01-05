@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import static tree.Node.reLabelCopy;
 import static tree.RedBean.binary;
 import java.util.*;
@@ -21,7 +22,7 @@ public class RoundTripTestCase extends AbstractRoundTripTestCase {
         Node<Character> binary=binary();
         Iterator<Long> i=new Longs();
         bRoot=reLabelCopy(binary,i);
-        System.out.println("relabeled bRoot:");
+        Logging.mainLogger.info("relabeled bRoot:");
         //G2.print(bRoot,"");
     }
 }

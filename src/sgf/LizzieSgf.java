@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static sgf.Parser.restoreSgf;
 import java.io.File;
 import java.util.*;
@@ -419,7 +420,7 @@ public class LizzieSgf {
     public static void print(SgfNode node) {
         for(int i=0;i<node.properties.size();++i) {
             Property property=node.properties.get(i);
-            System.out.println(i+"="+property);
+            Logging.mainLogger.info(i+"="+property);
         }
     }
     static Property getLizzieProperty(SgfNode node) {
@@ -428,21 +429,21 @@ public class LizzieSgf {
         return null;
     }
     public static void parseLizzieProperty(String lizzie) {
-        System.out.println('`'+lizzie+"'");
+        Logging.mainLogger.info('`'+lizzie+"'");
         String[] words=lizzie.split(" ");
         List<String> list=Arrays.asList(words);
-        System.out.println("as a list:"+list);
+        Logging.mainLogger.info("as a list:"+list);
 
     }
  */
 // B[qd]LZ[0.7.2 42.4 14
 class MyAcceptor extends SgfAcceptorImpl {
     @Override public void accept(SgfNode node) {
-        System.out.print(node+" "+node.sgfProperties.size()+" properties. ");
+        Logging.mainLogger.info(node+" "+node.sgfProperties.size()+" properties. ");
         boolean nodeHasLizzieProperty=false;
         for(SgfProperty property:node.sgfProperties) {
             if(property.p().id.equals(P2.LZ.name())) nodeHasLizzieProperty=true;
-            System.out.print(property.p().getClass().getName()+" ");
+            Logging.mainLogger.info(property.p().getClass().getName()+" ");
         }
         if(nodeHasLizzieProperty) idToNode.put(node.sgfId,node);
     }
@@ -456,16 +457,16 @@ class LizzieSgf {
         File file=new File("lizzie1.sgf");
         SgfNode games=restoreSgf(IOs.toReader(file));
         traverser.visit(games);
-        //System.out.println("lizzies nodes: "+myAcceptor.idToNode);
+        //Logging.mainLogger.info("lizzies nodes: "+myAcceptor.idToNode);
         for(Integer key:myAcceptor.idToNode.keySet()) {
-            System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            Logging.mainLogger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             SgfNode node=myAcceptor.idToNode.get(key);
-            System.out.println(node);
+            Logging.mainLogger.info(String.valueOf(node));
             //Property lizzieProperty=getLizzieProperty(node);
             //List<String> list=lizzieProperty.list();
             //parseLizzieProperty(lizzieProperty.list.get(0));
-            //if(list.size()>1) System.err.println("LZ property.list has "+list.size()+" elements!");
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            //if(list.size()>1) Logging.mainLogger.warning("LZ property.list has "+list.size()+" elements!");
+            Logging.mainLogger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         }
     }
 }

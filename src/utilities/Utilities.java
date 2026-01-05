@@ -109,7 +109,7 @@ public class Utilities {
             while((c=reader.read())!=-1) stringBuffer.append((char)c);
             reader.close();
         } catch(IOException e) {
-            System.out.println("fromReader caught: "+e);
+            Logging.mainLogger.info("fromReader caught: "+e);
             e.printStackTrace();
         }
     }
@@ -119,7 +119,7 @@ public class Utilities {
             r=new FileReader(file);
             fromReader(stringBuffer,r);
         } catch(FileNotFoundException e) {
-            System.out.println(file+" fromFile caught: "+e);
+            Logging.mainLogger.info(file+" fromFile caught: "+e);
         }
     }
     public static String fromFile(final File file) {
@@ -209,13 +209,13 @@ public class Utilities {
         }
     }
     public static boolean areEqual(String string1,String string2) {
-        if(string1.length()!=string2.length()) System.out.println("strings have different length!");
+        if(string1.length()!=string2.length()) Logging.mainLogger.info("strings have different length!");
         int n=Math.min(string1.length(),string2.length());
         for(int i=0;i<n;++i) if(string1.charAt(i)!=string2.charAt(i)) {
-            System.err.println("strings differ at character "+i);
+            Logging.mainLogger.warning("strings differ at character "+i);
             int start=Math.max(0,i-20),end=Math.min(i+20,n-1);
-            System.err.print(string1.substring(start,end));
-            System.err.print(string2.substring(start,end));
+            Logging.mainLogger.warning(String.valueOf(string1.substring(start,end)));
+            Logging.mainLogger.warning(String.valueOf(string2.substring(start,end)));
             return false;
         }
         return true;

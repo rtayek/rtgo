@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import static org.junit.Assert.*;
 import static tree.Node.*;
 import java.util.*;
@@ -106,10 +107,10 @@ public class G2TestCase {
         // tree is encoded as null
         // should be "0 maybe?
         Node<Long> tree=decode(expected,null);
-        System.out.println("encoded in node: "+tree.encoded);
-        System.out.println("ex: "+expected);
+        Logging.mainLogger.info("encoded in node: "+tree.encoded);
+        Logging.mainLogger.info("ex: "+expected);
         String actual=encode(tree,null);
-        System.out.println("ac: "+actual);
+        Logging.mainLogger.info("ac: "+actual);
         Node<Long> actualNode=decode(actual,null);
         G2.p(tree);
         G2.p(actualNode);

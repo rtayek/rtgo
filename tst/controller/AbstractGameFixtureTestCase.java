@@ -60,13 +60,13 @@ public abstract class AbstractGameFixtureTestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         // also should have been found by grep - add my test watcher !
     }
-    @BeforeClass public static void setUpClass() { System.out.println("static start: "+staticEt); }
+    @BeforeClass public static void setUpClass() { Logging.mainLogger.info("static start: "+staticEt); }
     static void printHistograms() {
-        System.out.println("static end "+staticEt);
-        System.out.println(" game: "+gameFixture);
-        System.out.println("setup: "+setUp);
-        System.out.println(" down: "+tearDown);
-        System.out.println("total: "+tearDown);
+        Logging.mainLogger.info("static end "+staticEt);
+        Logging.mainLogger.info(" game: "+gameFixture);
+        Logging.mainLogger.info("setup: "+setUp);
+        Logging.mainLogger.info(" down: "+tearDown);
+        Logging.mainLogger.info("total: "+tearDown);
     }
     @AfterClass public static void tearDownClass() {
         //printHistograms();
@@ -156,11 +156,11 @@ public abstract class AbstractGameFixtureTestCase {
         assertEquals(expected,black.lastMoveGTP());
     }
     public static void main(String[] args) {
-        System.out.println(Init.first);
+        Logging.mainLogger.info(String.valueOf(Init.first));
         first.suiteControls=true;
         JUnitCore jUnitCore=new JUnitCore();
         jUnitCore.run(AbstractGameFixtureTestCase.ParameterizedTestSuite.class);
-        System.out.println("exit main");
+        Logging.mainLogger.info("exit main");
     }
     static Histogram gameFixture=new Histogram(10,0,100);
     static Histogram setUp=new Histogram(10,0,100);

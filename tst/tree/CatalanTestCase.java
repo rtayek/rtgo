@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import static org.junit.Assert.*;
 import static tree.Catalan.*;
 import static tree.G2.roundTripLong;
@@ -23,14 +24,14 @@ import utilities.MyTestWatcher;
 	@Before public void setUp() throws Exception {}
 	@After public void tearDown() throws Exception {}
 	@Test public void testArrayValueEqualsCalculatedValue() {
-		// System.out.println("equal "+(catalans[nodes]==catalan2(nodes)));
+		// Logging.mainLogger.info("equal "+(catalans[nodes]==catalan2(nodes)));
 		assertEquals(catalans[nodes],catalan2(nodes));
 	}
 	@Test public void testBotheCalculationsAgree() {
 		long c1=catalan(nodes);
 		long c2=catalan2(nodes);
-		if(c1<0) System.out.println("catalan("+nodes+") fails!");
-		if(c2<0) System.out.println("catalan2("+nodes+") fails!");
+		if(c1<0) Logging.mainLogger.info("catalan("+nodes+") fails!");
+		if(c2<0) Logging.mainLogger.info("catalan2("+nodes+") fails!");
 		if(c1<0||c1<0); // check for overflow
 		else assertEquals(catalan(nodes),Catalan.catalan2(nodes));
 	}
@@ -56,18 +57,18 @@ import utilities.MyTestWatcher;
 		}
 	}
 	@Test public void testRelabel() {
-		System.out.println(nodes+" nodes.");
+		Logging.mainLogger.info(nodes+" nodes.");
 		ArrayList<Node<Long>> trees=Generator.one(nodes,iterator,false);
 		for(Node<Long> expected:trees) {
-			System.out.println("ex: "+G2.pPrint(expected));
+			Logging.mainLogger.info("ex: "+G2.pPrint(expected));
 			Iterator<Character> j=new Characters();
 			Node<Character> actual=reLabelCopy(expected,j);
-			System.out.println("ac:"+G2.pPrint(actual));
+			Logging.mainLogger.info("ac:"+G2.pPrint(actual));
 			Iterator<Long> i=new Longs();
 			Node<Long> actual2=reLabelCopy(expected,i);
 			Iterator<Character> k=new Characters();
 			Node<Character> actual3=reLabelCopy(actual2,k);
-			System.out.println("a3:"+G2.pPrint(actual3));
+			Logging.mainLogger.info("a3:"+G2.pPrint(actual3));
 			assertTrue(structureDeepEquals(actual,actual3));
 			assertTrue(deepEquals(actual,actual3));
 		}

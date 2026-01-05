@@ -33,13 +33,13 @@ public abstract class AbstractBothTestCase {
         DuplexTestCase.class,}) public static class BothTestSuite {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @BeforeClass public static void setUpClass() {
-            System.out.println(Init.first);
-            System.out.println("set up suite class");
+            Logging.mainLogger.info(String.valueOf(Init.first));
+            Logging.mainLogger.info("set up suite class");
             // do not bump wrapup counter
             first.suiteControls=true;
         }
         @AfterClass public static void tearDownClass() {
-            System.out.println("tear down suite class");
+            Logging.mainLogger.info("tear down suite class");
             // use a map of thread to ?
             first.wrapupTests_();
         }

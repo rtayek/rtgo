@@ -1,4 +1,5 @@
 package game;
+import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import controller.GameFixture;
@@ -19,7 +20,7 @@ public class PushTestCase {
             black.setRoot(expected.board().width(),expected.board().depth());
             white.setRoot(expected.board().width(),expected.board().depth());
             // probably need to set other stuff like shape etc.
-        } else System.out.println("expected has null board!");
+        } else Logging.mainLogger.info("expected has null board!");
         game.printStatus();
         assertTrue(game.namedThread==null);
         game.startPlayerBackends();

@@ -60,8 +60,8 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
             if(isStopping) {
                 Logging.mainLogger.info(name+" stopping 00 caught: "+e);
             } else {
-                System.out.println(isStopping());
-                System.out.println(e.getMessage());
+                Logging.mainLogger.info(String.valueOf(isStopping()));
+                Logging.mainLogger.info(String.valueOf(e.getMessage()));
                 Logging.mainLogger.warning(name+" 10 caught: "+e);
             }
             //throw new RuntimeException(e);
@@ -70,8 +70,8 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
             if(isStopping) {
                 Logging.mainLogger.info(name+" stopping 15 caught: "+e);
             } else {
-                System.out.println(isStopping());
-                System.out.println(e.getMessage());
+                Logging.mainLogger.info(String.valueOf(isStopping()));
+                Logging.mainLogger.info(String.valueOf(e.getMessage()));
                 Logging.mainLogger.warning(name+" 20 caught: "+e);
             }
             //throw new RuntimeException(e);
@@ -94,7 +94,7 @@ public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
         }
         if(!s.startsWith(okString)) {
             GTPBackEnd.sleep2(10);
-            System.out.println("received: '"+s+"'");
+            Logging.mainLogger.info("received: '"+s+"'");
             Logging.mainLogger.severe(name+" receive problem! '"+s+"'");
         }
         Response response=Response.response(s);

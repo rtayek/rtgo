@@ -34,7 +34,7 @@ public class ManyGamesTestCase {
     }
     @After public void tearDown() throws Exception {
         if(IOs.currentThreadIsTimeLimited()) {
-            System.out.println("not main! "+"'"+Thread.currentThread().getName());
+            Logging.mainLogger.info("not main! "+"'"+Thread.currentThread().getName());
             Logging.mainLogger.severe("not main! "+"'"+Thread.currentThread().getName());
         }
         for(int i=0;i<n;i++) { games.get(i).stop(); }

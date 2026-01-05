@@ -1,4 +1,5 @@
 package game;
+import io.Logging;
 import static org.junit.Assert.assertEquals;
 import java.util.List;
 import org.junit.*;
@@ -18,39 +19,39 @@ public class GoToNodeTesCase {
         String key="sgfExamleFromRedBean";
         String sgfString=Parser.getSgfData(key);
         //String sgfString=Parser.sgfExamleFromRedBean;
-        System.out.println(sgfString);
+        Logging.mainLogger.info(String.valueOf(sgfString));
         // maybe add a test that uses restore
         MNode root=SgfTestIo.quietLoadMNode(sgfString);
         model.setRoot(root);
         List<MNode> list1=MakeList.toList(root);
-        System.out.println(list1);
+        Logging.mainLogger.info(String.valueOf(list1));
         List<MNode> list2=MakeList.toList(root);
-        System.out.println(list1);
+        Logging.mainLogger.info(String.valueOf(list1));
         list1.remove(0); // get rid of private property RT
         list2.remove(0); // get rid of private property RT
         // maybe we should not always remove?
-        System.out.println(list1);
-        System.out.println(list1);
+        Logging.mainLogger.info(String.valueOf(list1));
+        Logging.mainLogger.info(String.valueOf(list1));
         for(MNode node1:list1) {
-            System.out.println("node1: "+node1);
+            Logging.mainLogger.info("node1: "+node1);
             model.setRoot(root);
             for(MNode node2:list2) {
-                System.out.println("testGoToNode() <<<<<<<<<<<<<");
-                System.out.println("node1: "+node1);
-                System.out.println("node2: "+node2);
+                Logging.mainLogger.info("testGoToNode() <<<<<<<<<<<<<");
+                Logging.mainLogger.info("node1: "+node1);
+                Logging.mainLogger.info("node2: "+node2);
                 boolean ok=model.goToMNode(node1);
-                if(!ok) System.out.println("go to node fails!");
-                System.out.println("at node 1 "+node1);
+                if(!ok) Logging.mainLogger.info("go to node fails!");
+                Logging.mainLogger.info("at node 1 "+node1);
                 assertEquals(node1,model.currentNode());
                 boolean theOtherWay=true;
                 if(theOtherWay) {
-                    System.out.println("try to go to node 2: "+node2);
+                    Logging.mainLogger.info("try to go to node 2: "+node2);
                     boolean ok2=model.goToMNode(node2); // uses equals predicate.
-                    if(!ok2) System.out.println("go to node fails!");
-                    System.out.println("at node 2 "+node2);
+                    if(!ok2) Logging.mainLogger.info("go to node fails!");
+                    Logging.mainLogger.info("at node 2 "+node2);
                     assertEquals(node2,model.currentNode());
                 }
-                System.out.println("testGoToNode() >>>>>>>>>>>>>");
+                Logging.mainLogger.info("testGoToNode() >>>>>>>>>>>>>");
             }
         }
         //System.setOut(x);

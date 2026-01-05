@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import java.util.Objects;
 import equipment.*;
 // PASS & resign https://www.gnu.org/software/gnugo/gnugo_19.html
@@ -65,7 +66,7 @@ public final class Move2 { // make this a record?
 		if(raw==null) return Move2.nullMove;
 		String string=raw.trim();
 		if(string.equals("")) {
-			System.out.println("string is: "+"\"\"");
+			Logging.mainLogger.info("string is: "+"\"\"");
 			return Move2.nullMove; // pass?
 		} else if(string.equalsIgnoreCase(gtpPassString)) {
 			if(color.equals(Stone.black)) return Move2.blackPass;

@@ -76,19 +76,19 @@ public class Audio implements Runnable {
         }
     }
     public static void main(String[] args) throws InterruptedException {
-        System.out.println("sounds");
+        Logging.mainLogger.info("sounds");
         for(Sound sound:Sound.values()) {
-            System.out.println(sound);
+            Logging.mainLogger.info(String.valueOf(sound));
             Audio audio=play(sound);
             if(audio!=null) audio.thread.join();
-            else System.out.println("no sound for: "+sound);
+            else Logging.mainLogger.info("no sound for: "+sound);
         }
-        System.out.println("wheres");
+        Logging.mainLogger.info("wheres");
         for(Where where:Where.values()) {
-            System.out.println(where);
+            Logging.mainLogger.info(String.valueOf(where));
             Audio audio=play(where);
             if(audio!=null) audio.thread.join();
-            else System.out.println("no sound for: "+where);
+            else Logging.mainLogger.info("no sound for: "+where);
         }
     }
     final String filename;

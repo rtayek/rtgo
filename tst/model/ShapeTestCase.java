@@ -10,9 +10,9 @@ public class ShapeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void test1() throws Exception {
         List<Point> points=Board.squares(1,19,19);
-        Logging.mainLogger.warning(points.toString());
+        Logging.mainLogger.warning(String.valueOf(points.toString()));
         points=Board.squares(2,19,19);
-        Logging.mainLogger.warning(points.toString());
+        Logging.mainLogger.warning(String.valueOf(points.toString()));
         //what do we test here?
     }
     @Test public void testShapes() throws Exception {

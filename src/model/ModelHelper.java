@@ -133,7 +133,7 @@ public final class ModelHelper {
                     }
                     break;
                 case RG:
-                    System.out.println("RG:  "+state.shape+", region: "+property.list());
+                    Logging.mainLogger.info("RG:  "+state.shape+", region: "+property.list());
                     // above we have diamond, hole1, region [jj]
                     // using state.board above does not seem quite right.
                     // yes, diamond needs another region or a bigger region.
@@ -150,7 +150,7 @@ public final class ModelHelper {
                         Point point=Coordinates.fromSgfCoordinates(s,model.board().depth());
                         model.board().setAt(point,Stone.edge);
                     }
-                    else System.out.println("RG: board() is  null.");
+                    else Logging.mainLogger.info("RG: board() is  null.");
                     break;
                 case SZ: // create the board
                     // maybe delay the board creation?
@@ -221,7 +221,7 @@ public final class ModelHelper {
         if(expectedSgf==null) return null;
         SgfNode games=restoreSgf(toReader(expectedSgf));
         if(games==null) return null;
-        if(games.right!=null) System.out.println(" 2 more than one game!");
+        if(games.right!=null) Logging.mainLogger.info(" 2 more than one game!");
         if(saveMode==ModelSaveMode.sgfNodeChecked) {
             games.saveSgf(new StringWriter(),noIndent);
         }
@@ -231,7 +231,7 @@ public final class ModelHelper {
         MNode mNodes=model.root();
         if(mNodes!=null) {
             if(mNodes.children().size()>1) {
-                //System.out.println("more than one child: "+mNodes.children);
+                //Logging.mainLogger.info("more than one child: "+mNodes.children);
             }
             String actualSgf=saveFromModelRoot(mNodes,saveMode);
             if(actualSgf!=null) try {
@@ -248,8 +248,6 @@ public final class ModelHelper {
         }
         SgfNode sgfRoot=root.toBinaryTree();
         SgfNode actual=sgfRoot.left;
-        StringWriter stringWriter=new StringWriter();
-        actual.saveSgf(stringWriter,noIndent);
-        return stringWriter.toString();
+        return SgfRoundTrip.saveSgfToString(actual,noIndent);
     }
 }

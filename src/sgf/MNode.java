@@ -48,7 +48,7 @@ public class MNode {
 		boolean ok=true;
 		if(hasAMoveType&&hasASetupType) {
 			parserLogger.severe("node has move and setup type properties!");
-			System.out.println("node has move and setup type properties!");
+			Logging.mainLogger.info("node has move and setup type properties!");
 			if(!ignoreMoveAndSetupFlags) {
 				IOs.stackTrace(10);
 				System.exit(1);
@@ -70,7 +70,7 @@ public class MNode {
 				if(child!=null) {
 					left=tail=child.toBinaryTree();
 					if(left.right!=null) throw new RuntimeException("wierdness!");
-				} else System.out.println("first chile is null!");
+				} else Logging.mainLogger.info("first chile is null!");
 			} else {
 				SgfNode newRight=child.toBinaryTree();
 				tail.right=newRight;
@@ -95,7 +95,7 @@ public class MNode {
 		if(node!=null) {
 			node.setFlags();
 			boolean ok=node.checkFlags();
-			if(!ok) System.out.println("node has move and setup type properties!");
+			if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
 		}
 		if(node.left!=null) {
 			@SuppressWarnings("unused") MNode child=toGeneralTree(node.left,parent);
@@ -128,7 +128,7 @@ public class MNode {
 			throw new RuntimeException(e);
 		}
 		sentenel.data=sentenel.id; // just so it's not null
-		// System.out.println("new root and children: "+mRoot+"
+		// Logging.mainLogger.info("new root and children: "+mRoot+"
 		// "+mRoot.children);
 		@SuppressWarnings("unused") MNode mNode=toGeneralTree(extra.left,sentenel);
 		return sentenel;
@@ -150,7 +150,7 @@ public class MNode {
 	}
 	public static MNode restore(Reader reader) {
 		SgfNode games=restoreSgf(reader);
-		if(games!=null&&games.right()!=null) System.out.println("root has variations!");
+		if(games!=null&&games.right()!=null) Logging.mainLogger.info("root has variations!");
 		MNode node=toGeneralTree(games);
 		return node;
 	}
@@ -164,7 +164,7 @@ public class MNode {
 			int children=root.children.size();
 			games=root.toBinaryTree(); // ths is where root gets tossed.
 			// that's why none of the sgf in the root is not coming out.
-			// System.out.println("discarding: "+root);
+			// Logging.mainLogger.info("discarding: "+root);
 			if(games.left!=null) games.left.saveSgf(writer,indent);
 			Logging.mainLogger.info("games.right: "+games.right);
 		}
@@ -243,7 +243,7 @@ public class MNode {
 			try {
 				saveDirectly(stringWriter,child,noIndent);
 			} catch(IOException e) {
-				System.out.println("caught: "+e);
+				Logging.mainLogger.info("caught: "+e);
 			}
 		return stringWriter.toString();
 	}
@@ -255,20 +255,20 @@ public class MNode {
 			label(n,i);
 	}
 	public static void main(String[] args) throws IOException {
-		System.out.println(Init.first);
+		Logging.mainLogger.info(String.valueOf(Init.first));
 		if(true) {
 			MNode mNode=restoreRedBean();
 			String saved=saveDirectly(mNode);
-			System.out.println("saved directly: "+saved);
+			Logging.mainLogger.info("saved directly: "+saved);
 			return;
 		}
 		// lookAtRoot();
 		String oneGame="(;GM[1];B[as];B[at])";
-		System.out.println(oneGame);
+		Logging.mainLogger.info(String.valueOf(oneGame));
 		MNode root=MNode.restore(toReader(oneGame));
 		boolean ok=MNode.save(new PrintWriter(System.out),root,standardIndent);
 		String expected=getSgfData("smartgo43");
-		System.out.println(expected);
+		Logging.mainLogger.info(String.valueOf(expected));
 		root=MNode.restore(toReader(expected));
 		ok=MNode.save(new PrintWriter(System.out),root,standardIndent);
 	}

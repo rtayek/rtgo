@@ -58,9 +58,9 @@ public class SpinnerOptions extends WidgetOptions {
     } // end of inner option class
     @Override public void setValuesInWidgetsFromCurrentValues() {
         for(Option<?,?> button:options()) {
-            System.out.println(button.t);
+            Logging.mainLogger.info(String.valueOf(button.t));
             boolean ok=((SpinnerOption<?,?>)button).setValueInWidgetFromCurrentValue();
-            if(!ok) System.out.println("not ok!");
+            if(!ok) Logging.mainLogger.info("not ok!");
         }
     }
     public void enableAll(Mediator mediator) { // default behavious is to enable all of the buttons.

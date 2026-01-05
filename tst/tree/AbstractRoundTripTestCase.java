@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import static org.junit.Assert.*;
 import static tree.MNode.from;
 import static tree.MNode.print;
@@ -12,18 +13,18 @@ public abstract class AbstractRoundTripTestCase {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testNodeRoundTrip() {
-        if(bRoot==null) System.out.println("binary tree is null.");
-        if(verbose) { System.out.println("bRoot"); G2.print(bRoot,"   "); }
+        if(bRoot==null) Logging.mainLogger.info("binary tree is null.");
+        if(verbose) { Logging.mainLogger.info("bRoot"); G2.print(bRoot,"   "); }
         mRoot=from(bRoot);
-        if(verbose) { System.out.println("mRoot"); print(mRoot,"",true); }
+        if(verbose) { Logging.mainLogger.info("mRoot"); print(mRoot,"",true); }
         processed.clear();
         Node<Long> actual=from(mRoot);
         assertNotNull(actual);
-        if(verbose) { System.out.println("actual:"); G2.print(actual.left,"   "); }
+        if(verbose) { Logging.mainLogger.info("actual:"); G2.print(actual.left,"   "); }
         if(!deepEquals(bRoot,actual.left)) {
-            System.out.println("bRoot");
+            Logging.mainLogger.info("bRoot");
             G2.print(bRoot,"   ");
-            System.out.println("actual");
+            Logging.mainLogger.info("actual");
             G2.print(actual.left,"   ");
         }
         assertTrue(key.toString(),deepEquals(bRoot,actual.left));

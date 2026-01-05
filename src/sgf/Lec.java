@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static sgf.Parser.restoreSgf;
 import java.io.*;
 import java.util.*;
@@ -28,9 +29,9 @@ public class Lec {
             int moves;
         });
         traverser.visitLeft(games); // only main line maybe?
-        // System.out.println(" "+filename);
+        // Logging.mainLogger.info(" "+filename);
         Pair<String,String> pair=new Pair<>(filename,stringBuffer.toString());
-        // System.out.println(pair.first+" "+pair.second);
+        // Logging.mainLogger.info(pair.first+" "+pair.second);
         pairs.add(pair);
         previous=pair;
     }
@@ -45,13 +46,13 @@ public class Lec {
         for(Pair<String,String> pair:pairs) {
             if(previous!=null) {
                 int n=howSimilar(previous.second,pair.second);
-                System.out.println("equal up to: "+n+" moves.");
-                System.out.println(pair.second);
+                Logging.mainLogger.info("equal up to: "+n+" moves.");
+                Logging.mainLogger.info(String.valueOf(pair.second));
             }
             previous=pair;
         }
-        System.out.println(pairs.size()+" files.");
-        pairs.forEach((Pair<String,String> pair)->System.out.println(pair.second+" "+pair.first));
+        Logging.mainLogger.info(pairs.size()+" files.");
+        pairs.forEach((Pair<String,String> pair)->Logging.mainLogger.info(pair.second+" "+pair.first));
         int requiredMoves=7;
         for(Pair<String,String> pair:pairs) if(similar.size()==0) {
             Set<Pair<String,String>> set=new LinkedHashSet<>();
@@ -70,9 +71,9 @@ public class Lec {
                 similar.put(pair.second,set);
             }
         }
-        System.out.println(similar.size()+" equivalence classes.");
-        for(String key:similar.keySet()) System.out.print(similar.get(key).size()+" ");
-        System.out.println();
+        Logging.mainLogger.info(similar.size()+" equivalence classes.");
+        for(String key:similar.keySet()) Logging.mainLogger.info(similar.get(key).size()+" ");
+        Logging.mainLogger.info("");
     }
     static void moveSets(int max,StringBuffer stringBuffer,File dir,final Set<String> moves,
             Set<Pair<String,Set<String>>> pairs2,String filename) {
@@ -91,7 +92,7 @@ public class Lec {
         });
         traverser.visitLeft(games);
         Pair<String,Set<String>> pair=new Pair<>(filename,new LinkedHashSet<String>(moves));
-        // System.out.println(pair.first+" "+pair.second);
+        // Logging.mainLogger.info(pair.first+" "+pair.second);
         pairs2.add(pair);
     }
     public static void main(String args[]) {
@@ -116,7 +117,7 @@ public class Lec {
             moveSets(requiredMoves,stringBuffer,dir,moves,pairs2,filename);
         }
         // processMoveSequences(pairs,similar);
-        System.out.println(pairs2);
+        Logging.mainLogger.info(String.valueOf(pairs2));
         Map<Set<String>,Set<String>> map=new LinkedHashMap<>();
         for(Pair<String,Set<String>> pair:pairs2)
             if(map.keySet().contains(pair.second)) map.get(pair.second).add(pair.first);
@@ -127,19 +128,19 @@ public class Lec {
             }
         map.forEach((moves2,filenames)-> { // only works if
             // required==strings.length!
-            System.out.println("map: "+filenames+" "+moves2);
+            Logging.mainLogger.info("map: "+filenames+" "+moves2);
         });
         String strings[]= {"B[qd]","W[oq]","B[dc]","W[oc]","B[co]","W[jj]"};
         // String strings[]= {"B[qd]"};
         Set<String> target=new LinkedHashSet<>();
         // ;
         for(int i=0;i<Math.min(strings.length,requiredMoves);i++) target.add(strings[i]);
-        System.out.println("target: "+target);
+        Logging.mainLogger.info("target: "+target);
         map.forEach((moves2,filenames)-> {
             if(moves2.equals(target)) {
-                System.out.println("found: "+filenames.size()+": ");
-                for(String filename:filenames) System.out.println(filename);
-                System.out.print("found: "+filenames.size()+" "+filenames+" "+moves2);
+                Logging.mainLogger.info("found: "+filenames.size()+": ");
+                for(String filename:filenames) Logging.mainLogger.info(String.valueOf(filename));
+                Logging.mainLogger.info("found: "+filenames.size()+" "+filenames+" "+moves2);
             }
         });
     }

@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import static org.junit.Assert.*;
 import java.lang.Thread.State;
 import java.util.Set;
@@ -22,13 +23,13 @@ import utilities.*;
     }
     @After public void tearDown() throws Exception {
         Set<Thread> threads=IOs.activeThreads();
-        System.out.println(threads);
+        Logging.mainLogger.info(String.valueOf(threads));
     }
     @Test(timeout=watchdogTimeoutTime) public void testInfiniteLoop() {
         // watchdog goes off and
         // Thread[watchdog,5,main] w joined with: Thread[main,5,main]
         // watch run method exits
-        System.out.println(Thread.currentThread());
+        Logging.mainLogger.info(String.valueOf(Thread.currentThread()));
         if(hack) while(true) GTPBackEnd.sleep2(GTPBackEnd.yield);
         assertTrue(false);
     }
@@ -43,10 +44,10 @@ import utilities.*;
     @Test(timeout=watchdogTimeoutTime) public void testThatThisTimesOutWithATimeout() {
         try {
             while(!Thread.currentThread().isInterrupted()) Thread.yield();
-            System.out.println("we got interrupted or something at "+et);
+            Logging.mainLogger.info("we got interrupted or something at "+et);
             assertTrue(true);
         } catch(Exception e) {
-            System.out.println("caught:"+e);
+            Logging.mainLogger.info("caught:"+e);
             fail("caught:"+e);
         }
     }
@@ -55,10 +56,10 @@ import utilities.*;
         // maybe start watchdog in each test?
         try {
             while(!Thread.currentThread().isInterrupted()) Thread.yield();
-            System.out.println("we got interrupted or something at "+et);
+            Logging.mainLogger.info("we got interrupted or something at "+et);
             assertTrue(true);
         } catch(Exception e) {
-            System.out.println("caught:"+e);
+            Logging.mainLogger.info("caught:"+e);
             fail("caught:"+e);
         }
     }
@@ -69,6 +70,6 @@ import utilities.*;
     Logger logger=Logging.mainLogger;
     Et et=new Et();
     static {
-        System.out.println("static init: "+Init.first.et);
+        Logging.mainLogger.info("static init: "+Init.first.et);
     }
 }

@@ -21,10 +21,10 @@ class Mediator implements Observer,ActionListener {
         // maybe we were trying to replace the bottom?
         /*
         Component old=borderLayout.getLayoutComponent(BorderLayout.PAGE_END);
-        System.out.println(old);
+        Logging.mainLogger.info(String.valueOf(old));
         if(old!=null) {
-            System.out.println("removing: "+old);mainGui.remove(old); mainGui.validate(); }
-        else System.out.println("not removing.");
+            Logging.mainLogger.info("removing: "+old);mainGui.remove(old); mainGui.validate(); }
+        else Logging.mainLogger.info("not removing.");
         */
         //center.add(new JLabel("center"),BorderLayout.CENTER);
         //center.add(new JLabel("center2"),BorderLayout.CENTER);
@@ -59,11 +59,11 @@ class Mediator implements Observer,ActionListener {
         Logging.mainLogger.info(model+" "+"click: "+button.name());
         switch(button) {
             case humidity:
-                System.out.println(button);
+                Logging.mainLogger.info(String.valueOf(button));
                 model.changeHumidity(1);
                 break;
             case temperature:
-                System.out.println(button);
+                Logging.mainLogger.info(String.valueOf(button));
                 model.changeTemperature(1);
                 break;
             default:

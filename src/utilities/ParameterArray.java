@@ -1,4 +1,5 @@
 package utilities;
+import io.Logging;
 import java.util.*;
 public class ParameterArray {
     public static Collection<Object[]> modulo(int n) {
@@ -15,7 +16,7 @@ public class ParameterArray {
         Collection<Object[]> collection=modulo(3);
         for(Object[] o:collection) {
             List<Object> x=Arrays.asList(o);
-            System.out.println(x);
+            Logging.mainLogger.info(String.valueOf(x));
         }
     }
 }

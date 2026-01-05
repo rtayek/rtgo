@@ -127,7 +127,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public void ensureBoard() {
 		if(board()==null) {
-			// System.out.println("ensuring that we have a board.");
+			// Logging.mainLogger.info("ensuring that we have a board.");
 			Board board=Board.factory.create(state.widthFromSgf,state.depthFromSgf,boardTopology(),boardShape());
 			setBoard(board);
 		}
@@ -272,7 +272,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		addSgfRegion_(depth,newRoot,points);
 	}
 	public void setRootFromParameters() {
-		System.out.println("set root from parameters");
+		Logging.mainLogger.info("set root from parameters");
 		int width=(int)Parameters.width.currentValue();
 		int depth=(int)Parameters.depth.currentValue();
 		Board.Topology topology=(Board.Topology)Parameters.topology.currentValue();
@@ -421,7 +421,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public int movesToGenerate() {
 		if(board()==null) {
-			System.out.println("board() is null in moves to generate.");
+			Logging.mainLogger.info("board() is null in moves to generate.");
 			return 0;
 		}
 		return board().width()*board().depth()*7/10;
@@ -484,7 +484,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public Move2 lastMove2() {
 		if(board()==null) {
-			System.out.println("board is null, returning null move.");
+			Logging.mainLogger.info("board is null, returning null move.");
 			return Move2.nullMove;
 		}
 		return fromGTP(lastColorGTP(),lastMoveGTP(),board().width(),board().depth());
@@ -582,7 +582,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		}
 		if(!move.equals(lastMove2())) {
 			// let's try to get resign into last move!
-			if(true&&move.isResign()) System.out.println(move);
+			if(true&&move.isResign()) Logging.mainLogger.info(String.valueOf(move));
 			else {
 				Logging.mainLogger.info(move+"!="+lastMoveGTP()+" "+lastMove2()+" 3 move oops");
 				throw new RuntimeException(move+"!="+lastMoveGTP()+" "+lastMove2()+" 5 move oops");
@@ -980,7 +980,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 					}
 					break;
 				case RG:
-					System.out.println("RG:  "+state.shape+", region: "+property.list());
+					Logging.mainLogger.info("RG:  "+state.shape+", region: "+property.list());
 					// above we have diamond, hole1, region [jj]
 					// using state.board above does not seem quite right.
 					// yes, diamond needs another region or a bigger region.
@@ -998,7 +998,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 						Point point=Coordinates.fromSgfCoordinates(s,board().depth());
 						board().setAt(point,Stone.edge);
 					}
-					else System.out.println("RG: board() is  null.");
+					else Logging.mainLogger.info("RG: board() is  null.");
 					break;
 				case SZ: // create the board
 					// maybe delay the board creation?
@@ -1078,7 +1078,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 			MNode ancester=list.get(0);
 			while(currentNode()!=ancester) {
 				if(!Navigate.up.canDo(this)) {
-					System.out.println("can't do up!");
+					Logging.mainLogger.info("can't do up!");
 				}
 				if(Navigate.up.canDo(this)) up();
 				if(!Navigate.up.canDo(this)) { return false; }
@@ -1102,7 +1102,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 				return false;
 			}
 		} else {
-			System.out.println("list is null");
+			Logging.mainLogger.info("list is null");
 			Logging.mainLogger.warning(name+" "+"list is null!");
 			return false;
 		}
@@ -1199,7 +1199,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 			// how to find thread and interrupt?
 			Thread current=Thread.currentThread();
 			if(current.isInterrupted()) {
-				System.out.println(current);
+				Logging.mainLogger.info(String.valueOf(current));
 				if(current instanceof Stopable&&((Stopable)current).isStopping()) //
 					Logging.mainLogger.info("stopping wait for move complete interrupted!");
 				else {
@@ -1250,10 +1250,10 @@ public class Model extends Observable { // model of a go game or problem forrest
 			}
 			path=MNode.findPathToNode(model.currentNode(),root);
 		} catch(ArrayIndexOutOfBoundsException e) {
-			System.out.println("main line from ... caught: "+e);
+			Logging.mainLogger.info("main line from ... caught: "+e);
 			parserLogger.severe("caught: "+e);
 		} catch(Exception e) {
-			System.out.println("main line from ... caught: "+e);
+			Logging.mainLogger.info("main line from ... caught: "+e);
 			parserLogger.severe("caught: "+e);
 		}
 		// we should be able to get path from state stack in model!
@@ -1262,17 +1262,17 @@ public class Model extends Observable { // model of a go game or problem forrest
 	private static void lookAtRoot() {
 		Model model=new Model();
 		model.move(new Move2(MoveType.move,Stone.black,new Point()));
-		System.out.println("root: "+model.root());
-		System.out.println("current node: "+model.currentNode());
-		System.out.println("children: "+model.currentNode().children());
+		Logging.mainLogger.info("root: "+model.root());
+		Logging.mainLogger.info("current node: "+model.currentNode());
+		Logging.mainLogger.info("children: "+model.currentNode().children());
 		model.save(new OutputStreamWriter(System.out));
-		System.out.println();
+		Logging.mainLogger.info("");
 		// if(true) return;
-		System.out.println("|||");
+		Logging.mainLogger.info("|||");
 		model.save(new OutputStreamWriter(System.out));
-		System.out.println("after save.");
+		Logging.mainLogger.info("after save.");
 		System.out.flush();
-		System.out.println(model);
+		Logging.mainLogger.info(String.valueOf(model));
 	}
 	public static boolean disconnectFromServer(Model model) {
 		if(model.gtp!=null) {
@@ -1470,51 +1470,51 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	private static void normal() {
 		Model model=new Model();
-		System.out.println(model.root());
-		System.out.println(model.root().parent());
-		System.out.println(model.currentNode());
+		Logging.mainLogger.info(String.valueOf(model.root()));
+		Logging.mainLogger.info(String.valueOf(model.root().parent()));
+		Logging.mainLogger.info(String.valueOf(model.currentNode()));
 		model.setRoot(5,5);
 		strangeGame(model);
 		model.setRoot(5,5);
 		int n=model.movesToGenerate();
 		Model.generateRandomMoves(model,n);
 		// randomeMovesUsingParameters(model);
-		System.out.println(model);
+		Logging.mainLogger.info(String.valueOf(model));
 		Command.doTGOSend("manyFacesTwoMovesAtA1AndR16");
-		System.out.println(model);
+		Logging.mainLogger.info(String.valueOf(model));
 	}
 	private static void dtrt(Model model) {
 		model.ensureBoard();
 		// model.move(Stone.black,"A1",model.board().width()); // lets see what
 		// no moves does.
 		// model.move(Stone.white,"A2",model.board().width());
-		// System.out.println(model);
+		// Logging.mainLogger.info(model);
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
 		Stone color=model.board().at(point);
-		System.out.println("color at A1: "+color);
+		Logging.mainLogger.info("color at A1: "+color);
 		if(!color.equals(Stone.black)) {
-			System.out.println("expected black at A1, got "+color);
+			Logging.mainLogger.info("expected black at A1, got "+color);
 		}
 		String expected=model.save();
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
-		System.out.println("expected: "+expected);
+		Logging.mainLogger.info("expected: "+expected);
 		if(!color.equals(Stone.black)) {
-			System.out.println("expected black at A1, got "+color);
+			Logging.mainLogger.info("expected black at A1, got "+color);
 		}
 		Model m=new Model("",true);
 		point=Coordinates.fromGtpCoordinateSystem("A1",19);
 		color=m.board().at(point);
-		System.out.println("color at A1: "+color);
+		Logging.mainLogger.info("color at A1: "+color);
 		if(!color.equals(Stone.black)) {
-			System.out.println("expected black at A1, got "+color);
+			Logging.mainLogger.info("expected black at A1, got "+color);
 		}
 		// if(true) return;
 		// assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
 		m.restore(toReader(expected));
 		final String actual=m.save();
-		System.out.println("expected: "+expected);
-		System.out.println("actual  : "+actual);
+		Logging.mainLogger.info("expected: "+expected);
+		Logging.mainLogger.info("actual  : "+actual);
 	}
 	public static void main(String[] args) {
 		// normal();
@@ -1522,17 +1522,17 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.setLevels(Level.OFF);
 		Model model=new Model("",true);
 		String sgf=model.save();
-		System.out.println("new way: "+sgf);
+		Logging.mainLogger.info("new way: "+sgf);
 		model=new Model("",false);
 		sgf=model.save();
-		System.out.println("old way: "+sgf);
-		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&");
+		Logging.mainLogger.info("old way: "+sgf);
+		Logging.mainLogger.info("&&&&&&&&&&&&&&&&&&&&&&&");
 		model=new Model("",true);
 		dtrt(model);
-		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&");
+		Logging.mainLogger.info("&&&&&&&&&&&&&&&&&&&&&&&");
 		model=new Model("",false);
 		dtrt(model);
-		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&");
+		Logging.mainLogger.info("&&&&&&&&&&&&&&&&&&&&&&&");
 	}
 	public int verbosity;
 	// move stuff like type, shape, and band to parameter

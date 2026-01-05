@@ -235,25 +235,25 @@ public class Parser {
 							if(!file.getName().startsWith("KogosJosekiDictionary")) // exclude
 																					// for
 																					// now
-								// System.out.println("ok "+file);
+								// Logging.mainLogger.info("ok "+file);
 								if(!badSgfFiles.contains(file)) objects.add(file);
-						} else System.out.println(file+" is not an sgf file!");
-					} else System.out.println(file+" soes not exist!");
+						} else Logging.mainLogger.info(file+" is not an sgf file!");
+					} else Logging.mainLogger.info(file+" soes not exist!");
 				} else if(file.isDirectory()) {
 					collectSgfFiles(objects,file.listFiles());
-				} else System.out.println("strange: "+file);
+				} else Logging.mainLogger.info("strange: "+file);
 		} else {
 			throw new RuntimeException("ollectSgfFiles: files is null!");
-			// System.out.println("files is null!");
+			// Logging.mainLogger.info("files is null!");
 		}
 	}
 	private static void collectSgfFiles(String dir,Set<Object> objects) {
-		System.out.println(new File(dir));
+		Logging.mainLogger.info(String.valueOf(new File(dir)));
 		File[] files=new File(dir).listFiles();
 		if(files!=null) {
-			// System.out.println("has "+files.length+" files.");}
+			// Logging.mainLogger.info("has "+files.length+" files.");}
 			collectSgfFiles(objects,files);
-		} else System.out.println(dir+" is empty in collectSgfFiles!");
+		} else Logging.mainLogger.info(dir+" is empty in collectSgfFiles!");
 	}
 	public static String sgfPath="data/sgf";
 	public static String strangePath="data/strangesgf";
@@ -273,7 +273,7 @@ public class Parser {
 		if(key instanceof String) sgf=statocSgfData.get(key);
 		else if(key instanceof File) sgf=utilities.Utilities.fromFile((File)key);
 		else {
-			System.out.println(key+" is not a string or a file!");
+			Logging.mainLogger.info(key+" is not a string or a file!");
 			IOs.stackTrace(10);
 			// System.exit(1);
 			throw new RuntimeException(key+" is not a string or a file!");
@@ -285,11 +285,11 @@ public class Parser {
 		for(Object key:objects) {
 			String sgf=getSgfData(key);
 			int p=parentheses(sgf);
-			if(p!=0) System.out.println("parentheses count: "+p);
+			if(p!=0) Logging.mainLogger.info("parentheses count: "+p);
 			SgfNode games=restoreSgf(IOs.toReader(sgf));
 			if(games!=null) if(games.right!=null) {
 				many.add(key);
-				System.out.println(key+" has more than one game: "+games.right);
+				Logging.mainLogger.info(key+" has more than one game: "+games.right);
 			}
 		}
 		return many;
@@ -299,27 +299,27 @@ public class Parser {
 		if(string!=null) for(Character c:string.toCharArray()) {
 			if(c.equals('(')) ++count;
 			else if(c.equals(')')) --count;
-			if(count<0) System.out.println("count is negative!");
+			if(count<0) Logging.mainLogger.info("count is negative!");
 		}
 		return count;
 	}
 	public static void main(String[] argument) throws Exception {
-		System.out.println(Init.first);
-		// System.out.println("main "+god.et);
+		Logging.mainLogger.info(String.valueOf(Init.first));
+		// Logging.mainLogger.info("main "+god.et);
 		// combineAndCheckKogosJosekiDictionary();
-		// System.out.println(sgfData);
+		// Logging.mainLogger.info(sgfData);
 		List<Object> objects=new ArrayList<>();
 		objects.addAll(sgfDataKeySet());
 		// objects.addAll(sgfFiles());
 		for(Object key:objects) {
-			System.out.println("key: "+key);
+			Logging.mainLogger.info("key: "+key);
 			String expectedSgf=getSgfData(key);
 			expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
 			SgfNode games=expectedSgf!=null?restoreSgf(IOs.toReader(expectedSgf)):null;
-			if(games!=null) if(games.right!=null) System.out.println(key+" right: "+games.right);
-			// System.out.println(games);
+			if(games!=null) if(games.right!=null) Logging.mainLogger.info(key+" right: "+games.right);
+			// Logging.mainLogger.info(games);
 		}
-		System.out.println(objects);
+		Logging.mainLogger.info(String.valueOf(objects));
 	}
 	Indent indent=new Indent("  ");
 	PushbackReader reader;
@@ -455,11 +455,11 @@ public class Parser {
 		statocSgfData.put("smartgo4",smartgo4);
 		statocSgfData.put("smartgo42",smartgo42);
 		statocSgfData.put("smartgo43",smartgo43);
-		// System.out.println(sgfData.keySet());
-		// System.out.println(sgfData.size()+" sgf strings in parser map.");
+		// Logging.mainLogger.info(sgfData.keySet());
+		// Logging.mainLogger.info(sgfData.size()+" sgf strings in parser map.");
 	}
 	static {
-		// System.out.println("static parser init");
+		// Logging.mainLogger.info("static parser init");
 		// IO.stackTrace(20);
 	}
 	static final AtomicBoolean isInitialized=new AtomicBoolean();

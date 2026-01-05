@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static org.junit.Assert.*;
 import static sgf.Parser.getSgfData;
 import java.io.File;
@@ -78,7 +79,7 @@ public class OldModelTestCase {
         int n=model.board().width()*model.board().depth();
         Model.generateSillyMoves(model,n-1);
         List<Move2> expectedMoves=model.movesToCurrentState();
-        System.out.println(expectedMoves);
+        Logging.mainLogger.info(String.valueOf(expectedMoves));
         Model actual=new Model();
         actual.makeMoves(expectedMoves);
         model.board().isEqual(actual.board());
@@ -90,10 +91,10 @@ public class OldModelTestCase {
             if(i>5) break; // debuging
             model.setRoot(i,i);
             int n=model.movesToGenerate();
-            System.out.println("start");
+            Logging.mainLogger.info("start");
             Model.generateSillyMoves(model,n);
             List<Move2> expectedMoves=model.movesToCurrentState();
-            System.out.println(expectedMoves);
+            Logging.mainLogger.info(String.valueOf(expectedMoves));
             Model actual=new Model();
             actual.setRoot(i,i);
             actual.makeMoves(expectedMoves);
@@ -203,8 +204,8 @@ public class OldModelTestCase {
         String expected=ModelTestIo.save(model,"first save fails");
         Model copy=new Model(model,model.name);
         String actual=ModelTestIo.save(copy,"second save fails");
-        System.out.println("ex: "+expected);
-        System.out.println("ac: "+actual);
+        Logging.mainLogger.info("ex: "+expected);
+        Logging.mainLogger.info("ac: "+actual);
         assertEquals(expected,actual);
     }
     @Test public void testSquares() {
@@ -258,7 +259,7 @@ public class OldModelTestCase {
             int actual=model.board().id();
             // what is this actually testing?
             assertEquals("we get the same board id.",expected,actual);
-        } else System.out.println(key+" board is null.");
+        } else Logging.mainLogger.info(key+" board is null.");
     }
     @Test public void testRTWithNoMoves() {
         Model model=new Model();

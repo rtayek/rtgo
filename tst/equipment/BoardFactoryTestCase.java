@@ -1,4 +1,5 @@
 package equipment;
+import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import equipment.Board.*;
@@ -29,10 +30,10 @@ public class BoardFactoryTestCase {
         int failures=0;
         for(Topology topology:Topology.values()) {
             board=Board.factory.create(19,19,topology);
-            if(board==null) { ++failures; System.out.println(topology+" fails!"); }
+            if(board==null) { ++failures; Logging.mainLogger.info(topology+" fails!"); }
             //assertNotNull(board);
         }
-        if(failures>0) System.out.println(failures+" failures.");
+        if(failures>0) Logging.mainLogger.info(failures+" failures.");
         assertEquals(0,failures);
     }
     @Test public void testCreateIntIntTypeShape() {
@@ -40,10 +41,10 @@ public class BoardFactoryTestCase {
         for(Topology topology:Topology.values()) for(Shape shape:Shape.values()) {
             board=Board.factory.create(19,19,topology,shape);
             if(topology.equals(Topology.diamond)&&shape.equals(Shape.programmer)); //
-            else if(board==null) { ++failures; System.out.println(topology+" "+shape+" fails!"); }
+            else if(board==null) { ++failures; Logging.mainLogger.info(topology+" "+shape+" fails!"); }
             //assertNotNull(board);
         }
-        if(failures>0) System.out.println(failures+" failures.");
+        if(failures>0) Logging.mainLogger.info(failures+" failures.");
         assertEquals(0,failures);
     }
     Board board;

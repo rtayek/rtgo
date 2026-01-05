@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import static tree.Node.*;
 import java.lang.management.ManagementFactory;
 import java.util.*;
@@ -20,7 +21,7 @@ public class G2 {
         ArrayList<T> data=new ArrayList<>();
         String actualEncoded=encode(expected,data);
         Node<T> actual=decode(actualEncoded,data);
-        if(data.size()>0) System.out.println("leftoverdata: "+data);
+        if(data.size()>0) Logging.mainLogger.info("leftoverdata: "+data);
         return actual;
     }
     public static <T> String decodeEncode(String expected,ArrayList<T> data) {
@@ -30,11 +31,11 @@ public class G2 {
         String actual=encode(decoded,data2);
         if(data!=null) {
             if(data.size()>0) {
-                System.out.println("leftover data: "+data);
+                Logging.mainLogger.info("leftover data: "+data);
                 //throw new RuntimeException("data us not epty!");
             }
             if(!data0.equals(data2)) {
-                System.out.println("d0 "+data0+"!="+data2);
+                Logging.mainLogger.info("d0 "+data0+"!="+data2);
                 //throw new RuntimeException(data0+"!="+data2);
             }
         }
@@ -85,52 +86,52 @@ public class G2 {
             sb.append(", left: ").append(x.left!=null?(x.left.encoded+" "+x.left.id):"null");
             sb.append(", right: ").append(x.right!=null?(x.right.encoded+" "+x.right.id):"null");
         }
-        System.out.println(sb);
+        Logging.mainLogger.info(String.valueOf(sb));
     }
     static <T> void pd(Node<T> x) {
         StringBuffer sb=new StringBuffer();
         sb.append(' ').append(x.data);
-        System.out.print(sb);
+        Logging.mainLogger.info(String.valueOf(sb));
     }
     public static <T> void print(Node<T> tree) {
         if(tree==null) return;
-        Consumer<Node<T>> p=x->System.out.print(x.data+" ");
-        System.out.print("preorder:  ");
+        Consumer<Node<T>> p=x->Logging.mainLogger.info(x.data+" ");
+        Logging.mainLogger.info("preorder:  ");
         tree.preorder(p);
-        System.out.println();
-        System.out.print("inorder:   ");
+        Logging.mainLogger.info("");
+        Logging.mainLogger.info("inorder:   ");
         tree.inorder(p);
-        System.out.println();
-        System.out.print("postorder: ");
+        Logging.mainLogger.info("");
+        Logging.mainLogger.info("postorder: ");
         tree.postorder(p);
-        System.out.println();
+        Logging.mainLogger.info("");
     }
     public static <T> void printStuff(ArrayList<Node<T>> trees) {
         for(int i=0;i<trees.size();++i) {
-            System.out.print("tree "+i+": ");
+            Logging.mainLogger.info("tree "+i+": ");
             Node<T> tree=trees.get(i);
             final Consumer<Node<T>> p=x->pd(x);
             preorder(tree,p);
-            System.out.println();
+            Logging.mainLogger.info("");
         }
     }
     public static <T> void printStuff(ArrayList<ArrayList<Node<T>>> all,int nodes) {
         ArrayList<Node<T>> trees=all.get(nodes);
-        System.out.println(nodes+" nodes.");
+        Logging.mainLogger.info(nodes+" nodes.");
         printStuff(trees);
-        System.out.println("end of nodes "+nodes);
+        Logging.mainLogger.info("end of nodes "+nodes);
     }
     private static <T> void print(Node<T> node,String prefix,boolean isLeft) {
         // lambda
         if(node!=null) {
-            System.out.println(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
+            Logging.mainLogger.info(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
             print(node.left,prefix+(isLeft?"|   ":"    "),true);
             print(node.right,prefix+(isLeft?"|   ":"    "),false);
         }
     }
     public static <T> void print(Node<T> node,String prefix) {
         if(node!=null) print(node,prefix,true);
-        else System.out.println("0");
+        else Logging.mainLogger.info("0");
     }
     public static <T> void pPrint(Node<T> root,StringBuffer sb) {
         if(root==null) return;
@@ -165,7 +166,7 @@ public class G2 {
                     }
                 }
             }
-            if(useMap) if(map.put(nodes,trees)!=null) System.out.println(nodes+" is already in map!");
+            if(useMap) if(map.put(nodes,trees)!=null) Logging.mainLogger.info(nodes+" is already in map!");
             return trees;
         }
         public static <T> ArrayList<Node<T>> one(int nodes,Iterator<T> iterator,boolean useMap) {
@@ -196,33 +197,33 @@ public class G2 {
         print(tree,"");
         print(tree);
         ArrayList<Long> data=collectData(tree);
-        System.out.println("collect data: "+data);
+        Logging.mainLogger.info("collect data: "+data);
         StringBuffer stringBuffer=new StringBuffer();
         toDataString(stringBuffer,tree);
-        System.out.println("to data string: "+stringBuffer);
+        Logging.mainLogger.info("to data string: "+stringBuffer);
         String expected=encode(tree,null);
         MyConsumer<Long> c2=new MyConsumer<Long>();
         Node.<Long> postorder(tree,c2);
         String actual=encode(c2.copy,null);
-        System.out.println("ac: "+actual);
-        if(!expected.equals(actual)) System.out.println("copy failure!");
+        Logging.mainLogger.info("ac: "+actual);
+        if(!expected.equals(actual)) Logging.mainLogger.info("copy failure!");
         ArrayList<Long> data2=collectData(c2.copy);
-        System.out.println("collect data2: "+data2);
+        Logging.mainLogger.info("collect data2: "+data2);
     }
     public static void main(String[] arguments) {
         List<String> x=ManagementFactory.getRuntimeMXBean().getInputArguments();
-        System.out.println(x);
-        System.out.println("in eclipse: "+inEclipse());
+        Logging.mainLogger.info(String.valueOf(x));
+        Logging.mainLogger.info("in eclipse: "+inEclipse());
         G2 g2=new G2();
         if(arguments!=null&&arguments.length>0) g2.useMap=true;
         if(inEclipse()) g2.useMap=true;
         g2.useMap=false;
         int nodes=3;
         ArrayList<ArrayList<Node<Long>>> all=G2.Generator.all(nodes);
-        System.out.println(nodes+" nodes.");
+        Logging.mainLogger.info(nodes+" nodes.");
         if(false) { check(all.get(2).get(0)); return; }
         if(false) for(int i=0;i<=nodes;i++) {
-            System.out.println("check "+i+" nodes.");
+            Logging.mainLogger.info("check "+i+" nodes.");
             ArrayList<Node<Long>> trees=all.get(i);
             int n=0;
             for(Node<Long> expected:trees) {
@@ -233,16 +234,16 @@ public class G2 {
         }
         ArrayList<Node<Long>> some=all.get(3);
         for(int i=0;i<some.size();++i) {
-            System.out.print("tree "+i+": ");
+            Logging.mainLogger.info("tree "+i+": ");
             Node<Long> tree=some.get(i);
             final Consumer<Node<Long>> p=x1->pd(x1);
             preorder(tree,p);
-            System.out.println();
+            Logging.mainLogger.info("");
             print(tree,"");
-            System.out.println(pPrint(tree));
+            Logging.mainLogger.info(String.valueOf(pPrint(tree)));
         }
         Node<Character> redBean=RedBean.binary();
-        System.out.println(pPrint(redBean));
+        Logging.mainLogger.info(String.valueOf(pPrint(redBean)));
         if(true) return;
         ArrayList<Node<Long>> trees=all.get(nodes);
         int n=trees.size();
@@ -260,6 +261,6 @@ public class G2 {
         ArrayList<Long> data=new ArrayList<>();
         for(int i=0;i<maxNodes;++i) data.add((long)i); // start at 1?
         sequentialData=Collections.unmodifiableList(data);
-        //System.out.println("end static init.");
+        //Logging.mainLogger.info("end static init.");
     }
 }

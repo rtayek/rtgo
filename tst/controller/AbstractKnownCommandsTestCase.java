@@ -37,7 +37,7 @@ public abstract class AbstractKnownCommandsTestCase {
         String string=new GTPBackEnd(command.sample(),directModel).runCommands(directJustRun);
         Response response=Response.response(string);
         // need to add some example arguments
-        if(response.isBad()) System.out.println(response);
+        if(response.isBad()) Logging.mainLogger.info(String.valueOf(response));
         assertTrue(command.name(),response.isOk());
         assertFalse(command.name(),response.response.startsWith(GTPBackEnd.unknownCommandMessage));
         assertFalse(command.name(),GTPBackEnd.unknownCommandMessage.equals(response.response));

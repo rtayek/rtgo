@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import java.io.*;
 import java.util.function.Function;
 import io.IOs.Duplex;
@@ -9,9 +10,9 @@ public class Copy implements Runnable {
             boolean once=false;
             try {
                 while(!done) {
-                    if(!once) { once=true; System.out.println("back end read"); }
+                    if(!once) { once=true; Logging.mainLogger.info("back end read"); }
                     String string=in.readLine();
-                    System.out.println("back end read: "+string);
+                    Logging.mainLogger.info("back end read: "+string);
                     if(string==null) { done=true; break; }
                     if(process!=null) { boolean ok=this.process.apply(string); if(!ok) done=true; }
                 }
@@ -26,7 +27,7 @@ public class Copy implements Runnable {
             CopyBC copyBC=new CopyBC(duplex.back.in(),duplex.back.out());
             Function<String,Boolean> p=(string)-> {
                 try {
-                    System.out.println("back end write");
+                    Logging.mainLogger.info("back end write");
                     copyBC.out.write(string+'\n');
                     copyBC.out.flush();
                     return true;
@@ -38,14 +39,14 @@ public class Copy implements Runnable {
             copyBC.process=p;
             Thread thread=new Thread(copyBC);
             thread.start();
-            System.out.println("started");
+            Logging.mainLogger.info("started");
             //copyBC.run();
-            System.out.println("front end write");
+            Logging.mainLogger.info("front end write");
             duplex.front.out().write("foo\n");
             duplex.front.out().flush();
-            System.out.println("front end read");
+            Logging.mainLogger.info("front end read");
             String string=duplex.front.in().readLine();
-            System.out.println("front end read:  "+string);
+            Logging.mainLogger.info("front end read:  "+string);
         }
         boolean done;
         Function<String,Boolean> process;
@@ -112,9 +113,9 @@ public class Copy implements Runnable {
     final BufferedReader in;
     final Writer out;
     public static void main(String[] args) throws IOException {
-        System.out.println(Init.first);
-        System.out.println("enter main");
+        Logging.mainLogger.info(String.valueOf(Init.first));
+        Logging.mainLogger.info("enter main");
         CopyBC.foo();
-        System.out.println("exit main");
+        Logging.mainLogger.info("exit main");
     }
 }

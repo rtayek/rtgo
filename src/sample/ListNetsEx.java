@@ -1,4 +1,5 @@
 package sample;
+import io.Logging;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -13,14 +14,14 @@ public class ListNetsEx {
         String localHost=null;
         try {
             localHost=InetAddress.getLocalHost().getHostAddress();
-            System.out.println(localHost);
+            Logging.mainLogger.info(String.valueOf(localHost));
         } catch(java.net.UnknownHostException ex) {
             ex.printStackTrace();
             throw new ParseException(ex.getMessage(),0);
         }
     }
     static void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
-        System.out.println("Display name: "+netint.getDisplayName());
-        System.out.println("Hardware address: "+Arrays.toString(netint.getHardwareAddress()));
+        Logging.mainLogger.info("Display name: "+netint.getDisplayName());
+        Logging.mainLogger.info("Hardware address: "+Arrays.toString(netint.getHardwareAddress()));
     }
 }

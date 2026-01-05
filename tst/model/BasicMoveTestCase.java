@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import sgf.SgfRoundTrip;
@@ -20,8 +21,8 @@ public class BasicMoveTestCase {
     @Test() public void testMoveAtA2() throws Exception {
         expectedMove=Move2.whiteMoveAtA2;
         run();
-        System.out.println("expected move: "+expectedMove);
-        System.out.println("actual move: "+actualMove);
+        Logging.mainLogger.info("expected move: "+expectedMove);
+        Logging.mainLogger.info("actual move: "+actualMove);
         assertEquals(expectedMove,actualMove);
     }
     @Test() public void testPass() throws Exception {

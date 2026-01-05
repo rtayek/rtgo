@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static io.IOs.noIndent;
 import static io.IOs.toReader;
 import static sgf.Parser.parentheses;
@@ -7,6 +8,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.io.IOException;
+import io.Indent;
 import static io.Logging.parserLogger;
 /**
  * Shared round-trip helpers for SGF and MNode flows.
@@ -16,31 +18,43 @@ public final class SgfRoundTrip {
         standard,direct
     }
     private SgfRoundTrip() {}
+    public static String saveSgfToString(SgfNode node,Indent indent) {
+        if(node==null) return null;
+        StringWriter writer=new StringWriter();
+        node.saveSgf(writer,indent);
+        return writer.toString();
+    }
+    public static String restoreAndSaveToString(Reader reader) {
+        if(reader==null) return null;
+        StringWriter stringWriter=new StringWriter();
+        restoreAndSave(reader,stringWriter);
+        return stringWriter.toString();
+    }
     public static SgfNode restoreAndSave(Reader reader,Writer writer) {
         if(reader==null) return null;
         SgfNode games=restoreSgf(reader);
         if(games!=null) games.saveSgf(writer,noIndent);
         String actual=writer.toString();
         int p=parentheses(actual);
-        if(p!=0) System.out.println("actual parentheses count: "+p);
+        if(p!=0) Logging.mainLogger.info("actual parentheses count: "+p);
         //if(p!=0) throw new RuntimeException("actual parentheses count: "+p);
         return games;
     }
     public static String restoreAndSave(String expectedSgf) {
         if(expectedSgf==null) return null;
-        StringWriter stringWriter=new StringWriter();
-        Reader reader=toReader(expectedSgf);
-        restoreAndSave(reader,stringWriter);
-        return stringWriter.toString();
+        return restoreAndSaveToString(toReader(expectedSgf));
     }
     public static SgfNode saveAndRestore(SgfNode expected,StringWriter stringWriter) {
         SgfNode actualSgf=null;
         if(expected!=null) {
-            expected.saveSgf(stringWriter,noIndent);
-            String sgf=stringWriter.toString();
+            String sgf=saveSgfToString(expected,noIndent);
+            stringWriter.append(sgf);
             actualSgf=restoreSgf(toReader(sgf));
         }
         return actualSgf;
+    }
+    public static SgfNode saveAndRestore(SgfNode expected) {
+        return saveAndRestore(expected,new StringWriter());
     }
     public static boolean roundTripTwice(Reader original) {
         Writer writer=new StringWriter();
@@ -68,7 +82,7 @@ public final class SgfRoundTrip {
             }
         } else {
             boolean ok=MNode.save(writer,root,noIndent);
-            if(!ok) System.out.println("not ok!");
+            if(!ok) Logging.mainLogger.info("not ok!");
         }
         return root;
     }

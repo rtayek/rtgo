@@ -88,7 +88,7 @@ public class Node<T> {
         for(int i=length;i>=1;b/=2,--i) bits.add(b%2==1?true:false);
         Collections.reverse(bits);
         while(!implies(bits.size()>0,bits.get(0))) { bits.remove(0); }
-        if(bits.size()==0) System.out.println("no bits!");
+        if(bits.size()==0) Logging.mainLogger.info("no bits!");
         return bits;
     }
     static <T> void toDataString(StringBuffer sb,Node<T> node) { // encode
@@ -120,7 +120,7 @@ public class Node<T> {
     static <T> Node<T> decode_(List<Character> binaryString,List<T> data) {
         // lambda?
         if(binaryString.size()==0) return null;
-        //System.out.println("decodingL "+binaryString);
+        //Logging.mainLogger.info("decodingL "+binaryString);
         boolean b=binaryString.remove(0)=='1';
         if(b) {
             T d=data!=null?data.remove(0):null;
@@ -145,26 +145,26 @@ public class Node<T> {
         @SuppressWarnings("unchecked") Node<T> other=(Node<T>)obj;
         if((data==null)!=(other.data==null)) return false;
         boolean equal=data.equals(other.data);
-        if(!equal) if(verbose) System.out.println(data+" "+other.data);
+        if(!equal) if(verbose) Logging.mainLogger.info(data+" "+other.data);
         return equal;
     }
     public boolean deepEquals_(Node<T> other,boolean ckeckEqual) {
         // lambda?
         if(this==other) return true;
-        else if(other==null) { if(verbose) System.out.println(data+" othe ris null!"); return false; }
-        if(ckeckEqual) if(!equals(other)) { if(verbose) System.out.println(data+" "+other.data); return false; }
+        else if(other==null) { if(verbose) Logging.mainLogger.info(data+" othe ris null!"); return false; }
+        if(ckeckEqual) if(!equals(other)) { if(verbose) Logging.mainLogger.info(data+" "+other.data); return false; }
         if(left!=null) {
             boolean isEqual=left.deepEquals_(other.left,ckeckEqual);
-            if(!isEqual) { if(verbose) System.out.println(left.data+"!="+other.left.data); return false; }
-            if(verbose) System.out.println(left.data+"=="+other.left.data);
-        } else if(other.left!=null) { if(verbose) System.out.println(data+" othe left is null!"); return false; }
+            if(!isEqual) { if(verbose) Logging.mainLogger.info(left.data+"!="+other.left.data); return false; }
+            if(verbose) Logging.mainLogger.info(left.data+"=="+other.left.data);
+        } else if(other.left!=null) { if(verbose) Logging.mainLogger.info(data+" othe left is null!"); return false; }
         if(right!=null) {
             boolean isEqual=right.deepEquals_(other.right,ckeckEqual);
-            if(!isEqual) { if(verbose) System.out.println(right.data+"!="+other.right.data); return false; }
-            if(verbose) System.out.println(right.data+"=="+other.right.data);
+            if(!isEqual) { if(verbose) Logging.mainLogger.info(right.data+"!="+other.right.data); return false; }
+            if(verbose) Logging.mainLogger.info(right.data+"=="+other.right.data);
         } else if(other.right!=null) {
-            if(verbose) System.out.println(data+" othe right is not null!");
-            if(verbose) System.out.println("other right "+other.right.data);
+            if(verbose) Logging.mainLogger.info(data+" othe right is not null!");
+            if(verbose) Logging.mainLogger.info("other right "+other.right.data);
             return false;
         }
         return true;
@@ -183,20 +183,20 @@ public class Node<T> {
     }
     static <T> int check(Node<T> expected) {
         int n=0;
-        //System.out.println("check: "+expected);
+        //Logging.mainLogger.info("check: "+expected);
         Node<T> actual=encodeDecode(expected);
-        if(!structureDeepEquals(expected,actual)) { ++n; System.out.println("0 "+expected+"!="+actual); }
+        if(!structureDeepEquals(expected,actual)) { ++n; Logging.mainLogger.info("0 "+expected+"!="+actual); }
         //if(true) return n;
         ArrayList<T> data=new ArrayList<>();
         String expectedEncoded=encode(expected,data);
-        if(expectedEncoded.length()!=data.size()) System.out.println("encoded length!=data size!");
+        if(expectedEncoded.length()!=data.size()) Logging.mainLogger.info("encoded length!=data size!");
         String actualEncoded=roundTripLong(expectedEncoded);
-        if(!expectedEncoded.equals(actualEncoded)) { ++n; System.out.println("1 "+expectedEncoded+"!="+actualEncoded); }
+        if(!expectedEncoded.equals(actualEncoded)) { ++n; Logging.mainLogger.info("1 "+expectedEncoded+"!="+actualEncoded); }
         String actualEncoded2=decodeEncode(expectedEncoded,data);
-        if(data.size()>0) System.out.println("data size is >0!");
+        if(data.size()>0) Logging.mainLogger.info("data size is >0!");
         if(!expectedEncoded.equals(actualEncoded2)) {
             ++n;
-            System.out.println("2 "+expectedEncoded+"!="+actualEncoded);
+            Logging.mainLogger.info("2 "+expectedEncoded+"!="+actualEncoded);
         }
         return n;
     }
@@ -207,25 +207,25 @@ public class Node<T> {
     // read the left child of a node as its first child and the right child as its next sibling.
     private static <T> MNode<T> from_(Node<T> node,MNode<T> grandParent) {
         if(node==null) { if(grandParent!=null) grandParent.children.add(null); return null; }
-        //System.out.println("processing: "+node.data+" <<<<<<");
+        //Logging.mainLogger.info("processing: "+node.data+" <<<<<<");
         boolean ok=processed.add(node.data);
-        if(!ok) { System.out.println(node.data+" "+node.id+"  node already processed!"); return null; }
+        if(!ok) { Logging.mainLogger.info(node.data+" "+node.id+"  node already processed!"); return null; }
         MNode<T> parent=new MNode<T>(node.data,grandParent);
         if(grandParent!=null) grandParent.children.add(parent);
-        else System.out.println("gradparent is null!");
+        else Logging.mainLogger.info("gradparent is null!");
         if(node.left!=null) {
             for(Node<T> n=node.left;n!=null;n=n.right) {
-                if(verbose) if(processed.contains(n.data)) System.out.println("1 will be already processed"+n);
+                if(verbose) if(processed.contains(n.data)) Logging.mainLogger.info("1 will be already processed"+n);
                 MNode<T> newMNode2=from_(n,parent);
             }
-        } else if(node.right!=null) System.out.println("can not be a game!");
+        } else if(node.right!=null) Logging.mainLogger.info("can not be a game!");
         // this seems to work, but it's different from my MNode's!
         if(node.right!=null) {
             if(verbose)
-                if(processed.contains(node.right.data)) System.out.println("2 will be already processed"+node.right);
+                if(processed.contains(node.right.data)) Logging.mainLogger.info("2 will be already processed"+node.right);
             MNode<T> newMNode2=from_(node.right,grandParent);
         }
-        //System.out.println("end processing: "+node.data+" >>>>>>");
+        //Logging.mainLogger.info("end processing: "+node.data+" >>>>>>");
         return parent;
     }
     public static <T> MNode<T> from(Node<T> node) {

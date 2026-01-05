@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import audio.Audio;
 import audio.Audio.Sound;
 import equipment.*;
@@ -17,7 +16,6 @@ import gui.Spinners.OldSpinners;
 import gui.TopPanels.*;
 import gui.WestPanels.WestPanel;
 import io.*;
-import io.IOs;
 import model.*;
 import model.Event;
 import model.OptionsABC.Option;
@@ -26,7 +24,7 @@ class Mediator implements Observer,ActionListener {
     // anyway to disconnect this from the model?
     // like for web presentation?
     Mediator(Model model,Main main,TextView textView) {
-        System.out.println("start mediator init.");
+        Logging.mainLogger.info("start mediator init.");
         if(model==null) {
             model=new Model(); // just for testing?
             // throw new RuntimeException("oops");
@@ -50,7 +48,11 @@ class Mediator implements Observer,ActionListener {
         BorderLayout borderLayout=(BorderLayout)main.getLayout();
         Component old=borderLayout.getLayoutComponent(BorderLayout.PAGE_START);
         // old=null; fixed the left panel problem. but it's probably not the cause
-        if(old!=null) { System.out.println("removing: "+old.getName()); main.remove(old); main.validate(); }
+        if(old!=null) {
+            Logging.mainLogger.fine("removing: "+old.getName());
+            main.remove(old);
+            main.validate();
+        }
         // make all of the panels
         if(useNewTopPanel) {
             topPanel=null;
@@ -59,7 +61,7 @@ class Mediator implements Observer,ActionListener {
             // the oldest parameter stuff gets added the new top panel constructor.
             if(useNewSpinners) {
                 if(useSpinnerOptions) {
-                    System.out.println("using spinner options.");
+                    Logging.mainLogger.info("using spinner options.");
                     newTopPanel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
                     for(Option<?,?> button:newTopPanel.spinnerParameterOptions.options()) {
                         SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)button;
@@ -67,7 +69,7 @@ class Mediator implements Observer,ActionListener {
                         newTopPanel.add(spinnerOption.jSpinner);
                     }
                 } else {
-                    System.out.println("using new spinners.");
+                    Logging.mainLogger.info("using new spinners.");
                     // newTopPanel.spinners.initializeParameters(Parameters.propertiesFilename);
                     newTopPanel.spinners.setValuesInWidgetsFromCurrentValues();
                     // button should be widget or something
@@ -77,7 +79,7 @@ class Mediator implements Observer,ActionListener {
                     }
                 }
             } else {
-                System.out.println("using old spinners.");
+                Logging.mainLogger.info("using old spinners.");
                 OldSpinners.staticStValuesInWidgetsFromCurrentValues();
                 for(Parameters parameter:OldSpinners.map.keySet()) {
                     OldSpinners spinner=OldSpinners.map.get(parameter);
@@ -137,7 +139,7 @@ class Mediator implements Observer,ActionListener {
             westPanel.setBackground(Color.yellow);
             main.add(westPanel,BorderLayout.LINE_START);
             WestPanel.ConnectButtons.enableAll(this);
-            System.out.println("old west panel)");
+            Logging.mainLogger.info("old west panel)");
             // Main.listComponentsIn(westPanel,null,true);
         } else {
             westPanel=null;
@@ -146,7 +148,7 @@ class Mediator implements Observer,ActionListener {
             main.add(newWestPanel,BorderLayout.LINE_START);
             newWestPanel.buttons.enableAll(this);
             // above is wrong. must be myt enums
-            // System.out.println("west panel)");
+            // Logging.mainLogger.info("west panel)");
             // Main.listComponentsIn(westPanel,null,true);
         }
         // status.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -178,7 +180,7 @@ class Mediator implements Observer,ActionListener {
                 }
             }
         });
-        System.out.println("end mediator init.");
+        Logging.mainLogger.info("end mediator init.");
     }
     public JMenuBar createMenuBar() {
         JMenuBar menuBar=new JMenuBar();
@@ -246,11 +248,11 @@ class Mediator implements Observer,ActionListener {
         Logging.mainLogger.info(model.name+" "+"action performed: "+e);
         if(e.getActionCommand().equals("Open ...")) {
             try {
-                JFileChooser fileChoser=new JFileChooser(lastLoadDirectory!=null?lastLoadDirectory:new File("."));
-                fileChoser.setFileFilter(new FileNameExtensionFilter("SGF file","sgf"));
-                if(fileChoser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
-                    File file=fileChoser.getSelectedFile();
-                    model.restore(IOs.toReader(file));
+                Component parent=main.isApplet()?main.applet():main.frame();
+                GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(parent,lastLoadDirectory);
+                if(selection!=null) {
+                    File file=selection.file();
+                    ModelIo.restore(model,file);
                     // maybe here is where i can check for my root node?
                     // it would be in the first child.
                     String comment="from: "+file;
@@ -260,7 +262,7 @@ class Mediator implements Observer,ActionListener {
                     // comment may not be handled correctly.
                     // doc says text, so why the list?
                     root.sgfProperties().add(0,property);
-                    lastLoadDirectory=file.getParentFile();
+                    lastLoadDirectory=selection.directory();
                     lastOpenFile=file;
                 }
             } catch(Exception ex) {
@@ -269,14 +271,13 @@ class Mediator implements Observer,ActionListener {
             }
         } else if(e.getActionCommand().equals("Save ...")) {
             try {
-                JFileChooser fileChoser=new JFileChooser(lastSaveDirectory!=null?lastSaveDirectory:new File("."));
-                fileChoser.setFileFilter(new FileNameExtensionFilter("SGF file","sgf"));
-                // fileChoser.s
-                if(fileChoser.showSaveDialog(null)==JFileChooser.APPROVE_OPTION) {
-                    File file=fileChoser.getSelectedFile();
-                    file=Model.insureExtension(file,Model.desiredExtension);
-                    if(!model.save(IOs.toWriter(file)))
+                Component parent=main.isApplet()?main.applet():main.frame();
+                GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseSaveSgf(parent,lastSaveDirectory);
+                if(selection!=null) {
+                    File file=Model.insureExtension(selection.file(),Model.desiredExtension);
+                    if(!ModelIo.save(model,file)) {
                         Logging.mainLogger.warning(model.name+" "+"can not save to: "+file);
+                    }
                     lastSaveDirectory=file.getParentFile();
                 }
             } catch(Exception ex) {
@@ -411,7 +412,10 @@ class Mediator implements Observer,ActionListener {
             }
         } else {
             Logging.mainLogger.info(model.name+" "+"replacing game panel");
-            if(gamePanel!=null) { System.out.println("removing: "+gamePanel.getName()); main.remove(gamePanel); }
+            if(gamePanel!=null) {
+                Logging.mainLogger.fine("removing: "+gamePanel.getName());
+                main.remove(gamePanel);
+            }
             addGamePanels();
             main.validate();
             if(!main.isApplet()) main.frame().pack();

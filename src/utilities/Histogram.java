@@ -1,4 +1,5 @@
 package utilities;
+import io.Logging;
 import java.util.*;
 //should be called stats and should have two implementatons
 //one like this that uses buckets and one that keeps an accurate frequency distribution.
@@ -54,7 +55,7 @@ public class Histogram {
         if(x>=high) { // this test seem right, but sorta sucks since you need an
             // extra bin for high
             // fix by giving high a value like 6.0001
-            //if(false) System.out.println("high "+x+">="+high+" *******");
+            //if(false) Logging.mainLogger.info("high "+x+">="+high+" *******");
             overflows++;
         } else if(x<low) underflows++;
         else {
@@ -64,7 +65,7 @@ public class Histogram {
         }
     }
     public void add(Histogram histogram) {
-        //System.out.println("adding: "+histogram);
+        //Logging.mainLogger.info("adding: "+histogram);
         if(histogram.bins!=bins||histogram.low!=low||histogram.high!=high)
             throw new RuntimeException(histogram+" is incompatablet with: "+this);
         synchronized(recent) {

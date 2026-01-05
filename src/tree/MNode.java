@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import java.util.*;
 import java.util.function.Consumer;
 public class MNode<T> {
@@ -22,7 +23,7 @@ public class MNode<T> {
     public static <T> Node<T> from(MNode<T> mNode2) {
         if(mNode2==null) { return null; }
         boolean ok=processed.add(mNode2.data);
-        if(!ok) System.out.println(mNode2.data+" MNode2 already processed!");
+        if(!ok) Logging.mainLogger.info(mNode2.data+" MNode2 already processed!");
         Node<T> left=null,tail=null;
         for(int i=0;i<mNode2.children.size();++i) {
             MNode<T> child=mNode2.children.get(i);
@@ -30,7 +31,7 @@ public class MNode<T> {
                 if(child!=null) {
                     left=tail=from(child);
                     if(left.right!=null) throw new RuntimeException("wierdness!");
-                } else System.out.println("first chile is null!");
+                } else Logging.mainLogger.info("first chile is null!");
             } else {
                 Node<T> newRight=from(child);
                 tail.right=newRight;
@@ -41,7 +42,7 @@ public class MNode<T> {
         return binaryNode;
     }
     public static <T> void print(MNode<T> tree,String indent,boolean last) {
-        System.out.println(indent+"+- "+(tree!=null?tree.data:"0"));
+        Logging.mainLogger.info(indent+"+- "+(tree!=null?tree.data:"0"));
         indent+=last?"   ":"|  ";
         if(tree!=null) for(int i=0;i<tree.children.size();i++) {
             print(tree.children.get(i),indent,i==tree.children.size()-1);
@@ -55,7 +56,7 @@ public class MNode<T> {
         MNode<T> other=(MNode<T>)obj;
         if((data==null)!=(other.data==null)) return false;
         boolean equal=data.equals(other.data);
-        //if(!equal) if(verbose) System.out.println(data+" "+other.data);
+        //if(!equal) if(verbose) Logging.mainLogger.info(data+" "+other.data);
         return equal;
     }
     private boolean deepEquals_(MNode<T> other,boolean ckeckEqual) {
@@ -63,7 +64,7 @@ public class MNode<T> {
         if(this==other) return true;
         else if(other==null) return false;
         if(ckeckEqual) {
-            //System.out.println("cheching: "+this+" "+other);
+            //Logging.mainLogger.info("cheching: "+this+" "+other);
             if(!equals(other)) return false;
         }
         if(children.size()!=other.children.size()) return false;

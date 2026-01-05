@@ -1,4 +1,5 @@
 package utilities;
+import io.Logging;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -26,7 +27,7 @@ public class FindMainPrograms {
     }
     private static Class<?> processTriple(String name,Triple triple) {
         String dotted=dotted(triple.file);
-        //System.out.println(name+"|"+dotted);
+        //Logging.mainLogger.info(name+"|"+dotted);
         // dotted will be the class with the filename
         // how to get others?
         // compare name with filename?
@@ -34,7 +35,7 @@ public class FindMainPrograms {
         try {
             clazz=Class.forName(dotted);
         } catch(ClassNotFoundException e) {
-            //System.out.println("caught: "+e);
+            //Logging.mainLogger.info("caught: "+e);
             //e.printStackTrace();
         }
         return clazz;
@@ -62,16 +63,16 @@ public class FindMainPrograms {
     private static List<Triple> makeTRiplesFromFiles() throws IOException {
         List<File> files=new ArrayList<>();
         for(String folder:sourceFolders) { fillFilesRecursively(new File(folder),files); }
-        System.err.println(files.size()+" java files.");
+        Logging.mainLogger.warning(files.size()+" java files.");
         List<String> lines=new ArrayList<>();
         List<Triple> mains=new ArrayList<>();
         List<Triple> different=new ArrayList<>();
         for(File file:files) {
-            //System.out.println(file);
+            //Logging.mainLogger.info(file);
             String lastClass=null;
             lines=Files.readAllLines(file.toPath(),StandardCharsets.UTF_8);
             for(String line:lines) {
-                //System.out.println(line);
+                //Logging.mainLogger.info(line);
                 // use targets
                 if(line.contains("class ")||line.contains("interface ")||line.contains("enum ")) {
                     Pair<String,String> pair=getClassName(line);
@@ -80,47 +81,47 @@ public class FindMainPrograms {
                     //&&Utilities.isValidJavaIdentifier(name))
                     {
                         lastClass=line;
-                        //System.out.println("valid: "+name);
-                    } else System.out.println("not valid identifier: "+name+" "+line);
-                    //System.out.println(lastClass);
+                        //Logging.mainLogger.info("valid: "+name);
+                    } else Logging.mainLogger.info("not valid identifier: "+name+" "+line);
+                    //Logging.mainLogger.info(lastClass);
                 }
                 if(line.contains(target)) {
                     Triple triple=new Triple(file,lastClass,line);
                     Pair<String,String> pair=getClassName(triple.clazz);
                     if(pair.first==null||pair.second==null) {
-                        if(pair.first==null) System.out.println("found is null.");
-                        if(pair.second==null) System.out.println("name is null.");
-                        System.err.println("excluding: "+triple);
+                        if(pair.first==null) Logging.mainLogger.info("found is null.");
+                        if(pair.second==null) Logging.mainLogger.info("name is null.");
+                        Logging.mainLogger.warning("excluding: "+triple);
                     } else {
                         if(triple.file.toString().contains(pair.second+javaExtension)) {
                             mains.add(triple);
-                            //System.out.println(pair+" "+triple);
+                            //Logging.mainLogger.info(pair+" "+triple);
                             Class<?> clazz=processTriple(pair.second,triple);
                             if(clazz!=null) {
-                                //System.out.println("forname found class: "+clazz);
+                                //Logging.mainLogger.info("forname found class: "+clazz);
                             } else {
-                                System.out.println("can not find class!: "+pair+" "+triple);
+                                Logging.mainLogger.info("can not find class!: "+pair+" "+triple);
                                 System.exit(0);
                             }
                         } else {
                             different.add(triple);
-                            //System.out.println("different: "+pair.second+"!="+triple.file);
+                            //Logging.mainLogger.info("different: "+pair.second+"!="+triple.file);
                         }
                     }
                 }
             }
         }
-        System.err.println(mains.size()+" mains.");
-        System.err.println(different.size()+" different.");
-        System.out.println("differebt: ----------------------------");
+        Logging.mainLogger.warning(mains.size()+" mains.");
+        Logging.mainLogger.warning(different.size()+" different.");
+        Logging.mainLogger.info("differebt: ----------------------------");
         if(true) {
             for(Triple triple:different) {
                 Pair<String,String> pair=getClassName(triple.clazz);
                 if(!triple.file.toString().contains(pair.second+javaExtension))
-                    System.out.println("still different: "+pair.second+"!="+triple.file);
-                System.out.println(pair+" "+triple);
+                    Logging.mainLogger.info("still different: "+pair.second+"!="+triple.file);
+                Logging.mainLogger.info(pair+" "+triple);
                 Class<?> clazz=processTriple(pair.second,triple);
-                System.out.println("class: "+clazz);
+                Logging.mainLogger.info("class: "+clazz);
             }
         }
         return mains;
@@ -128,7 +129,7 @@ public class FindMainPrograms {
     public static void main(String[] args) throws IOException {
         List<Triple> mains=makeTRiplesFromFiles();
         // pairs look like (... <class> ... ,xyzzy  ... <main(> ...)
-        System.out.println("after makeMainsFromFiles().");
+        Logging.mainLogger.info("after makeMainsFromFiles().");
         if(true) return;
         // lets find the classes
     }
@@ -139,6 +140,6 @@ public class FindMainPrograms {
     static Set<String> targets=Set.of("class","interface","enum");
     static String target="public static void main(";
     static {
-        System.out.println(Init.first);
+        Logging.mainLogger.info(String.valueOf(Init.first));
     }
 }

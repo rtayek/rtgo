@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import static utilities.Utilities.toObjects;
 import java.util.*;
 import java.util.Map.Entry;
@@ -7,8 +8,8 @@ public class ColorLogs {
     //https://stackoverflow.com/questions/54909752/how-to-change-the-util-logging-logger-printing-colour-in-logging-properties/60434521#60434521
     //https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println/5762502#5762502
     public static String coloredString(String string,String escapeSequence) {
-        if(escapeSequence!=null) System.out.println("color: "+Arrays.asList(toObjects(escapeSequence.getBytes())));
-        else System.out.println("escape sequence is null!");
+        if(escapeSequence!=null) Logging.mainLogger.info("color: "+Arrays.asList(toObjects(escapeSequence.getBytes())));
+        else Logging.mainLogger.info("escape sequence is null!");
         return color_RESET+(escapeSequence!=null?escapeSequence:blackOrWhite)+string+color_RESET;
         // try removing trailig reset?
     }
@@ -43,7 +44,7 @@ public class ColorLogs {
         if(words.length>=2) {
             String target=words[1];
             escapeSequence=escapeSequence(target);
-            if(escapeSequence==null) { System.out.println(words[1]+" escape sequence is null!"); } //else System.out.println("escape sequence is: "+quote(escapeSequence));
+            if(escapeSequence==null) { Logging.mainLogger.info(words[1]+" escape sequence is null!"); } //else Logging.mainLogger.info("escape sequence is: "+quote(escapeSequence));
         }
         String coloredString=coloredString(string,escapeSequence);
         //coloredString+=quote(escapeSequence);
@@ -63,34 +64,34 @@ public class ColorLogs {
                 blackPair,whitePair,serverPair,modelPair};
         for(Pair<String,String> pair:pairs) map.put(pair.first,pair.second);
     }
-    public static void printMap() { for(String key:map.keySet()) System.out.println(key+":"+quote(map.get(key))); }
+    public static void printMap() { for(String key:map.keySet()) Logging.mainLogger.info(key+":"+quote(map.get(key))); }
     public static void test() {
         boolean foo=true;
         if(foo) {
-            System.out.println("color1:");
-            System.out.println(ColorLogs.coloredString("a nothing xx",ColorLogs.blackOrWhite));
-            System.out.println(ColorLogs.coloredString("a main xx",ColorLogs.blackOrWhite));
-            System.out.println(ColorLogs.coloredString("a game xx",ColorLogs.color_RED));
-            System.out.println(ColorLogs.coloredString("a recorder xx",ColorLogs.color_PURPLE));
-            System.out.println(ColorLogs.coloredString("a black xx",ColorLogs.color_GREEN));
-            System.out.println(ColorLogs.coloredString("a white xx",ColorLogs.color_CYAN));
-            System.out.println(ColorLogs.coloredString("a server xx",ColorLogs.color_BLUE));
-            System.out.println(ColorLogs.coloredString("a model xx",ColorLogs.color_YELLOW));
-            System.out.println("||||||||||");
-            System.out.println("color2");
+            Logging.mainLogger.info("color1:");
+            Logging.mainLogger.info(ColorLogs.coloredString("a nothing xx",ColorLogs.blackOrWhite));
+            Logging.mainLogger.info(ColorLogs.coloredString("a main xx",ColorLogs.blackOrWhite));
+            Logging.mainLogger.info(ColorLogs.coloredString("a game xx",ColorLogs.color_RED));
+            Logging.mainLogger.info(ColorLogs.coloredString("a recorder xx",ColorLogs.color_PURPLE));
+            Logging.mainLogger.info(ColorLogs.coloredString("a black xx",ColorLogs.color_GREEN));
+            Logging.mainLogger.info(ColorLogs.coloredString("a white xx",ColorLogs.color_CYAN));
+            Logging.mainLogger.info(ColorLogs.coloredString("a server xx",ColorLogs.color_BLUE));
+            Logging.mainLogger.info(ColorLogs.coloredString("a model xx",ColorLogs.color_YELLOW));
+            Logging.mainLogger.info("||||||||||");
+            Logging.mainLogger.info("color2");
             for(String string:strings) {
-                System.out.println(string+" "+color(string));
-                //System.out.println("reset: "+RESET);
+                Logging.mainLogger.info(string+" "+color(string));
+                //Logging.mainLogger.info("reset: "+RESET);
             }
-            System.out.println("color3");
+            Logging.mainLogger.info("color3");
             for(Entry<String,String> key:map.entrySet())
-                System.out.println(key.getKey()+" "+quote(key.getValue())+" "+key.getValue());
+                Logging.mainLogger.info(key.getKey()+" "+quote(key.getValue())+" "+key.getValue());
             return;
         }
     }
     public static void main(String[] args) { test(); }
     static {
-        //  System.out.println("start static init color logs");
+        //  Logging.mainLogger.info("start static init color logs");
     }
     public static final String color_RESET="\033[0m"; // Text Reset
     // Regular Colors

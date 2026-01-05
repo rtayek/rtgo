@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static utilities.Utilities.*;
 import java.io.File;
 import java.util.*;
@@ -40,7 +41,7 @@ public enum Parameters { // properties
     static void setCurrentValuesFromProperties(Properties properties) {
         for(Parameters parameter:values()) if(properties.containsKey(parameter.name())) {
             parameter.currentValue=parameter.fromString(properties.getProperty(parameter.name()));
-        } else System.out.println("can not find property: "+parameter.name()+" in "+properties);
+        } else Logging.mainLogger.info("can not find property: "+parameter.name()+" in "+properties);
     }
     static void setPropertiesFromCurrentValues(Properties properties) {
         for(Parameters parameter:values()) properties.setProperty(parameter.name(),parameter.currentValue.toString());
@@ -64,7 +65,7 @@ public enum Parameters { // properties
         else storeCurrentValuesInPropertiesFile(filename);
     }
     public static void main(String argv[]) {
-        for(Parameters parameters:Parameters.values()) System.out.println(parameters);
+        for(Parameters parameters:Parameters.values()) Logging.mainLogger.info(String.valueOf(parameters));
     }
     // they all seem to be new game parameters
     // investigate what this means. look around new game in model.
@@ -76,7 +77,7 @@ public enum Parameters { // properties
     public static final String propertiesFilename="tgo.properties";
     static {
         //Init.Main.main(null);
-        System.out.println("static init in parameters class.");
+        Logging.mainLogger.info("static init in parameters class.");
         initializeParameters(propertiesFilename); // move?
     }
     // these are the static values for the model lists?.

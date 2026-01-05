@@ -26,8 +26,8 @@ import utilities.MyTestWatcher;
         // can't test boards with holes without a lot of trouble.
         // maybe fragile. maybe make the list
         String expected="[(-1,0), (1,0), (0,-1), (0,1), (0,0), (-1,-1), (1,-1), (-1,1), (1,1)]";
-        //System.out.println(expected);
-        //System.out.println(actual);
+        //Logging.mainLogger.info(expected);
+        //Logging.mainLogger.info(actual);
         // extremely fragile, make a of points
         assertEquals(expected,actual.toString());
     }
@@ -39,7 +39,7 @@ import utilities.MyTestWatcher;
             boardImpl.setAt(width/2,depth/2,Stone.edge);
             boardImpl.setAt(width-1,depth-1,Stone.white);
             String string=boardImpl.toString();
-            Logging.mainLogger.info(string);
+            Logging.mainLogger.info(String.valueOf(string));
         }
     }
     int width=3,depth=5;

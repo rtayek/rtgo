@@ -1,15 +1,16 @@
 package iox;
+import io.Logging;
 import utilities.Et;
 public enum Init3 {
     first;
     Init3() { //
-        System.out.println(et);
+        Logging.mainLogger.info(String.valueOf(et));
         if(!once) {
             try {
                 // initializ hear
                 once=true;
             } catch(Exception e) {
-                System.out.println(e);
+                Logging.mainLogger.info(String.valueOf(e));
                 System.exit(1);
             }
         }

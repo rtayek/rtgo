@@ -28,7 +28,7 @@ public class LoadExistinGameTestCase {
         Game.loadExistinGame(file,recorder,game);
         assertTrue(game.areBoardsEqual());
         game.startGameThread();
-        System.out.println(recorder.role()+" "+black.role()+" "+white.role());
+        Logging.mainLogger.info(recorder.role()+" "+black.role()+" "+white.role());
     }
     @Test public void testLoadGame() throws InterruptedException { restoreGame(); }
     @Test public void test() throws InterruptedException {
@@ -43,7 +43,7 @@ public class LoadExistinGameTestCase {
         move=new Move2(MoveType.move,Stone.black,point);
         moveResult=white.move(move);
         assertEquals(MoveResult.legal,moveResult);
-        System.out.println(white);
+        Logging.mainLogger.info(String.valueOf(white));
         move=new Move2(MoveType.move,Stone.white,point);
 
         moveResult=white.move(move);

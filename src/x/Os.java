@@ -1,4 +1,5 @@
 package x;
+import io.Logging;
 import java.util.LinkedHashMap;
 import x.Os.O;
 enum E1 { e1, e11 }
@@ -21,15 +22,15 @@ public class Os extends LinkedHashMap<Enum<?>,O> {
         Os os=new Os() {
             {
                 add(E1.e1,new O(Integer.valueOf(42)));
-                System.out.println(get(E1.e1));
+                Logging.mainLogger.info(String.valueOf(get(E1.e1)));
                 add(E2.e2,new O(Double.valueOf(.5)));
-                System.out.println(get(E2.e2));
+                Logging.mainLogger.info(String.valueOf(get(E2.e2)));
                 add(Names.e1,new O(E1.e1));
-                System.out.println(get(Names.e1));
+                Logging.mainLogger.info(String.valueOf(get(Names.e1)));
                 add(Names.e2,new O(Names.e2));
-                System.out.println(get(Names.e2));
+                Logging.mainLogger.info(String.valueOf(get(Names.e2)));
             }
         };
-        System.out.println(os);
+        Logging.mainLogger.info(String.valueOf(os));
     }
 }

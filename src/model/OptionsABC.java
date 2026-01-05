@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static utilities.Utilities.*;
 import java.io.File;
 import java.util.*;
@@ -57,7 +58,7 @@ public class OptionsABC implements Persistance { // an instance of options.
     @Override public void setCurrentValuesFromProperties(Properties properties) {
         for(Option<?,?> option:options()) if(properties.containsKey(option.t.name())) {
             option.currentValue=option.fromString(properties.getProperty(option.t.name()));
-        } else System.out.println("can not find option: "+option.t.name()+" in "+properties);
+        } else Logging.mainLogger.info("can not find option: "+option.t.name()+" in "+properties);
     }
     @Override public void setPropertiesFromCurrentValues(Properties properties) {
         for(Option<?,?> option:options()) properties.setProperty(option.t.name(),option.currentValue.toString());
@@ -65,7 +66,7 @@ public class OptionsABC implements Persistance { // an instance of options.
     @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
         Properties properties=new Properties();
         load(properties,propertiesFilename);
-        System.out.println(properties);
+        Logging.mainLogger.info(String.valueOf(properties));
         setCurrentValuesFromProperties(properties);
     }
     @Override public void storeCurrentValuesInPropertiesFile(String filename) {

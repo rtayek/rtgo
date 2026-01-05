@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
@@ -90,19 +91,19 @@ public class Tee extends FilterOutputStream {
         logger.info("log after add syserr");
         //t.setOut();
         t.setErr();
-        System.out.println("out foo");
+        Logging.mainLogger.info("out foo");
         t.printStream.println("printstream foo");
-        System.err.println("err foo");
+        Logging.mainLogger.warning("err foo");
         logger.info("log after");
         t.restoreOut();
         t.restoreErr();
-        //System.out.println("baos: '"+byteArrayOutputStream+"'");
+        //Logging.mainLogger.info("baos: '"+byteArrayOutputStream+"'");
         out.println("after reset -------------------");
-        System.out.println("out foo");
+        Logging.mainLogger.info("out foo");
         t.printStream.println("printstream foo");
-        System.err.println("err foo");
+        Logging.mainLogger.warning("err foo");
         logger.info("log after2");
-        System.out.println("baos: '"+byteArrayOutputStream+"'");
+        Logging.mainLogger.info("baos: '"+byteArrayOutputStream+"'");
     }
     public static void main(String[] args) throws IOException,InterruptedException {
         // almost correct. looks like we need two tees to avoid duplicate output.
@@ -110,7 +111,7 @@ public class Tee extends FilterOutputStream {
         Logger logger=Logger.getLogger("frog");
         Logging.setupLogger(logger,new MyFormatter());
         Handler[] x=logger.getHandlers();
-        System.out.println(Arrays.asList(x));
+        Logging.mainLogger.info(String.valueOf(Arrays.asList(x)));
         if(false) oneTee(logger);
         else {
             PrintStream out=System.out;
@@ -121,22 +122,22 @@ public class Tee extends FilterOutputStream {
             Tee t2=new Tee(byteArrayOutputStream);
             t2.setErr();
             t2.prefix="T2 ";
-            System.out.println("out foo");
+            Logging.mainLogger.info("out foo");
             t.printStream.println("printstream foo");
-            System.err.println("err foo");
+            Logging.mainLogger.warning("err foo");
             logger.info("log after");
             t.flush();
             t2.flush();
             t.restoreOut();
             t2.restoreErr();
-            //System.out.println("baos: '"+byteArrayOutputStream+"'");
+            //Logging.mainLogger.info("baos: '"+byteArrayOutputStream+"'");
             //Thread.sleep(100);
             out.println("after reset -------------------");
-            System.out.println("out foo");
+            Logging.mainLogger.info("out foo");
             t2.printStream.println("printstream foo 2");
-            System.err.println("err foo");
+            Logging.mainLogger.warning("err foo");
             logger.info("log after2");
-            System.out.println("baos: '"+byteArrayOutputStream+"'");
+            Logging.mainLogger.info("baos: '"+byteArrayOutputStream+"'");
         }
     }
     boolean verbose;

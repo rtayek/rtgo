@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import java.io.File;
 import java.util.*;
 import org.junit.*;
@@ -39,10 +40,10 @@ import utilities.*;
         }
         if(false) {
             File[] files=someFiles(dir); // some files in dir. not recursive.
-            System.out.println("adding: "+Arrays.asList((Object[])(files))+" files.");
+            Logging.mainLogger.info("adding: "+Arrays.asList((Object[])(files))+" files.");
             List<Object> fileList=new ArrayList<>(Arrays.asList((Object[])(files)));
             for(File file:files) if(!file.exists()) {
-                System.out.println(file+" does not exist!");
+                Logging.mainLogger.info(file+" does not exist!");
                 fileList.remove(file);
             }
             objects.addAll(fileList);
@@ -53,7 +54,7 @@ import utilities.*;
             };
             objects.addAll(new ArrayList<>(Arrays.asList((Object[])(keys))));
         }
-        System.out.println(objects.size()+" keys");
+        Logging.mainLogger.info(objects.size()+" keys");
         return ParameterArray.parameterize(objects);
     }
     public SmallerParameterizedRoundTripTestCase(Object key) { this.key=key; watcher.key=key; }

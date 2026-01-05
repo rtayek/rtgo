@@ -1,4 +1,5 @@
 package utilities;
+import io.Logging;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.*;
@@ -26,7 +27,7 @@ class SingleJUnitTestRunner {
                 assertTrue(result.wasSuccessful());
             }
         } else {
-            System.out.println("usage: classNaame tesCaseClass#testMethod ...");
+            Logging.mainLogger.info("usage: classNaame tesCaseClass#testMethod ...");
         }
     }
 }

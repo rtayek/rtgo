@@ -18,7 +18,7 @@ import utilities.*;
     }
     @After public void tearDown() throws Exception {
         if(IOs.currentThreadIsTimeLimited()) {
-            System.out.println("not main! "+"'"+Thread.currentThread().getName());
+            Logging.mainLogger.info("not main! "+"'"+Thread.currentThread().getName());
             Logging.mainLogger.severe("not main! "+"'"+Thread.currentThread().getName());
         }
         game.stop();

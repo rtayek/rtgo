@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static io.Logging.parserLogger;
 import static org.junit.Assert.fail;
 import static sgf.Parser.restoreSgf;
@@ -22,7 +23,7 @@ import utilities.MyTestWatcher;
         fail=false;
         for(File file:files) try {
             boolean ok=SgfRoundTrip.roundTripTwice(IOs.toReader(file));
-            if(!ok) System.out.println(file+" fails!");
+            if(!ok) Logging.mainLogger.info(file+" fails!");
         } catch(Exception e) {
             parserLogger.warning(this+" caught: "+e);
         }
@@ -41,7 +42,7 @@ import utilities.MyTestWatcher;
             SgfNode games=restoreSgf(IOs.toReader(file));
             all.add(games);
         } catch(Exception e) {
-            System.out.println(this+" caught: "+e); //
+            Logging.mainLogger.info(this+" caught: "+e); //
         }
         System.setErr(old);
         parserLogger.warning(all.size()+" games in "+strange);

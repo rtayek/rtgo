@@ -13,15 +13,15 @@ public class Main extends MainGui {
         GraphicsDevice gd=GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int width=gd.getDisplayMode().getWidth();
         int height=gd.getDisplayMode().getHeight();
-        System.out.println(width+"x"+height);
-        Logging.mainLogger.info(model.toString());
+        Logging.mainLogger.info(width+"x"+height);
+        Logging.mainLogger.info(String.valueOf(model.toString()));
     }
     Color oppositeColor(Color color) { return new Color(~color.getRGB()); }
     Border oppositeBorder(Color color) { return BorderFactory.createLineBorder(oppositeColor(color),3); }
     void addLabel(JPanel jPanel) { // should be just something to show layout in th panel
         Color color=jPanel.getBackground();
         LayoutManager layoutManager=jPanel.getLayout();
-        System.out.println(layoutManager);
+        Logging.mainLogger.info(String.valueOf(layoutManager));
         JLabel jLabel=new JLabel("s n");
         jPanel.add(jLabel);
         JPanel small=new JPanel();

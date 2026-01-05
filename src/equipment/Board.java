@@ -187,9 +187,9 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
         Set<Point> points=Set.of(lL,lR,uL,uR);
         for(Point point:points) {
             Board lowerLeft=part(board,width,depth,point);
-            System.out.println(board);
-            System.out.println(lowerLeft);
-            System.out.println(point+" -----------------------");
+            Logging.mainLogger.info(String.valueOf(board));
+            Logging.mainLogger.info(String.valueOf(lowerLeft));
+            Logging.mainLogger.info(point+" -----------------------");
         }
     }
     public static void main(String[] args) throws FileNotFoundException {
@@ -206,20 +206,20 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
             Board board=model.board();
             List<Point> points=topology==Topology.diamond?points=Board.getPointsForDiamondRegion(width,depth)
                     :Shape.getPointsForRegion(width,depth,shape);
-            System.out.println(points.size()+" points.");
+            Logging.mainLogger.info(points.size()+" points.");
             int xMax=-1,yMax=-1;
             for(Point point:points) {
                 if(point.x>xMax) xMax=point.x;
                 if(point.y>yMax) yMax=point.y;
             }
-            System.out.println(xMax+"x"+yMax);
+            Logging.mainLogger.info(xMax+"x"+yMax);
             int i=0;
             for(Point point:points) {
-                System.out.println(i+" point: "+point);
-                if(!Stone.edge.equals(board.at(point))) System.out.println("bad");
+                Logging.mainLogger.info(i+" point: "+point);
+                if(!Stone.edge.equals(board.at(point))) Logging.mainLogger.info("bad");
                 ++i;
             }
-            System.out.println(model);
+            Logging.mainLogger.info(String.valueOf(model));
         }
     }
     Factory factory=BoardFactory.instance;
@@ -260,7 +260,7 @@ class BoardFactory implements Board.Factory {
     @Override public Board create(int n,Topology type) { return create(n,n,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology type) { return create(width,depth,type,Shape.normal); }
     @Override public Board create(int width,int depth,Topology topeology,Shape shape) {
-        //System.out.println("factory is crearing board.");
+        //Logging.mainLogger.info("factory is crearing board.");
         BoardImpl boardImpl=null;
         if(topeology.equals(Topology.diamond)) if(shape.equals(Shape.programmer)) {
             Logging.mainLogger.severe(topeology+" "+shape+"is illegal combination");

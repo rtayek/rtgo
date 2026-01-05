@@ -1,8 +1,9 @@
 package controller;
+import io.Logging;
 import java.util.EnumSet;
 import equipment.Stone;
-import io.IOs;
 import model.Model;
+import model.ModelIo;
 import sgf.Parser;
 // maybe move all of the gtp stuff into it's own package?
 public enum Command { // should implement some interface? (probably)
@@ -54,20 +55,20 @@ public enum Command { // should implement some interface? (probably)
     public static void doTGOSend(String key) {
         String expectedSgf=Parser.getSgfData(key);
         Model original=new Model();
-        original.restore(IOs.toReader(expectedSgf));
+        ModelIo.restore(original,expectedSgf);
         original.bottom();
         String command=Command.tgo_send_sgf.name();
         String response=null;
         GTPBackEnd backend=new GTPBackEnd(command,original);
         backend.runBackend(true);
         response=backend.out.toString();
-        System.out.println("1 "+response);
+        Logging.mainLogger.info("1 "+response);
         // why am i doing this twice?
         backend=new GTPBackEnd(command,original); // this is a new one?
         // yes, because unBackend() is a one-shot.
         String response2=backend.runCommands(true);
-        System.out.println("2 "+response);
-        if(!response.equals(response2)) System.out.println("fail!");
+        Logging.mainLogger.info("2 "+response);
+        if(!response.equals(response2)) Logging.mainLogger.info("fail!");
     }
     public final int arguments; // maybe have -1 mean many?
     private final String sampleArguments;

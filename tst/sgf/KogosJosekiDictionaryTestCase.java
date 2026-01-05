@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static io.Logging.parserLogger;
 import static org.junit.Assert.assertTrue;
 import java.io.File;
@@ -16,7 +17,7 @@ import sgf.combine.Combine;
         for(String filename:filenames) try {
             File file=new File(Combine.pathToHere,filename);
             boolean ok=SgfRoundTrip.roundTripTwice(IOs.toReader(file));
-            System.out.println(file+" fails!");
+            Logging.mainLogger.info(file+" fails!");
             fail|=!ok;
         } catch(Exception e) {
             parserLogger.warning(this+" caught: "+e);

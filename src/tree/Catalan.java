@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import java.util.*;
 import tree.G2.Generator;
 import utilities.Iterators.Longs;
@@ -27,27 +28,27 @@ public class Catalan {
     public static void main(String[] args) {
         for(int nodes=0;nodes<=maxNodes;++nodes) {
             System.gc();
-            System.out.println("nodes: "+nodes);
+            Logging.mainLogger.info("nodes: "+nodes);
             Node.ids=0;
             Iterator<Long> iterator=new Longs();
             List<Node<Long>> trees=Generator.one(nodes,iterator,true);
-            //System.out.println("trees: "+trees);
-            //System.out.println("trees2: "+trees2);
-            //System.out.println(nodes+" nodes. has "+trees.size()+" trees.");
-            //System.out.println(nodes+" nodes. has "+trees2.size()+" trees2.");
+            //Logging.mainLogger.info("trees: "+trees);
+            //Logging.mainLogger.info("trees2: "+trees2);
+            //Logging.mainLogger.info(nodes+" nodes. has "+trees.size()+" trees.");
+            //Logging.mainLogger.info(nodes+" nodes. has "+trees2.size()+" trees2.");
             if(trees.size()!=catalans[nodes]) {
-                System.out.println(trees.size()+" trees.size()!=catalans["+nodes+"]");
-            } else System.out.println(trees.size()+" trees.");
+                Logging.mainLogger.info(trees.size()+" trees.size()!=catalans["+nodes+"]");
+            } else Logging.mainLogger.info(trees.size()+" trees.");
             int i=0;
             for(Node<Long> node:trees) {
                 if(node!=null)
-                    if(RedBean.encoded.equals(node.encoded)) System.out.println("node: "+nodes+", tree: "+i+": "+node);
+                    if(RedBean.encoded.equals(node.encoded)) Logging.mainLogger.info("node: "+nodes+", tree: "+i+": "+node);
                 ++i;
             }
-            //System.out.println("|||||||");
-            System.out.println("end of nodes: "+nodes);
+            //Logging.mainLogger.info("|||||||");
+            Logging.mainLogger.info("end of nodes: "+nodes);
         }
-        System.out.println(catalans.length+" catalans.");
+        Logging.mainLogger.info(catalans.length+" catalans.");
     }
     static final int maxNodes=13;
     public static long[] catalans=new long[] {1,1,2,5,14,42,132,429,1430,4862,16796,58786,208012,742900,2674440,9694845,

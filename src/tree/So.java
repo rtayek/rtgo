@@ -1,4 +1,5 @@
 package tree;
+import io.Logging;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import utilities.Holder;
@@ -47,14 +48,14 @@ public class So {
     }
     static public void print(String prefix,Node node,boolean isLeft) {
         if(node!=null) {
-            System.out.println(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
+            Logging.mainLogger.info(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
             print(prefix+(isLeft?"|   ":"    "),node.left,true);
             print(prefix+(isLeft?"|   ":"    "),node.right,false);
         }
     }
     public static void print(String prefi,Node node) {
         if(node!=null) print(prefi,node,false);
-        else System.out.println("0");
+        else Logging.mainLogger.info("0");
     }
     static class MyConsumer implements Consumer<Node> {
         @Override public void accept(Node node) { //
@@ -98,14 +99,14 @@ public class So {
         makeTrees();
         MyConsumer c2=new MyConsumer();
         for(int nodes=0;nodes<all.length;++nodes) {
-            System.out.println("trees with "+nodes+" nodes.");
+            Logging.mainLogger.info("trees with "+nodes+" nodes.");
             Node[] trees=all[nodes];
             for(int i=0;i<trees.length;++i) {
-                System.out.println("tree "+(i+1)+":");
-                System.out.println("\toriginal:");
+                Logging.mainLogger.info("tree "+(i+1)+":");
+                Logging.mainLogger.info("\toriginal:");
                 Node node=trees[i];
                 print("\t\t",node);
-                System.out.println("\tcopy:");
+                Logging.mainLogger.info("\tcopy:");
                 Node copy=Node.copy(node);
                 print("\t\t",copy);
                 //node.postorder(c2);

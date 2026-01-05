@@ -30,7 +30,7 @@ import utilities.*;
         game=goServer.setupRemoteGameBackEnds(port);
         assertNotNull("no game from server!",game);
         GTPBackEnd.sleep2(2); // try to find out why this is necessary.
-        System.out.println("waiting: "+game.recorderFixture.backEnd.isWaitingForMove());
+        Logging.mainLogger.info("waiting: "+game.recorderFixture.backEnd.isWaitingForMove());
         assertNotNull("black board",game.recorderFixture.backEnd.model.board());
         width=game.recorderFixture.backEnd.model.board().width();
         depth=game.recorderFixture.backEnd.model.board().depth();
@@ -44,12 +44,12 @@ import utilities.*;
     @Test() public void testPlayZeroMoves() throws Exception {
         //printStuff(game);
         //game.blackFixture.backEnd.waitUntilItIsTmeToMove(); // was uncommented 1/5/23
-        System.out.println("exit testPlayZeroMoves()");
+        Logging.mainLogger.info("exit testPlayZeroMoves()");
     }
     @Test() public void testPlayOneMove() throws Exception {
         printStuff(game);
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
-        System.out.println("exit testPlayOneMove()");
+        Logging.mainLogger.info("exit testPlayOneMove()");
     }
     @Test() public void testPlayTwoMoves() throws Exception {
         game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));

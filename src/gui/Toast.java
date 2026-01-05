@@ -2,6 +2,7 @@ package gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
+import io.Logging;
 import javax.swing.*;
 public class Toast extends JFrame {
     public Toast(final String message) {
@@ -30,7 +31,7 @@ public class Toast extends JFrame {
             // set the visibility to false
             setVisible(false);
         } catch(Exception e) {
-            System.out.println(e.getMessage());
+            Logging.mainLogger.info(String.valueOf(e.getMessage()));
         }
     }
     public static void toast(String message) {

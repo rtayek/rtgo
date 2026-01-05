@@ -29,6 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package converterproject;
+import io.Logging;
 import java.awt.*;
 /*
  * A application that requires the following files:
@@ -100,21 +101,21 @@ public class Converter {
             } else if(LOOKANDFEEL.equals("GTK+")) { //new in 1.4.2
                 lookAndFeel="com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
             } else {
-                System.err.println("Unexpected value of LOOKANDFEEL specified: "+LOOKANDFEEL);
+                Logging.mainLogger.warning("Unexpected value of LOOKANDFEEL specified: "+LOOKANDFEEL);
                 lookAndFeel=UIManager.getCrossPlatformLookAndFeelClassName();
             }
             try {
                 UIManager.setLookAndFeel(lookAndFeel);
             } catch(ClassNotFoundException e) {
-                System.err.println("Couldn't find class_ for specified look and feel:"+lookAndFeel);
-                System.err.println("Did you include the L&F library in the classpath?");
-                System.err.println("Using the default look and feel.");
+                Logging.mainLogger.warning("Couldn't find class_ for specified look and feel:"+lookAndFeel);
+                Logging.mainLogger.warning("Did you include the L&F library in the classpath?");
+                Logging.mainLogger.warning("Using the default look and feel.");
             } catch(UnsupportedLookAndFeelException e) {
-                System.err.println("Can't use the specified look and feel ("+lookAndFeel+") on this platform.");
-                System.err.println("Using the default look and feel.");
+                Logging.mainLogger.warning("Can't use the specified look and feel ("+lookAndFeel+") on this platform.");
+                Logging.mainLogger.warning("Using the default look and feel.");
             } catch(Exception e) {
-                System.err.println("Couldn't get specified look and feel ("+lookAndFeel+"), for some reason.");
-                System.err.println("Using the default look and feel.");
+                Logging.mainLogger.warning("Couldn't get specified look and feel ("+lookAndFeel+"), for some reason.");
+                Logging.mainLogger.warning("Using the default look and feel.");
                 e.printStackTrace();
             }
         }

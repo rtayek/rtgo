@@ -22,9 +22,9 @@ class SgfPrintAcceptor extends SgfAcceptorImpl {
         if(node==null) return;
         // this feels wrong. maybe visit() should do the work
         // maybe not, maybe the parameter should be the visitor.
-        System.out.print("accepting: "+node+" "+node.sgfProperties.size()+" properties. ");
-        for(SgfProperty property:node.sgfProperties) { System.out.print(property.p().getClass().getName()+" "); }
-        System.out.println();
+        Logging.mainLogger.info("accepting: "+node+" "+node.sgfProperties.size()+" properties. ");
+        for(SgfProperty property:node.sgfProperties) { Logging.mainLogger.info(property.p().getClass().getName()+" "); }
+        Logging.mainLogger.info("");
     }
 }
 class SgfNoOpAcceptor extends SgfAcceptorImpl { @Override public void accept(SgfNode node) {} }
@@ -37,7 +37,7 @@ class SgfMovesPath extends SgfAcceptorImpl {
             moves.add(sgfNode);
             i++;
         }
-        if(!isAMove) System.out.println(sgfNode+" is not a move.");
+        if(!isAMove) Logging.mainLogger.info(sgfNode+" is not a move.");
     }
     int i;
     final ArrayList<SgfNode> moves=new ArrayList<>();
@@ -115,11 +115,11 @@ class Traverser {
         SgfAcceptor sgfAcceptor=new SgfPrintAcceptor();
         Traverser traverser=new Traverser(sgfAcceptor);
         File dir=new File(sgfPath);
-        System.out.println("||||");
+        Logging.mainLogger.info("||||");
         File file=new File(dir,"1635215-056-rtayek-Sighris.sgf");
         SgfNode games=restoreSgf(IOs.toReader(file));
         traverser.visit(games);
-        System.out.println("||||");
+        Logging.mainLogger.info("||||");
         String sgfString=getSgfData("oneMoveAtA1");
         games=restoreSgf(IOs.toReader(sgfString));
         traverser.visit(games);

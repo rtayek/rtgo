@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
 import java.util.*;
@@ -62,14 +63,14 @@ import utilities.*;
 		// PrintStream x=System.out;
 		// System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
 		if(hasMultipleGames) {
-			// System.out.println(originalSgf);
-			// System.out.println("list1: "+list1);
+			// Logging.mainLogger.info(originalSgf);
+			// Logging.mainLogger.info("list1: "+list1);
 		}
 		for(MNode node1:list1) //
 			for(MNode node2:list2) //
 				if(!node1.equals(node2)) { //
 					List<MNode> list=root.lca(node1,node2);
-					// System.out.println(node1+" "+node2+" "+list);
+					// Logging.mainLogger.info(node1+" "+node2+" "+list);
 					assertNotNull(key.toString(),list);
 				}
 		// System.setOut(x);

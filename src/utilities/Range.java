@@ -1,4 +1,5 @@
 package utilities;
+import io.Logging;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -33,16 +34,16 @@ public class Range<T extends Comparable<T>> {
     public static void main(String[] args) {
         // make this a test!
         Range<Integer> ir=new Range<>(0,10);
-        System.out.println(ir.contains(-1));
-        System.out.println(ir.contains(0));
-        System.out.println(ir.contains(1));
-        System.out.println(ir.contains(10));
-        System.out.println(ir.contains(11));
+        Logging.mainLogger.info(String.valueOf(ir.contains(-1)));
+        Logging.mainLogger.info(String.valueOf(ir.contains(0)));
+        Logging.mainLogger.info(String.valueOf(ir.contains(1)));
+        Logging.mainLogger.info(String.valueOf(ir.contains(10)));
+        Logging.mainLogger.info(String.valueOf(ir.contains(11)));
         Range<L> er=new Range<>(L.b,L.e);
-        System.out.println(er.contains(L.a));
-        System.out.println(er.contains(L.b));
-        System.out.println(er.contains(L.c));
-        System.out.println(er.contains(L.e));
+        Logging.mainLogger.info(String.valueOf(er.contains(L.a)));
+        Logging.mainLogger.info(String.valueOf(er.contains(L.b)));
+        Logging.mainLogger.info(String.valueOf(er.contains(L.c)));
+        Logging.mainLogger.info(String.valueOf(er.contains(L.e)));
     }
     final T min,max;
     static final Comparator<Number> numberComparator=(a,b)->Double.compare(a.doubleValue(),b.doubleValue());

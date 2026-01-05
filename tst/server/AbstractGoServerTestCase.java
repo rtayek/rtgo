@@ -40,7 +40,7 @@ public abstract class AbstractGoServerTestCase {
         game=goServer.setupRemoteGameBackEnds(port); // and this waits for a game
         assertNotNull("no game from server!",game);
         GTPBackEnd.sleep2(1); // try to find out why this is necessary.
-        System.out.println("waiting: "+game.recorderFixture.backEnd.isWaitingForMove());
+        Logging.mainLogger.info("waiting: "+game.recorderFixture.backEnd.isWaitingForMove());
         assertNotNull("black board",game.recorderFixture.backEnd.model.board());
         width=game.recorderFixture.backEnd.model.board().width();
         depth=game.recorderFixture.backEnd.model.board().depth();

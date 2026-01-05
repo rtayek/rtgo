@@ -1,4 +1,5 @@
 package simplegui;
+import io.Logging;
 import java.util.Observable;
 public class Model extends Observable {
     public Model() {}
@@ -13,7 +14,7 @@ public class Model extends Observable {
     @Override public String toString() { return "Model [temperature="+temperature+", humidity="+humidity+"]"; }
     public static void main(String[] args) throws Exception {
         Model model=new Model();
-        System.out.println(model.toString());
+        Logging.mainLogger.info(String.valueOf(model.toString()));
     }
     double temperature,humidity;
 }

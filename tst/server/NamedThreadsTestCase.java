@@ -64,7 +64,7 @@ public class NamedThreadsTestCase {
         IOs.myClose(null,null,null,thread1,"thread 1",r1);
         //Thread.sleep(10); //
         //print3();
-        //System.out.println(namedThreadGroup.activeNamedThreads().size());
+        //Logging.mainLogger.info(namedThreadGroup.activeNamedThreads().size());
         assertTrue(namedThreadGroup.activeNamedThreads().size()==0);
     }
     @Test() public void testUnamedThread() throws InterruptedException {

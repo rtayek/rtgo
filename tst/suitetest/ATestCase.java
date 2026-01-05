@@ -1,4 +1,5 @@
 package suitetest;
+import io.Logging;
 import static io.Init.first;
 import org.junit.*;
 import org.junit.runner.*;
@@ -15,14 +16,14 @@ public class ATestCase {
                 CTestCase.class}) public static class AllTests2Suite implements I {
             @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
             {
-                System.out.println("suite");
+                Logging.mainLogger.info("suite");
             }
         }
     }
     // [{ExactMatcher:fDisplayName=main(java.lang.String[])], {LeadingIdentifierMatcher:fClassName=suitetest.ATestCase,fLeadingIdentifier=main]] from org.junit.internal.requests.ClassRequest@574caa3f
     @Test public void test() {}
     public static void main(String[] args) {
-        System.out.println(Init.first);
+        Logging.mainLogger.info(String.valueOf(Init.first));
         first.suiteControls=true;
         JUnitCore jUnitCore=new JUnitCore();
         jUnitCore.run(AllTests2Suite.class);

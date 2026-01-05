@@ -76,16 +76,16 @@ public class Coordinates {
     public static void main(String[] args) { // explain the coordinate systems
         int n=Board.standard;
         Point point=new Point(0,0);
-        System.out.println("board coordinate system is right handed, origin is lower left: "+point);
+        Logging.mainLogger.info("board coordinate system is right handed, origin is lower left: "+point);
         String noI=toGtpCoordinateSystem(point,n,n);
-        System.out.println("noI/gtp coordinate system is right handed, origin is lower left: "+noI);
+        Logging.mainLogger.info("noI/gtp coordinate system is right handed, origin is lower left: "+noI);
         String sgf=toSgfCoordinates(point,n);
         String sgfOrigin=toSgfCoordinates(new Point(0,n-1),n);
-        System.out.println("sgf coordinate system is left handed, origin is upper left: "+sgfOrigin);
+        Logging.mainLogger.info("sgf coordinate system is left handed, origin is upper left: "+sgfOrigin);
         Point screenOrigin=new Point(0,0);
-        System.out.println("screen coordinate system is left handed, origin is upper left: "+screenOrigin);
+        Logging.mainLogger.info("screen coordinate system is left handed, origin is upper left: "+screenOrigin);
         Point2D.Float screen=toBoardCoordinates(screenOrigin,new Point(0,0),new Point(10,10)/*no aspect ratio!*/,n);
-        System.out.println(
+        Logging.mainLogger.info(
                 "so lower left corner is: "+point+" (board),  "+noI+" (gtp), "+sgf+" (sgf), "+screen+" (screen)");
     }
     public static final byte factor='A'-'a'-26;

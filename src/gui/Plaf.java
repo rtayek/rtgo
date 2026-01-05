@@ -3,7 +3,7 @@ import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import io.Logging;
 import utilities.MainGui;
 public class Plaf extends MainGui {
     public static String getLookAndFeelClassName(String nameSnippet) {
@@ -13,11 +13,11 @@ public class Plaf extends MainGui {
     }
     void foo() {
         try {
-            JFileChooser fileChoser=new JFileChooser(lastLoadDirectory!=null?lastLoadDirectory:new File("."));
-            fileChoser.setFileFilter(new FileNameExtensionFilter("SGF file","sgf"));
-            if(fileChoser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
-                File file=fileChoser.getSelectedFile();
-                System.out.println(file);
+            GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(null,lastLoadDirectory);
+            if(selection!=null) {
+                lastOpenFile=selection.file();
+                lastLoadDirectory=selection.directory();
+                Logging.mainLogger.info(String.valueOf(lastOpenFile));
             }
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -25,7 +25,7 @@ public class Plaf extends MainGui {
         }
     }
     public static void setPlaf(LookAndFeelInfo plaf_) {
-        System.out.println(plaf_);
+        Logging.mainLogger.info(String.valueOf(plaf_));
         try {
             UIManager.setLookAndFeel(plaf_.getClassName());
         } catch(ClassNotFoundException|InstantiationException|IllegalAccessException
@@ -41,10 +41,10 @@ public class Plaf extends MainGui {
     }
     public static void main(String[] args) {
         LookAndFeelInfo[] plafs=UIManager.getInstalledLookAndFeels();
-        System.out.println(Arrays.asList(plafs));
+        Logging.mainLogger.info(String.valueOf(Arrays.asList(plafs)));
         if(true) { run(plafs[2]); return; }
         for(LookAndFeelInfo plaf_:plafs) {
-            System.out.println(plaf_);
+            Logging.mainLogger.info(String.valueOf(plaf_));
             run(plaf_);
         }
     }

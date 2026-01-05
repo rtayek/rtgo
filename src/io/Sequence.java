@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import java.util.*;
 import server.NamedThreadGroup;
 enum Sequence {
@@ -73,7 +74,7 @@ enum Sequence {
         SortedMap<Integer,String> indexToKey2=new TreeMap<>();
         for(String key:map.keySet()) if(string.contains(key)) { indexToKey2.put(string.indexOf(key),key); }
         if(indexToKey2.size()>0) {
-            if(indexToKey2.size()>1) System.out.println(indexToKey2);
+            if(indexToKey2.size()>1) Logging.mainLogger.info(String.valueOf(indexToKey2));
             String key=indexToKey2.get(indexToKey2.firstKey());
             return map.get(key);
         } else return blackOrWhite;
@@ -84,13 +85,13 @@ enum Sequence {
     }
     static String color(Sequence sequence) { return sequence.coloredString(ColorLogs.quote(sequence.sequence)); }
     public static void main(String[] args) {
-        System.out.println("first: "+Init.first);
-        System.out.println("foreground"+" "+ColorLogs.quote(blackOrWhite.sequence)+" "+color(blackOrWhite));
+        Logging.mainLogger.info("first: "+Init.first);
+        Logging.mainLogger.info("foreground"+" "+ColorLogs.quote(blackOrWhite.sequence)+" "+color(blackOrWhite));
         for(String key:map.keySet()) {
             Sequence sequence=map.get(key);
-            System.out.println(key+":"+ColorLogs.quote(blackOrWhite.sequence)+' '+color(sequence));
+            Logging.mainLogger.info(key+":"+ColorLogs.quote(blackOrWhite.sequence)+' '+color(sequence));
         }
-        System.out.println("foreground"+" "+ColorLogs.quote(blackOrWhite.sequence)+" "+color(blackOrWhite));
+        Logging.mainLogger.info("foreground"+" "+ColorLogs.quote(blackOrWhite.sequence)+" "+color(blackOrWhite));
     }
     final String sequence;
     static Sequence blackOrWhite=white; // depends on eclipse theme or console foreground.

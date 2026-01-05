@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static sgf.Parser.getSgfData;
 import static sgf.Parser.sgfDataKeySet;
 import static sgf.Parser.sgfFiles;
@@ -17,34 +18,34 @@ public class SgfData {
 		Set<Object> objects=new LinkedHashSet<>();
 
 		Collection<Object> staticSgfData=sgfDataKeySet();
-		System.out.println(staticSgfData.size()+" static sgf data keys:");
+		Logging.mainLogger.info(staticSgfData.size()+" static sgf data keys:");
 		objects.addAll(staticSgfData);
 
 		Collection<Object> files=sgfFiles();
-		System.out.println(files.size()+" sgf files.");
+		Logging.mainLogger.info(files.size()+" sgf files.");
 		objects.addAll(files);
 
 		Set<File> badSgfFiles=Parser.badSgfFiles;
-		System.out.println(badSgfFiles.size()+" bad sgf files.");
+		Logging.mainLogger.info(badSgfFiles.size()+" bad sgf files.");
 		objects.addAll(badSgfFiles);
 
 		String sgfDir=Parser.sgfPath;
 		Collection<Object> sgf=sgfFiles(sgfDir);
-		System.out.println(sgf.size()+" in "+sgfDir);
+		Logging.mainLogger.info(sgf.size()+" in "+sgfDir);
 		objects.addAll(sgf);
 		
 		String ogsDir=Parser.ogsPath;
 		Collection<Object> ogs=sgfFiles(ogsDir);
-		System.out.println(ogs.size()+" in "+ogsDir);
+		Logging.mainLogger.info(ogs.size()+" in "+ogsDir);
 		objects.addAll(ogs);
 
 		String strangeDir=Parser.strangePath;
 		Collection<Object> strange=sgfFiles(strangeDir);
-		System.out.println(strange.size()+" in "+strangeDir);
+		Logging.mainLogger.info(strange.size()+" in "+strangeDir);
 		objects.addAll(strange);
 
 		// strangesgf
-		System.out.println(objects.size()+" total objects:");
+		Logging.mainLogger.info(objects.size()+" total objects:");
 
 	}
 }

@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static io.IOs.noIndent;
 import static org.junit.Assert.assertEquals;
 import java.io.*;
@@ -20,26 +21,26 @@ public class SimpleParserTestCase {
         return node;
     }
     void print(SgfNode node) {
-        System.out.println("saved sgf node "+SgfTestIo.save(node,noIndent));
-        System.out.println("----------------");
+        Logging.mainLogger.info("saved sgf node "+SgfTestIo.save(node,noIndent));
+        Logging.mainLogger.info("----------------");
     }
     SgfNode sample() { // maybe use redbean example?
         SgfNode root=comment("root",null,null);
-        System.out.print("node root: "+root+" ");
+        Logging.mainLogger.info("node root: "+root+" ");
         print(root);
         SgfNode left1=comment("left1",root,null);
-        System.out.print("node left1: "+left1+" ");
+        Logging.mainLogger.info("node left1: "+left1+" ");
         print(root);
         SgfNode right1=comment("right1",null,root);
-        System.out.print("node right; "+right1+" ");
+        Logging.mainLogger.info("node right; "+right1+" ");
         print(root);
         SgfNode left1Left2=comment("left1.left2",left1,null);
-        System.out.print("node left1Left2: "+left1Left2+" ");
+        Logging.mainLogger.info("node left1Left2: "+left1Left2+" ");
         print(root);
         SgfNode left1right1=comment("left1.right1",null,left1);
-        System.out.print("node left1.right1: "+left1right1+" ");
+        Logging.mainLogger.info("node left1.right1: "+left1right1+" ");
         print(root);
-        System.out.println("node at end");
+        Logging.mainLogger.info("node at end");
         return root;
     }
     @Test public void testSample() {

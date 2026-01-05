@@ -10,6 +10,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import io.*;
 import io.IOs;
 import model.Model;
+import model.ModelIo;
 import utilities.*;
 public class Main extends MainGui implements ActionListener,ComponentListener { // this is the main ui.
     public Main(MyJApplet applet,Model model,TextView textView) {
@@ -21,8 +22,8 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
             frame.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                     textView.teardownTeest();
-                    System.out.println("closing");
-                    System.err.println("closing");
+                    Logging.mainLogger.info("closing");
+                    Logging.mainLogger.warning("closing");
                 }
             });
         }
@@ -40,7 +41,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         // if this was a remote gui
         // how would we do this?
         //
-        System.out.println("enter addContent().");
+        Logging.mainLogger.info("enter addContent().");
         setLayout(new BorderLayout());
         if(frame!=null) frame.setResizable(true);
         else;// ???
@@ -78,14 +79,14 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         south.setBackground(Color.blue);
         add(south,BorderLayout.PAGE_END);
         Container container=frame().getContentPane();
-        //System.out.println("main frame contains");
+        //Logging.mainLogger.info("main frame contains");
         //listComponentsIn(container,null,false);
-        System.out.println("model for mediator: "+model.root());
+        Logging.mainLogger.info("model for mediator: "+model.root());
         mediator=new Mediator(model,this,textView);
-        System.out.println("exit addContent().");
+        Logging.mainLogger.info("exit addContent().");
     }
     public static void addTextViewOutputStreams(TextView textView) {
-        System.out.println("add text view");
+        Logging.mainLogger.info("add text view");
         Logging.mainLogger.info("before tee");
         Tee tee=new Tee(System.out); // keep around so we can untee?
         tee.addOutputStream(textView.taOutputStream);
@@ -120,7 +121,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
     Consumer<Component> consumer=(c)->darken(c);
     public static void darken(Container parent) { // over complicated. clean up later.
         for(Component c:parent.getComponents()) {
-            //System.out.println(c.getClass().getSimpleName());
+            //Logging.mainLogger.info(c.getClass().getSimpleName());
             darken(c);
             if(c instanceof Container) darken((Container)c);
         }
@@ -130,7 +131,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         if(component!=null) {
             String name=component.getName();
             String className=component.getClass().getSimpleName();
-            if(component instanceof Container||all) System.out.println(indent.indent()+" "+name+" "+className);
+            if(component instanceof Container||all) Logging.mainLogger.info(indent.indent()+" "+name+" "+className);
             if(component instanceof Container) {
                 Container container=(Container)component;
                 for(Component c:container.getComponents()) {
@@ -146,15 +147,15 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         TextView textView=new TextView();
         TextView.createAndShowGui(textView);
         textView.setupTees();
-        System.out.println("out foo");
+        Logging.mainLogger.info("out foo");
         textView.tee.printStream.println("printstream foo");
-        System.err.println("err foo");
+        Logging.mainLogger.warning("err foo");
         textView.tee2.printStream.println("printstream 2 foo");
         Model model=new Model();
         if(startWithFile!=null) {
-            System.out.println("restoring: "+startWithFile);
-            model.restore(IOs.toReader(startWithFile));
-            System.out.println("afer restore board is: "+model.board());
+            Logging.mainLogger.info("restoring: "+startWithFile);
+            ModelIo.restore(model,startWithFile);
+            Logging.mainLogger.info("afer restore board is: "+model.board());
         }
         main=new Main(null,model,useTextView?textView:null);
         main.moveToLocationFor(name);
@@ -166,20 +167,20 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
             point.y+=100;
             main.textView.frame.setLocation(point);
             String title=main.textView.frame.getTitle();
-            System.out.println("old tv: "+title);
+            Logging.mainLogger.info("old tv: "+title);
             title+=" "+name;
-            System.out.println("new tv: "+title);
-            System.out.println(title);
+            Logging.mainLogger.info("new tv: "+title);
+            Logging.mainLogger.info(String.valueOf(title));
             main.textView.frame.setTitle(main.textView.frame.getTitle()+" "+name);
         }
-        System.out.println("main constructed.");
+        Logging.mainLogger.info("main constructed.");
         mains.add(main);
         if(true) try {
             Thread.sleep(500);
         } catch(InterruptedException e) {
             e.printStackTrace();
         }
-        Consumer<String> c=(x)->System.out.println(x.toLowerCase());
+        Consumer<String> c=(x)->Logging.mainLogger.info(String.valueOf(x.toLowerCase()));
         if(darkef) Main.darken(main.frame.getContentPane());
         Container container=main.frame().getContentPane();
         //listComponentsIn(container,null,false);
@@ -220,7 +221,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         }
     }
     public static void setPlaf(LookAndFeelInfo plaf_) {
-        System.out.println(plaf_);
+        Logging.mainLogger.info(String.valueOf(plaf_));
         try {
             UIManager.setLookAndFeel(plaf_.getClassName());
         } catch(ClassNotFoundException|InstantiationException|IllegalAccessException
@@ -229,32 +230,32 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
         }
     }
     public static void main(String[] args) {
-        System.out.println(Arrays.asList(args));
+        Logging.mainLogger.info(String.valueOf(Arrays.asList(args)));
         LookAndFeelInfo[] plafs=UIManager.getInstalledLookAndFeels();
-        System.out.println(Arrays.asList(plafs));
+        Logging.mainLogger.info(String.valueOf(Arrays.asList(plafs)));
         setPlaf(plafs[2]);
         // add a panel somewhere to control logging
         // add a bunch of frames to control everything.
         Init.first.twice();
-        System.out.println("1 Main.main()");
+        Logging.mainLogger.info("1 Main.main()");
         Map<String,Object> map=MainGetOpt.processArguments(args);
-        System.out.println(map);
+        Logging.mainLogger.info(String.valueOf(map));
         // use arguments from map instead of below.
         String name=(String)map.get("name");
-        System.out.println("name: "+name);
+        Logging.mainLogger.info("name: "+name);
         if(name!=null) { Main main=run(name); return; }
         Main maink=null;
         if(!run3) maink=run("one");
         else maink=run("black");
-        System.out.println("black: "+maink.frame.getTitle());
+        Logging.mainLogger.info("black: "+maink.frame.getTitle());
         if(run3) {
             Main white=run("white");
-            System.out.println("white: "+white.frame.getTitle());
+            Logging.mainLogger.info("white: "+white.frame.getTitle());
             //Main observer=run("observer");
-            //System.out.println("observer: "+observer.frame.getTitle());
+            //Logging.mainLogger.info("observer: "+observer.frame.getTitle());
         }
-        for(Main main:mains) { System.out.println(main.frame.getTitle()); }
-        System.out.println("exit Main.main() ---------------");
+        for(Main main:mains) { Logging.mainLogger.info(String.valueOf(main.frame.getTitle())); }
+        Logging.mainLogger.info("exit Main.main() ---------------");
     }
     JPanel north,south,east,west;
     final Model model;
@@ -283,7 +284,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener { 
     }
     @Override public void componentMoved(ComponentEvent e) { //
         Point p=frame().getLocation();
-        if(frame().isVisible()) { Point pScteen=frame().getLocationOnScreen(); System.out.println(p+" "+pScteen); }
+        if(frame().isVisible()) { Point pScteen=frame().getLocationOnScreen(); Logging.mainLogger.info(p+" "+pScteen); }
     }
     @Override public void componentShown(ComponentEvent e) { //
     }

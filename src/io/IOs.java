@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import static io.Logging.*;
 import static server.NamedThreadGroup.name;
 import java.io.*;
@@ -33,7 +34,7 @@ public class IOs {
             } catch(Exception e) {}
         }
         void callBlockingReadLoop() {
-            Consumer<String> consumer=(x)->System.out.println(x);
+            Consumer<String> consumer=(x)->Logging.mainLogger.info(String.valueOf(x));
             blockingReadLoopIdea(consumer);
         }
         BufferedReader in;
@@ -124,7 +125,7 @@ public class IOs {
                     if(back==null) throw new RuntimeException("back is null!");
                     serverSocket.close();
                 } catch(Exception e) {
-                    System.out.println("in create(), caught: "+e);
+                    Logging.mainLogger.info("in create(), caught: "+e);
                     serverLogger.warning("in create(), caught: "+e);
                     throw new RuntimeException("create can not connect!");
                 } finally {
@@ -191,7 +192,7 @@ public class IOs {
     }
     public static String toString(Thread thread) {
         if(thread!=null) if(thread.getName().contains(timeLimitedThreadName)) {
-            System.out.println(thread.getName());
+            Logging.mainLogger.info(String.valueOf(thread.getName()));
             mainLogger.severe(thread.getName()+" time limited");
         }
         return thread==null?null
@@ -368,8 +369,8 @@ public class IOs {
         for(int i=0;i<10;++i) {
             String string=connect_(timeout,socket,inetSocketAddress);
             if(string.equals("")) return true;
-            System.out.println("string: "+string);
-            System.out.println("connect "+host+":"+port+" fails on try: "+i);
+            Logging.mainLogger.info("string: "+string);
+            Logging.mainLogger.info("connect "+host+":"+port+" fails on try: "+i);
             //IO.stackTrace(10);
             GTPBackEnd.sleep2(1);
         }
@@ -448,23 +449,23 @@ public class IOs {
     }
     public static void printThreads(Set<Thread> threads,String name,boolean all) {
         // maybe remove main and reader thread?
-        if(name!=null&&threads.size()>0) System.out.println(name+" threads:");
+        if(name!=null&&threads.size()>0) Logging.mainLogger.info(name+" threads:");
         int i=0,n=4;
         for(Thread thread:threads) {
-            System.out.println(thread);
+            Logging.mainLogger.info(String.valueOf(thread));
             ++i;
-            if(!all&&i>n) { System.out.println((threads.size()-n)+" more ..."); break; }
+            if(!all&&i>n) { Logging.mainLogger.info((threads.size()-n)+" more ..."); break; }
         }
     }
     public static void stackTrace(int n) {
         String name=Thread.currentThread().getName();
         StackTraceElement[] ste=Thread.currentThread().getStackTrace();
-        for(int i=2;i<Math.min(n,ste.length);++i) System.out.println(name+" "+ste[i]);
+        for(int i=2;i<Math.min(n,ste.length);++i) Logging.mainLogger.info(name+" "+ste[i]);
     }
     public static boolean currentThreadIsTimeLimited() {
         if(false&&Thread.currentThread().getName()==IOs.timeLimitedThreadName) {
-            System.out.println("on "+Thread.currentThread().getName());
-            System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            Logging.mainLogger.info("on "+Thread.currentThread().getName());
+            Logging.mainLogger.info("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             System.exit(1);
         }
         return Thread.currentThread().getName()==IOs.timeLimitedThreadName;
@@ -479,6 +480,6 @@ public class IOs {
     public static final Indent standardIndent=new Indent("  ");
     public static final Set<Integer> ports=Set.of(IOs.noPort,IOs.anyPort,IOs.defaultPort);
     static {
-        //System.out.println("ports: "+ports);
+        //Logging.mainLogger.info("ports: "+ports);
     }
 }

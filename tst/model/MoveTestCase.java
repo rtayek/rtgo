@@ -52,13 +52,13 @@ public class MoveTestCase {
             Logging.mainLogger.severe("removing null move from move list!");
             moves.remove(moves.get(0));
         }
-        System.out.println();
-        System.out.println(moves);
+        Logging.mainLogger.info("");
+        Logging.mainLogger.info(String.valueOf(moves));
         Model actual=new Model(); // maybe problems if custom width and depth?
         actual.ensureBoard();
         actual.makeMoves(moves);
-        System.out.println(expected.board());
-        System.out.println(actual.board());
+        Logging.mainLogger.info(String.valueOf(expected.board()));
+        Logging.mainLogger.info(String.valueOf(actual.board()));
         assertTrue(expected.board().isEqual(actual.board()));
         List<Move2> actualMoves=actual.movesToCurrentState();
         if(actualMoves!=null&&actualMoves.size()>0&&actualMoves.get(0).equals(Move2.nullMove)) {
@@ -97,9 +97,9 @@ public class MoveTestCase {
         Move2 move=Move2.blackResign;
         toGTPCoordinates(move,0,0);// returns a string?
         model.move(move);
-        System.out.println("resign "+move);
+        Logging.mainLogger.info("resign "+move);
         Move2 lastMove=model.lastMove2();
         String lastMoveGtp=model.lastMoveGTP();
-        System.out.println(lastMove+" "+lastMoveGtp);
+        Logging.mainLogger.info(lastMove+" "+lastMoveGtp);
     }
 }

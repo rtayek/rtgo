@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 public enum P2 { // looks like the only thing i need this for is so i can switch
     // on it!
     // yes, p can not be an enum because it has subclassed.
@@ -13,7 +14,7 @@ public enum P2 { // looks like the only thing i need this for is so i can switch
         P p0=P.idToP.get(name());
         p=p0;
         type=type(p0);
-        if(p0==null) System.out.println("can not find p for "+name());
+        if(p0==null) Logging.mainLogger.info("can not find p for "+name());
     }
     public static P2 which(String id) { return valueOf(id); }
     static Types type(P p) {
@@ -27,9 +28,9 @@ public enum P2 { // looks like the only thing i need this for is so i can switch
     public static void main(String[] arguments) {
         // time left BL and WL() and tesugi (TE) are move types!
         // i added these custom types.
-        System.out.println(P2.valueOf("RT"));
-        System.out.println(P2.valueOf("ZB"));
-        System.out.println(P2.valueOf("ZW"));
+        Logging.mainLogger.info(String.valueOf(P2.valueOf("RT")));
+        Logging.mainLogger.info(String.valueOf(P2.valueOf("ZB")));
+        Logging.mainLogger.info(String.valueOf(P2.valueOf("ZW")));
     }
     final P p;
     final Types type;

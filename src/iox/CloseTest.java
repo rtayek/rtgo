@@ -1,4 +1,5 @@
 package iox;
+import io.Logging;
 import java.io.*;
 import java.net.*;
 import java.util.Set;
@@ -7,27 +8,27 @@ public class CloseTest {
     Thread server() {
         Thread server=new Thread(new Runnable() {
             @Override public void run() {
-                System.out.println("server thread enter run().");
+                Logging.mainLogger.info("server thread enter run().");
                 Socket socket=null;
                 try {
                     Thread.sleep(100);
                     InetAddress host=InetAddress.getLocalHost();
                     socket=new Socket(host,PORT);
-                    System.out.println("server wait");
+                    Logging.mainLogger.info("server wait");
                     synchronized(this) { // why not just sleep?
                         while(!done) wait(10);
                         // investigate wait vs sleep.
                     }
-                    System.out.println("end of server wait");
+                    Logging.mainLogger.info("end of server wait");
                 } catch(Exception e) {
-                    System.out.println("server caught: "+e);
-                    System.out.println("server caught: "+e.getMessage());
+                    Logging.mainLogger.info("server caught: "+e);
+                    Logging.mainLogger.info("server caught: "+e.getMessage());
                 } finally {
                     if(socket!=null) try {
                         socket.close();
                     } catch(IOException ignored) {}
                 }
-                System.out.println("server thread exit run().");
+                Logging.mainLogger.info("server thread exit run().");
             }
         },"server");
         return server;
@@ -43,14 +44,14 @@ public class CloseTest {
         Runnable readerRunnable=new Runnable() {
             @Override public void run() {
                 try {
-                    System.out.println("reader is reading ...");
-                    System.out.println("1 reader: "+IOs.toString(reader));
+                    Logging.mainLogger.info("reader is reading ...");
+                    Logging.mainLogger.info("1 reader: "+IOs.toString(reader));
                     String s=bufferedReader.readLine();
                     // should never get here
-                    System.out.println("reader returned "+s);
+                    Logging.mainLogger.info("reader returned "+s);
                 } catch(Exception e) {
                     // This is the behavior we want, but never get here
-                    System.out.println("reader aborted with "+e.getMessage());
+                    Logging.mainLogger.info("reader aborted with "+e.getMessage());
                 }
                 done=true;
             }
@@ -59,16 +60,16 @@ public class CloseTest {
         return new Thread(runnable,"reader");
     }
     Thread closer(final Reader reader) {
-        Runnable r=()->System.out.println();
+        Runnable r=()->Logging.mainLogger.info("");
         Runnable runnable=new Runnable() {
             @Override public void run() {
                 try {
-                    System.out.println("closer started ... ");
+                    Logging.mainLogger.info("closer started ... ");
                     Thread.sleep(100); // give reader time to start
-                    System.out.println("closing reader ...");
-                    System.out.println("closer: "+closer);
+                    Logging.mainLogger.info("closing reader ...");
+                    Logging.mainLogger.info("closer: "+closer);
                     reader.close();
-                    System.out.println("closing reader complete");
+                    Logging.mainLogger.info("closing reader complete");
                 } catch(Exception e) {}
             }
         };
@@ -88,16 +89,16 @@ public class CloseTest {
         Thread.sleep(100);
     }
     void run() throws Exception {
-        System.out.println("enter main run()");
+        Logging.mainLogger.info("enter main run()");
         testBufferedReader();
         Thread.sleep(400);
         boolean printActiveThreads=false;
         Set<Thread> activeThreads=IOs.activeThreads();
         if(printActiveThreads) {
-            System.out.println("active threads");
-            for(Thread thread:activeThreads) { System.out.println("ct run "+IOs.toString(thread)); }
+            Logging.mainLogger.info("active threads");
+            for(Thread thread:activeThreads) { Logging.mainLogger.info("ct run "+IOs.toString(thread)); }
         }
-        System.out.println("interrupt server, reader and closer.");
+        Logging.mainLogger.info("interrupt server, reader and closer.");
         //server.interrupt();
         reader.interrupt();
         closer.interrupt();
@@ -105,14 +106,14 @@ public class CloseTest {
         //testDataInputStream();
         activeThreads=IOs.activeThreads();
         if(printActiveThreads) {
-            System.out.println("active threads");
-            for(Thread thread:activeThreads) { System.out.println("ct run 2 "+IOs.toString(thread)); }
+            Logging.mainLogger.info("active threads");
+            for(Thread thread:activeThreads) { Logging.mainLogger.info("ct run 2 "+IOs.toString(thread)); }
         }
-        System.out.println("exit main run().");
+        Logging.mainLogger.info("exit main run().");
     }
     public static void main(String[] args) throws Exception {
         new CloseTest().run();
-        System.out.println("exit main().");
+        Logging.mainLogger.info("exit main().");
     }
     ServerSocket serverSocket;
     Thread server;

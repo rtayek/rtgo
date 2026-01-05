@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import sgf.*;
@@ -30,7 +31,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertEquals(key.toString(),expectedSgf,actualSgf);
         // failing probably due to add new root problem
         Model model=new Model();
-        System.out.println("ex: "+expectedSgf);
+        Logging.mainLogger.info("ex: "+expectedSgf);
         ModelTestIo.restore(model,expectedSgf);
         String actualSgf2=ModelTestIo.save(model,key.toString());
         actualSgf2=SgfNode.options.removeUnwanted(actualSgf2);
@@ -53,8 +54,8 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
     }
     @Test public void testLongRoundTrip21() throws Exception {
         String actualSgf=ModelTestIo.modelRoundTripToString(expectedSgf,ModelHelper.ModelSaveMode.sgfNodeChecked);
-        System.out.println("ex: "+expectedSgf);
-        System.out.println("ac: "+actualSgf);
+        Logging.mainLogger.info("ex: "+expectedSgf);
+        Logging.mainLogger.info("ac: "+actualSgf);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }

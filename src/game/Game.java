@@ -5,6 +5,7 @@ import io.*;
 import io.IOs;
 import io.IOs.End.Holders;
 import model.Model;
+import model.ModelIo;
 import server.NamedThreadGroup;
 import sgf.HexAscii;
 public class Game {
@@ -30,7 +31,7 @@ public class Game {
         // no references to any back end stuff here.
         if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
-        recorder.restore(IOs.toReader(file));
+        ModelIo.restore(recorder,file);
         String sgf=recorder.save();
         sgf=HexAscii.encode(sgf.getBytes());
         String receiveCommand=Command.tgo_receive_sgf.name()+" "+sgf;
@@ -51,13 +52,13 @@ public class Game {
         NamedThreadGroup.printThraedsAtEnd();
     }
     public static void main(String[] args) throws Exception {
-        System.out.println(Init.first);
+        Logging.mainLogger.info(String.valueOf(Init.first));
         for(int i=0;i<1;++i) { //
             for(int port:IOs.ports) try {
                 run(port);
             } catch(Exception e) {
                 e.printStackTrace();
-                if(port==IOs.defaultPort) System.out.println("default port, probably ok.");
+                if(port==IOs.defaultPort) Logging.mainLogger.info("default port, probably ok.");
             }
         }
         NamedThreadGroup.printThraedsAtEnd();

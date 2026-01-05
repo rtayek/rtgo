@@ -1,4 +1,5 @@
 package io;
+import io.Logging;
 import static io.Constants.lineSeparator;
 import static java.lang.Math.max;
 import java.io.*;
@@ -25,9 +26,9 @@ public class Exec {
         }
         return sb.toString();
     }
-    public static void p(String string) { System.out.println(string); }
-    Consumer<String> out=(line)->System.out.println(line);
-    Consumer<String> err=(line)->System.err.println(line);
+    public static void p(String string) { Logging.mainLogger.info(String.valueOf(string)); }
+    Consumer<String> out=(line)->Logging.mainLogger.info(String.valueOf(line));
+    Consumer<String> err=(line)->Logging.mainLogger.warning(String.valueOf(line));
     static class Printer implements Runnable {
         Printer(String name,InputStream inputStream,Consumer<String> consumer) {
             this.name=name;
@@ -39,7 +40,7 @@ public class Exec {
             try {
                 br=new BufferedReader(new InputStreamReader(inputStream));
                 String line=null;
-                while((line=br.readLine())!=null) { System.out.println((name!=null?name+": ":"")+line); }
+                while((line=br.readLine())!=null) { Logging.mainLogger.info((name!=null?name+": ":"")+line); }
             } catch(IOException e) {
                 e.printStackTrace();
             } finally {
@@ -57,16 +58,16 @@ public class Exec {
     public Exec run() {
         Process process=null;
         try {
-            System.out.println("start");
+            Logging.mainLogger.info("start");
             process=processBuilder.start();
             //output=output(process.getInputStream());
             //error=output(process.getErrorStream());
             new Thread(new Printer(name,process.getInputStream(),out)).start();
             new Thread(new Printer(name,process.getErrorStream(),err)).start();
-            System.out.println("wait for");
+            Logging.mainLogger.info("wait for");
             //rc=process.waitFor();
             boolean okc=process.waitFor(1,TimeUnit.SECONDS);
-            System.out.println("get results");
+            Logging.mainLogger.info("get results");
         } catch(IOException e) {
             p("caught: "+e);
             e.printStackTrace();
@@ -77,7 +78,7 @@ public class Exec {
             p("caught: "+e);
             e.printStackTrace();
         }
-        System.out.println(this+" "+process);
+        Logging.mainLogger.info(this+" "+process);
         return this;
     }
     public void print() { print(rc,output,error); }
@@ -95,9 +96,9 @@ public class Exec {
     public static int exec(String command) {
         Runtime runtime=Runtime.getRuntime();
         try {
-            System.out.println(command);
+            Logging.mainLogger.info(String.valueOf(command));
             Process proc=runtime.exec(command);
-            System.out.println("wait for");
+            Logging.mainLogger.info("wait for");
             proc.waitFor();
             return proc.exitValue();
         } catch(IOException e) {

@@ -1,4 +1,5 @@
 package server;
+import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import io.IOs;
@@ -9,7 +10,7 @@ public class BoundTestCase {
         GoServer goServer=GoServer.startServer(IOs.testPort);
         assertTrue(goServer.serverSocket.isBound());
         int x=goServer.serverSocket.getLocalPort();
-        System.out.println(x);
+        Logging.mainLogger.info(String.valueOf(x));
         GoServer goServer2=GoServer.startServer(IOs.testPort);
         assertTrue(goServer2.serverSocket.isBound());
         assertNotEquals(goServer.serverSocket.getLocalPort(),goServer2.serverSocket.getLocalPort());

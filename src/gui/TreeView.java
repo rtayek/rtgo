@@ -5,27 +5,13 @@ import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.*;
 import io.*;
-import io.IOs;
 import model.Event;
 import model.Model;
+import model.ModelIo;
 import sgf.MNode;
 import utilities.*;
-class Node2 extends MNode { // why did i make this?
-	// maybe to make tree view easier?
-	Node2(MNode parent,DefaultMutableTreeNode treeNode) {
-		super(parent);
-		this.treeNode=treeNode;
-		sgfProperties().addAll(parent.sgfProperties());
-	}
-	@Override public String toString() {
-		String s=super.toString();
-		return super.toString()+(treeNode!=null?(" "+(treeNode.getLevel()+1)):"");
-	}
-	final DefaultMutableTreeNode treeNode;
-}
 @SuppressWarnings("serial") public class TreeView extends MainGui implements Observer,TreeSelectionListener,ActionListener {
 	public TreeView(MyJApplet applet,Model model) {
 		super(applet);
@@ -118,18 +104,15 @@ class Node2 extends MNode { // why did i make this?
 		DefaultMutableTreeNode node=(DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 		if(node!=null) {
 			boolean ok=model.goToMNode((MNode)node.getUserObject());
-			if(!ok) System.out.println("go to node fails!");
-			else; // System.out.println("go to node succeds.");
+			if(!ok) Logging.mainLogger.warning("go to node fails!");
 		} else Logging.mainLogger.warning("node null for: "+e);
 	}
 	@Override public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("Open ...")) {
-			JFileChooser fileChoser=new JFileChooser(lastLoadDirectory!=null?lastLoadDirectory:new File("."));
-			fileChoser.setFileFilter(new FileNameExtensionFilter("SGF file","sgf"));
-			if(fileChoser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
-				File file=fileChoser.getSelectedFile();
-				model.restore(IOs.toReader(file));
-				lastLoadDirectory=file.getParentFile();
+			GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(frame(),lastLoadDirectory);
+			if(selection!=null) {
+				ModelIo.restore(model,selection.file());
+				lastLoadDirectory=selection.directory();
 			}
 		}
 	}
@@ -138,6 +121,7 @@ class Node2 extends MNode { // why did i make this?
 		addChildren(top,newRoot);
 		// Create a tree that allows one selection at a time.
 		JTree tree=new JTree(top);
+		tree.setCellRenderer(new NodeRenderer());
 		final Font currentFont=tree.getFont();
 		final Font bigFont=new Font(currentFont.getName(),currentFont.getStyle(),currentFont.getSize()+10);
 		tree.setFont(bigFont);
@@ -154,6 +138,21 @@ class Node2 extends MNode { // why did i make this?
 			addChildren(childTreeNode,child);
 		}
 		else Logging.mainLogger.info(model.name+" "+"node is null in add children!");
+	}
+	static final class NodeRenderer extends DefaultTreeCellRenderer {
+		@Override public Component getTreeCellRendererComponent(JTree tree,Object value,boolean selected,boolean expanded,
+				boolean leaf,int row,boolean hasFocus) {
+			Component component=super.getTreeCellRendererComponent(tree,value,selected,expanded,leaf,row,hasFocus);
+			if(value instanceof DefaultMutableTreeNode) {
+				DefaultMutableTreeNode node=(DefaultMutableTreeNode)value;
+				Object userObject=node.getUserObject();
+				if(userObject instanceof MNode) {
+					int level=node.getLevel()+1;
+					setText(userObject.toString()+" "+level);
+				}
+			}
+			return component;
+		}
 	}
 	@Override public void addContent() {
 		setMenuBar();
@@ -184,15 +183,14 @@ class Node2 extends MNode { // why did i make this?
 		frame.setJMenuBar(menuBar);
 	}
 	public static void main(String[] args) {
-		// TreeView myTreeView=TreeView2.simple2();
-		TreeView myTreeView=TreeView2.simple();
+		TreeView myTreeView=TreeView.simple();
 	}
 	public static TreeView simple() {
 		Model model=new Model();
 		TreeView myTreeView=new TreeView(null,model);
 		myTreeView.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		model.addObserver(myTreeView);
-		model.restore(IOs.toReader(new File("sgf/ff4_ex.sgf")));
+		ModelIo.restore(model,new File("sgf/ff4_ex.sgf"));
 		return myTreeView;
 	}
 	public final Model model;

@@ -1,33 +1,24 @@
 package model;
-import static org.junit.Assert.assertTrue;
 import java.io.Reader;
-import java.io.StringWriter;
 import io.IOs;
+import io.TestIo;
 public final class ModelTestIo {
     private ModelTestIo() {}
     public static void restore(Model model,String sgf) {
         model.restore(IOs.toReader(sgf));
     }
     static String save(Model model) {
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue("save fails",ok);
-        return stringWriter.toString();
+        return save(model,"save fails");
     }
     static String save(Model model,String message) {
-        StringWriter stringWriter=new StringWriter();
-        boolean ok=model.save(stringWriter);
-        assertTrue(message,ok);
-        return stringWriter.toString();
+        return TestIo.saveToString(message,writer->model.save(writer));
     }
     public static String modelRoundTripToString(Reader reader) {
         return modelRoundTripToString(reader,ModelHelper.ModelSaveMode.sgfNode);
     }
     static String modelRoundTripToString(Reader reader,ModelHelper.ModelSaveMode saveMode) {
         if(reader==null) return null;
-        StringWriter stringWriter=new StringWriter();
-        ModelHelper.modelRoundTrip(reader,stringWriter,saveMode);
-        return stringWriter.toString();
+        return TestIo.writeToString(writer->ModelHelper.modelRoundTrip(reader,writer,saveMode));
     }
     public static String modelRoundTripToString(String sgf) {
         return modelRoundTripToString(sgf,ModelHelper.ModelSaveMode.sgfNode);

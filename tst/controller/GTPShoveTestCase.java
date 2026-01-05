@@ -1,4 +1,5 @@
 package controller;
+import io.Logging;
 //maybe shove sgf text with a new gtp command?
 //maybe: restore <sgf text>?
 // shove a tree of games to remote model.
@@ -33,8 +34,8 @@ public class GTPShoveTestCase {
     }
     @Test public void testPushGTPMovesToCurrentStateDirectOneAtATime() throws Exception {
         Model actual=ModelHelper2.pushGTPMovesToCurrentStateDirect(expected,true);
-        System.out.println(expected);
-        System.out.println(actual);
+        Logging.mainLogger.info(String.valueOf(expected));
+        Logging.mainLogger.info(String.valueOf(actual));
         assertTrue(actual.board().isEqual(expected.board()));
     }
     @Test public void testPushGTPMovesToCurrentStateDirectList() throws Exception {
@@ -77,8 +78,8 @@ public class GTPShoveTestCase {
         }
         Response[] responses=GTPBackEnd.runCommands(gtpMoves,actual,justRun);
         for(Response response:responses) assertTrue(response.isOk());
-        System.out.println(expected);
-        System.out.println(actual);
+        Logging.mainLogger.info(String.valueOf(expected));
+        Logging.mainLogger.info(String.valueOf(actual));
         assertTrue(expected.board().isEqual(actual.board()));
         List<Move2> moves=expected.movesToCurrentState(); //current line
         List<Move2> actualMoves=actual.movesToCurrentState();

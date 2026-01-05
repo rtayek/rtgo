@@ -1,4 +1,5 @@
 package sgf.combine;
+import io.Logging;
 import static io.IOs.standardIndent;
 import static org.junit.Assert.assertTrue;
 import java.io.*;
@@ -25,24 +26,24 @@ import utilities.MyTestWatcher;
         }
         return list;
     }
-    @Before public void setUp() throws Exception { System.out.println(filename); }
+    @Before public void setUp() throws Exception { Logging.mainLogger.info(String.valueOf(filename)); }
     @After public void tearDown() throws Exception {}
     public ParameterizedCombineTestCase(String file) { this.filename=file; }
     static boolean testCombine(String name) {
         // this needs a matching file in annotated/.
-        System.out.println("test combine: "+name);
+        Logging.mainLogger.info("test combine: "+name);
         try {
             SgfNode combined=Combine.combine(name);
             if(combined!=null) {
-                System.err.println("combined");
-                System.err.println(SgfTestIo.save(combined,standardIndent));
-                System.err.println();
+                Logging.mainLogger.warning("combined");
+                Logging.mainLogger.warning(String.valueOf(SgfTestIo.save(combined,standardIndent)));
+                Logging.mainLogger.warning("");
             } else {
-                System.err.println("combine returns null!");
+                Logging.mainLogger.warning("combine returns null!");
                 return false;
             }
         } catch(Exception e) {
-            System.err.println("in testCombine()");
+            Logging.mainLogger.warning("in testCombine()");
             e.printStackTrace();
             return false;
         }
@@ -50,12 +51,12 @@ import utilities.MyTestWatcher;
     }
     @Test public void testCombine() {
         File file=new File(Combine.pathToHere,filename);
-        System.out.println(file);
+        Logging.mainLogger.info(String.valueOf(file));
         if(file.exists()) {
             assertTrue(file.toString(),file.exists());
             //assertTrue(testCombine(""+file));
             assertTrue(file.toString(),testCombine(filename));
-        } else System.out.println("file "+file+" does not exist!");
+        } else Logging.mainLogger.info("file "+file+" does not exist!");
     }
     // ignore test combine. this is a path confusion problem.
     String filename;

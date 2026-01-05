@@ -105,12 +105,12 @@ public class GTPBackEnd implements Runnable,Stopable {
         // return boolean instead of throwing?
         boolean once=false;
         while(!isWaitingForMove()) {
-            if(!once) System.out.println("waiting for a move.");
+            if(!once) Logging.mainLogger.info("waiting for a move.");
             if(Thread.currentThread().isInterrupted()) throw new RuntimeException();
             GTPBackEnd.sleep2(GTPBackEnd.yield);
             once=true;
         }
-        System.out.println("end of waiting for a move.");
+        Logging.mainLogger.info("end of waiting for a move.");
     }
     private void waitForAMove(Message message) { // generate a move
         // this only gets called from genmove
@@ -172,7 +172,7 @@ public class GTPBackEnd implements Runnable,Stopable {
             // maybe these next 4 should be tgo_role with a role argument?
             // maybe.
             case tgo_black:
-                System.out.println("got: "+message.command);
+                Logging.mainLogger.info("got: "+message.command);
                 model.setRole(Model.Role.playBlack);
                 send(okCharacter,message.id,"");
                 break;
@@ -280,7 +280,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 // how to wait for this response to be sent?
                 return false;
             case boardsize:
-                System.out.println(model.name+" boardsize command.");
+                Logging.mainLogger.info(model.name+" boardsize command.");
                 if(message.arguments.length>1) {
                     int n=-1;
                     try {
@@ -415,7 +415,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                     try {
                         label=Long.valueOf(argument);
                     } catch(NumberFormatException e) {
-                        System.out.println(argument+" threw "+e);
+                        Logging.mainLogger.info(argument+" threw "+e);
                     }
                     if(label!=null) {
                         // go to the specified node
@@ -423,8 +423,8 @@ public class GTPBackEnd implements Runnable,Stopable {
                         remote.setLabel(label);
                         MNode root=model.root();
                         MNodeFinder finder=MNodeFinder.find(remote,root,labelPredicate);
-                        System.out.println(finder.ancestors);
-                        System.out.println(finder.found);
+                        Logging.mainLogger.info(String.valueOf(finder.ancestors));
+                        Logging.mainLogger.info(String.valueOf(finder.found));
                         if(finder.found!=null) {
                             model.top(); // go to the root
                             //List<MNode> x=finder.ancestors;
@@ -433,7 +433,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                             // may not haave all of the properties
                             ok=model.goToMNode(finder.found);
                             if(ok) {
-                                System.out.println("it worked!");
+                                Logging.mainLogger.info("it worked!");
                                 send(okCharacter,message.id,"went to label: "+label);
                             } else send(badCharacter,message.id,"go to move failed wth label: "+label);
                         } else send(badCharacter,message.id,"can not find node with label: "+label);
@@ -447,7 +447,7 @@ public class GTPBackEnd implements Runnable,Stopable {
                 Logging.mainLogger.config("received encoded sgf: "+sgfString);
                 if(useHexAscii) sgfString=decodeToString(sgfString);
                 Logging.mainLogger.config("decoded sgf: "+sgfString);
-                model.restore(IOs.toReader(sgfString));
+                ModelIo.restore(model,sgfString);
                 ok=send(okCharacter,message.id,"");
                 break;
             case tgo_send_sgf:
@@ -581,7 +581,7 @@ public class GTPBackEnd implements Runnable,Stopable {
             NamedThread namedThread=current instanceof NamedThread?(NamedThread)current:null;
             if(namedThread!=null) { // this is way too complicated!!!
                 Stopable stopable=namedThread.runnable instanceof Stopable?(Stopable)namedThread.runnable:null;
-                if(stopable!=null) System.out.println("is stopable stopping: "+stopable.isStopping());
+                if(stopable!=null) Logging.mainLogger.info("is stopable stopping: "+stopable.isStopping());
                 else Logging.mainLogger.severe("not a stopable!");
             } else Logging.mainLogger.severe(" not a named thread "+Thread.currentThread()+"sleep2 was interrupted!");
         }

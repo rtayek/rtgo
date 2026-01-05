@@ -1,4 +1,5 @@
 package equipment;
+import io.Logging;
 import java.util.List;
 import org.junit.*;
 import equipment.Board.*;
@@ -10,9 +11,9 @@ public class DiamondTestCase {
     @Test public void test() {
         List<Point> points=Board.getPointsForDiamondRegion(board.width(),board.depth());
         for(Point point:points) board.setAt(point,Stone.edge);
-        System.out.println(board);
-        System.out.println("----------------");
-        System.out.println(points);
+        Logging.mainLogger.info(String.valueOf(board));
+        Logging.mainLogger.info("----------------");
+        Logging.mainLogger.info(String.valueOf(points));
     }
     int n=9;
     Board board=Board.factory.create(n,n,Topology.diamond,Shape.normal);

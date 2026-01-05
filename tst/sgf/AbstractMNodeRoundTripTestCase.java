@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import utilities.MyTestWatcher;
@@ -6,11 +7,11 @@ public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTri
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testMMNodeRoundTrip() throws Exception {
         int p=Parser.parentheses(expectedSgf);
-        if(p!=0) System.out.println("ex bad parentheses: "+p);
+        if(p!=0) Logging.mainLogger.info("ex bad parentheses: "+p);
         String actualSgf=SgfTestIo.mNodeRoundTrip(expectedSgf,SgfRoundTrip.MNodeSaveMode.standard);
         if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
         /*int*/ p=Parser.parentheses(actualSgf);
-        if(p!=0) System.out.println("ac bad parentheses: "+p);
+        if(p!=0) Logging.mainLogger.info("ac bad parentheses: "+p);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testMMNodeDirectRoundTrip() throws Exception {
@@ -19,7 +20,7 @@ public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTri
         //Boolean ok=specialCases(actualSgf);
         //if(ok) return;
         int p=Parser.parentheses(actualSgf);
-        if(p!=0) System.out.println(" bad parentheses: "+p);
+        if(p!=0) Logging.mainLogger.info(" bad parentheses: "+p);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
 }

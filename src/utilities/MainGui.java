@@ -1,4 +1,5 @@
 package utilities;
+import io.Logging;
 import java.awt.BorderLayout;
 import javax.swing.*;
 public class MainGui extends JPanel {
@@ -14,16 +15,16 @@ public class MainGui extends JPanel {
         // setPreferredSize(new Dimension(640, 480));
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                System.out.println("startng awt thread");
+                Logging.mainLogger.info("startng awt thread");
                 MainGui.this.run();
-                System.out.println("ending awt thread");
+                Logging.mainLogger.info("ending awt thread");
             }
         });
     }
     public String title() { return "Main Gui"; }
     public void addContent() { add(new JLabel("add content! top")); }
     void run() {
-        System.out.println("enter main gui run().");
+        Logging.mainLogger.info("enter main gui run().");
         if(isApplet()) addContent();
         else {
             frame.getContentPane().add(this,BorderLayout.CENTER);
@@ -32,7 +33,7 @@ public class MainGui extends JPanel {
             frame.pack();
             frame.setVisible(true);
         }
-        System.out.println("exit main gui run().");
+        Logging.mainLogger.info("exit main gui run().");
     }
     public boolean isApplet() { return applet!=null; }
     public JFrame frame() { return frame; }

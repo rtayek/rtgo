@@ -1,4 +1,5 @@
 package model;
+import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import equipment.*;
@@ -19,9 +20,9 @@ public class TopologyAndShapeTTestCase {
         assertEquals(Stone.edge,board.at(board.center()));
     }
     private void saveAndRestore(Model model,Stone center) {
-        System.out.println(model.board().at(model.board().center()));
-        System.out.println("topology: "+model.boardTopology());
-        System.out.println("shape: "+model.boardShape());
+        Logging.mainLogger.info(String.valueOf(model.board().at(model.board().center())));
+        Logging.mainLogger.info("topology: "+model.boardTopology());
+        Logging.mainLogger.info("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
         final String expected=ModelTestIo.save(model);
         Model m=new Model();
@@ -58,7 +59,7 @@ public class TopologyAndShapeTTestCase {
         assertEquals(expectedTopology,model.boardTopology());
         assertEquals(expectedShape,model.boardShape());
         Board b=model.board();
-        if(b==null) System.out.println("b: "+b);
+        if(b==null) Logging.mainLogger.info("b: "+b);
         assertEquals(Stone.edge,b.at(b.center()));
         model.move(Move2.blackMoveAtA1);
         saveAndRestore(model,Stone.edge);
@@ -84,7 +85,7 @@ public class TopologyAndShapeTTestCase {
         assertEquals(expectedTopology,model.boardTopology());
         assertEquals(expectedShape,model.boardShape());
         Board b=model.board();
-        if(b==null) System.out.println("b: "+b);
+        if(b==null) Logging.mainLogger.info("b: "+b);
         assertEquals(Stone.edge,b.at(b.center()));
         model.move(Move2.blackMoveAtA1);
         saveAndRestore(model,Stone.edge);

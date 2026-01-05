@@ -1,4 +1,5 @@
 package controller;
+import io.Logging;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
 import java.util.*;
@@ -39,7 +40,7 @@ import utilities.*;
             //Parser.printDifferences(expectedSgf,actualSgf);
             actualSgf=HexAscii.decodeToString(actualSgf);
         } catch(Exception e) {
-            System.out.println("caught: "+e);
+            Logging.mainLogger.info("caught: "+e);
         }
         return actualSgf;
     }
@@ -74,7 +75,7 @@ import utilities.*;
         String actualSgf=sendSgfToModel(expectedSgf,model);
         assertTrue(model.currentNode().children().size()>0);
         assertTrue(Navigate.down.canDo(model));
-        //System.out.println(model);
+        //Logging.mainLogger.info(model);
         actualSgf=SgfNode.options.prepareSgf(actualSgf);
         assertEquals(key.toString().toString(),expectedSgf,actualSgf);
     }
