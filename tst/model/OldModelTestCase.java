@@ -285,7 +285,7 @@ public class OldModelTestCase {
     /*@Test*/ public void testSgfFileFromLittleGolem() {
         // Node root=quietLoad(new File("url.sgf"));
         Model model=new Model();
-        model.restore(IOs.toReader(new File("url.sgf")));
+        ModelIo.restore(model,new File("url.sgf"));
     }
     Model model=new Model();
     {

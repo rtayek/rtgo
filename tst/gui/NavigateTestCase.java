@@ -3,8 +3,8 @@ import static model.Navigate.*;
 import static org.junit.Assert.*;
 import java.io.File;
 import org.junit.*;
-import io.IOs;
 import model.*;
+import model.ModelIo;
 import sgf.Parser;
 import utilities.MyTestWatcher;
 public class NavigateTestCase {
@@ -17,7 +17,7 @@ public class NavigateTestCase {
     @Test public void testExample() {
         String filename="ff4_ex.sgf";
         File file=new File("sgf",filename);
-        model.restore(IOs.toReader(file));
+        ModelIo.restore(model,file);
         for(Navigate navigate:Navigate.values()) {
             Boolean expected=navigate.equals(down)||navigate.equals(bottom);
             assertEquals(filename,expected,navigate.canDo(model));
@@ -26,7 +26,7 @@ public class NavigateTestCase {
     @Test public void testExampleAfterOneDown() {
         String filename="ff4_ex.sgf";
         File file=new File(Parser.sgfPath,filename);
-        model.restore(IOs.toReader(file));
+        ModelIo.restore(model,file);
         down.do_(model);
         Boolean canDo=up.canDo(model);
         assertEquals(Boolean.TRUE,canDo);

@@ -223,7 +223,7 @@ public final class ModelHelper {
         if(games==null) return null;
         if(games.right!=null) Logging.mainLogger.info(" 2 more than one game!");
         if(saveMode==ModelSaveMode.sgfNodeChecked) {
-            games.saveSgf(new StringWriter(),noIndent);
+            SgfRoundTrip.saveSgfToString(games,noIndent);
         }
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();

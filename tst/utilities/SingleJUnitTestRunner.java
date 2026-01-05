@@ -15,6 +15,7 @@ class SingleJUnitTestRunner {
     private static Result runTest(String arg) throws ClassNotFoundException {
         String[] classAndMethod=arg.split("#");
         Request request=Request.method(Class.forName(classAndMethod[0]),classAndMethod[1]);
+        TestRunReporter.logRequest(request);
         Result result=null;
         result=new JUnitCore().run(request);
         return result;
@@ -24,6 +25,7 @@ class SingleJUnitTestRunner {
         if(args!=null&&args.length>0) {
             for(String arg:args) {
                 Result result=runTest(arg);
+                TestRunReporter.reportResult(result);
                 assertTrue(result.wasSuccessful());
             }
         } else {
