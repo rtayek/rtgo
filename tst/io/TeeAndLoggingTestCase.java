@@ -6,10 +6,6 @@ import java.io.*;
 import java.util.logging.*;
 import org.junit.*;
 import io.Logging.MyFormatter;
-class MyPrintStream {
-    MyPrintStream(String prefix,PrintStream printStream) { this.printStream=printStream; }
-    final PrintStream printStream;
-}
 public class TeeAndLoggingTestCase {
     @Before public void setUp() throws Exception {
         byteArrayOutputStream.reset(); //
@@ -17,7 +13,7 @@ public class TeeAndLoggingTestCase {
         Logging.useColor=false;
         logger=Logger.getLogger(getClass().getName());
         handlers=logger.getHandlers();
-        assertEquals(0,handlers.length); // remove this
+        assertEquals(0,handlers.length);
         baseOut=new PrintStream(new ByteArrayOutputStream(),true);
         baseErr=new PrintStream(new ByteArrayOutputStream(),true);
         console=new ConsoleStreams(baseOut,baseErr);

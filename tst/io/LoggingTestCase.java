@@ -13,8 +13,8 @@ public class LoggingTestCase {
         LogManager.getLogManager().reset();
         logger=Logger.getLogger(getClass().getName());
         handlers=logger.getHandlers();
-        assertEquals(0,handlers.length); // remove this
-        checkHandlers(); // and remove this?
+        assertEquals(0,handlers.length);
+        checkHandlers();
     }
     @After public void tearDown() throws Exception {}
     void checkHandlers() { // why do we need this?

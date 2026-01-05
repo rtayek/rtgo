@@ -2,7 +2,6 @@ package sgf;
 import io.Logging;
 import static io.IOs.noIndent;
 import static org.junit.Assert.assertEquals;
-import java.io.*;
 import java.util.*;
 import org.junit.*;
 public class SimpleParserTestCase {
