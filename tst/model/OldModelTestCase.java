@@ -190,8 +190,7 @@ public class OldModelTestCase {
         // ac: (;RT[Tgo root];FF[4]GM[1]AP[RTGO]C[root]SZ[19])
         // similar to variations below.
         Model model=new Model();
-        ModelTestIo.restore(model,Parser.empty);
-        String expected=ModelTestIo.save(model,"first save fails");
+        String expected=ModelTestIo.restoreAndSave(model,Parser.empty,"first save fails");
         Model copy=new Model(model,model.name);
         String actual=ModelTestIo.save(copy,"second save fails");
         assertEquals(expected,actual);
@@ -200,8 +199,7 @@ public class OldModelTestCase {
         // this is failing.
         // actual has 2 copyies of ;RT[Tgo root] in the first node?
         Model model=new Model();
-        ModelTestIo.restore(model,Parser.variationOfAVariation);
-        String expected=ModelTestIo.save(model,"first save fails");
+        String expected=ModelTestIo.restoreAndSave(model,Parser.variationOfAVariation,"first save fails");
         Model copy=new Model(model,model.name);
         String actual=ModelTestIo.save(copy,"second save fails");
         Logging.mainLogger.info("ex: "+expected);

@@ -22,7 +22,7 @@ import utilities.MyTestWatcher;
         if(files.size()==0) fail("no files!");
         fail=false;
         for(File file:files) try {
-            boolean ok=SgfRoundTrip.roundTripTwice(IOs.toReader(file));
+            boolean ok=SgfTestIo.roundTripTwice(IOs.toReader(file));
             if(!ok) Logging.mainLogger.info(file+" fails!");
         } catch(Exception e) {
             parserLogger.warning(this+" caught: "+e);

@@ -8,9 +8,12 @@ public class SgfMoveCoordinateSystemTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
-    @Test public void testTwoMoves() {
+    private static SgfNode restoreExample() {
         String sgfString=getSgfData("manyFacesTwoMovesAtA1AndR16OnA9by9Board");
-        SgfNode games=SgfTestIo.restore(sgfString);
+        return SgfTestIo.restore(sgfString);
+    }
+    @Test public void testTwoMoves() {
+        SgfNode games=restoreExample();
         SgfAcceptor acceptor=new SgfNoOpAcceptor();
         Traverser traverser=new Traverser(acceptor);
         traverser.visit(games);
@@ -28,8 +31,7 @@ public class SgfMoveCoordinateSystemTestCase {
         // no testing done, just finding out what the coordinate map is.
     }
     @Test public void testTwoMovesPath() {
-        String sgfString=getSgfData("manyFacesTwoMovesAtA1AndR16OnA9by9Board");
-        SgfNode games=SgfTestIo.restore(sgfString);
+        SgfNode games=restoreExample();
         SgfMovesPath acceptor=new SgfMovesPath();
         Traverser traverser=new Traverser(acceptor);
         traverser.visit(games);

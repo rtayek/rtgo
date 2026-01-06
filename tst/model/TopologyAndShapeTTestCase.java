@@ -24,13 +24,13 @@ public class TopologyAndShapeTTestCase {
         Logging.mainLogger.info("topology: "+model.boardTopology());
         Logging.mainLogger.info("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
-        final String expected=ModelTestIo.save(model);
+        String expected=ModelTestIo.save(model);
         Model m=new Model();
-        ModelTestIo.restore(m,expected);
-        m.ensureBoard();
-        m.down(0); // need to execute the sgf
-        assertNotNull(m.board());
-        final String actual=ModelTestIo.save(m);
+        String actual=ModelTestIo.restoreAndSave(m,expected,restored->{
+            restored.ensureBoard();
+            restored.down(0); // need to execute the sgf
+            assertNotNull(restored.board());
+        });
         assertEquals(expected,actual);
     }
     @Test public void testsetRoot() {

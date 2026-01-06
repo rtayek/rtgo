@@ -1,7 +1,7 @@
 package sgf;
 import static org.junit.Assert.*;
-import static sgf.Parser.*;
-import java.util.*;
+import static sgf.Parser.getSgfData;
+import java.util.Collection;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -27,10 +27,7 @@ class Verifier extends SgfAcceptorImpl {
 		watcher.key=key;
 	}
 	@Parameterized.Parameters(name="{0}") public static Collection<Object[]> data() {
-		Set<Object> objects=new LinkedHashSet<>();
-		objects.addAll(sgfDataKeySet());
-		objects.addAll(sgfFiles());
-		return ParameterArray.parameterize(objects);
+		return SgfTestParameters.allSgfKeysAndFiles();
 	}
 	public static void verify(SgfNode games) {
 		SgfNode target=games;

@@ -16,7 +16,7 @@ import sgf.combine.Combine;
         boolean fail=false;
         for(String filename:filenames) try {
             File file=new File(Combine.pathToHere,filename);
-            boolean ok=SgfRoundTrip.roundTripTwice(IOs.toReader(file));
+            boolean ok=SgfTestIo.roundTripTwice(IOs.toReader(file));
             Logging.mainLogger.info(file+" fails!");
             fail|=!ok;
         } catch(Exception e) {

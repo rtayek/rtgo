@@ -1,12 +1,10 @@
 package sgf;
-import org.junit.*;
+import org.junit.Rule;
 import utilities.MyTestWatcher;
+import utilities.TestKeys;
 public class SgfRoundTripTestCase extends AbstractSgfRoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Override @Before public void setUp() throws Exception {
-        key=Parser.empty;
-        key="sgfExamleFromRedBean";
-        key="emptyWithSemicolon";
-        super.setUp();
+    public SgfRoundTripTestCase() {
+        key=TestKeys.emptyWithSemicolon;
     }
 }

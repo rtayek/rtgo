@@ -8,6 +8,12 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     // add setup and check alwaysPrepare
     //         if(alwaysPrepare) prepare();
     @Override @Before public void setUp() throws Exception { super.setUp(); if(!alwaysPrepare) prepare(); }
+    protected static void assertNoLineFeeds(String sgf) {
+        if(sgf!=null) assertFalse(sgf.contains("\n"));
+    }
+    protected static String prepareSgf(String sgf) {
+        return sgf!=null?SgfNode.options.prepareSgf(sgf):null;
+    }
     private Boolean specialCases(String actualSgf) {
         Boolean ok=false; // no more assertions are needed
         if(expectedSgf.equals("")) expectedSgf=null; //11/29/22
@@ -27,15 +33,15 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     }
     @Test public void testSgfSaveAndRestore() throws Exception {
         // but does a restore first, then a deep equals on the trees.
-        if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
+        assertNoLineFeeds(expectedSgf);
         SgfNode expected=SgfTestIo.restore(expectedSgf);
         SgfNode actualSgf=SgfTestIo.saveAndRestore(expected);
         if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
     }
     @Test public void testSgfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
-        String actualSgf=SgfRoundTrip.restoreAndSave(expectedSgf);
-        if(actualSgf!=null) actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        String actualSgf=SgfTestIo.restoreAndSave(expectedSgf);
+        actualSgf=prepareSgf(actualSgf);
         if(actualSgf.length()==expectedSgf.length()+1) if(actualSgf.endsWith(")")) {
             Logging.mainLogger.info(key+"removing extra ')' "+actualSgf.length());
             if(true) throw new RuntimeException(key+"removing extra ')' "+actualSgf.length());
@@ -49,21 +55,21 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     @Ignore @Test public void testSPreordergfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
         if(expectedSgf.equals("")) return;
-        expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
+        expectedSgf=prepareSgf(expectedSgf);
         String actualSgf=SgfNode.preorderRouundTrip(expectedSgf);
         int p=Parser.parentheses(expectedSgf);
         if(p!=0) Logging.mainLogger.info(" bad parentheses: "+p);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
-        if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
+        assertNoLineFeeds(expectedSgf);
         boolean isOk=SgfTestIo.roundTripTwice(expectedSgf);
         assertTrue(key.toString(),isOk);
     }
     @Test public void testSgfCannonical() {
-        if(expectedSgf!=null) assertFalse(expectedSgf.contains("\n"));
-        String actualSgf=SgfRoundTrip.restoreAndSave(expectedSgf);
-        String actual2=SgfRoundTrip.restoreAndSave(actualSgf);
+        assertNoLineFeeds(expectedSgf);
+        String actualSgf=SgfTestIo.restoreAndSave(expectedSgf);
+        String actual2=SgfTestIo.restoreAndSave(actualSgf);
         assertEquals(key.toString(),actualSgf,actual2);
     }
 }

@@ -15,7 +15,7 @@ public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
         Model original=new Model();
         ModelTestIo.restore(original,expectedSgf);
         boolean hasABoard=original.board()!=null;
-        int n=Math.min(expectedSgf.length(),20);
+        int n=Math.min(expectedSgf.length(),20); // what is 20?
         Model model=new Model();
         ModelTestIo.restore(model,expectedSgf);
         if(model.board()==null); // Logging.mainLogger.info("model has no board!");

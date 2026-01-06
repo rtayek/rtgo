@@ -23,7 +23,7 @@ public final class SgfTestIo {
     }
     public static String save(SgfNode node,Indent indent) {
         if(node==null) return null;
-        return TestIo.writeToString(writer->node.saveSgf(writer,indent));
+        return SgfRoundTrip.saveSgfToString(node,indent);
     }
     public static String save(SgfNode node) {
         return save(node,IOs.noIndent);
@@ -32,8 +32,20 @@ public final class SgfTestIo {
         if(expected==null) return null;
         return SgfRoundTrip.saveAndRestore(expected);
     }
+    public static String restoreAndSave(String sgf) {
+        if(sgf==null) return null;
+        return SgfRoundTrip.restoreAndSave(sgf);
+    }
+    public static String restoreAndSave(Reader reader) {
+        if(reader==null) return null;
+        return SgfRoundTrip.restoreAndSaveToString(reader);
+    }
     public static boolean roundTripTwice(String sgf) {
         if(sgf==null) return true;
         return SgfRoundTrip.roundTripTwice(IOs.toReader(sgf));
+    }
+    public static boolean roundTripTwice(Reader reader) {
+        if(reader==null) return true;
+        return SgfRoundTrip.roundTripTwice(reader);
     }
 }

@@ -1,8 +1,11 @@
 package sgf;
 import io.Logging;
 import static org.junit.Assert.*;
-import static sgf.Parser.*;
-import java.util.*;
+import static sgf.Parser.getSgfData;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,10 +20,7 @@ import utilities.*;
 	}
 	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
 	@Parameterized.Parameters(name="{0}") public static Collection<Object[]> parameters() {
-		Set<Object> objects=new LinkedHashSet<>();
-		objects.addAll(sgfDataKeySet());
-		objects.addAll(sgfFiles());
-		return ParameterArray.parameterize(objects);
+		return SgfTestParameters.allSgfKeysAndFiles();
 	}
 	@Before public void setUp() throws Exception {
 		expectedSgf=getSgfData(key);

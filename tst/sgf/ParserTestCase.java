@@ -1,11 +1,10 @@
 package sgf;
-import org.junit.*;
+import org.junit.Rule;
 import utilities.MyTestWatcher;
+import utilities.TestKeys;
 public class ParserTestCase extends AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Override @Before public void setUp() throws Exception {
-        key=Parser.empty;
-        key="sgfExamleFromRedBean";
-        super.setUp();
+    public ParserTestCase() {
+        key=TestKeys.sgfExampleFromRedBean;
     }
 }

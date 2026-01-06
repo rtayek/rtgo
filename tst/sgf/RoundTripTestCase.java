@@ -22,12 +22,16 @@ public class RoundTripTestCase {
         // looks like a double round trup?
         // do we need this?
         String expected=modelRoundTripToString(r);
-        String actual=modelRoundTripToString(expected);
+        assertRoundTripTwice(expected);
         try {
             r.close();
         } catch(IOException e) {
             Logging.mainLogger.severe("caught: "+e);
         }
+    }
+    private static void assertRoundTripTwice(String sgf) {
+        String expected=modelRoundTripToString(sgf);
+        String actual=modelRoundTripToString(expected);
         assertEquals(expected,actual);
     }
     private static String modelRoundTripToString(Reader reader) {
@@ -57,8 +61,6 @@ public class RoundTripTestCase {
         //
     }
     private static void checkString(String sgf) throws IOException {
-        String expected=modelRoundTripToString(sgf);
-        String actual=modelRoundTripToString(expected);
-        assertEquals(expected,actual);
+        assertRoundTripTwice(sgf);
     }
 }

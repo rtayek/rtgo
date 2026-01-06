@@ -46,7 +46,7 @@ public class SimpleParserTestCase {
         SgfNode root=sample();
         String expected=SgfTestIo.save(root,noIndent);
         Logging.mainLogger.info("sample sgf: "+expected);
-        String actual=SgfRoundTrip.restoreAndSave(expected);
+        String actual=SgfTestIo.restoreAndSave(expected);
         assertEquals(expected,actual);
     }
 }

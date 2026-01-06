@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.*;
 import model.MNodeAcceptor.*;
 import utilities.Iterators.Longs;
+import utilities.TestKeys;
 public class LabelMNodeTestCase {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
@@ -48,7 +49,7 @@ public class LabelMNodeTestCase {
             assertEquals(node1.label(),finder.found.label());
         }
     }
-    String key="sgfExamleFromRedBean";
+    String key=TestKeys.sgfExampleFromRedBean;
     String sgf=Parser.getSgfData(key);
     MNode root1=SgfTestIo.restoreMNode(sgf);
     MNode root2=SgfTestIo.restoreMNode(sgf);

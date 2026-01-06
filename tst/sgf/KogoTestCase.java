@@ -13,7 +13,7 @@ import utilities.MyTestWatcher;
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testKogo() throws IOException {
         Reader reader=IOs.toReader(new File("sgf/KogosJosekiDictionary.sgf"));
-        boolean ok=SgfRoundTrip.roundTripTwice(reader);
+        boolean ok=SgfTestIo.roundTripTwice(reader);
         assertTrue(ok);
     }
     boolean old;

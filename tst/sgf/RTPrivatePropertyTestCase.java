@@ -1,7 +1,9 @@
 package sgf;
 import static org.junit.Assert.assertEquals;
-import static sgf.Parser.*;
-import java.util.*;
+import static sgf.Parser.getSgfData;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -12,10 +14,7 @@ import utilities.*;
 	}
 	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
 	@Parameterized.Parameters(name="{0}") public static Collection<Object[]> parameters() {
-		Set<Object> objects=new LinkedHashSet<>();
-		objects.addAll(sgfDataKeySet());
-		objects.addAll(sgfFiles());
-		return ParameterArray.parameterize(objects);
+		return SgfTestParameters.allSgfKeysAndFiles();
 	}
 	@Before public void setUp() throws Exception {
 		originalSgf=getSgfData(key);
@@ -23,12 +22,12 @@ import utilities.*;
 	}
 	@After public void tearDown() throws Exception {}
 	@Test public void testCannonical() {
-		String expectedSgf=SgfRoundTrip.restoreAndSave(originalSgf);
-		String actualSgf=SgfRoundTrip.restoreAndSave(expectedSgf);
+		String expectedSgf=SgfTestIo.restoreAndSave(originalSgf);
+		String actualSgf=SgfTestIo.restoreAndSave(expectedSgf);
 		assertEquals(key.toString(),expectedSgf,actualSgf);
 	}
 	@Test public void testMultipleGames() { // how does it do that?
-		String expectedSgf=SgfRoundTrip.restoreAndSave(originalSgf);
+		String expectedSgf=SgfTestIo.restoreAndSave(originalSgf);
 		// assertFalse(expectedSgf.contains(P.RT.toString()));
 		// why would we expect this?
 	}

@@ -25,6 +25,16 @@ public abstract class AbstractSgfParserTestCase {
         }
         assertFalse(containsQuotedControlCharacters(key.toString(),expectedSgf));
     }
+    private void assertSgfDelimiters() {
+        if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
+            if(!expectedSgf.endsWith(")")) Logging.mainLogger.info(key+" does not end with an close parenthesis");
+            //fail(key+" does not end with an close parenthesis");
+        } else if(!expectedSgf.equals("")) fail(key.toString()+" does not start with an open parenthesis");
+    }
+    private SgfNode parseGames() {
+        assertSgfDelimiters();
+        return SgfTestIo.restore(expectedSgf);
+    }
     @Before public void setUp() throws Exception {
         watcher.key=key;
         if(true) if(key==null) throw new RuntimeException("key: "+key+" is nul!");
@@ -43,11 +53,7 @@ public abstract class AbstractSgfParserTestCase {
         // maybe allow as an edge case?
     }
     @Test public void testParse() throws Exception {
-        if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
-            if(!expectedSgf.endsWith(")")) Logging.mainLogger.info(key+" does not end with an close parenthesis");
-            //fail(key+" does not end with an close parenthesis");
-        } else if(!expectedSgf.equals("")) fail(key.toString()+" does not start with an open parenthesis");
-        games=SgfTestIo.restore(expectedSgf);
+        games=parseGames();
     }
     @Test public void testHexAscii() {
         String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
@@ -58,19 +64,11 @@ public abstract class AbstractSgfParserTestCase {
         assertEquals(keyString,expectedSgf,actualSgf);
     }
     @Test public void testFlags() {
-        if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
-            if(!expectedSgf.endsWith(")")) Logging.mainLogger.info(key+" sgf does not end with an close parenthesis");
-            //fail(key+" does not end with an close parenthesis");
-        } else if(!expectedSgf.equals("")) fail(key.toString()+" sgf does not start with an open parenthesis");
-        games=SgfTestIo.restore(expectedSgf);
+        games=parseGames();
         if(games!=null) games.oldPreorderCheckFlags();
     }
     @Test public void testFlagsNew() {
-        if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
-            if(!expectedSgf.endsWith(")")) Logging.mainLogger.info(key+" sgf does not end with an close parenthesis");
-            //fail(key+" does not end with an close parenthesis");
-        } else if(!expectedSgf.equals("")) fail(key.toString()+" sgf does not start with an open parenthesis");
-        games=SgfTestIo.restore(expectedSgf);
+        games=parseGames();
         if(games!=null) games.preorderCheckFlags();
     }
     boolean alwaysPrepare=false;
