@@ -1,6 +1,7 @@
 package sgf;
 import static io.Logging.parserLogger;
 import java.util.*;
+import java.util.function.*;
 import utilities.Holder;
 public interface Tree {
     public static class BinaryNode<T> {
@@ -16,6 +17,12 @@ public interface Tree {
         protected BinaryNode<T> lastSibling() { return lastSibling_(new Holder<Integer>(0)); }
         int siblings() { return BinaryTreeSupport.siblingCount(this,node -> node.right); }
         protected BinaryNode<T> lastDescendant() { return lastDescendant_(new Holder<Integer>(0)); }
+        void preorder(Consumer<BinaryNode<T>> consumer) {
+            BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,consumer);
+        }
+        void preorder(Predicate<BinaryNode<T>> predicate) {
+            BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,predicate);
+        }
         void addSibling(BinaryNode<T> node) {
             BinaryTreeSupport.appendSibling(this,n -> n.right,(parent,sibling) -> parent.right=sibling,node);
         }

@@ -105,14 +105,10 @@ public class SgfNode {
         return ok;
     }
     public void preorder(Consumer<SgfNode> consumer) {
-        if(consumer!=null) consumer.accept(this);
-        if(left!=null) left.preorder(consumer);
-        if(right!=null) right.preorder(consumer);
+        BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,consumer);
     }
     public void preorder(Predicate<SgfNode> predicate) {
-        if(predicate!=null) if(predicate.test(this)) return;
-        if(left!=null) left.preorder(predicate);
-        if(right!=null) right.preorder(predicate);
+        BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,predicate);
     }
     static class CountingConsumer implements Consumer<SgfNode> {
         @Override public void accept(SgfNode node) { if(node!=null) ++n; }

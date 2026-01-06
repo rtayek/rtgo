@@ -1,6 +1,8 @@
 package sgf;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import utilities.Holder;
 final class BinaryTreeSupport {
     private BinaryTreeSupport() {}
@@ -24,6 +26,22 @@ final class BinaryTreeSupport {
         Holder<Integer> count=new Holder<>(0);
         lastSibling(start,right,count);
         return count.t;
+    }
+    static <T> void preorder(T start,Function<T,T> left,Function<T,T> right,Consumer<T> consumer) {
+        if(start==null) return;
+        if(consumer!=null) consumer.accept(start);
+        T leftNode=left.apply(start);
+        if(leftNode!=null) preorder(leftNode,left,right,consumer);
+        T rightNode=right.apply(start);
+        if(rightNode!=null) preorder(rightNode,left,right,consumer);
+    }
+    static <T> void preorder(T start,Function<T,T> left,Function<T,T> right,Predicate<T> stopPredicate) {
+        if(start==null) return;
+        if(stopPredicate!=null && stopPredicate.test(start)) return;
+        T leftNode=left.apply(start);
+        if(leftNode!=null) preorder(leftNode,left,right,stopPredicate);
+        T rightNode=right.apply(start);
+        if(rightNode!=null) preorder(rightNode,left,right,stopPredicate);
     }
     static <T> T lastChild(T leftChild,Function<T,T> right) {
         if(leftChild==null) return null;
