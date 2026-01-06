@@ -8,9 +8,6 @@ import tree.G2.CountingConsumer;
 public class Node<T> {
     public Node(T data) { this.data=data; }
     public Node(T data,Node<T> left,Node<T> right) { this.data=data; this.left=left; this.right=right; }
-    public void preorder(Consumer<Node<T>> consumer) {
-        BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,consumer);
-    }
     public static <T> Node<T> copy(Node<T> node) {
         if(node==null) return null;
         Node<T> copy=new Node<>(node.data,node.left,node.right);
@@ -30,24 +27,6 @@ public class Node<T> {
         if(node==null) return null;
         Node<U> copy=reLabelCopy_(node,iterator);
         return copy;
-    }
-    public void inorder(Consumer<Node<T>> consumer) {
-        BinaryTreeSupport.inorder(this,node -> node.left,node -> node.right,consumer);
-    }
-    public void postorder(Consumer<Node<T>> consumer) {
-        BinaryTreeSupport.postorder(this,node -> node.left,node -> node.right,consumer);
-    }
-    public static <T> void preorder(Node<T> node,Consumer<Node<T>> consumer) {
-        if(node==null) return;
-        node.preorder(consumer);
-    }
-    public static <T> void inorder(Node<T> node,Consumer<Node<T>> consumer) {
-        if(node==null) return;
-        node.inorder(consumer);
-    }
-    public static <T> void postorder(Node<T> node,Consumer<Node<T>> consumer) {
-        if(node==null) return;
-        node.postorder(consumer);
     }
     public static <T> void mirror(Node<T> root) {
         if(root==null) return;
@@ -169,7 +148,7 @@ public class Node<T> {
     }
     public static <T> int count(Node<T> node) {
         CountingConsumer<T> consumer=new CountingConsumer<>();
-        if(node!=null) Node.postorder(node,consumer);
+        BinaryTreeSupport.postorder(node,x -> x.left,x -> x.right,consumer);
         return consumer.n;
     }
     public static <T> boolean structureDeepEquals(Node<T> node,Node<T> other) {
@@ -235,7 +214,7 @@ public class Node<T> {
     }
     static <T> void relabel(Node<T> node,final Iterator<T> i) {
         Consumer<Node<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
-        preorder(node,relabel);
+        BinaryTreeSupport.preorder(node,x -> x.left,x -> x.right,relabel);
     }
     Node<T> left,right,parent;
     public T data;

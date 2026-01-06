@@ -128,11 +128,11 @@ public class SgfNode {
         if(searhingFunction.done) { Logging.mainLogger.info(searhingFunction.target+" is bad"); }
     }
     void oldPreorderCheckFlags() {
-        setFlags();
-        boolean ok=checkFlags();
-        if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
-        if(left!=null) left.oldPreorderCheckFlags();
-        if(right!=null) { right.oldPreorderCheckFlags(); }
+        BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,node -> {
+            node.setFlags();
+            boolean ok=node.checkFlags();
+            if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
+        });
     }
     void add(SgfProperty property) {
         if(sgfProperties==null) sgfProperties=new ArrayList<>();

@@ -4,6 +4,7 @@ import static tree.Node.*;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
+import tree.BinaryTreeSupport;
 import utilities.Et;
 import utilities.Iterators.Longs;
 public class G2 {
@@ -74,7 +75,7 @@ public class G2 {
         final ArrayList<T> datas=new ArrayList<>();
         Consumer<Node<T>> add=x->datas.add(x!=null?x.data:null);
         // make this check for duplicates!
-        preorder(node,add);
+        BinaryTreeSupport.preorder(node,x -> x.left,x -> x.right,add);
         return datas;
     }
     static <T> void p(Node<T> x) { // instance?
@@ -97,13 +98,13 @@ public class G2 {
         if(tree==null) return;
         Consumer<Node<T>> p=x->Logging.mainLogger.info(x.data+" ");
         Logging.mainLogger.info("preorder:  ");
-        tree.preorder(p);
+        BinaryTreeSupport.preorder(tree,x -> x.left,x -> x.right,p);
         Logging.mainLogger.info("");
         Logging.mainLogger.info("inorder:   ");
-        tree.inorder(p);
+        BinaryTreeSupport.inorder(tree,x -> x.left,x -> x.right,p);
         Logging.mainLogger.info("");
         Logging.mainLogger.info("postorder: ");
-        tree.postorder(p);
+        BinaryTreeSupport.postorder(tree,x -> x.left,x -> x.right,p);
         Logging.mainLogger.info("");
     }
     public static <T> void printStuff(ArrayList<Node<T>> trees) {
@@ -111,7 +112,7 @@ public class G2 {
             Logging.mainLogger.info("tree "+i+": ");
             Node<T> tree=trees.get(i);
             final Consumer<Node<T>> p=x->pd(x);
-            preorder(tree,p);
+            BinaryTreeSupport.preorder(tree,x -> x.left,x -> x.right,p);
             Logging.mainLogger.info("");
         }
     }
@@ -203,7 +204,7 @@ public class G2 {
         Logging.mainLogger.info("to data string: "+stringBuffer);
         String expected=encode(tree,null);
         MyConsumer<Long> c2=new MyConsumer<Long>();
-        Node.<Long> postorder(tree,c2);
+        BinaryTreeSupport.postorder(tree,x -> x.left,x -> x.right,c2);
         String actual=encode(c2.copy,null);
         Logging.mainLogger.info("ac: "+actual);
         if(!expected.equals(actual)) Logging.mainLogger.info("copy failure!");
@@ -237,7 +238,7 @@ public class G2 {
             Logging.mainLogger.info("tree "+i+": ");
             Node<Long> tree=some.get(i);
             final Consumer<Node<Long>> p=x1->pd(x1);
-            preorder(tree,p);
+            BinaryTreeSupport.preorder(tree,x -> x.left,x -> x.right,p);
             Logging.mainLogger.info("");
             print(tree,"");
             Logging.mainLogger.info(String.valueOf(pPrint(tree)));
