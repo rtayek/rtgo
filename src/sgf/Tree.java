@@ -2,6 +2,7 @@ package sgf;
 import static io.Logging.parserLogger;
 import java.util.*;
 import java.util.function.*;
+import tree.BinaryTreeSupport;
 import utilities.Holder;
 public interface Tree {
     public static class BinaryNode<T> {
@@ -22,6 +23,12 @@ public interface Tree {
         }
         void preorder(Predicate<BinaryNode<T>> predicate) {
             BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,predicate);
+        }
+        void inorder(Consumer<BinaryNode<T>> consumer) {
+            BinaryTreeSupport.inorder(this,node -> node.left,node -> node.right,consumer);
+        }
+        void postorder(Consumer<BinaryNode<T>> consumer) {
+            BinaryTreeSupport.postorder(this,node -> node.left,node -> node.right,consumer);
         }
         void addSibling(BinaryNode<T> node) {
             BinaryTreeSupport.appendSibling(this,n -> n.right,(parent,sibling) -> parent.right=sibling,node);

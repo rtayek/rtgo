@@ -8,19 +8,13 @@ public class So {
         public Node(Integer data) { this.data=data; }
         public Node(Integer data,Node left,Node right) { this.data=data; this.left=left; this.right=right; }
         public void preorder(Consumer<Node> consumer) {
-            if(consumer!=null) consumer.accept(this);
-            if(left!=null) left.preorder(consumer);
-            if(right!=null) right.preorder(consumer);
+            BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,consumer);
         }
         public void inorder(Consumer<Node> consumer) {
-            if(left!=null) left.inorder(consumer);
-            if(consumer!=null) consumer.accept(this);
-            if(right!=null) right.inorder(consumer);
+            BinaryTreeSupport.inorder(this,node -> node.left,node -> node.right,consumer);
         }
         public void postorder(Consumer<Node> consumer) {
-            if(left!=null) left.postorder(consumer);
-            if(right!=null) right.postorder(consumer);
-            if(consumer!=null) consumer.accept(this);
+            BinaryTreeSupport.postorder(this,node -> node.left,node -> node.right,consumer);
         }
         public static Node copy(Node node) {
             if(node==null) return null;

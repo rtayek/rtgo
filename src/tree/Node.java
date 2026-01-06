@@ -9,9 +9,7 @@ public class Node<T> {
     public Node(T data) { this.data=data; }
     public Node(T data,Node<T> left,Node<T> right) { this.data=data; this.left=left; this.right=right; }
     public void preorder(Consumer<Node<T>> consumer) {
-        if(consumer!=null) consumer.accept(this);
-        if(left!=null) left.preorder(consumer);
-        if(right!=null) right.preorder(consumer);
+        BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,consumer);
     }
     public static <T> Node<T> copy(Node<T> node) {
         if(node==null) return null;
@@ -34,14 +32,10 @@ public class Node<T> {
         return copy;
     }
     public void inorder(Consumer<Node<T>> consumer) {
-        if(left!=null) left.inorder(consumer);
-        if(consumer!=null) consumer.accept(this);
-        if(right!=null) right.inorder(consumer);
+        BinaryTreeSupport.inorder(this,node -> node.left,node -> node.right,consumer);
     }
     public void postorder(Consumer<Node<T>> consumer) {
-        if(left!=null) left.postorder(consumer);
-        if(right!=null) right.postorder(consumer);
-        if(consumer!=null) consumer.accept(this);
+        BinaryTreeSupport.postorder(this,node -> node.left,node -> node.right,consumer);
     }
     public static <T> void preorder(Node<T> node,Consumer<Node<T>> consumer) {
         if(node==null) return;
