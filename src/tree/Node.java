@@ -2,7 +2,6 @@ package tree;
 import static tree.G2.*;
 import static utilities.Utilities.*;
 import java.util.*;
-import java.util.function.Consumer;
 import io.Logging;
 import tree.G2.CountingConsumer;
 public class Node<T> {
@@ -36,7 +35,7 @@ public class Node<T> {
         root.left=root.right;
         root.right=temp;
     }
-    private static <T> void encode_(StringBuffer sb,Node<T> node,ArrayList<T> data) {
+    private static <T> void encode_(StringBuilder sb,Node<T> node,ArrayList<T> data) {
         // lambda?
         // use consumer of node instead of array list of node?
         boolean isNotNull=node!=null;
@@ -52,7 +51,7 @@ public class Node<T> {
     }
     public static <T> String encode(Node<T> tree,ArrayList<T> data) { // to binary string
         // https://oeis.org/search?q=4%2C20%2C24%2C84%2C88%2C100%2C104%2C112&language=english&go=Search
-        StringBuffer sb=new StringBuffer();
+        StringBuilder sb=new StringBuilder();
         encode_(sb,tree,data);
         return sb.toString();
     }
@@ -64,7 +63,7 @@ public class Node<T> {
         if(bits.size()==0) Logging.mainLogger.info("no bits!");
         return bits;
     }
-    static <T> void toDataString(StringBuffer sb,Node<T> node) { // encode
+    static <T> void toDataString(StringBuilder sb,Node<T> node) { // encode
         // lambda?
         if(node==null) sb.append('0');
         else {
@@ -213,10 +212,10 @@ public class Node<T> {
         return extraMNode2;
     }
     static <T> void relabel(Node<T> node,final Iterator<T> i) {
-        Consumer<Node<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
-        BinaryTreeSupport.preorder(node,x -> x.left,x -> x.right,relabel);
+        BinaryTreeSupport.preorder(node,x -> x.left,x -> x.right,
+                x -> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; });
     }
-    Node<T> left,right,parent;
+    Node<T> left,right;
     public T data;
     String encoded;
     final int id=++ids;

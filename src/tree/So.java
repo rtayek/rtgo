@@ -23,7 +23,7 @@ public class So {
             copy.right=node.right;
             return copy;
         }
-        Node left,right,parent;
+        Node left,right;
         Integer data;
     }
     public ArrayList<Node> all(int nodes,Holder<Integer> data) { // https://www.careercup.com/question?id=14945787

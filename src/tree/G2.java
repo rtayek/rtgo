@@ -1,11 +1,9 @@
 package tree;
 import io.Logging;
-import static tree.Node.*;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
 import tree.BinaryTreeSupport;
-import utilities.Et;
 import utilities.Iterators.Longs;
 public class G2 {
     /*
@@ -20,16 +18,16 @@ public class G2 {
     public static <T> Node<T> encodeDecode(Node<T> expected) {
         // add string writer and return the tree
         ArrayList<T> data=new ArrayList<>();
-        String actualEncoded=encode(expected,data);
-        Node<T> actual=decode(actualEncoded,data);
+        String actualEncoded=Node.encode(expected,data);
+        Node<T> actual=Node.decode(actualEncoded,data);
         if(data.size()>0) Logging.mainLogger.info("leftoverdata: "+data);
         return actual;
     }
     public static <T> String decodeEncode(String expected,ArrayList<T> data) {
         ArrayList<T> data0=new ArrayList<>(data);
-        Node<T> decoded=decode(expected,data);
+        Node<T> decoded=Node.decode(expected,data);
         ArrayList<T> data2=new ArrayList<>();
-        String actual=encode(decoded,data2);
+        String actual=Node.encode(decoded,data2);
         if(data!=null) {
             if(data.size()>0) {
                 Logging.mainLogger.info("leftover data: "+data);
@@ -43,11 +41,11 @@ public class G2 {
         return actual;
     }
     static String roundTripLong(String expected,long number) {
-        List<Boolean> list=bits(number,expected.length());
+        List<Boolean> list=Node.bits(number,expected.length());
         ArrayList<Long> data=new ArrayList<>(sequentialData);
         // maybe add data as parameter?
-        Node<Long> node2=decode(list,data);
-        String actual=encode(node2,data);
+        Node<Long> node2=Node.decode(list,data);
+        String actual=Node.encode(node2,data);
         return actual;
     }
     public static String roundTripLong(String expected) {
@@ -79,7 +77,7 @@ public class G2 {
         return datas;
     }
     static <T> void p(Node<T> x) { // instance?
-        StringBuffer sb=new StringBuffer();
+        StringBuilder sb=new StringBuilder();
         if(x!=null) {
             sb.append("pre id: ").append(x.id);
             sb.append(", data: ").append(x.data);
@@ -90,7 +88,7 @@ public class G2 {
         Logging.mainLogger.info(String.valueOf(sb));
     }
     static <T> void pd(Node<T> x) {
-        StringBuffer sb=new StringBuffer();
+        StringBuilder sb=new StringBuilder();
         sb.append(' ').append(x.data);
         Logging.mainLogger.info(String.valueOf(sb));
     }
@@ -134,7 +132,7 @@ public class G2 {
         if(node!=null) print(node,prefix,true);
         else Logging.mainLogger.info("0");
     }
-    public static <T> void pPrint(Node<T> root,StringBuffer sb) {
+    public static <T> void pPrint(Node<T> root,StringBuilder sb) {
         if(root==null) return;
         sb.append(root.data);
         if(root.left==null&&root.right==null) return;
@@ -146,7 +144,7 @@ public class G2 {
         if(root.right!=null) { sb.append('('); pPrint(root.right,sb); sb.append(')'); }
     }
     public static <T> String pPrint(Node<T> root) {
-        StringBuffer sb=new StringBuffer();
+        StringBuilder sb=new StringBuilder();
         pPrint(root,sb);
         return sb.toString();
     }
@@ -162,7 +160,7 @@ public class G2 {
                     for(Node<T> right:all(nodes-1-i,iterator)) {
                         T data=iterator!=null&&iterator.hasNext()?iterator.next():null;
                         Node<T> node=new Node<>(data,left,right);
-                        node.encoded=encode(node,null); // ?
+                        node.encoded=Node.encode(node,null); // ?
                         trees.add(node);
                     }
                 }
@@ -199,13 +197,13 @@ public class G2 {
         print(tree);
         ArrayList<Long> data=collectData(tree);
         Logging.mainLogger.info("collect data: "+data);
-        StringBuffer stringBuffer=new StringBuffer();
-        toDataString(stringBuffer,tree);
-        Logging.mainLogger.info("to data string: "+stringBuffer);
-        String expected=encode(tree,null);
+        StringBuilder stringBuilder=new StringBuilder();
+        Node.toDataString(stringBuilder,tree);
+        Logging.mainLogger.info("to data string: "+stringBuilder);
+        String expected=Node.encode(tree,null);
         MyConsumer<Long> c2=new MyConsumer<Long>();
         BinaryTreeSupport.postorder(tree,x -> x.left,x -> x.right,c2);
-        String actual=encode(c2.copy,null);
+        String actual=Node.encode(c2.copy,null);
         Logging.mainLogger.info("ac: "+actual);
         if(!expected.equals(actual)) Logging.mainLogger.info("copy failure!");
         ArrayList<Long> data2=collectData(c2.copy);
@@ -215,20 +213,16 @@ public class G2 {
         List<String> x=ManagementFactory.getRuntimeMXBean().getInputArguments();
         Logging.mainLogger.info(String.valueOf(x));
         Logging.mainLogger.info("in eclipse: "+inEclipse());
-        G2 g2=new G2();
-        if(arguments!=null&&arguments.length>0) g2.useMap=true;
-        if(inEclipse()) g2.useMap=true;
-        g2.useMap=false;
         int nodes=3;
         ArrayList<ArrayList<Node<Long>>> all=G2.Generator.all(nodes);
         Logging.mainLogger.info(nodes+" nodes.");
-        if(false) { check(all.get(2).get(0)); return; }
+        if(false) { Node.check(all.get(2).get(0)); return; }
         if(false) for(int i=0;i<=nodes;i++) {
             Logging.mainLogger.info("check "+i+" nodes.");
             ArrayList<Node<Long>> trees=all.get(i);
             int n=0;
             for(Node<Long> expected:trees) {
-                check(expected);
+                Node.check(expected);
                 G2.print(expected,"");
                 //G2.print(expected);
             }
@@ -238,7 +232,7 @@ public class G2 {
             Logging.mainLogger.info("tree "+i+": ");
             Node<Long> tree=some.get(i);
             final Consumer<Node<Long>> p=x1->pd(x1);
-            BinaryTreeSupport.preorder(tree,x -> x.left,x -> x.right,p);
+            BinaryTreeSupport.preorder(tree,node -> node.left,node -> node.right,p);
             Logging.mainLogger.info("");
             print(tree,"");
             Logging.mainLogger.info(String.valueOf(pPrint(tree)));
@@ -251,10 +245,7 @@ public class G2 {
         Node<Long> tree=trees.get(n/2);
         foo(tree);
     }
-    boolean useMap; // set in main and never used.
-    Et et=new Et();
     // put all here as an instance variable?
-    SortedMap<Integer,ArrayList<Node<Integer>>> map=new TreeMap<>();
     static List<Long> sequentialData=new ArrayList<>();
     static final int maxNodes=100;
     static Boolean verbose=false;
