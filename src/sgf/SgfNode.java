@@ -146,55 +146,38 @@ public class SgfNode {
         if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
     }
     private SgfNode lastSibling_(Holder<Integer> h) {
-        SgfNode node=null,last=this;
-        for(node=right;node!=null;node=node.right) {
-            last=node;
-            ++h.t;
-        }
-        return last;
+        return BinaryTreeSupport.lastSibling(this,node -> node.right,h);
     }
     private SgfNode lastDescendant_(Holder<Integer> h) {
-        SgfNode node=null,last=this;
-        for(node=left;node!=null;node=node.left) {
-            last=node;
-            ++h.t;
-        }
-        return last;
+        return BinaryTreeSupport.lastDescendant(this,node -> node.left,h);
     }
     protected SgfNode lastSibling() { return lastSibling_(new Holder<Integer>(0)); }
-    int siblings() { Holder<Integer> siblings=new Holder<Integer>(0); lastSibling_(siblings); return siblings.t; }
+    int siblings() { return BinaryTreeSupport.siblingCount(this,node -> node.right); }
     protected SgfNode lastDescendant() { return lastDescendant_(new Holder<Integer>(0)); }
     void addSibling(SgfNode node) {
         // if(right==null) { right=node;
         // Logging.mainLogger.warning("added node "+node.id+" as first sibling of node
         // "+this.id);
         // return; }
-        SgfNode last=lastSibling();
-        last.right=node;
+        BinaryTreeSupport.appendSibling(this,n -> n.right,(parent,sibling) -> parent.right=sibling,node);
         // Logging.mainLogger.warning("added node "+node.id+" as sibling of node
         // "+this.id);
     }
-    private SgfNode lastChild() { return left==null?null:left.lastSibling(); }
+    private SgfNode lastChild() { return BinaryTreeSupport.lastChild(left,n -> n.right); }
     private void addDescendant(SgfNode node) {
-        SgfNode last=lastDescendant();
-        last.left=node;
+        BinaryTreeSupport.appendDescendant(this,n -> n.left,(parent,child) -> parent.left=child,node);
         // Logging.mainLogger.warning("added node "+node.id+" as desendent of node
         // "+last.id);
     }
     private int children() {
-        if(left==null) return 0;
-        Holder<Integer> siblings=new Holder<>(0);
-        left.lastSibling_(siblings);
-        return siblings.t+1; // why n+1? may be used as an index elsewhere
+        return BinaryTreeSupport.childCount(left,node -> node.right);
     }
     private void addChild(SgfNode node) {
         // if(left==null)
         // Logging.mainLogger.warning("added node "+node.id+" as first child of node
         // "+this.id);
-        if(left==null) { left=node; return; }
-        SgfNode last=left.lastSibling();
-        if(last==null) throw new RuntimeException("last is null in addChild");
-        last.right=node;
+        BinaryTreeSupport.appendChild(this,n -> n.left,n -> n.right,(parent,child) -> parent.left=child,
+                (parent,child) -> parent.right=child,node);
         // Logging.mainLogger.warning("added node "+node.id+" as child of node
         // "+this.id);
     }

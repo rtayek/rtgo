@@ -8,35 +8,24 @@ public interface Tree {
         GeneralNodee<T> convert() { return null; }
         BinaryNode(BinaryNode<T> left,BinaryNode<T> right,T t) { this.left=left; this.right=right; this.t=t; }
         private BinaryNode<T> lastSibling_(Holder<Integer> h) {
-            BinaryNode<T> node=null,last=this;
-            for(node=right;node!=null;node=node.right) {
-                last=node;
-                ++h.t;
-            }
-            return last;
+            return BinaryTreeSupport.lastSibling(this,node -> node.right,h);
         }
         private BinaryNode<T> lastDescendant_(Holder<Integer> h) {
-            BinaryNode<T> node=null,last=this;
-            for(node=left;node!=null;node=node.left) {
-                last=node;
-                ++h.t;
-            }
-            return last;
+            return BinaryTreeSupport.lastDescendant(this,node -> node.left,h);
         }
         protected BinaryNode<T> lastSibling() { return lastSibling_(new Holder<Integer>(0)); }
-        int siblings() { Holder<Integer> siblings=new Holder<Integer>(0); lastSibling_(siblings); return siblings.t; }
+        int siblings() { return BinaryTreeSupport.siblingCount(this,node -> node.right); }
         protected BinaryNode<T> lastDescendant() { return lastDescendant_(new Holder<Integer>(0)); }
-        void addSibling(BinaryNode<T> node) { BinaryNode<T> last=lastSibling(); last.right=node; }
-        private BinaryNode<T> lastChild() { return left==null?null:left.lastSibling(); }
+        void addSibling(BinaryNode<T> node) {
+            BinaryTreeSupport.appendSibling(this,n -> n.right,(parent,sibling) -> parent.right=sibling,node);
+        }
+        private BinaryNode<T> lastChild() { return BinaryTreeSupport.lastChild(left,n -> n.right); }
         private void addDescendant(T t) {
-            BinaryNode<T> last=lastDescendant();
-            last.left=new BinaryNode<T>(null,null,t);
+            BinaryTreeSupport.appendDescendant(this,n -> n.left,(parent,child) -> parent.left=child,
+                    new BinaryNode<T>(null,null,t));
         }
         private int children() {
-            if(left==null) return 0;
-            Holder<Integer> siblings=new Holder<>(0);
-            left.lastSibling_(siblings);
-            return siblings.t+1; // why n+1? may be used as an index elsewhere
+            return BinaryTreeSupport.childCount(left,node -> node.right);
         }
         final T t;
         BinaryNode<T> left,right;
