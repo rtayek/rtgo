@@ -13,8 +13,8 @@ public final class SgfTestParameters {
     }
     public static Collection<Object[]> multipleGameKeysAndFiles() {
         Set<Object> objects=new LinkedHashSet<>();
-        objects.addAll(Parser.sgfDataKeySet());
-        objects.addAll(Parser.sgfFiles());
+        objects.addAll(Parser.sgfDataKeySet()); // maybe omit?
+        objects.addAll(Parser.sgfFiles()); // maybe omit?
         Set<Object> multipleGames=Parser.findMultipleGames(objects);
         if(multipleGames.isEmpty()) throw new RuntimeException("no multiple games found!");
         return ParameterArray.parameterize(multipleGames);

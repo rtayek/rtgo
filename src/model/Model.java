@@ -525,7 +525,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public void sgfMakeMove(Stone stone,Point point) { // only called by tests
 		state.sgfMakeMove(stone,point);
 	}
-	void sgfUnmakeMove(Point at) { // only called by tests
+	public void sgfUnmakeMove(Point at) { // only called by tests
 		state.sgfUnmakeMove(at);
 	}
 	public void setChangedAndNotify(Object object) {
@@ -781,13 +781,13 @@ public class Model extends Observable { // model of a go game or problem forrest
 		} else Logging.mainLogger.warning(name+" "+"do with null!");
 		setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
 	}
-	void do_(MNode node) { // set node and execute the sgf
+	public void do_(MNode node) { // set node and execute the sgf
 		if(useOldWay) Logging.mainLogger.warning("using old way");
 		else Logging.mainLogger.info("using new way");
 		if(useOldWay) executeNode(node);
 		else domain(node);
 	}
-	void push() { // see if we can eliminate copying the board
+	public void push() { // see if we can eliminate copying the board
 		Board copy=board()!=null?board().copy():null;
 		State clone=null;
 		try {
@@ -804,7 +804,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// maybe not. i wonder what it was set to before?
 		setBoard(copy);
 	}
-	void pop() {
+	public void pop() {
 		state=stack.pop();
 	}
 	public void undo() {
