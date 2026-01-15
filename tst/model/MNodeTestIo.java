@@ -1,9 +1,9 @@
 package model;
 import io.TestIo;
 import sgf.MNode;
-final class MNodeTestIo {
+public final class MNodeTestIo {
     private MNodeTestIo() {}
-    static String save(MNode node) {
+    public static String save(MNode node) {
         return save(node,"save fails");
     }
     static String save(MNode node,String message) {

@@ -1,12 +1,12 @@
 package sgf;
 import io.Logging;
 import static org.junit.Assert.*;
-import static sgf.Parser.*;
 import static sgf.SgfNode.SgfOptions.containsQuotedControlCharacters;
 import static utilities.Utilities.implies;
 import org.junit.*;
 import io.IOs;
 import sgf.SgfNode.SgfOptions;
+import utilities.SgfTestParameters;
 import utilities.MyTestWatcher;
 public abstract class AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -30,23 +30,14 @@ public abstract class AbstractSgfParserTestCase {
         assertFalse(containsQuotedControlCharacters(key.toString(),normalized));
         return normalized;
     }
-    private void assertSgfDelimiters() {
-        if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
-            if(!expectedSgf.endsWith(")")) Logging.mainLogger.info(key+" does not end with an close parenthesis");
-            //fail(key+" does not end with an close parenthesis");
-        } else if(!expectedSgf.equals("")) fail(key.toString()+" does not start with an open parenthesis");
-    }
     private SgfNode parseGames() {
-        assertSgfDelimiters();
+        SgfTestSupport.assertSgfDelimiters(expectedSgf,key);
         return SgfTestIo.restore(expectedSgf);
     }
     @Before public void setUp() throws Exception {
         watcher.key=key;
-        if(true) if(key==null) throw new RuntimeException("key: "+key+" is nul!");
-        rawSgf=getSgfData(key);
-        if(rawSgf==null) { if(false) throw new RuntimeException("key: "+key+" returns nul!"); expectedSgf=normalizeExpectedSgf(null); return; }
-        int p=Parser.parentheses(rawSgf);
-        if(p!=0) { Logging.mainLogger.info(" bad parentheses: "+p); throw new RuntimeException(key+" bad parentheses: "+p); }
+        rawSgf=SgfTestSupport.loadExpectedSgf(key);
+        if(rawSgf==null) { expectedSgf=normalizeExpectedSgf(null); return; }
         expectedSgf=normalizeExpectedSgf(rawSgf);
     }
     @Test public void testKey() throws Exception {
@@ -80,4 +71,10 @@ public abstract class AbstractSgfParserTestCase {
     public String rawSgf;
     public String expectedSgf;
     public SgfNode games;
+    protected static java.util.Collection<Object[]> allSgfParameters() {
+        return SgfTestParameters.allSgfKeysAndFiles();
+    }
+    protected static java.util.Collection<Object[]> multipleGameParameters() {
+        return SgfTestParameters.multipleGameKeysAndFiles();
+    }
 }

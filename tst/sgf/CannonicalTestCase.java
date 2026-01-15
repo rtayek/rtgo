@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
-import model.ModelTestIo;
 import utilities.*;
 @RunWith(Parameterized.class) public class CannonicalTestCase extends AbstractSgfFixtureTestCase {
 	public CannonicalTestCase(Object key) {

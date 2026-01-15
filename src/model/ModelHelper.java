@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import core.engine.*;
 import core.formats.sgf.SgfDomainActionMapper;
+import core.formats.sgf.SgfNodeMapping;
 import equipment.Board;
 import equipment.Coordinates;
 import equipment.Point;
@@ -36,8 +37,10 @@ public final class ModelHelper {
     static GameNode toGameNode(Model model,sgf.MNode node) { return toGameNode(model,node,null); }
     private static GameNode toGameNode(Model model,sgf.MNode node,GameNode parent) {
         if(node==null) return null;
-        List<DomainAction> actions=SgfDomainActionMapper.mapNodeToDomainActions(model,node);
+        SgfNodeMapping mapping=SgfDomainActionMapper.mapNode(model.sgfMappingContext(),node);
+        List<DomainAction> actions=mapping.actions();
         List<SgfProperty> extras=new ArrayList<>(node.extraProperties());
+        extras.addAll(mapping.extras());
         List<RawProperty> rawExtras=new ArrayList<>(extras.size());
         for(SgfProperty p:extras) rawExtras.add(new RawProperty(p.p().id,p.list()));
         NodeAnnotations annotations=rawExtras.isEmpty()?NodeAnnotations.empty():

@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.logging.Level;
 import org.junit.*;
 import io.Logging;
+import sgf.ModelTestIo;
 import utilities.MyTestWatcher;
 // (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
 public class SmallerSaveTestCase {

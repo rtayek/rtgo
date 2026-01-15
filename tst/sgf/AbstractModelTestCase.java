@@ -1,7 +1,6 @@
 package sgf;
 import io.Logging;
 import model.Model;
-import model.ModelTestIo;
 import model.Navigate;
 import static org.junit.Assert.assertNotNull;
 import java.util.Collection;
@@ -12,7 +11,7 @@ public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
     public static boolean checkBoardInRoot(Object key) {
         // move this?
         if(key==null) { Logging.mainLogger.info("key is null!"); return true; }
-        String expectedSgf=Parser.getSgfData(key);
+        String expectedSgf=SgfTestSupport.loadExpectedSgf(key);
         Model original=new Model();
         ModelTestIo.restore(original,expectedSgf);
         boolean hasABoard=original.board()!=null;

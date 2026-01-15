@@ -97,7 +97,7 @@ public final class Move2 { // make this a record?
 	public static final Move2 whitePass=new Move2(MoveType.pass,Stone.white,null);
 	public static final Move2 blackResign=new Move2(MoveType.resign,Stone.black,null);
 	public static final Move2 whiteResign=new Move2(MoveType.resign,Stone.white,null);
-	static final Move2 blackMoveAtA1=new Move2(MoveType.move,Stone.black,new Point());
-	static final Move2 whiteMoveAtA2=new Move2(MoveType.move,Stone.white,new Point(0,1));
+	public static final Move2 blackMoveAtA1=new Move2(MoveType.move,Stone.black,new Point());
+	public static final Move2 whiteMoveAtA2=new Move2(MoveType.move,Stone.white,new Point(0,1));
 	public static String gtpPassString="pass",gtpResignString="resign";
 }

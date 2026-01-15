@@ -1,6 +1,5 @@
 package sgf;
 import static org.junit.Assert.assertEquals;
-import static sgf.Parser.getSgfData;
 import static utilities.Utilities.fromFile;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +7,6 @@ import java.io.Reader;
 import org.junit.*;
 import io.*;
 import io.IOs;
-import model.ModelTestIo;
 import utilities.MyTestWatcher;
 import utilities.TestKeys;
 // sgf file->sgf node tree->sgf tree->sgf string
@@ -36,7 +34,7 @@ public class RoundTripTestCase {
         assertEquals(expected,actual);
     }
     private static void checkKey(String key) throws IOException {
-        checkString(getSgfData(key));
+        checkString(SgfTestSupport.loadExpectedSgf(key));
     }
     @Test public void testOneMove() throws IOException {
         checkKey(TestKeys.oneMoveAtA1);

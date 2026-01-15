@@ -1,35 +1,34 @@
 package core.formats.sgf;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import core.engine.DomainAction;
 import equipment.Board;
 import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
-import model.Model;
 import sgf.MNode;
 import sgf.P2;
 import sgf.SgfProperty;
 
 /**
- * Maps SGF properties/nodes to DomainActions and captures extras for round-trip.
+ * Maps SGF properties/nodes to DomainActions and returns extras for round-trip.
+ * Mapping is pure; callers explicitly decide how to apply extras.
  */
 public final class SgfDomainActionMapper {
     private SgfDomainActionMapper() {}
 
-    public static List<DomainAction> mapPropertyToDomainActions(Model model,SgfProperty property) {
+    public static List<DomainAction> mapPropertyToDomainActions(SgfMappingContext context,SgfProperty property) {
         P2 p2=P2.which(property.p().id);
         if(p2==null) return List.of();
         return switch(p2) {
-            case AB->mapSetupAdds(model,Stone.black,property.list());
-            case AW->mapSetupAdds(model,Stone.white,property.list());
-            case B->List.of(mapMoveOrPass(model,Stone.black,property.list().get(0)));
-            case W->List.of(mapMoveOrPass(model,Stone.white,property.list().get(0)));
-            case RG->mapEdges(model,property.list());
+            case AB->mapSetupAdds(context,Stone.black,property.list());
+            case AW->mapSetupAdds(context,Stone.white,property.list());
+            case B->List.of(mapMoveOrPass(context,Stone.black,property.list().get(0)));
+            case W->List.of(mapMoveOrPass(context,Stone.white,property.list().get(0)));
+            case RG->mapEdges(context,property.list());
             case SZ->List.of(mapSize(property.list().get(0)));
-            case C->mapComment(property.list().get(0));
+            case C->mapComment(context,property.list().get(0));
             case ZB->List.of(new DomainAction.Resign(Stone.black));
             case ZW->List.of(new DomainAction.Resign(Stone.white));
             case RE->List.of(); // preserve as raw extras instead
@@ -38,36 +37,35 @@ public final class SgfDomainActionMapper {
         };
     }
 
-    public static List<DomainAction> mapNodeToDomainActions(Model model,MNode node) {
-        List<DomainAction> actions=new ArrayList<>();
-        if(node==null) return actions;
-        for(Iterator<SgfProperty> it=node.sgfProperties().iterator();it.hasNext();) {
-            SgfProperty property=it.next();
-            try {
-                List<DomainAction> mapped=mapPropertyToDomainActions(model,property);
-                if(mapped.isEmpty()) {
-                    it.remove();
-                    node.addExtraProperty(property);
-                } else {
-                    actions.addAll(mapped);
-                }
-            } catch(IllegalArgumentException e) { // unknown property id -> preserve as extra
-                it.remove();
-                node.addExtraProperty(property);
-            }
-        }
-        return actions;
+    public static SgfNodeMapping mapNode(SgfMappingContext context,MNode node) {
+        if(node==null) return SgfNodeMapping.empty();
+        return mapProperties(context,node.sgfProperties());
     }
 
-    private static List<DomainAction> mapSetupAdds(Model model,Stone color,List<String> coords) {
+    public static SgfNodeMapping mapProperties(SgfMappingContext context,List<SgfProperty> properties) {
+        List<DomainAction> actions=new ArrayList<>();
+        List<SgfProperty> extras=new ArrayList<>();
+        for(SgfProperty property:properties) {
+            try {
+                List<DomainAction> mapped=mapPropertyToDomainActions(context,property);
+                if(mapped.isEmpty()) extras.add(property);
+                else actions.addAll(mapped);
+            } catch(RuntimeException e) { // malformed or unknown property -> preserve as extra
+                extras.add(property);
+            }
+        }
+        return new SgfNodeMapping(actions,extras);
+    }
+
+    private static List<DomainAction> mapSetupAdds(SgfMappingContext context,Stone color,List<String> coords) {
         List<DomainAction> out=new ArrayList<>(coords.size());
-        for(String s:coords) out.add(new DomainAction.SetupAddStone(color,parseSgfPoint(model,s)));
+        for(String s:coords) out.add(new DomainAction.SetupAddStone(color,parseSgfPoint(context,s)));
         return out;
     }
 
-    private static DomainAction mapMoveOrPass(Model model,Stone color,String coord) {
+    private static DomainAction mapMoveOrPass(SgfMappingContext context,Stone color,String coord) {
         if(coord==null||coord.isEmpty()) return new DomainAction.Pass(color);
-        Point point=parseSgfPoint(model,coord);
+        Point point=parseSgfPoint(context,coord);
         return new DomainAction.Move(color,point);
     }
 
@@ -83,20 +81,20 @@ public final class SgfDomainActionMapper {
         return new DomainAction.SetBoardSpec(n,n);
     }
 
-    private static List<DomainAction> mapEdges(Model model,List<String> coords) {
+    private static List<DomainAction> mapEdges(SgfMappingContext context,List<String> coords) {
         List<DomainAction> actions=new ArrayList<>(coords.size());
-        for(String s:coords) actions.add(new DomainAction.SetupSetEdge(parseSgfPoint(model,s)));
+        for(String s:coords) actions.add(new DomainAction.SetupSetEdge(parseSgfPoint(context,s)));
         return actions;
     }
 
-    private static List<DomainAction> mapComment(String comment) {
+    private static List<DomainAction> mapComment(SgfMappingContext context,String comment) {
         if(comment==null) return List.of();
         List<DomainAction> actions=new ArrayList<>();
-        if(comment.startsWith(Model.sgfBoardTopology)) {
-            String topo=comment.substring(Model.sgfBoardTopology.length());
+        if(context.boardTopologyPrefix()!=null && comment.startsWith(context.boardTopologyPrefix())) {
+            String topo=comment.substring(context.boardTopologyPrefix().length());
             actions.add(new DomainAction.SetTopology(Board.Topology.valueOf(topo)));
-        } else if(comment.startsWith(Model.sgfBoardShape)) {
-            String shapeString=comment.substring(Model.sgfBoardShape.length());
+        } else if(context.boardShapePrefix()!=null && comment.startsWith(context.boardShapePrefix())) {
+            String shapeString=comment.substring(context.boardShapePrefix().length());
             actions.add(new DomainAction.SetShape(Board.Shape.valueOf(shapeString)));
         } else {
             return List.of(); // treat normal comments as raw extras
@@ -104,8 +102,8 @@ public final class SgfDomainActionMapper {
         return actions;
     }
 
-    private static Point parseSgfPoint(Model model,String coord) {
-        int depth=model.board()!=null?model.board().depth():model.depthFromSgf()>0?model.depthFromSgf():Board.standard;
+    private static Point parseSgfPoint(SgfMappingContext context,String coord) {
+        int depth=context.depth()>0?context.depth():Board.standard;
         return Coordinates.fromSgfCoordinates(coord,depth);
     }
 }

@@ -1,9 +1,11 @@
-package model;
+package sgf;
 import io.Logging;
+import model.MNodeTestIo;
+import model.Model;
+import model.Move2;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import sgf.SgfRoundTrip;
-import sgf.SgfTestIo;
 public class BasicMoveTestCase {
     //fail("wait for move complete will hang!");
     //model.waitForMoveCompleteOnBoard(moves);

@@ -3,7 +3,6 @@ package core.engine;
 import equipment.Board;
 import equipment.Point;
 import equipment.Stone;
-import model.Model;
 
 /**
  * Domain-level actions. SGF mapping lives in format adapters.
@@ -22,40 +21,4 @@ public sealed interface DomainAction permits DomainAction.EngineAction, DomainAc
     record Pass(Stone color) implements EngineAction {}
     record Resign(Stone color) implements EngineAction {}
 
-    default void apply(model.Model model) { applyTo(this,model); }
-
-    static void applyTo(DomainAction action,Model model) {
-        switch(action) {
-            case DomainAction.SetBoardSpec a-> {
-                //model.setRoot(a.width(),a.depth(),model.boardTopology(),model.boardShape());
-                model.setBoard(Board.factory.create(a.width(),a.depth(),model.boardTopology(),model.boardShape()));
-            }
-            case DomainAction.SetTopology a-> {
-                model.setBoardTopology(a.topology());
-                if(model.board()!=null) model.setBoard(Board.factory.create(model.board().width(),model.board().depth(),
-                        model.boardTopology(),model.boardShape()));
-            }
-            case DomainAction.SetShape a-> {
-                model.setBoardShape(a.shape());
-                if(model.board()!=null) model.setBoard(Board.factory.create(model.board().width(),model.board().depth(),
-                        model.boardTopology(),model.boardShape()));
-            }
-            case DomainAction.SetupAddStone a-> {
-                model.ensureBoard();
-                model.board().setAt(a.point(),a.color());
-            }
-            case DomainAction.SetupSetEdge a-> {
-                model.ensureBoard();
-                model.board().setAt(a.point(),Stone.edge);
-            }
-            case DomainAction.Move a-> {
-                model.ensureBoard();
-                if(a.point()==null) model.sgfPassAction();
-                else model.sgfMakeMove(a.color(),a.point());
-            }
-            case DomainAction.Pass a->model.sgfPassAction();
-            case DomainAction.Resign a->model.sgfResignAction();
-            default->throw new IllegalArgumentException("Unexpected value: "+action);
-        }
-    }
 }

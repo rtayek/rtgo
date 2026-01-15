@@ -1,7 +1,6 @@
-package model;
+package sgf;
 import org.junit.Before;
 import org.junit.Rule;
-import sgf.AbstractMNodeRoundTripTestCase;
 import utilities.MyTestWatcher;
 import utilities.TestKeys;
 // why does this pass?

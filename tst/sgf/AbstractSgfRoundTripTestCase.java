@@ -13,6 +13,12 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     protected static String prepareSgf(String sgf) {
         return sgf!=null?SgfNode.options.prepareSgf(sgf):null;
     }
+    protected final String prepareActual(String actualSgf) {
+        return prepareSgf(actualSgf);
+    }
+    protected final void assertPreparedEquals(String preparedSgf) {
+        assertEquals(key.toString(),expectedSgf,preparedSgf);
+    }
     private Boolean specialCases(String actualSgf) {
         Boolean ok=false; // no more assertions are needed
         if(expectedSgf.equals("")) expectedSgf=null; //11/29/22
@@ -49,16 +55,15 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         // how to do this more often?
         //Boolean ok=specialCases(actualSgf);
         //if(ok) return;
-        assertEquals(key.toString(),expectedSgf,actualSgf);
+        assertPreparedEquals(actualSgf);
     }
     @Ignore @Test public void testSPreordergfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
         if(expectedSgf.equals("")) return;
         expectedSgf=prepareSgf(expectedSgf);
         String actualSgf=SgfNode.preorderRouundTrip(expectedSgf);
-        int p=Parser.parentheses(expectedSgf);
-        if(p!=0) Logging.mainLogger.info(" bad parentheses: "+p);
-        assertEquals(key.toString(),expectedSgf,actualSgf);
+        SgfTestSupport.logBadParentheses(expectedSgf,key,"ex");
+        assertPreparedEquals(actualSgf);
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
         assertNoLineFeeds(expectedSgf);

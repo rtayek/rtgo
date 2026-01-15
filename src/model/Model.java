@@ -11,8 +11,9 @@ import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
 import core.engine.DomainAction;
-import core.engine.applier.DomainActionApplier;
 import core.formats.sgf.SgfDomainActionMapper;
+import core.formats.sgf.SgfMappingContext;
+import core.formats.sgf.SgfNodeMapping;
 import static model.Move2.*;
 import equipment.*;
 import equipment.Board.*;
@@ -744,7 +745,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 			return;
 		}
 		try {
-			List<DomainAction> actions=SgfDomainActionMapper.mapNodeToDomainActions(this,node); // node-level
+            SgfNodeMapping mapping=SgfDomainActionMapper.mapNode(sgfMappingContext(),node); // node-level mapping
+            mapping.applyExtrasTo(node);
+            List<DomainAction> actions=mapping.actions();
 																								// mapping
 			new DomainActionApplier(this).applyAll(actions);
 		} catch(Exception e) {
@@ -757,6 +760,10 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public int depthFromSgf() {
 		return state.depthFromSgf;
+	}
+	SgfMappingContext sgfMappingContext() {
+		int depth=board()!=null?board().depth():depthFromSgf()>0?depthFromSgf():Board.standard;
+		return new SgfMappingContext(depth,sgfBoardTopology,sgfBoardShape);
 	}
 	private void executeNode(MNode node) {
 		state.node=node;

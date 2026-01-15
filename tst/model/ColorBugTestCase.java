@@ -7,6 +7,7 @@ import equipment.*;
 import io.IOs;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
+import sgf.ModelTestIo;
 import utilities.MyTestWatcher;
 public class ColorBugTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

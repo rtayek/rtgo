@@ -10,6 +10,7 @@ import org.junit.*;
 import equipment.*;
 import model.*;
 import model.ModelHelper2;
+import sgf.ModelTestIo;
 import utilities.MyTestWatcher;
 public class GTPShoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());

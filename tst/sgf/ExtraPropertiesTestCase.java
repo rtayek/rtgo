@@ -7,6 +7,9 @@ import java.util.List;
 import model.Model;
 import org.junit.Test;
 import core.formats.sgf.SgfDomainActionMapper;
+import core.formats.sgf.SgfMappingContext;
+import core.formats.sgf.SgfNodeMapping;
+import equipment.Board;
 
 public class ExtraPropertiesTestCase {
     @Test public void unknownPropertiesArePreserved() {
@@ -28,11 +31,17 @@ public class ExtraPropertiesTestCase {
 
         Model model=new Model();
 
-        SgfDomainActionMapper.mapNodeToDomainActions(model,root); // mutates extraProperties
-        // Comment is now treated as an unmapped property and preserved as an extra.
+        int depth=model.board()!=null?model.board().depth():model.depthFromSgf()>0?model.depthFromSgf():Board.standard;
+        SgfMappingContext context=new SgfMappingContext(depth,Model.sgfBoardTopology,Model.sgfBoardShape);
+
+        SgfNodeMapping rootMapping=SgfDomainActionMapper.mapNode(context,root);
+        assertEquals(List.of(new SgfProperty(P.C,List.of("hello")),keepRoot),rootMapping.extras());
+        rootMapping.applyExtrasTo(root);
         assertEquals(List.of(new SgfProperty(P.C,List.of("hello")),keepRoot),root.extraProperties());
 
-        SgfDomainActionMapper.mapNodeToDomainActions(model,child);
+        SgfNodeMapping childMapping=SgfDomainActionMapper.mapNode(context,child);
+        assertEquals(List.of(keepChild),childMapping.extras());
+        childMapping.applyExtrasTo(child);
         assertEquals(List.of(keepChild),child.extraProperties());
     }
 }

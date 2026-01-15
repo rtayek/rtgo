@@ -1,5 +1,6 @@
 package model;
 import io.Logging;
+import sgf.ModelTestIo;
 import static org.junit.Assert.*;
 import org.junit.*;
 import equipment.*;

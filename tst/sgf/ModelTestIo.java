@@ -1,18 +1,20 @@
-package model;
+package sgf;
 import java.io.Reader;
 import io.IOs;
 import io.TestIo;
+import model.Model;
+import model.ModelHelper;
 import model.ModelIo;
 public final class ModelTestIo {
-    record RoundTrip(String expected,String actual) {}
-    @FunctionalInterface interface ModelConsumer {
+    public record RoundTrip(String expected,String actual) {}
+    @FunctionalInterface public interface ModelConsumer {
         void accept(Model model);
     }
     private ModelTestIo() {}
     public static void restore(Model model,String sgf) {
         ModelIo.restore(model,sgf);
     }
-    static String save(Model model) {
+    public static String save(Model model) {
         return save(model,"save fails");
     }
     public static String save(Model model,String message) {
@@ -40,7 +42,7 @@ public final class ModelTestIo {
         restore(model,sgf);
         return save(model,message);
     }
-    static String restoreAndSave(Model model,String sgf,ModelConsumer afterRestore) {
+    public static String restoreAndSave(Model model,String sgf,ModelConsumer afterRestore) {
         restore(model,sgf);
         if(afterRestore!=null) afterRestore.accept(model);
         return save(model);
@@ -50,7 +52,7 @@ public final class ModelTestIo {
         if(afterRestore!=null) afterRestore.accept(model);
         return save(model,message);
     }
-    static RoundTrip roundTrip(Model original,Model restored) {
+    public static RoundTrip roundTrip(Model original,Model restored) {
         String expected=save(original);
         restore(restored,expected);
         String actual=save(restored);
