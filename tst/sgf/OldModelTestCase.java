@@ -1,7 +1,6 @@
 package sgf;
 import io.Logging;
 import static org.junit.Assert.*;
-import static sgf.Parser.getSgfData;
 import java.io.File;
 import java.util.*;
 import org.junit.*;
@@ -34,20 +33,13 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
         else assertEquals(who,model.turn());
     }
     @Test public void testgenerateAndMakeMovesPreserveTurn() {
-        Stone who=model.turn();
-        Model.generateAndMakeMoves(model,1);
-        assertEquals(who.otherColor(),model.turn());
+        assertGenerateAndMakeMovesPreserveTurn(null,1);
     }
     @Test public void testgenerateAndMakeMovesPreserveTurn2() {
-        Stone who=model.turn();
-        Model.generateAndMakeMoves(model,2);
-        assertEquals(who,model.turn());
+        assertGenerateAndMakeMovesPreserveTurn(null,2);
     }
     @Test public void testgenerateAndMakeMovesPreserveTurn3() {
-        model.setRoot(5,5);
-        Stone who=model.turn();
-        Model.generateAndMakeMoves(model,3);
-        assertEquals(who.otherColor(),model.turn());
+        assertGenerateAndMakeMovesPreserveTurn(5,3);
     }
     @Test public void testgenerateMoves() {
         model.setRoot(5,5);
@@ -62,15 +54,8 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
             int n=model.movesToGenerate();
             Model.generateAndMakeMoves(model,n);
             List<Move2> expectedMoves=model.movesToCurrentState();
-            Model actual=new Model();
-            actual.setRoot(i,i);
-            actual.ensureBoard();
-            actual.makeMoves(expectedMoves);
-            model.ensureBoard();
-            ;
-            model.board().isEqual(actual.board());
-            List<Move2> actualMoves=actual.movesToCurrentState();
-            assertEquals(expectedMoves,actualMoves); // round trip
+            Model actual=newModelWithRoot(i,true);
+            assertMovesRoundTrip(model,actual,expectedMoves,true);
         }
     }
     @Test public void testGenerateSomeSillyMoves() { Model.generateSillyMoves(model,2); }
@@ -80,10 +65,7 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
         List<Move2> expectedMoves=model.movesToCurrentState();
         Logging.mainLogger.info(String.valueOf(expectedMoves));
         Model actual=new Model();
-        actual.makeMoves(expectedMoves);
-        model.board().isEqual(actual.board());
-        List<Move2> actualMoves=actual.movesToCurrentState();
-        assertEquals(expectedMoves,actualMoves); // round trip
+        assertMovesRoundTrip(model,actual,expectedMoves,false);
     }
     @Test public void testGenerateSillyMovesTime() {
         for(int i=5;i<=19;i++) {
@@ -94,12 +76,8 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
             Model.generateSillyMoves(model,n);
             List<Move2> expectedMoves=model.movesToCurrentState();
             Logging.mainLogger.info(String.valueOf(expectedMoves));
-            Model actual=new Model();
-            actual.setRoot(i,i);
-            actual.makeMoves(expectedMoves);
-            model.board().isEqual(actual.board());
-            List<Move2> actualMoves=actual.movesToCurrentState();
-            assertEquals(expectedMoves,actualMoves); // round trip
+            Model actual=newModelWithRoot(i,false);
+            assertMovesRoundTrip(model,actual,expectedMoves,false);
         }
     }
     @Test public void testReplayMoves() {
@@ -107,17 +85,12 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
         int n=model.movesToGenerate();
         Model.generateAndMakeMoves(model,n);
         List<Move2> expectedMoves=model.movesToCurrentState();
-        Model actual=new Model();
-        actual.setRoot(19,19);
-        actual.makeMoves(expectedMoves);
         model.ensureBoard();
-        model.board().isEqual(actual.board());
-        List<Move2> actualMoves=actual.movesToCurrentState();
-        assertEquals(expectedMoves,actualMoves); // round trip
+        Model actual=newModelWithRoot(19,false);
+        assertMovesRoundTrip(model,actual,expectedMoves,false);
     }
     @Test public void testRandomMove() throws Exception {
-        Model model=new Model();
-        model.setRoot(5,5);
+        Model model=newModelWithRoot(5,false);
         int n=model.movesToGenerate();
         for(int i=0;i<n;++i) {
             Point point=model.generateRandomMove();
@@ -126,26 +99,19 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
         }
     }
     @Test public void testReplayRandomMoves() throws Exception {
-        Model model=new Model();
-        model.setRoot(5,5);
-        model.ensureBoard();
+        Model model=newModelWithRoot(5,true);
         int n=model.movesToGenerate();
         Model.generateRandomMoves(model,n);
         List<Move2> moves=model.movesToCurrentState();
-        Model actual=new Model();
-        actual.setRoot(5,5);
-        actual.ensureBoard();
+        Model actual=newModelWithRoot(5,true);
         actual.makeMoves(moves);
         model.board().isEqual(actual.board());
     }
     @Test public void testReplayRandomMovesList() throws Exception {
-        Model model=new Model();
-        model.setRoot(5,5);
-        model.ensureBoard();
+        Model model=newModelWithRoot(5,true);
         int n=model.movesToGenerate();
         List<Point> points=Model.generateRandomMovesInList(model,n);
-        Model actual=new Model();
-        actual.setRoot(5,5);
+        Model actual=newModelWithRoot(5,false);
         for(Point point:points) model.move(new Move2(MoveType.move,model.turn(),point));
         model.board().isEqual(actual.board());
     }
@@ -188,22 +154,12 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
         // ex: (;FF[4]GM[1]AP[RTGO]C[root]SZ[19])
         // ac: (;RT[Tgo root];FF[4]GM[1]AP[RTGO]C[root]SZ[19])
         // similar to variations below.
-        Model model=new Model();
-        String expected=ModelTestIo.restoreAndSave(model,Parser.empty,"first save fails");
-        Model copy=new Model(model,model.name);
-        String actual=ModelTestIo.save(copy,"second save fails");
-        assertEquals(expected,actual);
+        assertCopyConstructorRoundTrip(Parser.empty,false);
     }
     @Test public void testCopyConstructorWithVariationOfAVariation() {
         // this is failing.
         // actual has 2 copyies of ;RT[Tgo root] in the first node?
-        Model model=new Model();
-        String expected=ModelTestIo.restoreAndSave(model,Parser.variationOfAVariation,"first save fails");
-        Model copy=new Model(model,model.name);
-        String actual=ModelTestIo.save(copy,"second save fails");
-        Logging.mainLogger.info("ex: "+expected);
-        Logging.mainLogger.info("ac: "+actual);
-        assertEquals(expected,actual);
+        assertCopyConstructorRoundTrip(Parser.variationOfAVariation,true);
     }
     @Test public void testSquares() {
         for(int width=3;width<=Model.LargestBoardSize;width++) for(int depth=3;depth<=Model.LargestBoardSize;depth++) {
@@ -241,7 +197,7 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
     @Test public void testWithSgfFile() {
         // hangs when ignore is remove from test go to node!
         String key="manyFacesTwoMovesAtA1AndR16";
-        String sgfString=getSgfData(key);
+        String sgfString=SgfTestSupport.loadExpectedSgf(key);
         MNode root=SgfTestIo.quietLoadMNode(sgfString);
         model.setRoot(root);
         if(model.board()!=null) {
@@ -257,6 +213,38 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
             // what is this actually testing?
             assertEquals("we get the same board id.",expected,actual);
         } else Logging.mainLogger.info(key+" board is null.");
+    }
+    private Model newModelWithRoot(int size,boolean ensureBoard) {
+        Model model=new Model();
+        model.setRoot(size,size);
+        if(ensureBoard) model.ensureBoard();
+        return model;
+    }
+    private void assertGenerateAndMakeMovesPreserveTurn(Integer size,int moves) {
+        if(size!=null) model.setRoot(size,size);
+        Stone who=model.turn();
+        Model.generateAndMakeMoves(model,moves);
+        Stone expected=moves%2==0?who:who.otherColor();
+        assertEquals(expected,model.turn());
+    }
+    private void assertMovesRoundTrip(Model source,Model actual,List<Move2> expectedMoves,boolean ensureBoards) {
+        if(ensureBoards) actual.ensureBoard();
+        actual.makeMoves(expectedMoves);
+        if(ensureBoards) source.ensureBoard();
+        source.board().isEqual(actual.board());
+        List<Move2> actualMoves=actual.movesToCurrentState();
+        assertEquals(expectedMoves,actualMoves); // round trip
+    }
+    private void assertCopyConstructorRoundTrip(String sgf,boolean log) {
+        Model model=new Model();
+        String expected=ModelTestIo.restoreAndSave(model,sgf,"first save fails");
+        Model copy=new Model(model,model.name);
+        String actual=ModelTestIo.save(copy,"second save fails");
+        if(log) {
+            Logging.mainLogger.info("ex: "+expected);
+            Logging.mainLogger.info("ac: "+actual);
+        }
+        assertEquals(expected,actual);
     }
     private void assertRoundTripHasRt(Model model,boolean expectedBefore,boolean expectedAfter) {
         boolean hasRT=hasRT(model.root());

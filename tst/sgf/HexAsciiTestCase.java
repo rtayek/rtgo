@@ -19,18 +19,10 @@ import utilities.*;
         }
     }
     @Test public void testEncode15() {
-        byte[] expected=new byte[] {0x0f};
-        String s=encode(expected);
-        assertEquals("0f","0f",s);
-        byte[] actual=decode(s);
-        assertEquals(""+expected[0],expected[0],actual[0]);
+        assertEncodedByte((byte)0x0f,"0f");
     }
     @Test public void testEncode16() {
-        byte[] expected=new byte[] {0x10};
-        String s=encode(expected);
-        assertEquals("10","10",s);
-        byte[] actual=decode(s);
-        assertEquals(""+expected[0],expected[0],actual[0]);
+        assertEncodedByte((byte)0x10,"10");
     }
     @Test public void testOneByte() {
         byte b=16;
@@ -40,22 +32,10 @@ import utilities.*;
         assertEquals(""+b,expected,actual);
     }
     @Test public void testByte() {
-        for(int bite=0;bite<256;++bite) {
-            byte[] expected=new byte[] {(byte)bite};
-            String string=encode(expected);
-            byte[] actual=decode(string);
-            String string2=encode(actual);
-            assertEquals(string,string,string2);
-        }
+        assertRoundTripForAllBytes();
     }
     @Test public void testOneCharacterString() {
-        for(int bite=0;bite<256;++bite) {
-            byte[] expected=new byte[] {(byte)bite};
-            String string=encode(expected);
-            byte[] actual=decode(string);
-            String string2=encode(actual);
-            assertEquals(string,string,string2);
-        }
+        assertRoundTripForAllBytes();
     }
     @Test public void testTwoCharacterString() {
         String s="a1";
@@ -82,6 +62,21 @@ import utilities.*;
         assertTrue(testString,ok);
         String newString=new String(actual);
         assertEquals(testString,testString,newString);
+    }
+    private void assertRoundTripForAllBytes() {
+        for(int bite=0;bite<256;++bite) {
+            byte[] expected=new byte[] {(byte)bite};
+            String string=encode(expected);
+            byte[] actual=decode(string);
+            String string2=encode(actual);
+            assertEquals(string,string,string2);
+        }
+    }
+    private void assertEncodedByte(byte expected,String expectedHex) {
+        String s=encode(new byte[] {expected});
+        assertEquals(expectedHex,expectedHex,s);
+        byte[] actual=decode(s);
+        assertEquals(String.valueOf(expected),expected,actual[0]);
     }
     String key,testString="0123456789abcdefghijklmnopqrstuvwxyz";
 }

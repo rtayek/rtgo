@@ -16,16 +16,17 @@ public class ExtraPropertiesTestCase {
         // Build properties with IDs not known to P2 to force them into extras.
         P customXX=new P("XX","1234","unknown","none",""){};
         P customYY=new P("YY","1234","unknown","none",""){};
-        SgfProperty keepRoot=new SgfProperty(customXX,List.of("keepme"));
-        SgfProperty keepChild=new SgfProperty(customYY,List.of("alsokeep"));
+        SgfProperty keepRoot=SgfTestSupport.property(customXX,"keepme");
+        SgfProperty keepChild=SgfTestSupport.property(customYY,"alsokeep");
+        SgfProperty rootComment=SgfTestSupport.property(P.C,"hello");
 
         // Manually build MNode tree to avoid parser dropping unknown IDs
         MNode root=new MNode(null);
-        root.sgfProperties().add(new SgfProperty(P.C,List.of("hello")));
+        root.sgfProperties().add(rootComment);
         root.sgfProperties().add(keepRoot);
 
         MNode child=new MNode(root);
-        child.sgfProperties().add(new SgfProperty(P.B,List.of("aa")));
+        child.sgfProperties().add(SgfTestSupport.property(P.B,"aa"));
         child.sgfProperties().add(keepChild);
         root.children().add(child);
 
@@ -35,9 +36,9 @@ public class ExtraPropertiesTestCase {
         SgfMappingContext context=new SgfMappingContext(depth,Model.sgfBoardTopology,Model.sgfBoardShape);
 
         SgfNodeMapping rootMapping=SgfDomainActionMapper.mapNode(context,root);
-        assertEquals(List.of(new SgfProperty(P.C,List.of("hello")),keepRoot),rootMapping.extras());
+        assertEquals(List.of(rootComment,keepRoot),rootMapping.extras());
         rootMapping.applyExtrasTo(root);
-        assertEquals(List.of(new SgfProperty(P.C,List.of("hello")),keepRoot),root.extraProperties());
+        assertEquals(List.of(rootComment,keepRoot),root.extraProperties());
 
         SgfNodeMapping childMapping=SgfDomainActionMapper.mapNode(context,child);
         assertEquals(List.of(keepChild),childMapping.extras());

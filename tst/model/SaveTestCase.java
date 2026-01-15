@@ -10,45 +10,32 @@ import equipment.Stone;
 import utilities.MyTestWatcher;
 public class SaveTestCase {
 	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-	@Test public void testA1A2() throws IOException {
-		Model model=new Model("",false);
+	private void assertA1RoundTrip(boolean oldWay) throws IOException {
+		Model model=new Model("",oldWay);
 		Logging.mainLogger.info("using: "+model.useOldWay);
 		model.ensureBoard();
 		model.move(Stone.black,"A1",model.board().width());
 		//Logging.mainLogger.info(model);
 		//model.move(Stone.white,"A2",model.board().width());
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
-		Model m=new Model("",false);
+		Model m=new Model("",oldWay);
 		ModelTestIo.RoundTrip roundTrip=ModelTestIo.roundTrip(model,m);
 		final String expected=roundTrip.expected();
 		Logging.mainLogger.info("expected: "+expected);
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
-		Stone color=m.board().at(point)	;
+		Stone color=m.board().at(point);
 		//assertEquals(Stone.black,color);
 		final String actual=roundTrip.actual();
 		Logging.mainLogger.info("actual: "+actual);
 		assertEquals(actual,expected);
+	}
+	@Test public void testA1A2() throws IOException {
+		assertA1RoundTrip(false);
 		// is failing because the new way is not putting in ;RT[Tgo root 
 	}
 	@Test public void testA1A2TheOldWay() throws IOException {
-		Model model=new Model("",true);
-		Logging.mainLogger.info("using: "+model.useOldWay);
-		model.ensureBoard();
-		model.move(Stone.black,"A1",model.board().width());
-		//model.move(Stone.white,"A2",model.board().width());
-		//Logging.mainLogger.info(model);
-		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
-		Model m=new Model("",true);
-		ModelTestIo.RoundTrip roundTrip=ModelTestIo.roundTrip(model,m);
-		final String expected=roundTrip.expected();
-		Logging.mainLogger.info("expected: "+expected);
-		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
-		Stone color=m.board().at(point)	;
-		//assertEquals(Stone.black,color);
+		assertA1RoundTrip(true);
 		// this test passes but there is no stone there!
-		final String actual=roundTrip.actual();
-		Logging.mainLogger.info("actual: "+actual);
-		assertEquals(actual,expected);
 	}
 	// @Test public void testA1A2restored() throws IOException {}
 	String foo="(;B[as];W[ar])";

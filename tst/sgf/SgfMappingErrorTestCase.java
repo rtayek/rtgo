@@ -14,9 +14,9 @@ import model.Model;
 
 public class SgfMappingErrorTestCase {
     @Test public void malformedPropertiesBecomeExtrasAndMappingIsPure() {
-        SgfProperty badMove=new SgfProperty(P.B,List.of("a"));
+        SgfProperty badMove=SgfTestSupport.property(P.B,"a");
         SgfProperty emptyMove=new SgfProperty(P.W,List.of());
-        SgfProperty badSize=new SgfProperty(P.SZ,List.of("x"));
+        SgfProperty badSize=SgfTestSupport.property(P.SZ,"x");
 
         MNode node=new MNode(null);
         node.sgfProperties().add(badMove);

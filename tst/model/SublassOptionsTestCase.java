@@ -1,5 +1,5 @@
 package model;
-import org.junit.*;
+import org.junit.Test;
 import model.Options.OptionsA;
 import model.OptionsSubclass.OptionsC;
 enum Foo { bar }
@@ -30,7 +30,5 @@ class OptionsD extends OptionsSubclass {
     }
 }
 public class SublassOptionsTestCase {
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
     @Test public void test() { new OptionsA(); new OptionsB(); new OptionsC(); new OptionsD(); }
 }

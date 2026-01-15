@@ -1,16 +1,10 @@
 package sgf;
 import io.Logging;
 import static io.IOs.noIndent;
-import static org.junit.Assert.assertEquals;
-import java.util.*;
 import org.junit.Test;
 public class SimpleParserTestCase {
     private SgfNode comment(String string,SgfNode left,SgfNode right) {
-        SgfNode node=new SgfNode();
-        List<String> list=Arrays.asList(new String[] {string});
-        SgfProperty property=new SgfProperty(P.C,list);
-        //y= new Property(P.B,list);
-        node.add(property);
+        SgfNode node=SgfTestSupport.nodeWithProperty(P.C,string);
         if(left==null&&right==null) return node;
         if(left!=null) left.left=node;
         else if(right!=null) right.right=node;
@@ -44,7 +38,6 @@ public class SimpleParserTestCase {
         SgfNode root=sample();
         String expected=SgfTestIo.save(root,noIndent);
         Logging.mainLogger.info("sample sgf: "+expected);
-        String actual=SgfTestSupport.restoreAndSave(expected);
-        assertEquals(expected,actual);
+        SgfTestSupport.assertSgfRestoreSaveStable(expected);
     }
 }

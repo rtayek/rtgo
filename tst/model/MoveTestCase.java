@@ -1,7 +1,8 @@
 package model;
 import static org.junit.Assert.*;
 import java.util.List;
-import org.junit.*;
+import org.junit.Rule;
+import org.junit.Test;
 import equipment.*;
 import io.Logging;
 import model.Model.*;
@@ -9,8 +10,6 @@ import static model.Move2.*;
 import utilities.MyTestWatcher;
 public class MoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
     @Test public void testThatWeCanMakeAMoveOnANewModel() {
         Model model=new Model();
         MoveResult ok=model.move(Stone.black,new Point());

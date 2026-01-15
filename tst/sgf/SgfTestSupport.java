@@ -79,6 +79,16 @@ public final class SgfTestSupport {
         return SgfTestIo.restore(sgf);
     }
 
+    static SgfProperty property(P id,String value) {
+        return new SgfProperty(id,Arrays.asList(new String[] {value}));
+    }
+
+    static SgfNode nodeWithProperty(P id,String value) {
+        SgfNode node=new SgfNode();
+        node.add(property(id,value));
+        return node;
+    }
+
     private static String[] restoreAndSaveTwice(String sgf) {
         String actual=SgfTestIo.restoreAndSave(sgf);
         String actual2=SgfTestIo.restoreAndSave(actual);

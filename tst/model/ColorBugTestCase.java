@@ -12,7 +12,6 @@ import utilities.MyTestWatcher;
 public class ColorBugTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception { model.setRoot(); }
-    @After public void tearDown() throws Exception {}
     void randomMove2() {
         int width=model.board().width();
         int depth=model.board().depth();

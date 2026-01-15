@@ -9,7 +9,7 @@ public class BasicMoveTestCase {
     //fail("wait for move complete will hang!");
     //model.waitForMoveCompleteOnBoard(moves);
     // test all of these with gtp also!
-    void run() {
+    private void run() {
         model.move(Move2.blackMoveAtA1);
         moves=model.moves();
         model.move(expectedMove);
@@ -19,22 +19,24 @@ public class BasicMoveTestCase {
         String actualSgf2=SgfTestIo.mNodeRoundTrip(expectedSgf,SgfRoundTrip.MNodeSaveMode.standard);
         assertEquals(expectedSgf,actualSgf2);
     }
-    @Test() public void testMoveAtA2() throws Exception {
-        expectedMove=Move2.whiteMoveAtA2;
+    private void assertMove(Move2 move) {
+        expectedMove=move;
         run();
-        Logging.mainLogger.info("expected move: "+expectedMove);
-        Logging.mainLogger.info("actual move: "+actualMove);
         assertEquals(expectedMove,actualMove);
     }
-    @Test() public void testPass() throws Exception {
-        expectedMove=Move2.whitePass;
-        run();
-        assertEquals(expectedMove,actualMove);
+    @Test public void testMoveAtA2() throws Exception {
+        assertMove(Move2.whiteMoveAtA2);
+        logMoves();
+    }
+    @Test public void testPass() throws Exception {
+        assertMove(Move2.whitePass);
     }
     @Test public void testResign() throws Exception {
-        expectedMove=Move2.whiteResign;
-        run();
-        assertEquals(expectedMove,actualMove);
+        assertMove(Move2.whiteResign);
+    }
+    private void logMoves() {
+        Logging.mainLogger.info("expected move: "+expectedMove);
+        Logging.mainLogger.info("actual move: "+actualMove);
     }
     Model model=new Model();
     {

@@ -19,18 +19,18 @@ public class SmallerSaveTestCase extends AbstractWatchedTestCase {
 		Logging.mainLogger.info("saved: "+actual);
 		return actual;
 	}
-	// @Test public void atestNothing() throws IOException {}
-	@Test public void testNoMoves() throws IOException {
+	private void assertRoundTrip(String name,boolean oldWay) throws IOException {
 		Logging.setLevels(Level.INFO);
-		Model m=new Model("new way",false);
+		Model m=new Model(name,oldWay);
 		final String actual=dtrt(m);
 		assertEquals(sgf,actual);
 	}
+	// @Test public void atestNothing() throws IOException {}
+	@Test public void testNoMoves() throws IOException {
+		assertRoundTrip("new way",false);
+	}
 	@Test public void testNOneovesTheOldWay() throws IOException {
-		Logging.setLevels(Level.INFO);
-		Model m=new Model("old way",true);
-		final String actual=dtrt(m);
-		assertEquals(sgf,actual);
+		assertRoundTrip("old way",true);
 	}
 	// @Test public void testA1A2restored() throws IOException {}
 	final String sgf="(;FF[4]GM[1]AP[RTGO]C[comment];B[as])";

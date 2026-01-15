@@ -10,18 +10,11 @@ public class RoundTripTestCase extends AbstractWatchedTestCase {
     // maybe add all of the longer files
     // add the short ones to the map in parser.
     // these are probably duplicates
-    private static void checkKey(String key) throws IOException {
-        checkString(SgfTestSupport.loadExpectedSgf(key));
+    private static void checkKeys(String... keys) throws IOException {
+        for(String key:keys) checkString(SgfTestSupport.loadExpectedSgf(key));
     }
-    @Test public void testOneMove() throws IOException {
-        checkKey(TestKeys.oneMoveAtA1);
-        //for(String filename:ParserTestCase.filenames)
-        //checkFile(new File(filename));
-    }
-    @Test public void testTwoEmptyWithSemicolon() throws IOException {
-        checkKey(TestKeys.twoEmptyWithSemicolon);
-        //for(String filename:ParserTestCase.filenames)
-        //checkFile(new File(filename));
+    @Test public void testBasicKeys() throws IOException {
+        checkKeys(TestKeys.oneMoveAtA1,TestKeys.twoEmptyWithSemicolon);
     }
     @Test public void testVariation() throws IOException {
         File file=new File(Parser.sgfPath,"variation.sgf");
