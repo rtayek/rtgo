@@ -1,13 +1,14 @@
-package model;
+package sgf;
 import io.Logging;
+import model.Model;
+import model.ModelTestIo;
+import model.Navigate;
 import static org.junit.Assert.assertNotNull;
 import java.util.Collection;
 import org.junit.*;
 import io.IOs;
-import sgf.*;
 import utilities.MyTestWatcher;
 public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public static boolean checkBoardInRoot(Object key) {
         // move this?
         if(key==null) { Logging.mainLogger.info("key is null!"); return true; }

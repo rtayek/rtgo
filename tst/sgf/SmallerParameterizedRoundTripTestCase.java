@@ -9,7 +9,6 @@ import org.junit.runners.Parameterized.Parameters;
 import utilities.*;
 // https://stackoverflow.com/questions/14082004/create-multiple-parameter-sets-in-one-parameterized-class-junit
 @Ignore @RunWith(Parameterized.class) public class SmallerParameterizedRoundTripTestCase extends AbstractSgfRoundTripTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     public static File[] someFiles(String dir) {
         String[] filenames=new String[] { //
                 //"reallyEmpty.sgf", //

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import utilities.MyTestWatcher;
 public abstract class AbstractMNodeRoundTripTestCase extends AbstractSgfRoundTripTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testMMNodeRoundTrip() throws Exception {
         int p=Parser.parentheses(expectedSgf);
         if(p!=0) Logging.mainLogger.info("ex bad parentheses: "+p);

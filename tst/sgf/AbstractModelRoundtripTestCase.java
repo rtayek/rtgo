@@ -1,11 +1,13 @@
-package model;
+package sgf;
 import io.Logging;
+import model.Model;
+import model.ModelHelper;
+import model.ModelTestIo;
+import model.ModelHelper.ModelSaveMode;
 import static org.junit.Assert.*;
 import org.junit.*;
-import sgf.*;
 import utilities.MyTestWatcher;
 public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundTripTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testModelRT0() throws Exception {
         Model model=new Model("",true);
         String actualSgf=ModelTestIo.restoreAndSave(model,expectedSgf);

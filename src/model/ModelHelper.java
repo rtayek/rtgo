@@ -27,7 +27,7 @@ public final class ModelHelper {
     static record InterpretedNode(List<DomainAction> actions,List<SgfProperty> extras) {
         //
     }
-    enum ModelSaveMode {
+    public enum ModelSaveMode {
         sgfNode,sgfNodeChecked,direct
     }
 

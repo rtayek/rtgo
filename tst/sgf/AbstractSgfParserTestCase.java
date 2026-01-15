@@ -10,20 +10,25 @@ import sgf.SgfNode.SgfOptions;
 import utilities.MyTestWatcher;
 public abstract class AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    public void prepare() { // maybe make this static
-        if(expectedSgf!=null) {
+    protected String normalizeExpectedSgf(String rawSgf) {
+        return rawSgf;
+    }
+    protected String prepareExpectedSgf(String sgf) {
+        String normalized=sgf;
+        if(normalized!=null) {
             // consolidate so we only have one of these?
-            expectedSgf=SgfNode.options.prepareSgf(expectedSgf); // move this stuff to round trip?
-            if(SgfNode.options.removeLineFeed) if(expectedSgf.contains("\n)")) {
+            normalized=SgfNode.options.prepareSgf(normalized); // move this stuff to round trip?
+            if(SgfNode.options.removeLineFeed) if(normalized.contains("\n)")) {
                 Logging.mainLogger.info("lf badness");
                 System.exit(0);
             }
-            if(containsQuotedControlCharacters(key,expectedSgf)) {
+            if(containsQuotedControlCharacters(key,normalized)) {
                 Logging.mainLogger.info(key+" contains quoted control characters.");
-                expectedSgf=SgfOptions.removeQuotedControlCharacters(expectedSgf);
+                normalized=SgfOptions.removeQuotedControlCharacters(normalized);
             }
         }
-        assertFalse(containsQuotedControlCharacters(key.toString(),expectedSgf));
+        assertFalse(containsQuotedControlCharacters(key.toString(),normalized));
+        return normalized;
     }
     private void assertSgfDelimiters() {
         if(expectedSgf!=null) if(expectedSgf.startsWith("(")) {
@@ -38,11 +43,11 @@ public abstract class AbstractSgfParserTestCase {
     @Before public void setUp() throws Exception {
         watcher.key=key;
         if(true) if(key==null) throw new RuntimeException("key: "+key+" is nul!");
-        expectedSgf=getSgfData(key);
-        if(expectedSgf==null) { if(false) throw new RuntimeException("key: "+key+" returns nul!"); return; }
-        int p=Parser.parentheses(expectedSgf);
+        rawSgf=getSgfData(key);
+        if(rawSgf==null) { if(false) throw new RuntimeException("key: "+key+" returns nul!"); expectedSgf=normalizeExpectedSgf(null); return; }
+        int p=Parser.parentheses(rawSgf);
         if(p!=0) { Logging.mainLogger.info(" bad parentheses: "+p); throw new RuntimeException(key+" bad parentheses: "+p); }
-        if(alwaysPrepare) prepare();
+        expectedSgf=normalizeExpectedSgf(rawSgf);
     }
     @Test public void testKey() throws Exception {
         if(!(key!=null||expectedSgf!=null)) { Logging.mainLogger.info("key!=null||expectedSgf!=null"); IOs.stackTrace(10); }
@@ -71,8 +76,8 @@ public abstract class AbstractSgfParserTestCase {
         games=parseGames();
         if(games!=null) games.preorderCheckFlags();
     }
-    boolean alwaysPrepare=false;
     public Object key;
+    public String rawSgf;
     public String expectedSgf;
     public SgfNode games;
 }

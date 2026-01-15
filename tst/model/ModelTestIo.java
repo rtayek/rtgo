@@ -15,7 +15,7 @@ public final class ModelTestIo {
     static String save(Model model) {
         return save(model,"save fails");
     }
-    static String save(Model model,String message) {
+    public static String save(Model model,String message) {
         return TestIo.saveToString(message,writer->model.save(writer));
     }
     public static String modelRoundTripToString(Reader reader) {
@@ -28,15 +28,15 @@ public final class ModelTestIo {
     public static String modelRoundTripToString(String sgf) {
         return modelRoundTripToString(sgf,ModelHelper.ModelSaveMode.sgfNode);
     }
-    static String modelRoundTripToString(String sgf,ModelHelper.ModelSaveMode saveMode) {
+    public static String modelRoundTripToString(String sgf,ModelHelper.ModelSaveMode saveMode) {
         if(sgf==null) return null;
         return modelRoundTripToString(IOs.toReader(sgf),saveMode);
     }
-    static String restoreAndSave(Model model,String sgf) {
+    public static String restoreAndSave(Model model,String sgf) {
         restore(model,sgf);
         return save(model);
     }
-    static String restoreAndSave(Model model,String sgf,String message) {
+    public static String restoreAndSave(Model model,String sgf,String message) {
         restore(model,sgf);
         return save(model,message);
     }

@@ -8,7 +8,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import utilities.*;
 @RunWith(Parameterized.class) public class EdgeParserTestCase extends AbstractSgfParserTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Parameters public static Collection<Object[]> data() {
         String[] filenames=new String[] { //
                 //"empty.sgf", //

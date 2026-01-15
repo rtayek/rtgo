@@ -4,10 +4,9 @@ import static org.junit.Assert.*;
 import org.junit.*;
 import utilities.MyTestWatcher;
 public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    // add setup and check alwaysPrepare
-    //         if(alwaysPrepare) prepare();
-    @Override @Before public void setUp() throws Exception { super.setUp(); if(!alwaysPrepare) prepare(); }
+    @Override protected String normalizeExpectedSgf(String rawSgf) {
+        return prepareExpectedSgf(rawSgf);
+    }
     protected static void assertNoLineFeeds(String sgf) {
         if(sgf!=null) assertFalse(sgf.contains("\n"));
     }
