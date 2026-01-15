@@ -1,7 +1,6 @@
 package sgf;
 import io.Logging;
 import static org.junit.Assert.*;
-import static sgf.Parser.getSgfData;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -13,20 +12,13 @@ import model.MNodeAcceptor.MakeList;
 import model.Model;
 import model.ModelTestIo;
 import utilities.*;
-@RunWith(Parameterized.class) public class CannonicalTestCase {
+@RunWith(Parameterized.class) public class CannonicalTestCase extends AbstractSgfFixtureTestCase {
 	public CannonicalTestCase(Object key) {
 		this.key=key;
-		watcher.key=key;
 	}
-	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
 	@Parameterized.Parameters(name="{0}") public static Collection<Object[]> parameters() {
 		return SgfTestParameters.allSgfKeysAndFiles();
 	}
-	@Before public void setUp() throws Exception {
-		expectedSgf=getSgfData(key);
-		// no prepare here!
-	}
-	@After public void tearDown() throws Exception {}
 	@Test public void testThatGeneralTreeAlwaysHasRTProperty() {
 		// this will depend on whether the add new rot switch is on.
         SgfNode games=SgfTestIo.restore(expectedSgf);
@@ -45,7 +37,7 @@ import utilities.*;
         String sgfString=model.save();
 		boolean containsRTNode=sgfString.contains("RT[Tgo root]");
 		// when games.right!=null ==> multiple games
-		// amd we end up with an RT in the sgf!
+		// and we end up with an RT in the sgf!
 		// assertEquals(hasMultipleGames,containsRTNode);
 		// but we do not want the RT node in the sgf!
 		// need to check the add new root switch.
@@ -74,7 +66,5 @@ import utilities.*;
 				}
 		// System.setOut(x);
 	}
-	Object key;
-	String expectedSgf;
 	static final Set<String> paths=new LinkedHashSet<>();
 }

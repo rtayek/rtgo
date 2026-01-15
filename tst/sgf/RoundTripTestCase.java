@@ -10,6 +10,7 @@ import io.*;
 import io.IOs;
 import model.ModelTestIo;
 import utilities.MyTestWatcher;
+import utilities.TestKeys;
 // sgf file->sgf node tree->sgf tree->sgf string
 public class RoundTripTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -40,15 +41,16 @@ public class RoundTripTestCase {
     private static String modelRoundTripToString(String sgf) {
         return ModelTestIo.modelRoundTripToString(sgf);
     }
+    private static void checkKey(String key) throws IOException {
+        checkString(getSgfData(key));
+    }
     @Test public void testOneMove() throws IOException {
-        String sgfString=getSgfData("oneMoveAtA1");
-        checkString(sgfString);
+        checkKey(TestKeys.oneMoveAtA1);
         //for(String filename:ParserTestCase.filenames)
         //checkFile(new File(filename));
     }
     @Test public void testTwoEmptyWithSemicolon() throws IOException {
-        String sgfString=getSgfData("twoEmptyWithSemicolon");
-        checkString(sgfString);
+        checkKey(TestKeys.twoEmptyWithSemicolon);
         //for(String filename:ParserTestCase.filenames)
         //checkFile(new File(filename));
     }

@@ -48,6 +48,8 @@ import utilities.*;
         String actualSgf=getSgfFromModel(expectedSgf);
         actualSgf=SgfNode.options.prepareSgf(actualSgf);
         //Parser.printDifferences(expectedSgf,actualSgf);
+        System.out.println("expectedSgf:\n"+expectedSgf);
+        System.out.println("actualSgf:\n"+actualSgf);	
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     String sendSgfToModel(String expectedSgf,Model model) {
@@ -77,6 +79,8 @@ import utilities.*;
         assertTrue(Navigate.down.canDo(model));
         //Logging.mainLogger.info(model);
         actualSgf=SgfNode.options.prepareSgf(actualSgf);
+        System.out.println("expectedSgf:\n"+expectedSgf);
+        System.out.println("actualSgf:\n"+actualSgf);	
         assertEquals(key.toString().toString(),expectedSgf,actualSgf);
     }
     boolean useHexAscii=true;

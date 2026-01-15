@@ -5,4 +5,6 @@ public final class TestKeys {
     public static final String emptyWithSemicolon="emptyWithSemicolon";
     public static final String twoEmptyWithSemicolon="twoEmptyWithSemicolon";
     public static final String oneMoveAtA1="oneMoveAtA1";
+    public static final String simpleWithVariations="simpleWithVariations";
+    public static final String manyFacesTwoMovesAtA1AndR16OnA9by9Board="manyFacesTwoMovesAtA1AndR16OnA9by9Board";
 }

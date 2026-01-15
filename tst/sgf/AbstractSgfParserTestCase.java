@@ -10,7 +10,7 @@ import sgf.SgfNode.SgfOptions;
 import utilities.MyTestWatcher;
 public abstract class AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    public void prepare() {
+    public void prepare() { // maybe make this static
         if(expectedSgf!=null) {
             // consolidate so we only have one of these?
             expectedSgf=SgfNode.options.prepareSgf(expectedSgf); // move this stuff to round trip?

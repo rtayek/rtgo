@@ -1,4 +1,4 @@
-why String.valueOf(button.t) instead of toString()?
+maybe separate sgffiles by the app that wrote them?
 man tests failing. 
 commit 668e86c82d7d732c57be6d9bb96cad9fd1e6b329 (HEAD)
 commit cf7c98216c174fc5ec051bb73fcaa8fbc727cbe6

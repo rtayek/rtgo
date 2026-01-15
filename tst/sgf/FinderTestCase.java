@@ -20,11 +20,9 @@ class Verifier extends SgfAcceptorImpl {
 	}
 	final SgfNode root;
 }
-@RunWith(Parameterized.class) public class FinderTestCase {
-	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+@RunWith(Parameterized.class) public class FinderTestCase extends AbstractSgfFixtureTestCase {
 	public FinderTestCase(Object key) {
 		this.key=key;
-		watcher.key=key;
 	}
 	@Parameterized.Parameters(name="{0}") public static Collection<Object[]> data() {
 		return SgfTestParameters.allSgfKeysAndFiles();
@@ -40,7 +38,7 @@ class Verifier extends SgfAcceptorImpl {
 		traverser.visit(games);
 	}
 	@Test public void testFinderWithSimple() {
-		String sgf=getSgfData("simpleWithVariations");
+		String sgf=getSgfData(TestKeys.simpleWithVariations);
 		games=SgfTestIo.restore(sgf);
 		verify(games);
 	}
@@ -56,12 +54,10 @@ class Verifier extends SgfAcceptorImpl {
 	}
 	// add tests for all of the sgf files we have
 	@Test public void testFinder() {
-		String string=getSgfData(key);
 		// File file=new File(Parser.map.get(key));
-		games=SgfTestIo.restore(string);
+		games=SgfTestIo.restore(expectedSgf);
 		if(games!=null) verify(games);
 	}
 	SgfNode games;
 	boolean old=false;
-	final Object key;
 }

@@ -1,16 +1,13 @@
 package sgf;
-import io.Logging;
 import static org.junit.Assert.assertEquals;
-import static sgf.Parser.*;
-import org.junit.*;
-import utilities.MyTestWatcher;
-public class SgfMoveCoordinateSystemTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
-    private static SgfNode restoreExample() {
-        String sgfString=getSgfData("manyFacesTwoMovesAtA1AndR16OnA9by9Board");
-        return SgfTestIo.restore(sgfString);
+import org.junit.Test;
+import utilities.TestKeys;
+public class SgfMoveCoordinateSystemTestCase extends AbstractSgfFixtureTestCase {
+    public SgfMoveCoordinateSystemTestCase() {
+        key=TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board;
+    }
+    private SgfNode restoreExample() {
+        return SgfTestIo.restore(expectedSgf);
     }
     @Test public void testTwoMoves() {
         SgfNode games=restoreExample();

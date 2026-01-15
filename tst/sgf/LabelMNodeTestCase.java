@@ -6,9 +6,18 @@ import org.junit.*;
 import model.MNodeAcceptor.*;
 import utilities.Iterators.Longs;
 import utilities.TestKeys;
-public class LabelMNodeTestCase {
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
+public class LabelMNodeTestCase extends AbstractSgfFixtureTestCase {
+    public LabelMNodeTestCase() {
+        key=TestKeys.sgfExampleFromRedBean;
+    }
+    @Before public void setUpLabel() throws Exception {
+        root1=SgfTestIo.restoreMNode(expectedSgf);
+        root2=SgfTestIo.restoreMNode(expectedSgf);
+        MNode.label(root1,new Longs());
+        MNode.label(root2,new Longs());
+        list1=MakeList.toList(root1);
+        list2=MakeList.toList(root2);
+    }
     @Test public void testNodeNotInTree() {
         MNode mNode=new MNode(null);
         MNodeFinder finder=MNodeFinder.find(mNode,root2,equalsPredicate);
@@ -49,14 +58,8 @@ public class LabelMNodeTestCase {
             assertEquals(node1.label(),finder.found.label());
         }
     }
-    String key=TestKeys.sgfExampleFromRedBean;
-    String sgf=Parser.getSgfData(key);
-    MNode root1=SgfTestIo.restoreMNode(sgf);
-    MNode root2=SgfTestIo.restoreMNode(sgf);
-    {
-        MNode.label(root1,new Longs());
-        MNode.label(root2,new Longs());
-    }
-    List<MNode> list1=MakeList.toList(root1);
-    List<MNode> list2=MakeList.toList(root2);
+    MNode root1;
+    MNode root2;
+    List<MNode> list1;
+    List<MNode> list2;
 }
