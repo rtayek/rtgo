@@ -6,7 +6,7 @@ import static utilities.Utilities.implies;
 import org.junit.*;
 import io.IOs;
 import sgf.SgfNode.SgfOptions;
-import utilities.SgfTestParameters;
+import org.junit.runners.Parameterized;
 import utilities.MyTestWatcher;
 public abstract class AbstractSgfParserTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -67,14 +67,8 @@ public abstract class AbstractSgfParserTestCase {
         games=parseGames();
         if(games!=null) games.preorderCheckFlags();
     }
-    public Object key;
+    @Parameterized.Parameter public Object key;
     public String rawSgf;
     public String expectedSgf;
     public SgfNode games;
-    protected static java.util.Collection<Object[]> allSgfParameters() {
-        return SgfTestParameters.allSgfKeysAndFiles();
-    }
-    protected static java.util.Collection<Object[]> multipleGameParameters() {
-        return SgfTestParameters.multipleGameKeysAndFiles();
-    }
 }

@@ -7,13 +7,12 @@ public class SgfMoveCoordinateSystemTestCase extends AbstractSgfFixtureTestCase 
         key=TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board;
     }
     private SgfNode restoreExample() {
-        return SgfTestIo.restore(expectedSgf);
+        return restoreExpectedSgf();
     }
     @Test public void testTwoMoves() {
         SgfNode games=restoreExample();
         SgfAcceptor acceptor=new SgfNoOpAcceptor();
-        Traverser traverser=new Traverser(acceptor);
-        traverser.visit(games);
+        SgfTestSupport.traverse(acceptor,games);
         SgfNode move1=games.left;
         SgfNode move2=games.left.left;
         // a1 maps to as
@@ -30,8 +29,7 @@ public class SgfMoveCoordinateSystemTestCase extends AbstractSgfFixtureTestCase 
     @Test public void testTwoMovesPath() {
         SgfNode games=restoreExample();
         SgfMovesPath acceptor=new SgfMovesPath();
-        Traverser traverser=new Traverser(acceptor);
-        traverser.visit(games);
+        SgfTestSupport.traverse(acceptor,games);
         SgfNode move1=games.left;
         SgfNode move2=games.left.left;
         //Logging.mainLogger.info(games);

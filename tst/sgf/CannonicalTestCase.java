@@ -1,7 +1,6 @@
 package sgf;
 import io.Logging;
 import static org.junit.Assert.*;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,16 +10,10 @@ import org.junit.runners.Parameterized;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
 import utilities.*;
-@RunWith(Parameterized.class) public class CannonicalTestCase extends AbstractSgfFixtureTestCase {
-	public CannonicalTestCase(Object key) {
-		this.key=key;
-	}
-	@Parameterized.Parameters(name="{0}") public static Collection<Object[]> parameters() {
-		return SgfTestParameters.allSgfKeysAndFiles();
-	}
+@RunWith(Parameterized.class) public class CannonicalTestCase extends AbstractAllSgfFixtureTestCase {
 	@Test public void testThatGeneralTreeAlwaysHasRTProperty() {
 		// this will depend on whether the add new rot switch is on.
-        SgfNode games=SgfTestIo.restore(expectedSgf);
+        SgfNode games=restoreExpectedSgf();
 		MNode root=MNode.toGeneralTree(games);
 		// this mnay not be present
 		// check the add new root flag in mnode.

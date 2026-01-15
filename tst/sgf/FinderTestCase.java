@@ -1,6 +1,5 @@
 package sgf;
 import static org.junit.Assert.*;
-import java.util.Collection;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,13 +18,7 @@ class Verifier extends SgfAcceptorImpl {
 	}
 	final SgfNode root;
 }
-@RunWith(Parameterized.class) public class FinderTestCase extends AbstractSgfFixtureTestCase {
-	public FinderTestCase(Object key) {
-		this.key=key;
-	}
-	@Parameterized.Parameters(name="{0}") public static Collection<Object[]> data() {
-		return SgfTestParameters.allSgfKeysAndFiles();
-	}
+@RunWith(Parameterized.class) public class FinderTestCase extends AbstractAllSgfFixtureTestCase {
 	public static void verify(SgfNode games) {
 		SgfNode target=games;
 		SgfNodeFinder finder=SgfNodeFinder.finder(target,games);
@@ -33,8 +26,7 @@ class Verifier extends SgfAcceptorImpl {
 		assertTrue(finder.found!=null);
 		assertEquals(target,finder.found);
 		Verifier verifier=new Verifier(games);
-		Traverser traverser=new Traverser(verifier);
-		traverser.visit(games);
+		SgfTestSupport.traverse(verifier,games);
     }
     @Test public void testFinderWithSimple() {
         String sgf=SgfTestSupport.loadExpectedSgf(TestKeys.simpleWithVariations);
@@ -54,7 +46,7 @@ class Verifier extends SgfAcceptorImpl {
 	// add tests for all of the sgf files we have
 	@Test public void testFinder() {
 		// File file=new File(Parser.map.get(key));
-		games=SgfTestIo.restore(expectedSgf);
+		games=restoreExpectedSgf();
 		if(games!=null) verify(games);
 	}
 	SgfNode games;

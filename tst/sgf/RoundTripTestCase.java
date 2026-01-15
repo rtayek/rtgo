@@ -1,11 +1,8 @@
 package sgf;
-import static org.junit.Assert.assertEquals;
 import static utilities.Utilities.fromFile;
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import org.junit.*;
-import io.*;
 import io.IOs;
 import utilities.MyTestWatcher;
 import utilities.TestKeys;
@@ -17,22 +14,6 @@ public class RoundTripTestCase {
     // maybe add all of the longer files
     // add the short ones to the map in parser.
     // these are probably duplicates
-    public static void checkReader(Reader r) throws IOException {
-        // looks like a double round trup?
-        // do we need this?
-        String expected=ModelTestIo.modelRoundTripToString(r);
-        assertRoundTripTwice(expected);
-        try {
-            r.close();
-        } catch(IOException e) {
-            Logging.mainLogger.severe("caught: "+e);
-        }
-    }
-    private static void assertRoundTripTwice(String sgf) {
-        String expected=ModelTestIo.modelRoundTripToString(sgf);
-        String actual=ModelTestIo.modelRoundTripToString(expected);
-        assertEquals(expected,actual);
-    }
     private static void checkKey(String key) throws IOException {
         checkString(SgfTestSupport.loadExpectedSgf(key));
     }
@@ -48,13 +29,13 @@ public class RoundTripTestCase {
     }
     @Test public void testVariation() throws IOException {
         File file=new File(Parser.sgfPath,"variation.sgf");
-        checkReader(IOs.toReader(file));
+        SgfTestSupport.assertModelRoundTripTwice(IOs.toReader(file));
         StringBuffer sb=new StringBuffer();
         fromFile(sb,file);
         // now what should i do with string buffer?
         //
     }
     private static void checkString(String sgf) throws IOException {
-        assertRoundTripTwice(sgf);
+        SgfTestSupport.assertModelRoundTripTwice(sgf);
     }
 }

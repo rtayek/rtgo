@@ -19,6 +19,14 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     protected final void assertPreparedEquals(String preparedSgf) {
         assertEquals(key.toString(),expectedSgf,preparedSgf);
     }
+    protected final void assertPreparedRoundTrip(String actualSgf) {
+        assertPreparedEquals(prepareActual(actualSgf));
+    }
+    protected final void assertPreparedRoundTripWithParenthesesCheck(String actualSgf,String label) {
+        String prepared=prepareActual(actualSgf);
+        SgfTestSupport.logBadParentheses(prepared,key,label);
+        assertPreparedEquals(prepared);
+    }
     private Boolean specialCases(String actualSgf) {
         Boolean ok=false; // no more assertions are needed
         if(expectedSgf.equals("")) expectedSgf=null; //11/29/22
@@ -45,7 +53,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     }
     @Test public void testSgfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
-        String actualSgf=SgfTestIo.restoreAndSave(expectedSgf);
+        String actualSgf=SgfTestSupport.restoreAndSave(expectedSgf);
         actualSgf=prepareSgf(actualSgf);
         if(actualSgf.length()==expectedSgf.length()+1) if(actualSgf.endsWith(")")) {
             Logging.mainLogger.info(key+"removing extra ')' "+actualSgf.length());
@@ -72,8 +80,6 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     }
     @Test public void testSgfCannonical() {
         assertNoLineFeeds(expectedSgf);
-        String actualSgf=SgfTestIo.restoreAndSave(expectedSgf);
-        String actual2=SgfTestIo.restoreAndSave(actualSgf);
-        assertEquals(key.toString(),actualSgf,actual2);
+        SgfTestSupport.assertSgfRestoreSaveStable(expectedSgf,key);
     }
 }

@@ -1,8 +1,17 @@
 package sgf;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import io.Logging;
+import io.IOs;
+import utilities.SgfTestParameters;
+import utilities.ParameterArray;
 
-final class SgfTestSupport {
+public final class SgfTestSupport {
     private SgfTestSupport() {}
 
     static String loadExpectedSgf(Object key) {
@@ -29,5 +38,85 @@ final class SgfTestSupport {
         if(sgf==null) return;
         int p=Parser.parentheses(sgf);
         if(p!=0) Logging.mainLogger.info(key+" "+label+" bad parentheses: "+p);
+    }
+
+    static void assertModelRoundTripTwice(String sgf) {
+        String expected=ModelTestIo.modelRoundTripToString(sgf);
+        String actual=ModelTestIo.modelRoundTripToString(expected);
+        org.junit.Assert.assertEquals(expected,actual);
+    }
+
+    static void assertModelRoundTripTwice(Reader reader) {
+        String expected=ModelTestIo.modelRoundTripToString(reader);
+        assertModelRoundTripTwice(expected);
+        try {
+            reader.close();
+        } catch(IOException e) {
+            Logging.mainLogger.severe("caught: "+e);
+        }
+    }
+
+    static void assertSgfRestoreSaveStable(String sgf,Object key) {
+        String actual=SgfTestIo.restoreAndSave(sgf);
+        String actual2=SgfTestIo.restoreAndSave(actual);
+        org.junit.Assert.assertEquals(key.toString(),actual,actual2);
+    }
+
+    static void assertSgfRestoreSaveStable(String sgf) {
+        String actual=SgfTestIo.restoreAndSave(sgf);
+        String actual2=SgfTestIo.restoreAndSave(actual);
+        org.junit.Assert.assertEquals(actual,actual2);
+    }
+
+    public static boolean roundTripTwice(File file) {
+        return SgfTestIo.roundTripTwice(IOs.toReader(file));
+    }
+
+    static String restoreAndSave(String sgf) {
+        return SgfTestIo.restoreAndSave(sgf);
+    }
+
+    static void traverse(SgfAcceptor acceptor,SgfNode games) {
+        Traverser traverser=new Traverser(acceptor);
+        traverser.visit(games);
+    }
+
+    static java.util.Collection<Object[]> allSgfParameters() {
+        return SgfTestParameters.allSgfKeysAndFiles();
+    }
+
+    static java.util.Collection<Object[]> multipleGameParameters() {
+        return SgfTestParameters.multipleGameKeysAndFiles();
+    }
+
+    static java.util.Collection<Object[]> illegalSgfParameters() {
+        List<Object> objects=new ArrayList<>();
+        objects.addAll(Parser.illegalSgfKeys);
+        return ParameterArray.parameterize(objects);
+    }
+
+    static java.util.Collection<Object[]> edgeParserParameters() {
+        String[] filenames=new String[] { //
+                //"empty.sgf", //
+                // "reallyempty.sgf", //
+                //"saved.sgf", //
+                //"mf0false.sgf", //
+                //"mf1false.sgf", //
+                "mf0.sgf", //
+                "mf1.sgf", //
+                "smart0.sgf", //
+                "smart1.sgf", //
+                "rtgo0.sgf", //
+                "rtgo1.sgf", //
+        };
+        // use variable names above
+        File[] files=new File[filenames.length];
+        for(int i=0;i<filenames.length;i++) files[i]=new File(Parser.sgfPath,filenames[i]);
+        List<Object> objects=new ArrayList<>(Arrays.asList((Object[])(files)));
+        Logging.mainLogger.info(String.valueOf(objects.iterator().next().getClass().getName()));
+        objects.add("reallyEmpty");
+        java.util.Collection<Object[]> parameters=ParameterArray.parameterize(objects);
+        for(Object[] parameterized:parameters) Logging.mainLogger.info(parameterized[0]+" "+parameterized[0].getClass());
+        return ParameterArray.parameterize(objects);
     }
 }

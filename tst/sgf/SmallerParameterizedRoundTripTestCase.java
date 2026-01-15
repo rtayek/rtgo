@@ -56,5 +56,4 @@ import utilities.*;
         Logging.mainLogger.info(objects.size()+" keys");
         return ParameterArray.parameterize(objects);
     }
-    public SmallerParameterizedRoundTripTestCase(Object key) { this.key=key; watcher.key=key; }
 }

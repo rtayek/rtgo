@@ -1,5 +1,6 @@
 package sgf;
 import io.Logging;
+import io.IOs;
 import static io.Logging.parserLogger;
 import static org.junit.Assert.fail;
 import static sgf.Parser.restoreSgf;
@@ -7,7 +8,6 @@ import static utilities.Utilities.addFiles;
 import java.io.*;
 import java.util.*;
 import org.junit.*;
-import io.IOs;
 import utilities.MyTestWatcher;
 @Ignore public class WierdSGFTestCase {
     // these take a long time when tst/ is run
@@ -22,7 +22,7 @@ import utilities.MyTestWatcher;
         if(files.size()==0) fail("no files!");
         fail=false;
         for(File file:files) try {
-            boolean ok=SgfTestIo.roundTripTwice(IOs.toReader(file));
+            boolean ok=SgfTestSupport.roundTripTwice(file);
             if(!ok) Logging.mainLogger.info(file+" fails!");
         } catch(Exception e) {
             parserLogger.warning(this+" caught: "+e);
