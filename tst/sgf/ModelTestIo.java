@@ -14,6 +14,11 @@ public final class ModelTestIo {
     public static void restore(Model model,String sgf) {
         ModelIo.restore(model,sgf);
     }
+    public static Model restoreNew(String sgf) {
+        Model model=new Model();
+        restore(model,sgf);
+        return model;
+    }
     public static String save(Model model) {
         return save(model,"save fails");
     }

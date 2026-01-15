@@ -7,16 +7,12 @@ import java.util.Collection;
 import org.junit.*;
 import io.IOs;
 public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
-    public static boolean checkBoardInRoot(Object key) {
+    private boolean checkBoardInRoot() {
         // move this?
         if(key==null) { Logging.mainLogger.info("key is null!"); return true; }
-        String expectedSgf=SgfTestSupport.loadExpectedSgf(key);
-        Model original=new Model();
-        ModelTestIo.restore(original,expectedSgf);
+        Model original=ModelTestIo.restoreNew(expectedSgf);
         boolean hasABoard=original.board()!=null;
-        int n=Math.min(expectedSgf.length(),20); // what is 20?
-        Model model=new Model();
-        ModelTestIo.restore(model,expectedSgf);
+        Model model=ModelTestIo.restoreNew(expectedSgf);
         if(model.board()==null); // Logging.mainLogger.info("model has no board!");
         else Logging.mainLogger.info("model has a board!");
         Navigate.down.do_(model);
@@ -32,7 +28,7 @@ public abstract class AbstractModelTestCase extends AbstractMNodeTestCase {
             //System.exit(1);
         }
         assertNotNull(key);
-        boolean ok=checkBoardInRoot(key);
+        boolean ok=checkBoardInRoot();
         Logging.mainLogger.info("after key: "+key);
         // always fails because none of these have a board in root.
         // that seems to be the usual case.

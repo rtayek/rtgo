@@ -15,13 +15,16 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertModelRestoreAndSave(model);
     }
     private String restoreAndSavePrepared(String sgf) {
-        Model model=new Model();
-        ModelTestIo.restore(model,sgf);
+        Model model=ModelTestIo.restoreNew(sgf);
         String saved=model.save();
         return prepareActual(saved);
     }
-    private void assertModelRoundTripToString(ModelHelper.ModelSaveMode saveMode) {
+    private void assertModelRoundTripToString(ModelHelper.ModelSaveMode saveMode,boolean log) {
         String actualSgf=ModelTestIo.modelRoundTripToString(expectedSgf,saveMode);
+        if(log) {
+            Logging.mainLogger.info("ex: "+expectedSgf);
+            Logging.mainLogger.info("ac: "+actualSgf);
+        }
         assertPreparedRoundTrip(actualSgf);
     }
     private void assertSgfRestoreAndSave() {
@@ -49,7 +52,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertPreparedRoundTrip(actualSgf2);
     }
     @Test public void testLongRoundTrip() throws Exception {
-        assertModelRoundTripToString(ModelHelper.ModelSaveMode.sgfNode);
+        assertModelRoundTripToString(ModelHelper.ModelSaveMode.sgfNode,false);
     }
     @Test public void testModelRestoreAndSave1() throws Exception {
         MNode root=restoreExpectedMNode();
@@ -60,10 +63,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertPreparedRoundTrip(actualSgf);
     }
     @Test public void testLongRoundTrip21() throws Exception {
-        String actualSgf=ModelTestIo.modelRoundTripToString(expectedSgf,ModelHelper.ModelSaveMode.sgfNodeChecked);
-        Logging.mainLogger.info("ex: "+expectedSgf);
-        Logging.mainLogger.info("ac: "+actualSgf);
-        assertPreparedRoundTrip(actualSgf);
+        assertModelRoundTripToString(ModelHelper.ModelSaveMode.sgfNodeChecked,true);
     }
     @Test public void testCannonicalRoundTripTwice() {
         assertNoLineFeeds(expectedSgf);

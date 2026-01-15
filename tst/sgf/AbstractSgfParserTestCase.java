@@ -49,6 +49,12 @@ public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase
     @Test public void testParse() throws Exception {
         games=restoreExpectedSgf();
     }
+    private void assertFlags(boolean oldFlags) {
+        games=restoreExpectedSgf();
+        if(games==null) return;
+        if(oldFlags) games.oldPreorderCheckFlags();
+        else games.preorderCheckFlags();
+    }
     @Test public void testHexAscii() {
         String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
         String actualSgf=encoded!=null?HexAscii.decodeToString(encoded):null;
@@ -58,12 +64,10 @@ public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase
         assertEquals(keyString,expectedSgf,actualSgf);
     }
     @Test public void testFlags() {
-        games=restoreExpectedSgf();
-        if(games!=null) games.oldPreorderCheckFlags();
+        assertFlags(true);
     }
     @Test public void testFlagsNew() {
-        games=restoreExpectedSgf();
-        if(games!=null) games.preorderCheckFlags();
+        assertFlags(false);
     }
     public String rawSgf;
     public SgfNode games;

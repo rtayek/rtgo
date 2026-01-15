@@ -5,25 +5,24 @@ import java.util.*;
 import org.junit.Test;
 import equipment.*;
 public class SgfNodeTestCase extends AbstractWatchedTestCase {
+    private static SgfProperty property(P id,String value) {
+        return new SgfProperty(id,Arrays.asList(new String[] {value}));
+    }
+    private static SgfNode nodeWithProperty(P id,String value) {
+        SgfNode node=new SgfNode();
+        node.add(property(id,value));
+        return node;
+    }
     @Test public void testSgfCoordinates() {
-        SgfNode expected=new SgfNode();
-        List<String> list=Arrays.asList(new String[] {"AB"}); // what is AB?
-        SgfProperty property=new SgfProperty(P.B,list);
-        expected.add(property);
+        SgfNode expected=nodeWithProperty(P.B,"AB"); // what is AB?
         String string=expected.sgfProperties.get(0).list().get(0);
         Point point=Coordinates.fromSgfCoordinates(string,Board.standard);
         String string2=Coordinates.toSgfCoordinates(point,Board.standard);
-        SgfNode actual=new SgfNode();
-        List<String> list2=Arrays.asList(new String[] {string2});
-        SgfProperty property2=new SgfProperty(P.B,list2);
-        actual.add(property2);
+        SgfNode actual=nodeWithProperty(P.B,string2);
         assertEquals(expected,actual);
     }
     @Test public void testHasAMoveFlag() {
-        SgfNode node=new SgfNode();
-        List<String> list=Arrays.asList(new String[] {"inside the brackets"});
-        SgfProperty property=new SgfProperty(P.B,list);
-        node.add(property);
+        SgfNode node=nodeWithProperty(P.B,"inside the brackets");
         assertTrue(node.hasAMoveType);
         assertTrue(node.hasAMove);
         node.setFlags();
@@ -38,10 +37,7 @@ public class SgfNodeTestCase extends AbstractWatchedTestCase {
         }
     }
     @Test public void testHasAMoveTypeFlag() {
-        SgfNode node=new SgfNode();
-        List<String> list=Arrays.asList(new String[] {"inside the brackets"});
-        SgfProperty property=new SgfProperty(P.BM,list);
-        node.add(property);
+        SgfNode node=nodeWithProperty(P.BM,"inside the brackets");
         assertTrue(node.hasAMoveType);
         assertFalse(node.hasAMove);
         MNode mNode=MNode.toGeneralTree(node);
@@ -52,10 +48,7 @@ public class SgfNodeTestCase extends AbstractWatchedTestCase {
         }
     }
     @Test public void testBothFlagsFalse() {
-        SgfNode node=new SgfNode();
-        List<String> list=Arrays.asList(new String[] {"inside the brackets"});
-        SgfProperty property=new SgfProperty(P.AB,list);
-        node.add(property);
+        SgfNode node=nodeWithProperty(P.AB,"inside the brackets");
         assertFalse(node.hasAMoveType);
         assertFalse(node.hasAMove);
         MNode mNode=MNode.toGeneralTree(node);
@@ -66,8 +59,7 @@ public class SgfNodeTestCase extends AbstractWatchedTestCase {
     @Test public void testRT() {
         MNode mRoot=new MNode(null);
         try {
-            SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
-            mRoot.sgfProperties().add(property);
+            mRoot.sgfProperties().add(property(P.RT,"Tgo root"));
         } catch(Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

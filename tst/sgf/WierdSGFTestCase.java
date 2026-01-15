@@ -15,10 +15,14 @@ import org.junit.Test;
     // they do not take a long time.
     // they mumble a lot, so ignoring for now.
     // parameterize this!
-    @Test public void testWierd() throws Exception {
+    private static List<File> loadStrangeFiles() {
         if(!strange.exists()) fail(strange+" does not exits!");
         List<File> files=addFiles(null,strange);
         if(files.size()==0) fail("no files!");
+        return files;
+    }
+    @Test public void testWierd() throws Exception {
+        List<File> files=loadStrangeFiles();
         fail=false;
         for(File file:files) try {
             boolean ok=SgfTestSupport.roundTripTwice(file);
@@ -28,9 +32,7 @@ import org.junit.Test;
         }
     }
     @Test public void testFirstNodeOfWierd() throws Exception {
-        if(!strange.exists()) fail(strange+" does not exits!");
-        List<File> files=addFiles(null,strange);
-        if(files.size()==0) fail("no files!");
+        List<File> files=loadStrangeFiles();
         fail=false;
         List<SgfNode> all=new ArrayList<>();
         for(File file:files) try {

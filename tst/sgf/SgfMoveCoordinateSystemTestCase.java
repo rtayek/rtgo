@@ -6,15 +6,15 @@ public class SgfMoveCoordinateSystemTestCase extends AbstractSgfFixtureTestCase 
     @Override protected Object defaultKey() {
         return TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board;
     }
-    private SgfNode restoreExample() {
-        return restoreExpectedSgf();
+    private SgfNode[] restoreAndTraverse(SgfAcceptor acceptor) {
+        SgfNode games=restoreExpectedSgf();
+        SgfTestSupport.traverse(acceptor,games);
+        return new SgfNode[] {games,games.left,games.left.left};
     }
     @Test public void testTwoMoves() {
-        SgfNode games=restoreExample();
-        SgfAcceptor acceptor=new SgfNoOpAcceptor();
-        SgfTestSupport.traverse(acceptor,games);
-        SgfNode move1=games.left;
-        SgfNode move2=games.left.left;
+        SgfNode[] nodes=restoreAndTraverse(new SgfNoOpAcceptor());
+        SgfNode move1=nodes[1];
+        SgfNode move2=nodes[2];
         // a1 maps to as
         // r16 maps to qd
         SgfProperty property1=move1.sgfProperties.get(0);
@@ -27,11 +27,8 @@ public class SgfMoveCoordinateSystemTestCase extends AbstractSgfFixtureTestCase 
         // no testing done, just finding out what the coordinate map is.
     }
     @Test public void testTwoMovesPath() {
-        SgfNode games=restoreExample();
         SgfMovesPath acceptor=new SgfMovesPath();
-        SgfTestSupport.traverse(acceptor,games);
-        SgfNode move1=games.left;
-        SgfNode move2=games.left.left;
+        restoreAndTraverse(acceptor);
         //Logging.mainLogger.info(games);
         //Logging.mainLogger.info(move1);
         //Logging.mainLogger.info(move2);

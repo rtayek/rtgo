@@ -23,8 +23,7 @@ import utilities.*;
 		}
 	}
     @Test public void testSaveMultupleGames() {
-        Model model=new Model();
-        ModelTestIo.restore(model,expectedSgf);
+        Model model=ModelTestIo.restoreNew(expectedSgf);
         boolean hasMultipleGames=model.root().children().size()>1;
         String sgfString=model.save();
 		boolean containsRTNode=sgfString.contains("RT[Tgo root]");
