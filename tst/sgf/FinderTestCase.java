@@ -20,11 +20,6 @@ class Verifier extends SgfAcceptorImpl {
 }
 @RunWith(Parameterized.class) public class FinderTestCase extends AbstractAllSgfFixtureTestCase {
 	public static void verify(SgfNode games) {
-		SgfNode target=games;
-		SgfNodeFinder finder=SgfNodeFinder.finder(target,games);
-		finder.checkMove();
-		assertTrue(finder.found!=null);
-		assertEquals(target,finder.found);
 		Verifier verifier=new Verifier(games);
 		SgfTestSupport.traverse(verifier,games);
     }
@@ -45,8 +40,7 @@ class Verifier extends SgfAcceptorImpl {
 	// add tests for all of the sgf files we have
 	@Test public void testFinder() {
 		// File file=new File(Parser.map.get(key));
-		games=restoreExpectedSgf();
-		if(games!=null) verify(games);
+		games=restoreAndTraverse(Verifier::new);
 	}
 	SgfNode games;
 	boolean old=false;

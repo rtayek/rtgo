@@ -1,6 +1,4 @@
 package sgf;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -14,5 +12,4 @@ import utilities.*;
 		// assertFalse(expectedSgf.contains(P.RT.toString()));
 		// why would we expect this?
 	}
-	static final Set<String> paths=new LinkedHashSet<>();
 }

@@ -1,9 +1,7 @@
 package sgf;
 import io.Logging;
 import static org.junit.Assert.*;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -57,5 +55,4 @@ import utilities.*;
 				}
 		// System.setOut(x);
 	}
-	static final Set<String> paths=new LinkedHashSet<>();
 }

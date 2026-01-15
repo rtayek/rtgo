@@ -1,9 +1,11 @@
 package sgf;
 
 import java.util.Collection;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-public abstract class AbstractAllSgfParserTestCase extends AbstractSgfParserTestCase {
+@RunWith(Parameterized.class) public class AllModelRoundTripTestCase extends AbstractModelRoundtripTestCase {
     @Parameters(name="{0}") public static Collection<Object[]> parameters() {
         return SgfTestSupport.allSgfParameters();
     }

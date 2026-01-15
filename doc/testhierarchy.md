@@ -9,13 +9,13 @@ At a high level, you’re using a classic JUnit4 “template base class” patte
 ```
 AbstractSgfParserTestCase
   |
-  +-- ParserTestCase
   +-- EdgeParserTestCase
-  +-- ParameterizedParserTestCase         (@RunWith(Parameterized.class))
+  +-- AllSgfParserTestCase        (@RunWith(Parameterized.class))
   |
   +-- AbstractSgfRoundTripTestCase
   |     |
-  |     +-- ParameterizedSgfRoundTripTestCase   (@RunWith(Parameterized.class))
+  |     +-- AllSgfRoundTripTestCase     (@RunWith(Parameterized.class))
+  |     +-- SgfSmokeTestCase            (@RunWith(Parameterized.class))
   |     +-- SmallerParameterizedRoundTripTestCase (@RunWith(Parameterized.class))
   |
   +-- AbstractMNodeTestCase

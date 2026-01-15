@@ -1,5 +1,6 @@
 package sgf;
 
+import org.junit.Before;
 import org.junit.runners.Parameterized;
 import utilities.TestKeys;
 
@@ -18,6 +19,11 @@ abstract class AbstractSgfKeyedTestCase extends AbstractWatchedTestCase {
             fallback=TestKeys.sgfExampleFromRedBean;
         }
         if(fallback!=null) key=fallback;
+    }
+
+    @Before public void setUpKey() throws Exception {
+        ensureKey();
+        watcher.key=key;
     }
 
     protected SgfNode restoreExpectedSgf() {

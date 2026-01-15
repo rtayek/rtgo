@@ -32,8 +32,6 @@ public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase
         return SgfTestIo.restore(expectedSgf);
     }
     @Before public void setUp() throws Exception {
-        ensureKey();
-        watcher.key=key;
         rawSgf=SgfTestSupport.loadExpectedSgf(key);
         if(rawSgf==null) { expectedSgf=normalizeExpectedSgf(null); return; }
         expectedSgf=normalizeExpectedSgf(rawSgf);

@@ -6,15 +6,10 @@ public class SgfMoveCoordinateSystemTestCase extends AbstractSgfFixtureTestCase 
     @Override protected Object defaultKey() {
         return TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board;
     }
-    private SgfNode[] restoreAndTraverse(SgfAcceptor acceptor) {
-        SgfNode games=restoreExpectedSgf();
-        SgfTestSupport.traverse(acceptor,games);
-        return new SgfNode[] {games,games.left,games.left.left};
-    }
     @Test public void testTwoMoves() {
-        SgfNode[] nodes=restoreAndTraverse(new SgfNoOpAcceptor());
-        SgfNode move1=nodes[1];
-        SgfNode move2=nodes[2];
+        SgfNode games=restoreAndTraverse(new SgfNoOpAcceptor());
+        SgfNode move1=games.left;
+        SgfNode move2=games.left.left;
         // a1 maps to as
         // r16 maps to qd
         SgfProperty property1=move1.sgfProperties.get(0);
