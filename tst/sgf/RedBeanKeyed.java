@@ -1,0 +1,3 @@
+package sgf;
+
+interface RedBeanKeyed {}

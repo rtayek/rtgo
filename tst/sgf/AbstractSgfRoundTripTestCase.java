@@ -2,7 +2,6 @@ package sgf;
 import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
-import utilities.MyTestWatcher;
 public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTestCase {
     @Override protected String normalizeExpectedSgf(String rawSgf) {
         return prepareExpectedSgf(rawSgf);
@@ -47,7 +46,7 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     @Test public void testSgfSaveAndRestore() throws Exception {
         // but does a restore first, then a deep equals on the trees.
         assertNoLineFeeds(expectedSgf);
-        SgfNode expected=SgfTestIo.restore(expectedSgf);
+        SgfNode expected=restoreExpectedSgf();
         SgfNode actualSgf=SgfTestIo.saveAndRestore(expected);
         if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
     }

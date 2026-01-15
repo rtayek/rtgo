@@ -3,7 +3,7 @@ package sgf;
 import org.junit.After;
 import org.junit.Before;
 
-public abstract class AbstractIgnoreMoveAndSetupFlagsTestCase {
+public abstract class AbstractIgnoreMoveAndSetupFlagsTestCase extends AbstractWatchedTestCase {
     private boolean oldIgnoreFlags;
 
     @Before public void setUpIgnoreMoveAndSetupFlags() throws Exception {

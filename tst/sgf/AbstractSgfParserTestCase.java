@@ -6,10 +6,7 @@ import static utilities.Utilities.implies;
 import org.junit.*;
 import io.IOs;
 import sgf.SgfNode.SgfOptions;
-import org.junit.runners.Parameterized;
-import utilities.MyTestWatcher;
-public abstract class AbstractSgfParserTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase {
     protected String normalizeExpectedSgf(String rawSgf) {
         return rawSgf;
     }
@@ -30,11 +27,12 @@ public abstract class AbstractSgfParserTestCase {
         assertFalse(containsQuotedControlCharacters(key.toString(),normalized));
         return normalized;
     }
-    private SgfNode parseGames() {
+    @Override protected SgfNode restoreExpectedSgf() {
         SgfTestSupport.assertSgfDelimiters(expectedSgf,key);
         return SgfTestIo.restore(expectedSgf);
     }
     @Before public void setUp() throws Exception {
+        ensureKey();
         watcher.key=key;
         rawSgf=SgfTestSupport.loadExpectedSgf(key);
         if(rawSgf==null) { expectedSgf=normalizeExpectedSgf(null); return; }
@@ -49,7 +47,7 @@ public abstract class AbstractSgfParserTestCase {
         // maybe allow as an edge case?
     }
     @Test public void testParse() throws Exception {
-        games=parseGames();
+        games=restoreExpectedSgf();
     }
     @Test public void testHexAscii() {
         String encoded=expectedSgf!=null?HexAscii.encode(expectedSgf.getBytes()):null;
@@ -60,15 +58,13 @@ public abstract class AbstractSgfParserTestCase {
         assertEquals(keyString,expectedSgf,actualSgf);
     }
     @Test public void testFlags() {
-        games=parseGames();
+        games=restoreExpectedSgf();
         if(games!=null) games.oldPreorderCheckFlags();
     }
     @Test public void testFlagsNew() {
-        games=parseGames();
+        games=restoreExpectedSgf();
         if(games!=null) games.preorderCheckFlags();
     }
-    @Parameterized.Parameter public Object key;
     public String rawSgf;
-    public String expectedSgf;
     public SgfNode games;
 }

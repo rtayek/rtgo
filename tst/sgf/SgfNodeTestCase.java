@@ -2,13 +2,9 @@ package sgf;
 import io.Logging;
 import static org.junit.Assert.*;
 import java.util.*;
-import org.junit.*;
+import org.junit.Test;
 import equipment.*;
-import utilities.MyTestWatcher;
-public class SgfNodeTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
+public class SgfNodeTestCase extends AbstractWatchedTestCase {
     @Test public void testSgfCoordinates() {
         SgfNode expected=new SgfNode();
         List<String> list=Arrays.asList(new String[] {"AB"}); // what is AB?

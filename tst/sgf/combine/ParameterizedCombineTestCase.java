@@ -7,10 +7,9 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import sgf.AbstractWatchedTestCase;
 import utilities.ParameterArray;
-import utilities.MyTestWatcher;
-@Ignore @RunWith(Parameterized.class) public class ParameterizedCombineTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+@Ignore @RunWith(Parameterized.class) public class ParameterizedCombineTestCase extends AbstractWatchedTestCase {
     @Parameters public static Collection<Object[]> data() {
         // consoldate this!
         // yes, look at this later.
@@ -20,7 +19,6 @@ import utilities.MyTestWatcher;
         return ParameterArray.parameterize(objects);
     }
     @Before public void setUp() throws Exception { Logging.mainLogger.info(String.valueOf(filename)); }
-    @After public void tearDown() throws Exception {}
     public ParameterizedCombineTestCase(String file) { this.filename=file; }
     @Test public void testCombine() {
         File file=new File(Combine.pathToHere,filename);

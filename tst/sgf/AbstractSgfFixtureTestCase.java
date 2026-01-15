@@ -1,10 +1,8 @@
 package sgf;
 import org.junit.Before;
-import org.junit.Rule;
-import utilities.MyTestWatcher;
-import org.junit.runners.Parameterized;
-abstract class AbstractSgfFixtureTestCase {
+abstract class AbstractSgfFixtureTestCase extends AbstractSgfKeyedTestCase {
     @Before public void setUp() throws Exception {
+        ensureKey();
         watcher.key=key;
         expectedSgf=SgfTestSupport.loadExpectedSgf(key);
         if(expectedSgf==null) { return; }
@@ -12,10 +10,4 @@ abstract class AbstractSgfFixtureTestCase {
     void assertSgfDelimiters() {
         SgfTestSupport.assertSgfDelimiters(expectedSgf,key);
     }
-    SgfNode restoreExpectedSgf() {
-        return SgfTestIo.restore(expectedSgf);
-    }
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Parameterized.Parameter public Object key;
-    String expectedSgf;
 }

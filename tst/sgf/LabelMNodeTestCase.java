@@ -5,14 +5,10 @@ import java.util.List;
 import org.junit.*;
 import model.MNodeAcceptor.*;
 import utilities.Iterators.Longs;
-import utilities.TestKeys;
-public class LabelMNodeTestCase extends AbstractSgfFixtureTestCase {
-    public LabelMNodeTestCase() {
-        key=TestKeys.sgfExampleFromRedBean;
-    }
+public class LabelMNodeTestCase extends AbstractSgfFixtureTestCase implements RedBeanKeyed {
     @Before public void setUpLabel() throws Exception {
-        root1=SgfTestIo.restoreMNode(expectedSgf);
-        root2=SgfTestIo.restoreMNode(expectedSgf);
+        root1=restoreExpectedMNode();
+        root2=restoreExpectedMNode();
         MNode.label(root1,new Longs());
         MNode.label(root2,new Longs());
         list1=MakeList.toList(root1);

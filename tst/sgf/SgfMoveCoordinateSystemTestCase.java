@@ -3,8 +3,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import utilities.TestKeys;
 public class SgfMoveCoordinateSystemTestCase extends AbstractSgfFixtureTestCase {
-    public SgfMoveCoordinateSystemTestCase() {
-        key=TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board;
+    @Override protected Object defaultKey() {
+        return TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board;
     }
     private SgfNode restoreExample() {
         return restoreExpectedSgf();

@@ -2,15 +2,11 @@ package sgf;
 import static utilities.Utilities.fromFile;
 import java.io.File;
 import java.io.IOException;
-import org.junit.*;
+import org.junit.Test;
 import io.IOs;
-import utilities.MyTestWatcher;
 import utilities.TestKeys;
 // sgf file->sgf node tree->sgf tree->sgf string
-public class RoundTripTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
+public class RoundTripTestCase extends AbstractWatchedTestCase {
     // maybe add all of the longer files
     // add the short ones to the map in parser.
     // these are probably duplicates

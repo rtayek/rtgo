@@ -29,8 +29,7 @@ class Verifier extends SgfAcceptorImpl {
 		SgfTestSupport.traverse(verifier,games);
     }
     @Test public void testFinderWithSimple() {
-        String sgf=SgfTestSupport.loadExpectedSgf(TestKeys.simpleWithVariations);
-        games=SgfTestIo.restore(sgf);
+        games=SgfTestSupport.restoreFromKey(TestKeys.simpleWithVariations);
         verify(games);
     }
 	// move these out of this parameterized test case!

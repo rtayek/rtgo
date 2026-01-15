@@ -5,11 +5,20 @@ import model.ModelHelper;
 import model.ModelHelper.ModelSaveMode;
 import static org.junit.Assert.*;
 import org.junit.*;
-import utilities.MyTestWatcher;
 public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundTripTestCase {
     private void assertModelRestoreAndSave(Model model) {
         String actualSgf=ModelTestIo.restoreAndSave(model,expectedSgf);
         assertPreparedRoundTrip(actualSgf);
+    }
+    private void assertModelRestoreAndSave(boolean oldWay) {
+        Model model=new Model("",oldWay);
+        assertModelRestoreAndSave(model);
+    }
+    private String restoreAndSavePrepared(String sgf) {
+        Model model=new Model();
+        ModelTestIo.restore(model,sgf);
+        String saved=model.save();
+        return prepareActual(saved);
     }
     private void assertModelRoundTripToString(ModelHelper.ModelSaveMode saveMode) {
         String actualSgf=ModelTestIo.modelRoundTripToString(expectedSgf,saveMode);
@@ -20,14 +29,12 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertPreparedRoundTrip(actualSgf);
     }
     @Test public void testModelRT0() throws Exception {
-        Model model=new Model("",true);
         // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
-        assertModelRestoreAndSave(model);
+        assertModelRestoreAndSave(true);
     }
     @Test public void testModelRT0NewWay() throws Exception {
-        Model model=new Model("",false);
         // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
-        assertModelRestoreAndSave(model);
+        assertModelRestoreAndSave(false);
     }
     @Test public void testModelRestoreAndSave() throws Exception {
         // then it does a restore and a save.
@@ -45,7 +52,7 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
         assertModelRoundTripToString(ModelHelper.ModelSaveMode.sgfNode);
     }
     @Test public void testModelRestoreAndSave1() throws Exception {
-        MNode root=SgfTestIo.restoreMNode(expectedSgf);
+        MNode root=restoreExpectedMNode();
         Model model=new Model();
         model.setRoot(root);
         String actualSgf=ModelTestIo.save(model,key.toString());
@@ -61,14 +68,8 @@ public abstract class AbstractModelRoundtripTestCase extends AbstractMNodeRoundT
     @Test public void testCannonicalRoundTripTwice() {
         assertNoLineFeeds(expectedSgf);
         try {
-            Model model=new Model();
-            ModelTestIo.restore(model,expectedSgf);
-            String expectedSgf2=model.save();
-            expectedSgf2=prepareActual(expectedSgf2);
-            model=new Model();
-            ModelTestIo.restore(model,expectedSgf2);
-            String actualSgf=model.save();
-            actualSgf=prepareActual(actualSgf);
+            String expectedSgf2=restoreAndSavePrepared(expectedSgf);
+            String actualSgf=restoreAndSavePrepared(expectedSgf2);
             // fails with (;RT[Tgo root];FF[4]GM[1]AP[RTGO]C[comment];B[as])
             assertEquals(key.toString(),expectedSgf2,actualSgf);
         } catch(Exception e) {

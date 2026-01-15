@@ -57,15 +57,13 @@ public final class SgfTestSupport {
     }
 
     static void assertSgfRestoreSaveStable(String sgf,Object key) {
-        String actual=SgfTestIo.restoreAndSave(sgf);
-        String actual2=SgfTestIo.restoreAndSave(actual);
-        org.junit.Assert.assertEquals(key.toString(),actual,actual2);
+        String[] actual=restoreAndSaveTwice(sgf);
+        org.junit.Assert.assertEquals(key.toString(),actual[0],actual[1]);
     }
 
     static void assertSgfRestoreSaveStable(String sgf) {
-        String actual=SgfTestIo.restoreAndSave(sgf);
-        String actual2=SgfTestIo.restoreAndSave(actual);
-        org.junit.Assert.assertEquals(actual,actual2);
+        String[] actual=restoreAndSaveTwice(sgf);
+        org.junit.Assert.assertEquals(actual[0],actual[1]);
     }
 
     public static boolean roundTripTwice(File file) {
@@ -74,6 +72,17 @@ public final class SgfTestSupport {
 
     static String restoreAndSave(String sgf) {
         return SgfTestIo.restoreAndSave(sgf);
+    }
+
+    static SgfNode restoreFromKey(Object key) {
+        String sgf=loadExpectedSgf(key);
+        return SgfTestIo.restore(sgf);
+    }
+
+    private static String[] restoreAndSaveTwice(String sgf) {
+        String actual=SgfTestIo.restoreAndSave(sgf);
+        String actual2=SgfTestIo.restoreAndSave(actual);
+        return new String[] {actual,actual2};
     }
 
     static void traverse(SgfAcceptor acceptor,SgfNode games) {
@@ -117,6 +126,6 @@ public final class SgfTestSupport {
         objects.add("reallyEmpty");
         java.util.Collection<Object[]> parameters=ParameterArray.parameterize(objects);
         for(Object[] parameterized:parameters) Logging.mainLogger.info(parameterized[0]+" "+parameterized[0].getClass());
-        return ParameterArray.parameterize(objects);
+        return parameters;
     }
 }

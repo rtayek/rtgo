@@ -2,18 +2,15 @@ package sgf;
 import static org.junit.Assert.*;
 import static sgf.HexAscii.*;
 import java.util.*;
-import org.junit.*;
+import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import utilities.*;
-/*@RunWith(Parameterized.class)*/ public class HexAsciiTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+/*@RunWith(Parameterized.class)*/ public class HexAsciiTestCase extends AbstractWatchedTestCase {
     @Parameters public static Collection<Object[]> data() {
         return SgfTestSupport.allSgfParameters();
     }
     public HexAsciiTestCase() {}
     //public HexAsciiTestCase(String key) { this.key=key; }
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
     @Test public void testNybble() {
         for(byte expected=0;expected<ascii.length;expected++) {
             char c=encode(expected);

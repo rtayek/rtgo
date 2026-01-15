@@ -3,10 +3,8 @@ import io.Logging;
 import static io.IOs.noIndent;
 import static org.junit.Assert.assertEquals;
 import java.util.*;
-import org.junit.*;
+import org.junit.Test;
 public class SimpleParserTestCase {
-    @Before public void setUp() throws Exception {}
-    @After public void tearDown() throws Exception {}
     private SgfNode comment(String string,SgfNode left,SgfNode right) {
         SgfNode node=new SgfNode();
         List<String> list=Arrays.asList(new String[] {string});

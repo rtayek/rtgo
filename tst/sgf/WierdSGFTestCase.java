@@ -7,14 +7,13 @@ import static sgf.Parser.restoreSgf;
 import static utilities.Utilities.addFiles;
 import java.io.*;
 import java.util.*;
-import org.junit.*;
-import utilities.MyTestWatcher;
-@Ignore public class WierdSGFTestCase {
+import org.junit.Ignore;
+import org.junit.Test;
+@Ignore public class WierdSGFTestCase extends AbstractWatchedTestCase {
     // these take a long time when tst/ is run
     // check to see if they take a long time when run by themselves.
     // they do not take a long time.
     // they mumble a lot, so ignoring for now.
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // parameterize this!
     @Test public void testWierd() throws Exception {
         if(!strange.exists()) fail(strange+" does not exits!");

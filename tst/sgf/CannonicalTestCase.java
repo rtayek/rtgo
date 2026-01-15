@@ -39,7 +39,7 @@ import utilities.*;
 															// for now.
 		// ignoring for now as it is slow
 		// seems to be working for multiple games
-        MNode root=SgfTestIo.restoreMNode(expectedSgf);
+        MNode root=restoreExpectedMNode();
 		boolean hasMultipleGames=root!=null&&root.children().size()>1;
 		assertNotNull(root);
 		List<MNode> list1=MakeList.toList(root);
