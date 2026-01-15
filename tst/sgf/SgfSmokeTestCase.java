@@ -1,7 +1,9 @@
 package sgf;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -13,8 +15,12 @@ import utilities.TestKeys;
                 TestKeys.emptyWithSemicolon,
                 TestKeys.oneMoveAtA1,
                 TestKeys.simpleWithVariations,
-                TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board
+                TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board,
+                new File(Parser.sgfPath,"variation.sgf")
         );
         return ParameterArray.parameterize(keys);
+    }
+    @Test public void testModelRoundTripTwice() {
+        SgfTestSupport.assertModelRoundTripTwice(expectedSgf);
     }
 }

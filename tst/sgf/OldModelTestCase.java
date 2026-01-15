@@ -34,11 +34,7 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
     }
     @Test public void testgenerateAndMakeMovesPreserveTurn() {
         assertGenerateAndMakeMovesPreserveTurn(null,1);
-    }
-    @Test public void testgenerateAndMakeMovesPreserveTurn2() {
         assertGenerateAndMakeMovesPreserveTurn(null,2);
-    }
-    @Test public void testgenerateAndMakeMovesPreserveTurn3() {
         assertGenerateAndMakeMovesPreserveTurn(5,3);
     }
     @Test public void testgenerateMoves() {
