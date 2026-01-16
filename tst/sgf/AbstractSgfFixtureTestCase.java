@@ -11,12 +11,12 @@ abstract class AbstractSgfFixtureTestCase extends AbstractSgfKeyedTestCase {
         if(games!=null) SgfTestSupport.traverse(acceptor,games);
         return games;
     }
-    protected final SgfNode restoreAndTraverse(Function<SgfNode,SgfAcceptor> acceptorFactory) {
+    private final SgfNode restoreAndTraverse(Function<SgfNode,SgfAcceptor> acceptorFactory) {
         SgfNode games=restoreExpectedSgf();
         if(games!=null) SgfTestSupport.traverse(acceptorFactory.apply(games),games);
         return games;
     }
-    void assertSgfDelimiters() {
+    private void assertSgfDelimiters() {
         SgfTestSupport.assertSgfDelimiters(expectedSgf,key);
     }
 }

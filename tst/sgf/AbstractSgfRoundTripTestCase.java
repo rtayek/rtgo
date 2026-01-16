@@ -12,16 +12,16 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
     protected static String prepareSgf(String sgf) {
         return SgfRoundTripHarness.prepare3Sgf(sgf);
     }
-    protected final String prepareActual(String actualSgf) {
+    private final String prepareActual(String actualSgf) {
         return SgfRoundTripHarness.prepare4Actual(actualSgf);
     }
     protected final void assertPreparedEquals(String preparedSgf) {
         SgfRoundTripHarness.assert4PreparedEquals(key,expectedSgf,preparedSgf);
     }
-    protected final void assertPreparedRoundTrip(String actualSgf) {
+    private final void assertPreparedRoundTrip(String actualSgf) {
         SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
     }
-    protected final void assertPreparedRoundTripWithParenthesesCheck(String actualSgf,String label) {
+    private final void assertPreparedRoundTripWithParenthesesCheck(String actualSgf,String label) {
         SgfRoundTripHarness.assert2PreparedRoundTripWithParenthesesCheck(key,expectedSgf,actualSgf,label);
     }
     private Boolean specialCases(String actualSgf) {

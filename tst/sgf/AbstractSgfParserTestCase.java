@@ -4,7 +4,7 @@ public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase
     protected String normalizeExpectedSgf(String rawSgf) {
         return rawSgf;
     }
-    protected String prepareExpectedSgf(String sgf) {
+    private String prepareExpectedSgf(String sgf) {
         return SgfParserHarness.prepareExpectedSgf(key,sgf);
     }
     @Override protected SgfNode restoreExpectedSgf() {
