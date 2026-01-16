@@ -18,6 +18,6 @@ import utilities.TestKeys;
         );
     }
     @Test public void testModelRoundTripTwice() {
-        SgfTestSupport.assertModelRoundTripTwice(expectedSgf);
+        SgfModelRoundTripHarness.assertModelRoundTripTwice(expectedSgf);
     }
 }

@@ -1,9 +1,11 @@
 package sgf;
 
 import io.Logging;
+import io.IOs;
 import static org.junit.Assert.*;
 import model.Model;
 import model.ModelHelper.ModelSaveMode;
+import model.Navigate;
 
 final class SgfModelRoundTripHarness {
     private SgfModelRoundTripHarness() {}
@@ -25,6 +27,19 @@ final class SgfModelRoundTripHarness {
             Logging.mainLogger.info("ac: "+actualSgf);
         }
         SgfRoundTripHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
+    }
+
+    static void assertModelRoundTripTwice(String sgf) {
+        String expected=ModelTestIo.modelRoundTripToString(sgf);
+        String actual=ModelTestIo.modelRoundTripToString(expected);
+        assertEquals(expected,actual);
+    }
+
+    static void assertCheckBoardInRoot(Object key,String sgf) {
+        if(key==null) IOs.stackTrace(10);
+        assertNotNull(key);
+        checkBoardInRoot(key,sgf);
+        Logging.mainLogger.info("after key: "+key);
     }
 
     static void assertSgfRestoreAndSave(Object key,String expectedSgf) {
@@ -62,5 +77,18 @@ final class SgfModelRoundTripHarness {
         Model model=ModelTestIo.restoreNew(sgf);
         String saved=model.save();
         return SgfRoundTripHarness.prepareActual(saved);
+    }
+
+    private static boolean checkBoardInRoot(Object key,String sgf) {
+        // move this?
+        if(key==null) { Logging.mainLogger.info("key is null!"); return true; }
+        Model original=ModelTestIo.restoreNew(sgf);
+        boolean hasABoard=original.board()!=null;
+        Model model=ModelTestIo.restoreNew(sgf);
+        if(model.board()==null); // Logging.mainLogger.info("model has no board!");
+        else Logging.mainLogger.info("model has a board!");
+        Navigate.down.do_(model);
+        Model.mainLineFromCurrentPosition(model);
+        return hasABoard;
     }
 }

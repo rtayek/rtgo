@@ -9,17 +9,17 @@ At a high level, you’re using a classic JUnit4 “template base class” patte
 ```
 AbstractSgfParserTestCase
   |
-  +-- (parser-only tests moved to SgfParserTestCase)
+  +-- SgfParserTestCase            (@RunWith(Parameterized.class))
   |
   +-- AbstractSgfRoundTripTestCase
   |     |
-  |     +-- SgfRoundTripTestCase        (@RunWith(Parameterized.class))
-  |     +-- SgfSmokeTestCase            (@RunWith(Parameterized.class))
+  |     +-- SgfRoundTripTestCase   (@RunWith(Parameterized.class))
+  |     +-- SgfSmokeTestCase       (@RunWith(Parameterized.class))
   |     +-- SmallerParameterizedRoundTripTestCase (@RunWith(Parameterized.class))
   |
-  +-- AbstractMNodeTestCase
+  +-- AbstractModelRoundtripTestCase
         |
-        +-- (other MNode-focused tests)
+        +-- SgfModelRoundTripTestCase (@RunWith(Parameterized.class))
 ```
 
 And then a *separate but related* base:
@@ -30,6 +30,19 @@ AbstractMNodeRoundTripTestCase
   +-- SgfMNodeRoundTripTestCase    (@RunWith(Parameterized.class))
   +-- MultipleGamesTestCase        (@RunWith(Parameterized.class))
   (does not extend AbstractSgfParserTestCase)
+```
+
+Fixture-focused helpers:
+
+```
+AbstractSgfFixtureTestCase
+  |
+  +-- SgfFixtureTestCase          (@RunWith(Parameterized.class))
+  +-- SgfFinderUnitTestCase       (non-parameterized)
+  +-- IllegalSgfTestCase          (@RunWith(Parameterized.class))
+  +-- LabelMNodeTestCase
+  +-- OblongTestCase
+  +-- SgfMoveCoordinateSystemTestCase
 ```
 
 ### What `AbstractSgfParserTestCase` is doing

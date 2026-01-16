@@ -1,14 +1,12 @@
 package sgf;
 
 import static org.junit.Assert.*;
-
 import java.util.List;
-
 import org.junit.Test;
 import core.formats.sgf.SgfNodeMapping;
 import model.Model;
 
-public class ExtraPropertiesTestCase {
+public class SgfMappingTestCase {
     @Test public void unknownPropertiesArePreserved() {
         // Build properties with IDs not known to P2 to force them into extras.
         P customXX=new P("XX","1234","unknown","none",""){};
@@ -33,5 +31,23 @@ public class ExtraPropertiesTestCase {
         assertEquals(List.of(keepChild),childMapping.extras());
         childMapping.applyExtrasTo(child);
         assertEquals(List.of(keepChild),child.extraProperties());
+    }
+
+    @Test public void malformedPropertiesBecomeExtrasAndMappingIsPure() {
+        SgfProperty badMove=SgfTestSupport.property(P.B,"a");
+        SgfProperty emptyMove=new SgfProperty(P.W,List.of());
+        SgfProperty badSize=SgfTestSupport.property(P.SZ,"x");
+
+        MNode node=SgfMappingTestSupport.nodeWith(badMove,emptyMove,badSize);
+        SgfNodeMapping mapping=SgfMappingTestSupport.mapNode(node);
+
+        assertTrue(mapping.actions().isEmpty());
+        assertEquals(List.of(badMove,emptyMove,badSize),mapping.extras());
+        assertEquals(List.of(badMove,emptyMove,badSize),node.sgfProperties());
+        assertTrue(node.extraProperties().isEmpty());
+
+        mapping.applyExtrasTo(node);
+        assertTrue(node.sgfProperties().isEmpty());
+        assertEquals(List.of(badMove,emptyMove,badSize),node.extraProperties());
     }
 }

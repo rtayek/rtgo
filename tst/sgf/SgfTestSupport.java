@@ -1,7 +1,5 @@
 package sgf;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,22 +38,6 @@ public final class SgfTestSupport {
         if(sgf==null) return;
         int p=Parser.parentheses(sgf);
         if(p!=0) Logging.mainLogger.info(key+" "+label+" bad parentheses: "+p);
-    }
-
-    static void assertModelRoundTripTwice(String sgf) {
-        String expected=ModelTestIo.modelRoundTripToString(sgf);
-        String actual=ModelTestIo.modelRoundTripToString(expected);
-        org.junit.Assert.assertEquals(expected,actual);
-    }
-
-    static void assertModelRoundTripTwice(Reader reader) {
-        String expected=ModelTestIo.modelRoundTripToString(reader);
-        assertModelRoundTripTwice(expected);
-        try {
-            reader.close();
-        } catch(IOException e) {
-            Logging.mainLogger.severe("caught: "+e);
-        }
     }
 
     static void assertSgfRestoreSaveStable(String sgf,Object key) {
@@ -112,6 +94,19 @@ public final class SgfTestSupport {
     static void traverse(SgfAcceptor acceptor,SgfNode games) {
         Traverser traverser=new Traverser(acceptor);
         traverser.visit(games);
+    }
+
+    static void assertFinderMatches(SgfNode games) {
+        if(games==null) return;
+        SgfAcceptor acceptor=new SgfAcceptorImpl() {
+            @Override public void accept(SgfNode target) {
+                SgfNodeFinder finder=SgfNodeFinder.finder(target,games);
+                finder.checkMove();
+                org.junit.Assert.assertTrue(finder.found!=null);
+                org.junit.Assert.assertEquals(target,finder.found);
+            }
+        };
+        traverse(acceptor,games);
     }
 
     static java.util.Collection<Object[]> allSgfParameters() {
