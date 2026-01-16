@@ -41,7 +41,7 @@ AbstractSgfFixtureTestCase
   +-- SgfFinderUnitTestCase       (non-parameterized)
   +-- IllegalSgfTestCase          (@RunWith(Parameterized.class))
   +-- LabelMNodeTestCase
-  +-- OblongTestCase
+  +-- SgfMiscTestCase
   +-- SgfMoveCoordinateSystemTestCase
 ```
 

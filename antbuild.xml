@@ -176,7 +176,7 @@
 			<test name="sgf.SgfMappingTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.IllegalSgfTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.KogosJosekiDictionaryTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.LizzieTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.SgfMiscTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfMoveCoordinateSystemTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfNodeTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.WierdSGFTestCase" todir="${junit.output.dir}" />

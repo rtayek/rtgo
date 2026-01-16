@@ -7,22 +7,22 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         return SgfRoundTripHarness.prepareExpectedSgf(key,rawSgf);
     }
     protected static void assertNoLineFeeds(String sgf) {
-        SgfRoundTripHarness.assertNoLineFeeds(sgf);
+        SgfRoundTripHarness.assert5NoLineFeeds(sgf);
     }
     protected static String prepareSgf(String sgf) {
-        return SgfRoundTripHarness.prepareSgf(sgf);
+        return SgfRoundTripHarness.prepare3Sgf(sgf);
     }
     protected final String prepareActual(String actualSgf) {
-        return SgfRoundTripHarness.prepareActual(actualSgf);
+        return SgfRoundTripHarness.prepare4Actual(actualSgf);
     }
     protected final void assertPreparedEquals(String preparedSgf) {
-        SgfRoundTripHarness.assertPreparedEquals(key,expectedSgf,preparedSgf);
+        SgfRoundTripHarness.assert4PreparedEquals(key,expectedSgf,preparedSgf);
     }
     protected final void assertPreparedRoundTrip(String actualSgf) {
-        SgfRoundTripHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
+        SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
     }
     protected final void assertPreparedRoundTripWithParenthesesCheck(String actualSgf,String label) {
-        SgfRoundTripHarness.assertPreparedRoundTripWithParenthesesCheck(key,expectedSgf,actualSgf,label);
+        SgfRoundTripHarness.assert2PreparedRoundTripWithParenthesesCheck(key,expectedSgf,actualSgf,label);
     }
     private Boolean specialCases(String actualSgf) {
         Boolean ok=false; // no more assertions are needed
