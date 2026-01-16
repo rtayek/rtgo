@@ -1,4 +1,5 @@
 package sgf;
+import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTestCase {
