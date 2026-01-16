@@ -13,7 +13,7 @@ AbstractSgfParserTestCase
   |
   +-- AbstractSgfRoundTripTestCase
   |     |
-  |     +-- AllSgfRoundTripTestCase     (@RunWith(Parameterized.class))
+  |     +-- SgfRoundTripTestCase        (@RunWith(Parameterized.class))
   |     +-- SgfSmokeTestCase            (@RunWith(Parameterized.class))
   |     +-- SmallerParameterizedRoundTripTestCase (@RunWith(Parameterized.class))
   |
@@ -26,6 +26,9 @@ And then a *separate but related* base:
 
 ```
 AbstractMNodeRoundTripTestCase
+  |
+  +-- SgfMNodeRoundTripTestCase    (@RunWith(Parameterized.class))
+  +-- MultipleGamesTestCase        (@RunWith(Parameterized.class))
   (does not extend AbstractSgfParserTestCase)
 ```
 

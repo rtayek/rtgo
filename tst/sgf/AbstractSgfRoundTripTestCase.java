@@ -1,30 +1,27 @@
 package sgf;
-import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTestCase {
     @Override protected String normalizeExpectedSgf(String rawSgf) {
-        return prepareExpectedSgf(rawSgf);
+        return SgfRoundTripHarness.prepareExpectedSgf(key,rawSgf);
     }
     protected static void assertNoLineFeeds(String sgf) {
-        if(sgf!=null) assertFalse(sgf.contains("\n"));
+        SgfRoundTripHarness.assertNoLineFeeds(sgf);
     }
     protected static String prepareSgf(String sgf) {
-        return sgf!=null?SgfNode.options.prepareSgf(sgf):null;
+        return SgfRoundTripHarness.prepareSgf(sgf);
     }
     protected final String prepareActual(String actualSgf) {
-        return prepareSgf(actualSgf);
+        return SgfRoundTripHarness.prepareActual(actualSgf);
     }
     protected final void assertPreparedEquals(String preparedSgf) {
-        assertEquals(key.toString(),expectedSgf,preparedSgf);
+        SgfRoundTripHarness.assertPreparedEquals(key,expectedSgf,preparedSgf);
     }
     protected final void assertPreparedRoundTrip(String actualSgf) {
-        assertPreparedEquals(prepareActual(actualSgf));
+        SgfRoundTripHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
     protected final void assertPreparedRoundTripWithParenthesesCheck(String actualSgf,String label) {
-        String prepared=prepareActual(actualSgf);
-        SgfTestSupport.logBadParentheses(prepared,key,label);
-        assertPreparedEquals(prepared);
+        SgfRoundTripHarness.assertPreparedRoundTripWithParenthesesCheck(key,expectedSgf,actualSgf,label);
     }
     private Boolean specialCases(String actualSgf) {
         Boolean ok=false; // no more assertions are needed
@@ -44,25 +41,10 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         return ok;
     }
     @Test public void testSgfSaveAndRestore() throws Exception {
-        // but does a restore first, then a deep equals on the trees.
-        assertNoLineFeeds(expectedSgf);
-        SgfNode expected=restoreExpectedSgf();
-        SgfNode actualSgf=SgfTestIo.saveAndRestore(expected);
-        if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
+        SgfRoundTripHarness.assertSgfSaveAndRestore(key,expectedSgf);
     }
     @Test public void testSgfRoundTrip() throws Exception {
-        if(expectedSgf==null) return;
-        String actualSgf=SgfTestSupport.restoreAndSave(expectedSgf);
-        actualSgf=prepareSgf(actualSgf);
-        if(actualSgf.length()==expectedSgf.length()+1) if(actualSgf.endsWith(")")) {
-            Logging.mainLogger.info(key+"removing extra ')' "+actualSgf.length());
-            if(true) throw new RuntimeException(key+"removing extra ')' "+actualSgf.length());
-            actualSgf=actualSgf.substring(0,actualSgf.length()-1);
-        }
-        // how to do this more often?
-        //Boolean ok=specialCases(actualSgf);
-        //if(ok) return;
-        assertPreparedEquals(actualSgf);
+        SgfRoundTripHarness.assertSgfRoundTrip(key,expectedSgf);
     }
     @Ignore @Test public void testSPreordergfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
@@ -73,12 +55,9 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         assertPreparedEquals(actualSgf);
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
-        assertNoLineFeeds(expectedSgf);
-        boolean isOk=SgfTestIo.roundTripTwice(expectedSgf);
-        assertTrue(key.toString(),isOk);
+        SgfRoundTripHarness.assertRoundTripTwice(key,expectedSgf);
     }
     @Test public void testSgfCannonical() {
-        assertNoLineFeeds(expectedSgf);
-        SgfTestSupport.assertSgfRestoreSaveStable(expectedSgf,key);
+        SgfRoundTripHarness.assertSgfCannonical(key,expectedSgf);
     }
 }

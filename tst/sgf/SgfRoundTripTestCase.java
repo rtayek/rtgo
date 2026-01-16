@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class) public class AllSgfRoundTripTestCase extends AbstractSgfRoundTripTestCase {
+@RunWith(Parameterized.class) public class SgfRoundTripTestCase extends AbstractSgfRoundTripTestCase {
     @Parameters(name="{0}") public static Collection<Object[]> parameters() {
         return SgfTestSupport.allSgfParameters();
     }
