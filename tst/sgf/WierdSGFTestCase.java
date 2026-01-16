@@ -25,8 +25,7 @@ import org.junit.Test;
         List<File> files=loadStrangeFiles();
         fail=false;
         for(File file:files) try {
-            boolean ok=SgfTestSupport.roundTripTwice(file);
-            if(!ok) Logging.mainLogger.info(file+" fails!");
+            SgfTestSupport.roundTripTwiceWithLogging(file);
         } catch(Exception e) {
             parserLogger.warning(this+" caught: "+e);
         }

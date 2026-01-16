@@ -70,6 +70,12 @@ public final class SgfTestSupport {
         return SgfTestIo.roundTripTwice(IOs.toReader(file));
     }
 
+    static boolean roundTripTwiceWithLogging(File file) {
+        boolean ok=roundTripTwice(file);
+        if(!ok) Logging.mainLogger.info(file+" fails!");
+        return ok;
+    }
+
     static String restoreAndSave(String sgf) {
         return SgfTestIo.restoreAndSave(sgf);
     }
@@ -77,6 +83,12 @@ public final class SgfTestSupport {
     static SgfNode restoreFromKey(Object key) {
         String sgf=loadExpectedSgf(key);
         return SgfTestIo.restore(sgf);
+    }
+
+    static File firstExistingFile(File... files) {
+        if(files==null) return null;
+        for(File file:files) if(file!=null&&file.exists()) return file;
+        return null;
     }
 
     static SgfProperty property(P id,String value) {
@@ -109,9 +121,7 @@ public final class SgfTestSupport {
     }
 
     static java.util.Collection<Object[]> illegalSgfParameters() {
-        List<Object> objects=new ArrayList<>();
-        objects.addAll(Parser.illegalSgfKeys);
-        return ParameterArray.parameterize(objects);
+        return ParameterArray.parameterize(Parser.illegalSgfKeys);
     }
 
     static java.util.Collection<Object[]> edgeParserParameters() {
@@ -129,13 +139,19 @@ public final class SgfTestSupport {
                 "rtgo1.sgf", //
         };
         // use variable names above
-        File[] files=new File[filenames.length];
-        for(int i=0;i<filenames.length;i++) files[i]=new File(Parser.sgfPath,filenames[i]);
-        List<Object> objects=new ArrayList<>(Arrays.asList((Object[])(files)));
+        File[] files=filesInDir(Parser.sgfPath,filenames);
+        List<Object> objects=new ArrayList<>();
+        for(File file:files) objects.add(file);
         Logging.mainLogger.info(String.valueOf(objects.iterator().next().getClass().getName()));
         objects.add("reallyEmpty");
         java.util.Collection<Object[]> parameters=ParameterArray.parameterize(objects);
         for(Object[] parameterized:parameters) Logging.mainLogger.info(parameterized[0]+" "+parameterized[0].getClass());
         return parameters;
+    }
+
+    static File[] filesInDir(String dir,String... filenames) {
+        File[] files=new File[filenames.length];
+        for(int i=0;i<filenames.length;i++) files[i]=new File(dir,filenames[i]);
+        return files;
     }
 }

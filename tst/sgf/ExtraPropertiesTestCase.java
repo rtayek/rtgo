@@ -4,12 +4,9 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import model.Model;
 import org.junit.Test;
-import core.formats.sgf.SgfDomainActionMapper;
-import core.formats.sgf.SgfMappingContext;
 import core.formats.sgf.SgfNodeMapping;
-import equipment.Board;
+import model.Model;
 
 public class ExtraPropertiesTestCase {
     @Test public void unknownPropertiesArePreserved() {
@@ -21,26 +18,18 @@ public class ExtraPropertiesTestCase {
         SgfProperty rootComment=SgfTestSupport.property(P.C,"hello");
 
         // Manually build MNode tree to avoid parser dropping unknown IDs
-        MNode root=new MNode(null);
-        root.sgfProperties().add(rootComment);
-        root.sgfProperties().add(keepRoot);
-
-        MNode child=new MNode(root);
-        child.sgfProperties().add(SgfTestSupport.property(P.B,"aa"));
-        child.sgfProperties().add(keepChild);
+        MNode root=SgfMappingTestSupport.nodeWith(rootComment,keepRoot);
+        MNode child=SgfMappingTestSupport.nodeWith(root,SgfTestSupport.property(P.B,"aa"),keepChild);
         root.children().add(child);
 
         Model model=new Model();
 
-        int depth=model.board()!=null?model.board().depth():model.depthFromSgf()>0?model.depthFromSgf():Board.standard;
-        SgfMappingContext context=new SgfMappingContext(depth,Model.sgfBoardTopology,Model.sgfBoardShape);
-
-        SgfNodeMapping rootMapping=SgfDomainActionMapper.mapNode(context,root);
+        SgfNodeMapping rootMapping=SgfMappingTestSupport.mapNode(root,model);
         assertEquals(List.of(rootComment,keepRoot),rootMapping.extras());
         rootMapping.applyExtrasTo(root);
         assertEquals(List.of(rootComment,keepRoot),root.extraProperties());
 
-        SgfNodeMapping childMapping=SgfDomainActionMapper.mapNode(context,child);
+        SgfNodeMapping childMapping=SgfMappingTestSupport.mapNode(child,model);
         assertEquals(List.of(keepChild),childMapping.extras());
         childMapping.applyExtrasTo(child);
         assertEquals(List.of(keepChild),child.extraProperties());

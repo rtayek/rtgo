@@ -23,11 +23,16 @@ import utilities.*;
                 //"recentogsgames/39312326-026-DonJuan-rtayek.sgf",
                 //
         };
-        // use variable names above
-        File[] files=new File[filenames.length];
-        for(int i=0;i<filenames.length;i++) files[i]=new File(dir,filenames[i]);
-        // files are made from filenames
-        return files;
+        return SgfTestSupport.filesInDir(dir,filenames);
+    }
+    private static void addExistingFiles(Set<Object> objects,File[] files) {
+        for(File file:files) {
+            if(!file.exists()) Logging.mainLogger.info(file+" does not exist!");
+            else objects.add(file);
+        }
+    }
+    private static void addAll(Set<Object> objects,Object... items) {
+        Collections.addAll(objects,items);
     }
     @Parameters public static Collection<Object[]> parameters() {
         Set<Object> objects=new LinkedHashSet<>();
@@ -39,19 +44,14 @@ import utilities.*;
         }
         if(false) {
             File[] files=someFiles(dir); // some files in dir. not recursive.
-            Logging.mainLogger.info("adding: "+Arrays.asList((Object[])(files))+" files.");
-            List<Object> fileList=new ArrayList<>(Arrays.asList((Object[])(files)));
-            for(File file:files) if(!file.exists()) {
-                Logging.mainLogger.info(file+" does not exist!");
-                fileList.remove(file);
-            }
-            objects.addAll(fileList);
+            Logging.mainLogger.info("adding: "+Arrays.asList(files)+" files.");
+            addExistingFiles(objects,files);
         }
         if(false) {
             String[] keys=new String[] {
                     //"reallyEmpty",
             };
-            objects.addAll(new ArrayList<>(Arrays.asList((Object[])(keys))));
+            addAll(objects,(Object[])keys);
         }
         Logging.mainLogger.info(objects.size()+" keys");
         return ParameterArray.parameterize(objects);

@@ -46,12 +46,7 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
     }
     @Test public void testgenerateMovesTime() {
         for(int i=5;i<=19;i++) {
-            model.setRoot(i,i);
-            int n=model.movesToGenerate();
-            Model.generateAndMakeMoves(model,n);
-            List<Move2> expectedMoves=model.movesToCurrentState();
-            Model actual=newModelWithRoot(i,true);
-            assertMovesRoundTrip(model,actual,expectedMoves,true);
+            assertGeneratedMovesRoundTrip(i,false,true,false);
         }
     }
     @Test public void testGenerateSomeSillyMoves() { Model.generateSillyMoves(model,2); }
@@ -66,14 +61,7 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
     @Test public void testGenerateSillyMovesTime() {
         for(int i=5;i<=19;i++) {
             if(i>5) break; // debuging
-            model.setRoot(i,i);
-            int n=model.movesToGenerate();
-            Logging.mainLogger.info("start");
-            Model.generateSillyMoves(model,n);
-            List<Move2> expectedMoves=model.movesToCurrentState();
-            Logging.mainLogger.info(String.valueOf(expectedMoves));
-            Model actual=newModelWithRoot(i,false);
-            assertMovesRoundTrip(model,actual,expectedMoves,false);
+            assertGeneratedMovesRoundTrip(i,true,false,true);
         }
     }
     @Test public void testReplayMoves() {
@@ -230,6 +218,17 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
         source.board().isEqual(actual.board());
         List<Move2> actualMoves=actual.movesToCurrentState();
         assertEquals(expectedMoves,actualMoves); // round trip
+    }
+    private void assertGeneratedMovesRoundTrip(int size,boolean silly,boolean ensureBoards,boolean log) {
+        model.setRoot(size,size);
+        int n=model.movesToGenerate();
+        if(log) Logging.mainLogger.info("start");
+        if(silly) Model.generateSillyMoves(model,n);
+        else Model.generateAndMakeMoves(model,n);
+        List<Move2> expectedMoves=model.movesToCurrentState();
+        if(log) Logging.mainLogger.info(String.valueOf(expectedMoves));
+        Model actual=newModelWithRoot(size,ensureBoards);
+        assertMovesRoundTrip(model,actual,expectedMoves,ensureBoards);
     }
     private void assertCopyConstructorRoundTrip(String sgf,boolean log) {
         Model model=new Model();

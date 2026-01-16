@@ -6,11 +6,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import core.formats.sgf.SgfDomainActionMapper;
-import core.formats.sgf.SgfMappingContext;
 import core.formats.sgf.SgfNodeMapping;
-import equipment.Board;
-import model.Model;
 
 public class SgfMappingErrorTestCase {
     @Test public void malformedPropertiesBecomeExtrasAndMappingIsPure() {
@@ -18,13 +14,8 @@ public class SgfMappingErrorTestCase {
         SgfProperty emptyMove=new SgfProperty(P.W,List.of());
         SgfProperty badSize=SgfTestSupport.property(P.SZ,"x");
 
-        MNode node=new MNode(null);
-        node.sgfProperties().add(badMove);
-        node.sgfProperties().add(emptyMove);
-        node.sgfProperties().add(badSize);
-
-        SgfMappingContext context=new SgfMappingContext(Board.standard,Model.sgfBoardTopology,Model.sgfBoardShape);
-        SgfNodeMapping mapping=SgfDomainActionMapper.mapNode(context,node);
+        MNode node=SgfMappingTestSupport.nodeWith(badMove,emptyMove,badSize);
+        SgfNodeMapping mapping=SgfMappingTestSupport.mapNode(node);
 
         assertTrue(mapping.actions().isEmpty());
         assertEquals(List.of(badMove,emptyMove,badSize),mapping.extras());

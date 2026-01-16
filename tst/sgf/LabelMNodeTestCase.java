@@ -2,6 +2,7 @@ package sgf;
 import static model.MNodeAcceptor.MNodeFinder .*;
 import static org.junit.Assert.*;
 import java.util.List;
+import java.util.function.BiPredicate;
 import org.junit.*;
 import model.MNodeAcceptor.*;
 import utilities.Iterators.Longs;
@@ -16,17 +17,13 @@ public class LabelMNodeTestCase extends AbstractSgfFixtureTestCase implements Re
     }
     @Test public void testNodeNotInTree() {
         MNode mNode=new MNode(null);
-        MNodeFinder finder=MNodeFinder.find(mNode,root2,equalsPredicate);
-        assertTrue(finder.ancestors.size()==0);
+        assertNotFound(mNode,root2);
     }
     @Test public void testFindSelfWithEqualsPredicate() {
-        MNodeFinder finder=MNodeFinder.find(root1,root1,equalsPredicate);
-        assertTrue(finder.ancestors.size()>0);
+        assertFound(root1,root1,equalsPredicate);
     }
     @Test public void testFindSelfWithLabelPredicate() {
-        MNodeFinder finder=MNodeFinder.find(root1,root1,labelPredicate);
-        assertTrue(finder.ancestors.size()>0);
-        assertEquals(root1.label(),finder.found.label());
+        assertFoundWithLabel(root1,root1);
     }
     @Ignore   @Test public void testFindRootWithEqualsPredicate() {
         // should fail because we use equals which is just ==?
@@ -35,24 +32,31 @@ public class LabelMNodeTestCase extends AbstractSgfFixtureTestCase implements Re
         assertEquals(root1.label(),finder.found.label()); // might not always be labeled?
     }
     @Test public void testFindRootWithLabelPredicate() {
-        MNodeFinder finder=MNodeFinder.find(root1,root2,labelPredicate);
-        assertTrue(finder.ancestors.size()>0);
-        assertEquals(root1.label(),finder.found.label());
+        assertFoundWithLabel(root1,root2);
     }
     @Test public void testFindFirstChildWithLabelPredicate() {
         MNode child=root1.children().iterator().next();
-        MNodeFinder finder=MNodeFinder.find(child,root2,labelPredicate);
-        assertTrue(finder.ancestors.size()>0);
-        assertEquals(child.label(),finder.found.label());
+        assertFoundWithLabel(child,root2);
     }
     @Test public void testFindNodeWithLabelPredicate() {
         for(MNode node1:list1) {
             MNode remote=new MNode(null,node1.sgfProperties());
             remote.setLabel(node1.label());
-            MNodeFinder finder=MNodeFinder.find(remote,root2,labelPredicate);
-            assertTrue(finder.ancestors.size()>0);
-            assertEquals(node1.label(),finder.found.label());
+            assertFoundWithLabel(remote,root2);
         }
+    }
+    private static MNodeFinder assertFound(MNode target,MNode root,BiPredicate<MNode,MNode> predicate) {
+        MNodeFinder finder=MNodeFinder.find(target,root,predicate);
+        assertTrue(finder.ancestors.size()>0);
+        return finder;
+    }
+    private static void assertFoundWithLabel(MNode target,MNode root) {
+        MNodeFinder finder=assertFound(target,root,labelPredicate);
+        assertEquals(target.label(),finder.found.label());
+    }
+    private static void assertNotFound(MNode target,MNode root) {
+        MNodeFinder finder=MNodeFinder.find(target,root,equalsPredicate);
+        assertTrue(finder.ancestors.size()==0);
     }
     MNode root1;
     MNode root2;

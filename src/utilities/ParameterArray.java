@@ -7,10 +7,13 @@ public class ParameterArray {
         for(int i=0;i<n;++i) parameterArrays.add(new Object[] {i});
         return parameterArrays;
     }
-    public static Collection<Object[]> parameterize(Collection<Object> objects) {
+    public static Collection<Object[]> parameterize(Collection<?> objects) {
         List<Object[]> parameterArrays=new ArrayList<>();
         for(Object object:objects) parameterArrays.add(new Object[] {object});
         return parameterArrays;
+    }
+    public static Collection<Object[]> parameterize(Object... objects) {
+        return parameterize(Arrays.asList(objects));
     }
     public static void main(String[] args) {
         Collection<Object[]> collection=modulo(3);

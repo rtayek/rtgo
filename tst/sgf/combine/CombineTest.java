@@ -6,6 +6,9 @@ import sgf.SgfNode;
 import sgf.SgfTestIo;
 import sgf.SgfTestSupport;
 public class CombineTest {
+    static File fileInSgfDir(String name) {
+        return new File(Combine.pathToHere,name);
+    }
     static boolean testCombine(String name) {
         Logging.mainLogger.info("test combine: "+name);
         try {
@@ -27,7 +30,7 @@ public class CombineTest {
     public static void main(String args[]) throws Exception {
         Boolean ok=null;
         Tee tee=Tee.tee(new File(Combine.sgfOutputFilename));
-        ok=SgfTestSupport.roundTripTwice(new File(Combine.pathToHere,"ff4_ex.sgf"));
+        ok=SgfTestSupport.roundTripTwice(fileInSgfDir("ff4_ex.sgf"));
         if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
         ok=SgfTestSupport.roundTripTwice(new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf"));
         if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }

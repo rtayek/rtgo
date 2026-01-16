@@ -1,16 +1,14 @@
 package sgf;
 import java.io.File;
-import org.junit.Before;
 import org.junit.Test;
 import equipment.Board;
 import model.Model;
-public class OblongTestCase extends AbstractWatchedTestCase {
-    @Before public void setUp() throws Exception {
-        File file=new File("ogs/lecoblong.sgf");
-        expectedSgf=SgfTestSupport.loadExpectedSgf(file);
+public class OblongTestCase extends AbstractSgfFixtureTestCase {
+    @Override protected Object defaultKey() {
+        return new File("ogs/lecoblong.sgf");
     }
     @Test public void test() {
-        MNode games=SgfTestIo.restoreMNode(expectedSgf);
+        MNode games=restoreExpectedMNode();
         //Logging.mainLogger.info("root: "+games);
         //Logging.mainLogger.info("children: "+games.children);
         model=new Model("oblong");
@@ -25,6 +23,5 @@ public class OblongTestCase extends AbstractWatchedTestCase {
         //if(board!=null) Logging.mainLogger.info("board is "+board.width()+"x"+board.depth());
         //else Logging.mainLogger.info("board is null");
     }
-    String expectedSgf;
     Model model;
 }
