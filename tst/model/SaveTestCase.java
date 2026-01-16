@@ -1,6 +1,6 @@
 package model;
 import io.Logging;
-import sgf.ModelTestIo;
+import sgf.TestIoSupport;
 import static org.junit.Assert.*;
 import java.io.*;
 import org.junit.*;
@@ -19,7 +19,7 @@ public class SaveTestCase {
 		//model.move(Stone.white,"A2",model.board().width());
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
 		Model m=new Model("",oldWay);
-		ModelTestIo.RoundTrip roundTrip=ModelTestIo.roundTrip(model,m);
+		TestIoSupport.RoundTrip roundTrip=TestIoSupport.roundTrip(model,m);
 		final String expected=roundTrip.expected();
 		Logging.mainLogger.info("expected: "+expected);
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);

@@ -36,12 +36,20 @@ final class SgfParserHarness {
     }
 
     static SgfNode restoreExpectedSgf(String expectedSgf,Object key) {
-        SgfTestSupport.assertSgfDelimiters(expectedSgf,key);
+        return restoreExpectedSgf(expectedSgf,key,true);
+    }
+
+    static SgfNode restoreExpectedSgf(String expectedSgf,Object key,boolean checkDelimiters) {
+        if(checkDelimiters) SgfTestSupport.assertSgfDelimiters(expectedSgf,key);
         return SgfTestIo.restore(expectedSgf);
     }
 
     static SgfNode assertParse(Object key,String expectedSgf) {
-        return restoreExpectedSgf(expectedSgf,key);
+        return restoreExpectedSgf(expectedSgf,key,true);
+    }
+
+    static SgfNode assertParse(Object key,String expectedSgf,boolean checkDelimiters) {
+        return restoreExpectedSgf(expectedSgf,key,checkDelimiters);
     }
 
     static void assertHexAscii(Object key,String expectedSgf) {
@@ -54,7 +62,11 @@ final class SgfParserHarness {
     }
 
     static SgfNode assertFlags(Object key,String expectedSgf,boolean oldFlags) {
-        SgfNode games=restoreExpectedSgf(expectedSgf,key);
+        return assertFlags(key,expectedSgf,oldFlags,true);
+    }
+
+    static SgfNode assertFlags(Object key,String expectedSgf,boolean oldFlags,boolean checkDelimiters) {
+        SgfNode games=restoreExpectedSgf(expectedSgf,key,checkDelimiters);
         if(games==null) return games;
         if(oldFlags) games.oldPreorderCheckFlags();
         else games.preorderCheckFlags();

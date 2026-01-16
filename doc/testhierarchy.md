@@ -39,10 +39,14 @@ AbstractSgfFixtureTestCase
   |
   +-- SgfFixtureTestCase          (@RunWith(Parameterized.class))
   +-- SgfFinderUnitTestCase       (non-parameterized)
-  +-- IllegalSgfTestCase          (@RunWith(Parameterized.class))
-  +-- LabelMNodeTestCase
   +-- SgfMiscTestCase
-  +-- SgfMoveCoordinateSystemTestCase
+  +-- SgfStructureTestCase
+```
+
+Ignored/slow files:
+
+```
+SgfSlowFilesTestCase
 ```
 
 ### What `AbstractSgfParserTestCase` is doing

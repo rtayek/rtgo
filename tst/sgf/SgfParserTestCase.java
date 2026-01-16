@@ -15,10 +15,17 @@ import org.junit.runners.Parameterized.Parameters;
     @Parameterized.Parameter public Object key;
     private String expectedSgf;
     private SgfNode games;
+    private boolean rawInput;
 
     @Before public void setUp() throws Exception {
         watcher.key=key;
-        expectedSgf=SgfTestSupport.loadExpectedSgf(key);
+        rawInput=false;
+        if(key instanceof SgfTestSupport.RawSgf raw) {
+            expectedSgf=raw.sgf();
+            rawInput=true;
+        } else {
+            expectedSgf=SgfTestSupport.loadExpectedSgf(key);
+        }
     }
 
     @Test public void testKey() {
@@ -26,7 +33,7 @@ import org.junit.runners.Parameterized.Parameters;
     }
 
     @Test public void testParse() {
-        games=SgfParserHarness.assertParse(key,expectedSgf);
+        games=SgfParserHarness.assertParse(key,expectedSgf,!rawInput);
     }
 
     @Test public void testHexAscii() {
@@ -34,10 +41,10 @@ import org.junit.runners.Parameterized.Parameters;
     }
 
     @Test public void testFlags() {
-        games=SgfParserHarness.assertFlags(key,expectedSgf,true);
+        games=SgfParserHarness.assertFlags(key,expectedSgf,true,!rawInput);
     }
 
     @Test public void testFlagsNew() {
-        games=SgfParserHarness.assertFlags(key,expectedSgf,false);
+        games=SgfParserHarness.assertFlags(key,expectedSgf,false,!rawInput);
     }
 }

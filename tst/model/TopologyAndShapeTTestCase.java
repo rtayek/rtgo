@@ -1,6 +1,6 @@
 package model;
 import io.Logging;
-import sgf.ModelTestIo;
+import sgf.TestIoSupport;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -30,9 +30,9 @@ public class TopologyAndShapeTTestCase {
         Logging.mainLogger.info("topology: "+model.boardTopology());
         Logging.mainLogger.info("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
-        String expected=ModelTestIo.save(model);
+        String expected=TestIoSupport.save(model);
         Model m=new Model();
-        String actual=ModelTestIo.restoreAndSave(m,expected,restored->{
+        String actual=TestIoSupport.restoreAndSave(m,expected,restored->{
             restored.ensureBoard();
             restored.down(0); // need to execute the sgf
             assertNotNull(restored.board());

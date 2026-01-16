@@ -33,7 +33,7 @@ public class SgfMiscTestCase extends AbstractWatchedTestCase {
     }
 
     private String dtrt(Model m) {
-        String actual=ModelTestIo.restoreAndSave(m,sgf,restored->{
+        String actual=TestIoSupport.restoreAndSave(m,sgf,restored->{
             Logging.mainLogger.info("restored, root: "+restored.root().toString());
             boolean hasRT=Model.hasRT(restored.root());
             assertTrue(hasRT);

@@ -7,7 +7,7 @@ import equipment.*;
 import io.IOs;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
-import sgf.ModelTestIo;
+import sgf.TestIoSupport;
 import utilities.MyTestWatcher;
 public class ColorBugTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -38,7 +38,7 @@ public class ColorBugTestCase {
         boolean ok=model.save(IOs.toWriter(temporaryFile));
         assertTrue(ok);
         Model actual=new Model();
-        ModelTestIo.restore(model,"");
+        TestIoSupport.restore(model,"");
         fail("nyi");
         // go to the right move
         // how to test this?

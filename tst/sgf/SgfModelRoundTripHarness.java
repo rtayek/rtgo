@@ -16,12 +16,12 @@ final class SgfModelRoundTripHarness {
     }
 
     static void assertModelRestoreAndSave(Object key,String expectedSgf,Model model) {
-        String actualSgf=ModelTestIo.restoreAndSave(model,expectedSgf);
+        String actualSgf=TestIoSupport.restoreAndSave(model,expectedSgf);
         SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
     static void assertModelRoundTripToString(Object key,String expectedSgf,ModelSaveMode saveMode,boolean log) {
-        String actualSgf=ModelTestIo.modelRoundTripToString(expectedSgf,saveMode);
+        String actualSgf=TestIoSupport.modelRoundTripToString(expectedSgf,saveMode);
         if(log) {
             Logging.mainLogger.info("ex: "+expectedSgf);
             Logging.mainLogger.info("ac: "+actualSgf);
@@ -30,8 +30,8 @@ final class SgfModelRoundTripHarness {
     }
 
     static void assertModelRoundTripTwice(String sgf) {
-        String expected=ModelTestIo.modelRoundTripToString(sgf);
-        String actual=ModelTestIo.modelRoundTripToString(expected);
+        String expected=TestIoSupport.modelRoundTripToString(sgf);
+        String actual=TestIoSupport.modelRoundTripToString(expected);
         assertEquals(expected,actual);
     }
 
@@ -50,7 +50,7 @@ final class SgfModelRoundTripHarness {
     static void assertModelRestoreAndSaveWithExplicitModel(Object key,String expectedSgf) {
         Model model=new Model();
         Logging.mainLogger.info("ex: "+expectedSgf);
-        String actualSgf=ModelTestIo.restoreAndSave(model,expectedSgf,key.toString());
+        String actualSgf=TestIoSupport.restoreAndSave(model,expectedSgf,key.toString());
         actualSgf=SgfNode.options.removeUnwanted(actualSgf);
         SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
     }
@@ -58,7 +58,7 @@ final class SgfModelRoundTripHarness {
     static void assertModelSaveFromMNode(Object key,String expectedSgf,MNode root) {
         Model model=new Model();
         model.setRoot(root);
-        String actualSgf=ModelTestIo.save(model,key.toString());
+        String actualSgf=TestIoSupport.save(model,key.toString());
         SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
@@ -74,7 +74,7 @@ final class SgfModelRoundTripHarness {
     }
 
     private static String restoreAndSavePrepared(String sgf) {
-        Model model=ModelTestIo.restoreNew(sgf);
+        Model model=TestIoSupport.restoreNew(sgf);
         String saved=model.save();
         return SgfRoundTripHarness.prepare4Actual(saved);
     }
@@ -82,9 +82,9 @@ final class SgfModelRoundTripHarness {
     private static boolean checkBoardInRoot(Object key,String sgf) {
         // move this?
         if(key==null) { Logging.mainLogger.info("key is null!"); return true; }
-        Model original=ModelTestIo.restoreNew(sgf);
+        Model original=TestIoSupport.restoreNew(sgf);
         boolean hasABoard=original.board()!=null;
-        Model model=ModelTestIo.restoreNew(sgf);
+        Model model=TestIoSupport.restoreNew(sgf);
         if(model.board()==null); // Logging.mainLogger.info("model has no board!");
         else Logging.mainLogger.info("model has a board!");
         Navigate.down.do_(model);

@@ -117,10 +117,6 @@ public final class SgfTestSupport {
         return SgfTestParameters.multipleGameKeysAndFiles();
     }
 
-    static java.util.Collection<Object[]> illegalSgfParameters() {
-        return ParameterArray.parameterize(Parser.illegalSgfKeys);
-    }
-
     static java.util.Collection<Object[]> edgeParserParameters() {
         List<Object> objects=edgeParserObjects();
         Logging.mainLogger.info(String.valueOf(objects.iterator().next().getClass().getName()));
@@ -134,6 +130,7 @@ public final class SgfTestSupport {
         objects.addAll(Parser.sgfDataKeySet());
         objects.addAll(Parser.sgfFiles());
         objects.addAll(edgeParserObjects());
+        for(String sgf:Parser.illegalSgfKeys) objects.add(new RawSgf(sgf));
         return ParameterArray.parameterize(objects);
     }
 
@@ -155,7 +152,6 @@ public final class SgfTestSupport {
         File[] files=filesInDir(Parser.sgfPath,filenames);
         List<Object> objects=new ArrayList<>();
         for(File file:files) objects.add(file);
-        objects.add("reallyEmpty");
         return objects;
     }
 
@@ -163,5 +159,19 @@ public final class SgfTestSupport {
         File[] files=new File[filenames.length];
         for(int i=0;i<filenames.length;i++) files[i]=new File(dir,filenames[i]);
         return files;
+    }
+
+    static final class RawSgf {
+        private final String sgf;
+
+        RawSgf(String sgf) { this.sgf=sgf; }
+
+        String sgf() { return sgf; }
+
+        @Override public String toString() {
+            if(sgf==null) return "raw:null";
+            if(sgf.isEmpty()) return "raw:<empty>";
+            return "raw:"+sgf;
+        }
     }
 }

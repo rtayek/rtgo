@@ -10,7 +10,6 @@ import io.IOs;
 import model.Model;
 import model.Model.*;
 import static model.Model.*;
-import model.ModelIo;
 import model.Move2;
 import model.Move2.MoveType;
 public class OldModelTestCase extends AbstractWatchedTestCase {
@@ -232,9 +231,9 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
     }
     private void assertCopyConstructorRoundTrip(String sgf,boolean log) {
         Model model=new Model();
-        String expected=ModelTestIo.restoreAndSave(model,sgf,"first save fails");
+        String expected=TestIoSupport.restoreAndSave(model,sgf,"first save fails");
         Model copy=new Model(model,model.name);
-        String actual=ModelTestIo.save(copy,"second save fails");
+        String actual=TestIoSupport.save(copy,"second save fails");
         if(log) {
             Logging.mainLogger.info("ex: "+expected);
             Logging.mainLogger.info("ac: "+actual);
@@ -244,9 +243,9 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
     private void assertRoundTripHasRt(Model model,boolean expectedBefore,boolean expectedAfter) {
         boolean hasRT=hasRT(model.root());
         assertEquals("unexpected RT before round trip",expectedBefore,hasRT);
-        String sgfString=ModelTestIo.save(model);
+        String sgfString=TestIoSupport.save(model);
         model=new Model();
-        ModelTestIo.restore(model,sgfString);
+        TestIoSupport.restore(model,sgfString);
         hasRT=hasRT(model.root());
         assertEquals("unexpected RT after round trip",expectedAfter,hasRT);
     }
@@ -262,7 +261,7 @@ public class OldModelTestCase extends AbstractWatchedTestCase {
     /*@Test*/ public void testSgfFileFromLittleGolem() {
         // Node root=quietLoad(new File("url.sgf"));
         Model model=new Model();
-        ModelIo.restore(model,new File("url.sgf"));
+        TestIoSupport.restore(model,new File("url.sgf"));
     }
     Model model=new Model();
     {

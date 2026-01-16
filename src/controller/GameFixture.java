@@ -311,7 +311,7 @@ public class GameFixture implements Runnable,Stopable {
         // needs a game to be running and we need both back ends.
         // makes one move and waits for it to show up on opponents board.
         // this uses both ends.
-        if(namedThread==null) throw new RuntimeException();
+        if(namedThread==null) throw new RuntimeException("named thread is null!");
         if(player.frontEnd==null) throw new RuntimeException();
         // these nay not be necessary?
         if(opponent.frontEnd==null) throw new RuntimeException();
