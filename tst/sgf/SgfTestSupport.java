@@ -5,7 +5,9 @@ import java.io.Reader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import io.Logging;
 import io.IOs;
 import utilities.SgfTestParameters;
@@ -125,6 +127,22 @@ public final class SgfTestSupport {
     }
 
     static java.util.Collection<Object[]> edgeParserParameters() {
+        List<Object> objects=edgeParserObjects();
+        Logging.mainLogger.info(String.valueOf(objects.iterator().next().getClass().getName()));
+        java.util.Collection<Object[]> parameters=ParameterArray.parameterize(objects);
+        for(Object[] parameterized:parameters) Logging.mainLogger.info(parameterized[0]+" "+parameterized[0].getClass());
+        return parameters;
+    }
+
+    static java.util.Collection<Object[]> parserParameters() {
+        Set<Object> objects=new LinkedHashSet<>();
+        objects.addAll(Parser.sgfDataKeySet());
+        objects.addAll(Parser.sgfFiles());
+        objects.addAll(edgeParserObjects());
+        return ParameterArray.parameterize(objects);
+    }
+
+    private static List<Object> edgeParserObjects() {
         String[] filenames=new String[] { //
                 //"empty.sgf", //
                 // "reallyempty.sgf", //
@@ -142,11 +160,8 @@ public final class SgfTestSupport {
         File[] files=filesInDir(Parser.sgfPath,filenames);
         List<Object> objects=new ArrayList<>();
         for(File file:files) objects.add(file);
-        Logging.mainLogger.info(String.valueOf(objects.iterator().next().getClass().getName()));
         objects.add("reallyEmpty");
-        java.util.Collection<Object[]> parameters=ParameterArray.parameterize(objects);
-        for(Object[] parameterized:parameters) Logging.mainLogger.info(parameterized[0]+" "+parameterized[0].getClass());
-        return parameters;
+        return objects;
     }
 
     static File[] filesInDir(String dir,String... filenames) {

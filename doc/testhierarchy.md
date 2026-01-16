@@ -9,8 +9,7 @@ At a high level, you’re using a classic JUnit4 “template base class” patte
 ```
 AbstractSgfParserTestCase
   |
-  +-- EdgeParserTestCase
-  +-- AllSgfParserTestCase        (@RunWith(Parameterized.class))
+  +-- (parser-only tests moved to SgfParserTestCase)
   |
   +-- AbstractSgfRoundTripTestCase
   |     |
