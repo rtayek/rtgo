@@ -119,8 +119,9 @@ public class MNode {
 		// maybe we don't need and extra node if we already have one?
 		// maybe this can not happen?
 		// apparently there is a way and we ar not doing it now.
-		try {
-			SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
+        try {
+            // RT is a sentinel extra-root marker; it is a no-op in the engine and must round-trip unchanged.
+            SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
 			sentenel.sgfProperties.add(property);
 			Logging.mainLogger.info("toGeneralTree() added RT property to extra root node");
 		} catch(Exception e) {

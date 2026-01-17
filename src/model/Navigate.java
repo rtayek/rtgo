@@ -16,7 +16,7 @@ public enum Navigate { // move more code here?
                 if(hasAParent) {
                     List<SgfProperty> properties=model.currentNode().parent().sgfProperties();
                     if(properties.size()>0) {
-                        boolean parentIsRT=hasAParent&&model.currentNode().parent().sgfProperties().get(0).p().equals(P.RT);
+                        boolean parentIsSentinel=hasAParent&&model.currentNode().parent().sgfProperties().get(0).p().equals(P.RT);
                     }
                 }
                 return hasAParent; //&&!parentIsRT;

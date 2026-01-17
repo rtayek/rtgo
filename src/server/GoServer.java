@@ -169,6 +169,16 @@ public class GoServer implements Runnable,Stopable {
             game=games.iterator().next(); // remove from server
             // not really removed , this game is still in the list.
         }
+        if(game!=null) {
+            int spins=0;
+            while(game.namedThread==null&&!anyInterruptions()) {
+                Thread.yield();
+                if(++spins>1000) {
+                    Logging.mainLogger.info("waitForAGame: named thread still null after "+spins+" yields");
+                    break;
+                }
+            }
+        }
         //Logging.mainLogger.info("got a game at: "+first.et);
         return game;
     }

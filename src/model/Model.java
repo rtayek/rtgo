@@ -135,7 +135,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public boolean save(Writer writer) {
 		MNode root=root();
-		boolean found=hasRT(root); // sentinel
+        boolean found=isSentinel(root); // RT is a sentinel extra-root marker; no-op in the engine, must round-trip unchanged.
 		// add new root if we don't already have one.
 		if(!found) {
 			root=new MNode(null);
@@ -146,7 +146,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
 		return ok;
 	}
-	public static boolean hasRT(MNode root) {
+    public static boolean isSentinel(MNode root) { // RT is a sentinel extra-root marker; preserve for lossless round-trip.
 		boolean found=false;
 		for(SgfProperty p:root.sgfProperties()) {
 			if(p.p().equals(P.RT)) {

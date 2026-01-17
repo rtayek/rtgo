@@ -15,7 +15,7 @@ import utilities.*;
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         expectedSgf=getSgfData(key);
-        expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
+        expectedSgf=SgfHarness.prepareExpectedSgf(key,expectedSgf);
     }
     public GTPDirectSendReceiveSgfTestCase(Object key) { this.key=key; }
     @After public void tearDown() throws Exception {}

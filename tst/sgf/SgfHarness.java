@@ -173,7 +173,7 @@ public final class SgfHarness {
         return sgf;
     }
 
-    static String prepareExpectedSgf(Object key,String sgf) {
+    public static String prepareExpectedSgf(Object key,String sgf) {
         String normalized=sgf;
         if(normalized!=null) {
             normalized=SgfNode.options.prepareSgf(normalized);

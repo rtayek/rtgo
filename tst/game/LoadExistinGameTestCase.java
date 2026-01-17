@@ -55,5 +55,5 @@ public class LoadExistinGameTestCase {
     MoveResult moveResult;
     GameFixture game;
     Model recorder=new Model(),black,white;
-    File file=new File("existing9x9Game.sgf");
+    File file=new File("data/wasinroot/existing9x9Game.sgf");
 }

@@ -604,6 +604,7 @@ public class SgfUnitTestCase {
         }
         SgfNode sgfNode=mRoot.toBinaryTree();
         Logging.mainLogger.info(String.valueOf(sgfNode));
+        // this does not test anything yet.
     }
 
     @Test public void testNodeNotInTree() {
@@ -734,12 +735,12 @@ public class SgfUnitTestCase {
     }
 
     private void assertRoundTripHasRt(Model model,boolean expectedBefore,boolean expectedAfter) {
-        boolean hasRT=Model.hasRT(model.root());
+        boolean hasRT=Model.isSentinel(model.root());
         assertEquals("unexpected RT before round trip",expectedBefore,hasRT);
         String sgfString=SgfHarness.save(model);
         model=new Model();
         SgfHarness.restore(model,sgfString);
-        hasRT=Model.hasRT(model.root());
+        hasRT=Model.isSentinel(model.root());
         assertEquals("unexpected RT after round trip",expectedAfter,hasRT);
     }
 
@@ -853,7 +854,7 @@ public class SgfUnitTestCase {
     private String dtrt(Model m) {
         String actual=SgfHarness.restoreAndSave(m,sgf,restored->{
             Logging.mainLogger.info("restored, root: "+restored.root().toString());
-            boolean hasRT=Model.hasRT(restored.root());
+            boolean hasRT=Model.isSentinel(restored.root());
             assertTrue(hasRT);
         });
         Logging.mainLogger.info("saved: "+actual);

@@ -110,7 +110,7 @@ import model.Model;
         SgfHarness.assertCheckBoardInRoot(key,sgf);
     }
 
-    @Test public void testThatGeneralTreeAlwaysHasRTProperty() {
+    @Test public void testThatGeneralTreeRootIsAentinel() {
         if(skipRoundTripTests()) return;
         // this will depend on whether the add new root switch is on.
         SgfNode games=restoreExpectedSgf();
