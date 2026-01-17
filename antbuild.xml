@@ -164,15 +164,8 @@
 			<test name="server.ParameterizedGoServerTestCase" todir="${junit.output.dir}" />
 			<test name="server.PlayGameOnServerTestCase" todir="${junit.output.dir}" />
 			<test name="server.StopWatchTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfParserTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfRoundTripTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfMNodeRoundTripTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfModelRoundTripTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfFixtureTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfUnitTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfStructureTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfSlowFilesTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.combine.ParameterizedCombineTestCase" todir="${junit.output.dir}" />
 			<test name="tree.BinaryTestCase" todir="${junit.output.dir}" />
 			<test name="tree.CatalanTestCase" todir="${junit.output.dir}" />
 			<test name="tree.MultiwayTestCase" todir="${junit.output.dir}" />

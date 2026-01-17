@@ -28,7 +28,7 @@ import utilities.*;
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();
-        TestIoSupport.restore(original,expectedSgf);
+        SgfHarness.restore(original,expectedSgf);
         String sendCommand=Command.tgo_send_sgf.name();
         GTPBackEnd gtpBackEnd=new GTPBackEnd(sendCommand,original);
         gtpBackEnd.useHexAscii=useHexAscii;
@@ -88,3 +88,4 @@ import utilities.*;
     String expectedSgf;
     Model original;
 }
+

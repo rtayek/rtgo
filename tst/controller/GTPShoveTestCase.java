@@ -10,7 +10,7 @@ import org.junit.*;
 import equipment.*;
 import model.*;
 import model.ModelHelper2;
-import sgf.TestIoSupport;
+import sgf.SgfHarness;
 import utilities.MyTestWatcher;
 public class GTPShoveTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
@@ -60,7 +60,7 @@ public class GTPShoveTestCase {
     @Test public void testRestoreAndShoveMainLineDirect() throws Exception {
         String sgf=getSgfData("simpleWithVariations");
         Model original=new Model();
-        TestIoSupport.restore(original,sgf);
+        SgfHarness.restore(original,sgf);
         original.bottom();
         Model model=ModelHelper2.pushGTPMovesToCurrentStateDirect(original,false);
         assertTrue(model.board().isEqual(original.board()));
@@ -111,3 +111,4 @@ public class GTPShoveTestCase {
     GameFixture game;
     boolean justRun=true;
 }
+

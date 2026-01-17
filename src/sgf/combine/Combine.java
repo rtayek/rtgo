@@ -49,7 +49,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
         Logging.mainLogger.warning("combined");
         return annotated;
     }
-    static SgfNode combine(final String name) {
+    public static SgfNode combine(final String name) {
         Logging.mainLogger.warning("process: "+name);
         //Parser parser=new Parser();
         File file=new File(new File(pathToOldGames,"annotated"),name);
@@ -78,7 +78,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
     public static final File pathToHere=new File(sgfPath);// new
     // do not put a ./ in front of the "sgf"!
     // File(atHome?"i:/ray/workspace/sgf2":"c:/ray/root/com/tayek/games/go/sgf");
-    static final String pathToOldGames="sgf/old";
+    public static final String pathToOldGames="sgf/old";
     static final String pathToSgf="sgf";
     public static void main(String args[]) {
         try {

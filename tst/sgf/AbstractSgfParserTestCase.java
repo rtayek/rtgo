@@ -1,17 +1,43 @@
 package sgf;
 import org.junit.*;
-public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase {
+import org.junit.runners.Parameterized;
+import utilities.MyTestWatcher;
+import utilities.TestKeys;
+public abstract class AbstractSgfParserTestCase {
+    @Parameterized.Parameter public Object key;
+    protected String expectedSgf;
+    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+
+    protected Object defaultKey() {
+        return null;
+    }
+
+    protected final void ensureKey() {
+        if(key!=null) return;
+        Object fallback=defaultKey();
+        if(fallback==null) fallback=TestKeys.sgfExampleFromRedBean;
+        if(fallback!=null) key=fallback;
+    }
+
     protected String normalizeExpectedSgf(String rawSgf) {
         return rawSgf;
     }
-    private String prepareExpectedSgf(String sgf) {
-        return SgfHarness.prepareExpectedSgf(key,sgf);
-    }
-    @Override protected SgfNode restoreExpectedSgf() {
+    protected SgfNode restoreExpectedSgf() {
         return SgfHarness.restoreExpectedSgf(expectedSgf,key);
     }
+    protected MNode restoreExpectedMNode() {
+        return SgfHarness.restoreMNode(expectedSgf);
+    }
     @Before public void setUp() throws Exception {
-        rawSgf=SgfTestSupport.loadExpectedSgf(key);
+        ensureKey();
+        watcher.key=key;
+        rawInput=false;
+        if(key instanceof SgfHarness.RawSgf raw) {
+            rawSgf=raw.sgf();
+            rawInput=true;
+        } else {
+            rawSgf=SgfHarness.loadExpectedSgf(key);
+        }
         if(rawSgf==null) { expectedSgf=normalizeExpectedSgf(null); return; }
         expectedSgf=normalizeExpectedSgf(rawSgf);
     }
@@ -23,10 +49,10 @@ public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase
         // maybe allow as an edge case?
     }
     @Test public void testParse() throws Exception {
-        games=SgfHarness.assertParse(key,expectedSgf);
+        games=SgfHarness.assertParse(key,expectedSgf,!rawInput);
     }
     private void assertFlags(boolean oldFlags) {
-        games=SgfHarness.assertFlags(key,expectedSgf,oldFlags);
+        games=SgfHarness.assertFlags(key,expectedSgf,oldFlags,!rawInput);
     }
     @Test public void testHexAscii() {
         SgfHarness.assertHexAscii(key,expectedSgf);
@@ -39,4 +65,6 @@ public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase
     }
     public String rawSgf;
     public SgfNode games;
+    protected boolean rawInput;
 }
+

@@ -3,15 +3,22 @@ package sgf;
 import io.Logging;
 import io.IOs;
 import static io.IOs.noIndent;
+import static io.IOs.standardIndent;
+import static io.Logging.parserLogger;
 import static org.junit.Assert.*;
+import static model.MNodeAcceptor.MNodeFinder.*;
 import static sgf.HexAscii.*;
+import static sgf.Parser.restoreSgf;
 import static sgf.SgfNode.SgfOptions.*;
+import static utilities.Utilities.addFiles;
 import java.io.File;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.logging.Level;
 import core.formats.sgf.SgfNodeMapping;
 import equipment.Board;
@@ -20,14 +27,22 @@ import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import model.Model;
+import model.MNodeAcceptor.MNodeFinder;
+import model.MNodeAcceptor.MakeList;
 import model.Move2;
 import model.Move2.MoveType;
 import model.MNodeTestIo;
+import sgf.combine.Combine;
+import io.Tee;
 import utilities.TestKeys;
+import utilities.Iterators.Longs;
+import utilities.MyTestWatcher;
 
-public class SgfUnitTestCase extends AbstractWatchedTestCase {
+public class SgfUnitTestCase {
+    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Test public void testSmokeRoundTrip() {
         List<Object> keys=List.of(
                 TestKeys.emptyWithSemicolon,
@@ -37,20 +52,20 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
                 new File(Parser.sgfPath,"variation.sgf")
         );
         for(Object key:keys) {
-            String rawSgf=SgfTestSupport.loadExpectedSgf(key);
+            String rawSgf=SgfHarness.loadExpectedSgf(key);
             String expectedSgf=SgfHarness.prepareExpectedSgf(key,rawSgf);
             SgfHarness.assertSgfSaveAndRestore(key,expectedSgf);
             SgfHarness.assertSgfRoundTrip(key,expectedSgf);
             SgfHarness.assertRoundTripTwice(key,expectedSgf);
             SgfHarness.assertSgfCannonical(key,expectedSgf);
-            SgfModelRoundTripHarness.assertModelRoundTripTwice(expectedSgf);
+            SgfHarness.assertModelRoundTripTwice(expectedSgf);
         }
     }
 
     @Test public void testMultipleGamesRoundTrip() {
-        for(Object[] params:SgfTestSupport.multipleGameParameters()) {
+        for(Object[] params:SgfHarness.multipleGameParameters()) {
             Object key=params[0];
-            String rawSgf=SgfTestSupport.loadExpectedSgf(key);
+            String rawSgf=SgfHarness.loadExpectedSgf(key);
             String expectedSgf=SgfHarness.prepareExpectedSgf(key,rawSgf);
             SgfHarness.assertMNodeRoundTrip(key,expectedSgf,SgfRoundTrip.MNodeSaveMode.standard,true);
             SgfHarness.assertMNodeRoundTrip(key,expectedSgf,SgfRoundTrip.MNodeSaveMode.direct,false);
@@ -60,7 +75,7 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     @Ignore @Test public void testOgsRoundTripIgnored() {
         Set<Object> objects=new LinkedHashSet<>(Parser.sgfFiles("ogs"));
         for(Object key:objects) {
-            String rawSgf=SgfTestSupport.loadExpectedSgf(key);
+            String rawSgf=SgfHarness.loadExpectedSgf(key);
             String expectedSgf=SgfHarness.prepareExpectedSgf(key,rawSgf);
             SgfHarness.assertRoundTripTwice(key,expectedSgf);
         }
@@ -69,7 +84,7 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     @Test public void testModelRoundTrip() {
         Model original=new Model();
         Model restored=new Model();
-        TestIoSupport.RoundTrip roundTrip=TestIoSupport.roundTrip(original,restored);
+        SgfHarness.RoundTrip roundTrip=SgfHarness.roundTrip(original,restored);
         assertEquals(roundTrip.expected(),roundTrip.actual());
     }
 
@@ -80,8 +95,8 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     }
 
     @Test public void testOblong() {
-        String expectedSgf=SgfTestSupport.loadExpectedSgf(new java.io.File("ogs/lecoblong.sgf"));
-        MNode games=SgfTestIo.restoreMNode(expectedSgf);
+        String expectedSgf=SgfHarness.loadExpectedSgf(new java.io.File("ogs/lecoblong.sgf"));
+        MNode games=SgfHarness.restoreMNode(expectedSgf);
         Model model=new Model("oblong");
         model.setRoot(games); // does this really trash everything correctly?
         model.down(0);
@@ -107,18 +122,18 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     }
 
     @Test public void testRestoreNullReader() {
-        assertRestoresNull(SgfTestIo.restore((Reader)null));
+        assertRestoresNull(SgfHarness.restore((Reader)null));
     }
 
     @Test public void testRestoreEmpty() {
-        assertRestoresNull(SgfTestIo.restore(""));
+        assertRestoresNull(SgfHarness.restore(""));
     }
 
     @Test public void testSample() {
         SgfNode root=sample();
-        String expected=SgfTestIo.save(root,noIndent);
+        String expected=SgfHarness.save(root,noIndent);
         Logging.mainLogger.info("sample sgf: "+expected);
-        SgfTestSupport.assertSgfRestoreSaveStable(expected);
+        SgfHarness.assertSgfRestoreSaveStable(expected);
     }
 
     @Test public void testNybble() {
@@ -185,13 +200,13 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
         // Build properties with IDs not known to P2 to force them into extras.
         P customXX=new P("XX","1234","unknown","none",""){};
         P customYY=new P("YY","1234","unknown","none",""){};
-        SgfProperty keepRoot=SgfTestSupport.property(customXX,"keepme");
-        SgfProperty keepChild=SgfTestSupport.property(customYY,"alsokeep");
-        SgfProperty rootComment=SgfTestSupport.property(P.C,"hello");
+        SgfProperty keepRoot=SgfHarness.property(customXX,"keepme");
+        SgfProperty keepChild=SgfHarness.property(customYY,"alsokeep");
+        SgfProperty rootComment=SgfHarness.property(P.C,"hello");
 
         // Manually build MNode tree to avoid parser dropping unknown IDs
         MNode root=nodeWith(rootComment,keepRoot);
-        MNode child=nodeWith(root,SgfTestSupport.property(P.B,"aa"),keepChild);
+        MNode child=nodeWith(root,SgfHarness.property(P.B,"aa"),keepChild);
         root.children().add(child);
 
         Model model=new Model();
@@ -208,9 +223,9 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     }
 
     @Test public void testMalformedPropertiesBecomeExtrasAndMappingIsPure() {
-        SgfProperty badMove=SgfTestSupport.property(P.B,"a");
+        SgfProperty badMove=SgfHarness.property(P.B,"a");
         SgfProperty emptyMove=new SgfProperty(P.W,List.of());
-        SgfProperty badSize=SgfTestSupport.property(P.SZ,"x");
+        SgfProperty badSize=SgfHarness.property(P.SZ,"x");
 
         MNode node=nodeWith(badMove,emptyMove,badSize);
         SgfNodeMapping mapping=mapNode(node);
@@ -448,8 +463,8 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     @Test public void testWithSgfFile() {
         // hangs when ignore is remove from test go to node!
         String key="manyFacesTwoMovesAtA1AndR16";
-        String sgfString=SgfTestSupport.loadExpectedSgf(key);
-        MNode root=SgfTestIo.quietLoadMNode(sgfString);
+        String sgfString=SgfHarness.loadExpectedSgf(key);
+        MNode root=SgfHarness.quietLoadMNode(sgfString);
         model.setRoot(root);
         if(model.board()!=null) {
             int expected=model.board().id();
@@ -477,10 +492,197 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
         assertRoundTripHasRt(model,false,true);
     }
 
+    @Ignore @Test public void testCombineSimple() {
+        assertCombine("simple.sgf");
+    }
+
+    @Ignore @Test public void testCombineFf4() {
+        assertCombine("ff4_ex.sgf");
+    }
+
+    @Ignore @Test public void testCombineOldAnnotated() throws Exception {
+        boolean ok=SgfHarness.roundTripTwice(new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf"));
+        if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
+    }
+
+    @Ignore @Test public void testCombineMain() throws Exception {
+        Tee.tee(new File(Combine.sgfOutputFilename));
+        boolean ok=SgfHarness.roundTripTwice(new File(Combine.pathToHere,"ff4_ex.sgf"));
+        if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
+        ok=SgfHarness.roundTripTwice(new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf"));
+        if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
+        if(!testCombine("test.sgf")) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
+    }
+
+    @Ignore @Test public void testKogosJosekiDictionary() throws Exception {
+        boolean oldIgnoreFlags=SgfNode.ignoreMoveAndSetupFlags;
+        SgfNode.ignoreMoveAndSetupFlags=true;
+        try {
+            File file=SgfHarness.firstExistingFile(
+                    new File(Combine.pathToHere,kogoFilename),
+                    new File("sgf",kogoFilename)
+            );
+            if(file==null) {
+                assertTrue(kogoFilename+" not found",false);
+                return;
+            }
+            boolean ok=SgfHarness.roundTripTwiceWithLogging(file);
+            assertTrue(ok);
+        } finally {
+            SgfNode.ignoreMoveAndSetupFlags=oldIgnoreFlags;
+        }
+    }
+
+    @Ignore @Test public void testWierd() throws Exception {
+        boolean oldIgnoreFlags=SgfNode.ignoreMoveAndSetupFlags;
+        SgfNode.ignoreMoveAndSetupFlags=true;
+        try {
+            List<File> files=loadStrangeFiles();
+            failFast=false;
+            for(File file:files) try {
+                SgfHarness.roundTripTwiceWithLogging(file);
+            } catch(Exception e) {
+                parserLogger.warning(this+" caught: "+e);
+            }
+        } finally {
+            SgfNode.ignoreMoveAndSetupFlags=oldIgnoreFlags;
+        }
+    }
+
+    @Ignore @Test public void testFirstNodeOfWierd() throws Exception {
+        boolean oldIgnoreFlags=SgfNode.ignoreMoveAndSetupFlags;
+        SgfNode.ignoreMoveAndSetupFlags=true;
+        try {
+            List<File> files=loadStrangeFiles();
+            failFast=false;
+            List<SgfNode> all=new ArrayList<>();
+            for(File file:files) try {
+                SgfNode games=restoreSgf(IOs.toReader(file));
+                all.add(games);
+            } catch(Exception e) {
+                Logging.mainLogger.info(this+" caught: "+e); //
+            }
+            parserLogger.warning(all.size()+" games in "+strangeDir);
+        } finally {
+            SgfNode.ignoreMoveAndSetupFlags=oldIgnoreFlags;
+        }
+    }
+
+    @Test public void testSgfCoordinates() {
+        SgfNode expected=SgfHarness.nodeWithProperty(P.B,"AB"); // what is AB?
+        String string=expected.sgfProperties.get(0).list().get(0);
+        Point point=Coordinates.fromSgfCoordinates(string,Board.standard);
+        String string2=Coordinates.toSgfCoordinates(point,Board.standard);
+        SgfNode actual=SgfHarness.nodeWithProperty(P.B,string2);
+        assertEquals(expected,actual);
+    }
+
+    @Test public void testHasAMoveFlag() {
+        assertMoveFlags(P.B,true,true,true);
+    }
+
+    @Test public void testHasAMoveTypeFlag() {
+        assertMoveFlags(P.BM,true,false,false);
+    }
+
+    @Test public void testBothFlagsFalse() {
+        assertMoveFlagsOnRoot(P.AB,false,false);
+    }
+
+    @Test public void testConstructor() {
+        SgfNode sgfNode=new SgfNode();
+        sgfNode.sgfProperties=new ArrayList<>();
+    }
+
+    @Test public void testRTStructure() {
+        MNode mRoot=new MNode(null);
+        try {
+            mRoot.sgfProperties().add(SgfHarness.property(P.RT,"Tgo root"));
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        SgfNode sgfNode=mRoot.toBinaryTree();
+        Logging.mainLogger.info(String.valueOf(sgfNode));
+    }
+
+    @Test public void testNodeNotInTree() {
+        ensureStructure();
+        MNode mNode=new MNode(null);
+        assertNotFound(mNode,root2);
+    }
+
+    @Test public void testFindSelfWithEqualsPredicate() {
+        ensureStructure();
+        assertFound(root1,root1,equalsPredicate);
+    }
+
+    @Test public void testFindSelfWithLabelPredicate() {
+        ensureStructure();
+        assertFoundWithLabel(root1,root1);
+    }
+
+    @Ignore @Test public void testFindRootWithEqualsPredicate() {
+        ensureStructure();
+        // should fail because we use equals which is just ==?
+        MNodeFinder finder=MNodeFinder.find(root1,root2,equalsPredicate);
+        assertTrue(finder.ancestors.size()>0);
+        assertEquals(root1.label(),finder.found.label()); // might not always be labeled?
+    }
+
+    @Test public void testFindRootWithLabelPredicate() {
+        ensureStructure();
+        assertFoundWithLabel(root1,root2);
+    }
+
+    @Test public void testFindFirstChildWithLabelPredicate() {
+        ensureStructure();
+        MNode child=root1.children().iterator().next();
+        assertFoundWithLabel(child,root2);
+    }
+
+    @Test public void testFindNodeWithLabelPredicate() {
+        ensureStructure();
+        for(MNode node1:list1) {
+            MNode remote=new MNode(null,node1.sgfProperties());
+            remote.setLabel(node1.label());
+            assertFoundWithLabel(remote,root2);
+        }
+    }
+
+    @Test public void testFinderWithSimple() {
+        SgfNode games=SgfHarness.restoreFromKey(TestKeys.simpleWithVariations);
+        SgfHarness.assertFinderMatches(games);
+    }
+
+    @Test public void testFinderWith3Moves() {
+        Model model=new Model();
+        model.move(Stone.black,new Point(0,0));
+        model.move(Stone.white,new Point(0,1)); // fails if black - check later
+        model.move(Stone.black,new Point(0,2));
+        SgfHarness.assertFinderMatches(model.root().toBinaryTree());
+    }
+
+    @Test public void testTwoMovesPath() {
+        SgfMovesPath acceptor=new SgfMovesPath();
+        restoreAndTraverse(acceptor);
+        assertEquals(2,acceptor.moves.size());
+    }
+
+    @Test public void testTwoMoves() {
+        SgfNode games=restoreAndTraverse(new SgfNoOpAcceptor());
+        SgfNode move1=games.left;
+        SgfNode move2=games.left.left;
+        SgfProperty property1=move1.sgfProperties.get(0);
+        String m1=property1.list().get(0);
+        SgfProperty property2=move2.sgfProperties.get(0);
+        String m2=property2.list().get(0);
+    }
+
     /*@Test*/ public void testSgfFileFromLittleGolem() {
         // Node root=quietLoad(new File("url.sgf"));
         Model model=new Model();
-        TestIoSupport.restore(model,new File("url.sgf"));
+        SgfHarness.restore(model,new File("url.sgf"));
     }
 
     private Model newModelWithRoot(int size,boolean ensureBoard) {
@@ -521,9 +723,9 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
 
     private void assertCopyConstructorRoundTrip(String sgf,boolean log) {
         Model model=new Model();
-        String expected=TestIoSupport.restoreAndSave(model,sgf,"first save fails");
+        String expected=SgfHarness.restoreAndSave(model,sgf,"first save fails");
         Model copy=new Model(model,model.name);
-        String actual=TestIoSupport.save(copy,"second save fails");
+        String actual=SgfHarness.save(copy,"second save fails");
         if(log) {
             Logging.mainLogger.info("ex: "+expected);
             Logging.mainLogger.info("ac: "+actual);
@@ -534,11 +736,114 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     private void assertRoundTripHasRt(Model model,boolean expectedBefore,boolean expectedAfter) {
         boolean hasRT=Model.hasRT(model.root());
         assertEquals("unexpected RT before round trip",expectedBefore,hasRT);
-        String sgfString=TestIoSupport.save(model);
+        String sgfString=SgfHarness.save(model);
         model=new Model();
-        TestIoSupport.restore(model,sgfString);
+        SgfHarness.restore(model,sgfString);
         hasRT=Model.hasRT(model.root());
         assertEquals("unexpected RT after round trip",expectedAfter,hasRT);
+    }
+
+    private void assertMoveFlags(P id,boolean expectedMoveType,boolean expectedMove,boolean logChildren) {
+        SgfNode node=SgfHarness.nodeWithProperty(id,"inside the brackets");
+        assertEquals(expectedMoveType,node.hasAMoveType);
+        assertEquals(expectedMove,node.hasAMove);
+        node.setFlags();
+        node.checkFlags();
+        MNode mNode=MNode.toGeneralTree(node);
+        for(MNode child:mNode.children()) {
+            if(logChildren) Logging.mainLogger.info(String.valueOf(child));
+            child.setFlags();
+            child.checkFlags();
+            assertEquals(expectedMoveType,child.hasAMoveType());
+            assertEquals(expectedMove,child.hasAMove());
+        }
+    }
+
+    private void assertMoveFlagsOnRoot(P id,boolean expectedMoveType,boolean expectedMove) {
+        SgfNode node=SgfHarness.nodeWithProperty(id,"inside the brackets");
+        assertEquals(expectedMoveType,node.hasAMoveType);
+        assertEquals(expectedMove,node.hasAMove);
+        MNode mNode=MNode.toGeneralTree(node);
+        assertEquals(expectedMoveType,mNode.hasAMoveType());
+        assertEquals(expectedMove,mNode.hasAMove());
+    }
+
+    private static MNodeFinder assertFound(MNode target,MNode root,BiPredicate<MNode,MNode> predicate) {
+        MNodeFinder finder=MNodeFinder.find(target,root,predicate);
+        assertTrue(finder.ancestors.size()>0);
+        return finder;
+    }
+
+    private static void assertFoundWithLabel(MNode target,MNode root) {
+        MNodeFinder finder=assertFound(target,root,labelPredicate);
+        assertEquals(target.label(),finder.found.label());
+    }
+
+    private static void assertNotFound(MNode target,MNode root) {
+        MNodeFinder finder=MNodeFinder.find(target,root,equalsPredicate);
+        assertTrue(finder.ancestors.size()==0);
+    }
+
+    private void ensureStructure() {
+        if(structureReady) return;
+        Object key=structureKey;
+        watcher.key=key;
+        expectedStructureSgf=SgfHarness.loadExpectedSgf(key);
+        if(expectedStructureSgf==null) { return; }
+        root1=SgfHarness.restoreMNode(expectedStructureSgf);
+        root2=SgfHarness.restoreMNode(expectedStructureSgf);
+        MNode.label(root1,new Longs());
+        MNode.label(root2,new Longs());
+        list1=MakeList.toList(root1);
+        list2=MakeList.toList(root2);
+        structureReady=true;
+    }
+
+    private SgfNode restoreAndTraverse(SgfAcceptor acceptor) {
+        ensureStructure();
+        SgfNode games=SgfHarness.restore(expectedStructureSgf);
+        if(games!=null) SgfHarness.traverse(acceptor,games);
+        return games;
+    }
+
+    private void assertCombine(String filename) {
+        File file=fileInSgfDir(filename);
+        Logging.mainLogger.info(String.valueOf(file));
+        if(file.exists()) {
+            assertTrue(file.toString(),file.exists());
+            //assertTrue(testCombine(""+file));
+            assertTrue(file.toString(),testCombine(filename));
+        } else Logging.mainLogger.info("file "+file+" does not exist!");
+    }
+
+    private static File fileInSgfDir(String name) {
+        return new File(Combine.pathToHere,name);
+    }
+
+    private boolean testCombine(String name) {
+        Logging.mainLogger.info("test combine: "+name);
+        try {
+            SgfNode combined=Combine.combine(name);
+            if(combined==null) {
+                Logging.mainLogger.warning("combine returns null!");
+                return false;
+            }
+            Logging.mainLogger.warning("combined");
+            Logging.mainLogger.warning(String.valueOf(SgfHarness.save(combined,standardIndent)));
+            Logging.mainLogger.warning("");
+        } catch(Exception e) {
+            Logging.mainLogger.warning("in testCombine()");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private static List<File> loadStrangeFiles() {
+        if(!strangeDir.exists()) fail(strangeDir+" does not exits!");
+        List<File> files=addFiles(null,strangeDir);
+        if(files.size()==0) fail("no files!");
+        return files;
     }
 
     private static void assertRestoresNull(SgfNode games) {
@@ -546,7 +851,7 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     }
 
     private String dtrt(Model m) {
-        String actual=TestIoSupport.restoreAndSave(m,sgf,restored->{
+        String actual=SgfHarness.restoreAndSave(m,sgf,restored->{
             Logging.mainLogger.info("restored, root: "+restored.root().toString());
             boolean hasRT=Model.hasRT(restored.root());
             assertTrue(hasRT);
@@ -563,7 +868,7 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     }
 
     private SgfNode comment(String string,SgfNode left,SgfNode right) {
-        SgfNode node=SgfTestSupport.nodeWithProperty(P.C,string);
+        SgfNode node=SgfHarness.nodeWithProperty(P.C,string);
         if(left==null&&right==null) return node;
         if(left!=null) left.left=node;
         else if(right!=null) right.right=node;
@@ -572,7 +877,7 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
     }
 
     private void print(SgfNode node) {
-        Logging.mainLogger.info("saved sgf node "+SgfTestIo.save(node,noIndent));
+        Logging.mainLogger.info("saved sgf node "+SgfHarness.save(node,noIndent));
         Logging.mainLogger.info("----------------");
     }
 
@@ -650,7 +955,7 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
         basicModel.move(expectedMove);
         String expectedSgf=MNodeTestIo.save(basicModel.root());
         actualMove=basicModel.lastMove2();
-        String actualSgf2=SgfTestIo.mNodeRoundTrip(expectedSgf,SgfRoundTrip.MNodeSaveMode.standard);
+        String actualSgf2=SgfHarness.mNodeRoundTrip(expectedSgf,SgfRoundTrip.MNodeSaveMode.standard);
         assertEquals(expectedSgf,actualSgf2);
     }
 
@@ -667,6 +972,16 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
 
     private final String testString="0123456789abcdefghijklmnopqrstuvwxyz";
     private final String sgf="(;FF[4]GM[1]AP[RTGO]C[comment];B[as])";
+    private final Object structureKey=TestKeys.manyFacesTwoMovesAtA1AndR16OnA9by9Board;
+    private String expectedStructureSgf;
+    private boolean structureReady;
+    private MNode root1;
+    private MNode root2;
+    private List<MNode> list1;
+    private List<MNode> list2;
+    private boolean failFast=true;
+    private static final File strangeDir=new File("strangesgf/");
+    private static final String kogoFilename="KogosJosekiDictionary.sgf";
 
     Model model=new Model();
     {
@@ -685,3 +1000,4 @@ public class SgfUnitTestCase extends AbstractWatchedTestCase {
         sgfModel.setBoard(Board.factory.create(Board.standard));
     }
 }
+

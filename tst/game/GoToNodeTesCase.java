@@ -21,7 +21,7 @@ public class GoToNodeTesCase {
         //String sgfString=Parser.sgfExamleFromRedBean;
         Logging.mainLogger.info(String.valueOf(sgfString));
         // maybe add a test that uses restore
-        MNode root=SgfTestIo.quietLoadMNode(sgfString);
+        MNode root=SgfHarness.quietLoadMNode(sgfString);
         model.setRoot(root);
         List<MNode> list1=MakeList.toList(root);
         Logging.mainLogger.info(String.valueOf(list1));
@@ -58,3 +58,4 @@ public class GoToNodeTesCase {
     }
     Model model=new Model();
 }
+
