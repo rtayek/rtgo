@@ -40,16 +40,8 @@ public class So {
         }
         return trees;
     }
-    static public void print(String prefix,Node node,boolean isLeft) {
-        if(node!=null) {
-            Logging.mainLogger.info(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
-            print(prefix+(isLeft?"|   ":"    "),node.left,true);
-            print(prefix+(isLeft?"|   ":"    "),node.right,false);
-        }
-    }
     public static void print(String prefi,Node node) {
-        if(node!=null) print(prefi,node,false);
-        else Logging.mainLogger.info("0");
+        TreeSupport.printBinaryTree(node,prefi,false,x -> x.left,x -> x.right,x -> x.data);
     }
     static class MyConsumer implements Consumer<Node> {
         @Override public void accept(Node node) { //

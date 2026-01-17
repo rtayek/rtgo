@@ -12,113 +12,42 @@ public class G2TestCase {
     // round trip?
     // parameterize?
     // so far, none of these tests use a non null value for data.
-    @BeforeClass public static void setUpBeforeClass() throws Exception {}
     @Before public void setUp() throws Exception {
         g2=new G2();
         //all=new G2().generate(3);
         verbose=false; //
     }
-    @After public void tearDown() throws Exception {}
-    @Test public void testEncodeNullFalse() {
-        trees=Generator.one(0,iterator,false);
-        Node<Long> node=trees.get(0);
-        assertNull(node);
-        String encoded=encode(node,null);
-        assertEquals("0",encoded);
+    @Test public void testEncodeCases() {
+        for(Object[] test:ENCODE_CASES) {
+            int nodes=(Integer)test[0];
+            boolean useMap=(Boolean)test[1];
+            String[] expected=(String[])test[2];
+            assertEncodings(nodes,useMap,expected);
+        }
     }
-    @Test public void testEncodeNulTruel() {
-        trees=Generator.one(0,iterator,true);
-        Node<Long> node=trees.get(0);
-        assertNull(node);
-        String encoded=encode(node,null);
-        assertEquals("0",encoded);
+    @Test public void testDecodeCases() {
+        for(String expected:DECODE_CASES) {
+            // tree is encoded as null
+            // should be "0 maybe?
+            Node<Long> tree=decode(expected,null);
+            if(LOG_DECODE_DETAILS) {
+                Logging.mainLogger.info("encoded in node: "+tree.encoded);
+                Logging.mainLogger.info("ex: "+expected);
+            }
+            G2.p(tree);
+            String actual=encode(tree,null);
+            if(LOG_DECODE_DETAILS) Logging.mainLogger.info("ac: "+actual);
+            Node<Long> actualNode=decode(actual,null);
+            G2.p(actualNode);
+            assertEquals(expected,actual);
+            assertTrue(structureDeepEquals(tree,actualNode));
+        }
     }
-    @Test public void testEncode1False() {
-        trees=Generator.one(1,iterator,false);
-        Node<Long> expected=trees.get(0);
-        assertNotNull(expected);
-        String encoded=encode(expected,null);
-        assertEquals("100",encoded);
+    @Test public void testMirrorCases() {
+        for(int nodes:MIRROR_CASES) assertMirrorRoundTrip(nodes);
     }
-    @Test public void testEncode1Truel() {
-        trees=Generator.one(1,iterator,true);
-        Node<Long> node=trees.get(0);
-        assertNotNull(node);
-        String encoded=encode(node,null);
-        assertEquals("100",encoded);
-    }
-    @Test public void test0False() {
-        trees=Generator.one(0,iterator,false);
-        Node<Long> tree=trees.get(0);
-        String encoded=encode(tree,null);
-        assertEquals("0",encoded);
-    }
-    @Test public void test0Ttue() {
-        trees=Generator.one(0,iterator,true);
-        Node<Long> tree=trees.get(0);
-        String encoded=encode(tree,null);
-        assertEquals("0",encoded);
-    }
-    @Test public void test1False() {
-        trees=Generator.one(1,iterator,false);
-        Node<Long> tree=trees.get(0);
-        String encoded=encode(tree,null);
-        assertEquals("100",encoded);
-    }
-    @Test public void test1Ttue() {
-        trees=Generator.one(1,iterator,true);
-        Node<Long> tree=trees.get(0);
-        String encoded=encode(tree,null);
-        assertEquals("100",encoded);
-    }
-    @Test public void testDecode100() {
-        String expected="100";
-        // tree is encoded as null
-        // should be "0 maybe?
-        Node<Long> tree=decode(expected,null);
-        G2.p(tree);
-        String actual=encode(tree,null);
-        assertEquals(expected,actual);
-        Node<Long> actualNode=decode(actual,null);
-        G2.p(actualNode);
-        assertTrue(structureDeepEquals(tree,actualNode));
-    }
-    @Test public void test2False() {
-        trees=Generator.one(2,iterator,false);
-        Node<Long> tree=trees.get(0);
-        String encoded=encode(tree,null);
-        assertEquals("10100",encoded);
-        tree=trees.get(1);
-        encoded=encode(tree,null);
-        assertEquals("11000",encoded);
-    }
-    @Test public void test2Ttue() {
-        trees=Generator.one(2,iterator,true);
-        Node<Long> tree=trees.get(0);
-        String encoded=encode(tree,null);
-        assertEquals("10100",encoded);
-        tree=trees.get(1);
-        encoded=encode(tree,null);
-        assertEquals("11000",encoded);
-    }
-    @Test public void testDecode11100() {
-        String expected="11000";
-        //String expected="10100";
-        // tree is encoded as null
-        // should be "0 maybe?
-        Node<Long> tree=decode(expected,null);
-        Logging.mainLogger.info("encoded in node: "+tree.encoded);
-        Logging.mainLogger.info("ex: "+expected);
-        String actual=encode(tree,null);
-        Logging.mainLogger.info("ac: "+actual);
-        Node<Long> actualNode=decode(actual,null);
-        G2.p(tree);
-        G2.p(actualNode);
-        assertEquals(expected,actual);
-        assertTrue(structureDeepEquals(tree,actualNode));
-    }
-    @Test public void testMirror2() {
-        trees=Generator.one(2,iterator,false);
+    private void assertMirrorRoundTrip(int nodes) {
+        trees=Generator.one(nodes,iterator,false);
         for(Node<Long> node:trees) {
             if(node==null) continue;
             String expected=encode(node,null);
@@ -128,17 +57,28 @@ public class G2TestCase {
             assertEquals(expected,actual);
         }
     }
-    @Test public void testMirror3() {
-        trees=Generator.one(3,iterator,false);
-        for(Node<Long> node:trees) {
-            if(node==null) continue;
-            String expected=encode(node,null);
-            mirror(node);
-            mirror(node);
-            String actual=encode(node,null);
-            assertEquals(expected,actual);
+    private void assertEncodings(int nodes,boolean useMap,String... expectedEncodings) {
+        trees=Generator.one(nodes,iterator,useMap);
+        assertEquals(expectedEncodings.length,trees.size());
+        for(int i=0;i<expectedEncodings.length;i++) {
+            Node<Long> tree=trees.get(i);
+            if(tree==null) assertNull(tree);
+            else assertNotNull(tree);
+            String encoded=encode(tree,null);
+            assertEquals(expectedEncodings[i],encoded);
         }
     }
+    private static final String[] DECODE_CASES=new String[] {"100","11000"};
+    private static final int[] MIRROR_CASES=new int[] {2,3};
+    private static final boolean LOG_DECODE_DETAILS=false;
+    private static final Object[][] ENCODE_CASES=new Object[][] {
+        {0,false,new String[] {"0"}},
+        {0,true,new String[] {"0"}},
+        {1,false,new String[] {"100"}},
+        {1,true,new String[] {"100"}},
+        {2,false,new String[] {"10100","11000"}},
+        {2,true,new String[] {"10100","11000"}},
+    };
     G2 g2;
     boolean verbose;
     Generator<Long> generator=new Generator<>(false);

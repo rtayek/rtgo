@@ -75,39 +75,43 @@ public class Node<T> {
         }
     }
     static <T> Node<T> decode(List<Boolean> bits,List<T> data) {
-        // lambda?
-        // get rid of this!
-        if(bits.size()==0) return null;
-        boolean b=bits.get(0);
-        bits.remove(0);
-        if(b) {
-            T d=data!=null?data.remove(0):null;
-            Node<T> root=new Node<>(d); // lambda?
-            root.left=decode(bits,data);
-            root.right=decode(bits,data);
-            return root;
-        }
-        return null;
+        return decode(new BooleanListReader(bits),data,false);
     }
     static <T> Node<T> decode_(List<Character> binaryString,List<T> data) {
-        // lambda?
-        if(binaryString.size()==0) return null;
-        //Logging.mainLogger.info("decodingL "+binaryString);
-        boolean b=binaryString.remove(0)=='1';
-        if(b) {
-            T d=data!=null?data.remove(0):null;
-            Node<T> node=new Node<>(d);
-            node.left=decode_(binaryString,data);
-            node.right=decode_(binaryString,data);
-            node.encoded=encode(node,null);
-            return node;
-        }
-        //T d=data!=null?data.remove(0):null;
-        return null;
+        return decode(new CharListReader(binaryString),data,true);
     }
     public static <T> Node<T> decode(String binaryString,List<T> data) {
         List<Character> characters=Arrays.asList(toObjects(binaryString.toCharArray()));
         return decode_(new ArrayList<>(characters),data);
+    }
+    private static <T> Node<T> decode(BitReader bits,List<T> data,boolean setEncoded) {
+        if(!bits.hasNext()) return null;
+        boolean b=bits.next();
+        if(b) {
+            T d=data!=null?data.remove(0):null;
+            Node<T> node=new Node<>(d);
+            node.left=decode(bits,data,setEncoded);
+            node.right=decode(bits,data,setEncoded);
+            if(setEncoded) node.encoded=encode(node,null);
+            return node;
+        }
+        return null;
+    }
+    private interface BitReader {
+        boolean hasNext();
+        boolean next();
+    }
+    private static final class BooleanListReader implements BitReader {
+        private final List<Boolean> bits;
+        private BooleanListReader(List<Boolean> bits) { this.bits=bits; }
+        @Override public boolean hasNext() { return bits.size()>0; }
+        @Override public boolean next() { return bits.remove(0); }
+    }
+    private static final class CharListReader implements BitReader {
+        private final List<Character> bits;
+        private CharListReader(List<Character> bits) { this.bits=bits; }
+        @Override public boolean hasNext() { return bits.size()>0; }
+        @Override public boolean next() { return bits.remove(0)=='1'; }
     }
     @Override public int hashCode() { return Objects.hash(data); }
     @Override public boolean equals(Object obj) {
@@ -121,25 +125,7 @@ public class Node<T> {
         return equal;
     }
     public boolean deepEquals_(Node<T> other,boolean ckeckEqual) {
-        // lambda?
-        if(this==other) return true;
-        else if(other==null) { if(verbose) Logging.mainLogger.info(data+" othe ris null!"); return false; }
-        if(ckeckEqual) if(!equals(other)) { if(verbose) Logging.mainLogger.info(data+" "+other.data); return false; }
-        if(left!=null) {
-            boolean isEqual=left.deepEquals_(other.left,ckeckEqual);
-            if(!isEqual) { if(verbose) Logging.mainLogger.info(left.data+"!="+other.left.data); return false; }
-            if(verbose) Logging.mainLogger.info(left.data+"=="+other.left.data);
-        } else if(other.left!=null) { if(verbose) Logging.mainLogger.info(data+" othe left is null!"); return false; }
-        if(right!=null) {
-            boolean isEqual=right.deepEquals_(other.right,ckeckEqual);
-            if(!isEqual) { if(verbose) Logging.mainLogger.info(right.data+"!="+other.right.data); return false; }
-            if(verbose) Logging.mainLogger.info(right.data+"=="+other.right.data);
-        } else if(other.right!=null) {
-            if(verbose) Logging.mainLogger.info(data+" othe right is not null!");
-            if(verbose) Logging.mainLogger.info("other right "+other.right.data);
-            return false;
-        }
-        return true;
+        return TreeSupport.deepEquals(this,other,ckeckEqual,(a,b) -> a.equals(b),binaryChildren());
     }
     @Override public String toString() { return "Node [data="+data+"]"; }
     public static <T> boolean deepEquals(Node<T> node,Node<T> other) {
@@ -180,8 +166,9 @@ public class Node<T> {
     private static <T> MNode<T> from_(Node<T> node,MNode<T> grandParent) {
         if(node==null) { if(grandParent!=null) grandParent.children.add(null); return null; }
         //Logging.mainLogger.info("processing: "+node.data+" <<<<<<");
-        boolean ok=processed.add(node.data);
-        if(!ok) { Logging.mainLogger.info(node.data+" "+node.id+"  node already processed!"); return null; }
+        boolean ok=TreeSupport.markProcessed(processed,node.data,
+                node.data+" "+node.id+"  node already processed!");
+        if(!ok) return null;
         MNode<T> parent=new MNode<T>(node.data,grandParent);
         if(grandParent!=null) grandParent.children.add(parent);
         else Logging.mainLogger.info("gradparent is null!");
@@ -206,14 +193,14 @@ public class Node<T> {
         Node<T> extra=new Node<>(null);
         extra.left=node; // might be null
         MNode<T> extraMNode2=new MNode<>(null,null);
-        processed.clear();
+        clearProcessed();
         MNode<T> mNode2=from_(extra.left,extraMNode2);
         //mroot.data=0l;
         return extraMNode2;
     }
     static <T> void relabel(Node<T> node,final Iterator<T> i) {
-        BinaryTreeSupport.preorder(node,x -> x.left,x -> x.right,
-                x -> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; });
+        TreeSupport.relabel(node,i,(target,data) -> target.data=data,
+                (root,consumer) -> BinaryTreeSupport.preorder(root,x -> x.left,x -> x.right,consumer));
     }
     Node<T> left,right;
     public T data;
@@ -221,4 +208,15 @@ public class Node<T> {
     final int id=++ids;
     static int ids;
     static Set<Object> processed=new LinkedHashSet<>();
+    public static Set<Object> processed() { return processed; }
+    public static void clearProcessed() { TreeSupport.clearProcessed(processed); }
+    @SuppressWarnings("rawtypes")
+    private static final TreeSupport.ChildrenAccess<Node> BINARY_CHILDREN=new TreeSupport.ChildrenAccess<Node>() {
+        @Override public int size(Node node) { return 2; }
+        @Override public Node childAt(Node node,int index) { return index==0?node.left:node.right; }
+    };
+    @SuppressWarnings("unchecked")
+    private static <T> TreeSupport.ChildrenAccess<Node<T>> binaryChildren() {
+        return (TreeSupport.ChildrenAccess<Node<T>>)BINARY_CHILDREN;
+    }
 }

@@ -1,36 +1,34 @@
 package tree;
-import java.util.*;
-import org.junit.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import utilities.*;
 import utilities.Iterators.Longs;
 @RunWith(Parameterized.class) public class ParameterizedNodeRoundTripTestCase extends AbstractRoundTripTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-    @Override @Before public void setUp() throws Exception {}
-    @Override @After public void tearDown() throws Exception {}
-    @Parameters public static Collection<Object[]> parameters() {
-        //node: 10, tree: 8360
-        Set<Object> objects=new LinkedHashSet<>();
-        int[] x=new int[] {0,0};
+    @Parameters(name="{0}") public static Collection<Object[]> parameters() {
+        List<Object[]> parameters=new ArrayList<>();
+        parameters.add(new Object[] {"red bean sample",redBeanSample()});
         for(int nodes=0;nodes<=7;++nodes) {
-            long trees=Catalan.catalan(nodes);
-            for(int tree=0;tree<trees;++tree) {
-                x=new int[] {nodes,tree};
-                objects.add(x);
+            long treeCount=Catalan.catalan(nodes);
+            Iterator<Long> iterator=new Longs();
+            boolean useMap=false;
+            ArrayList<Node<Long>> trees=G2.Generator.one(nodes,iterator,useMap);
+            for(int tree=0;tree<treeCount;++tree) {
+                parameters.add(new Object[] {"node: "+nodes+", tree: "+tree,trees.get(tree)});
             }
         }
-        return ParameterArray.parameterize(objects);
+        return parameters;
     }
-    public ParameterizedNodeRoundTripTestCase(int[] x) {
-        nodes=x[0];
-        int tree=x[1];
-        watcher.key=key="node: "+nodes+", tree: "+tree;
+    public ParameterizedNodeRoundTripTestCase(String label,Node<Long> root) {
+        watcher.key=key=label;
+        bRoot=root;
+    }
+    private static Node<Long> redBeanSample() {
+        Node<Character> binary=RedBean.binary();
         Iterator<Long> iterator=new Longs();
-        boolean useMap=false;
-        ArrayList<Node<Long>> trees=G2.Generator.one(nodes,iterator,useMap);
-        bRoot=trees.get(tree);
+        return Node.reLabelCopy(binary,iterator);
     }
-    int nodes;
 }

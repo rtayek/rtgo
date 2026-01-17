@@ -3,7 +3,6 @@ import io.Logging;
 import static org.junit.Assert.*;
 import static tree.MNode.from;
 import static tree.MNode.print;
-import static tree.MNode.processed;
 import static tree.Node.deepEquals;
 import static tree.Node.from;
 import org.junit.*;
@@ -17,7 +16,7 @@ public abstract class AbstractRoundTripTestCase {
         if(verbose) { Logging.mainLogger.info("bRoot"); G2.print(bRoot,"   "); }
         mRoot=from(bRoot);
         if(verbose) { Logging.mainLogger.info("mRoot"); print(mRoot,"",true); }
-        processed.clear();
+        MNode.clearProcessed();
         Node<Long> actual=from(mRoot);
         assertNotNull(actual);
         if(verbose) { Logging.mainLogger.info("actual:"); G2.print(actual.left,"   "); }

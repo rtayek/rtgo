@@ -120,17 +120,8 @@ public class G2 {
         printStuff(trees);
         Logging.mainLogger.info("end of nodes "+nodes);
     }
-    private static <T> void print(Node<T> node,String prefix,boolean isLeft) {
-        // lambda
-        if(node!=null) {
-            Logging.mainLogger.info(prefix+(isLeft?"|-- ":"\\-- ")+node.data);
-            print(node.left,prefix+(isLeft?"|   ":"    "),true);
-            print(node.right,prefix+(isLeft?"|   ":"    "),false);
-        }
-    }
     public static <T> void print(Node<T> node,String prefix) {
-        if(node!=null) print(node,prefix,true);
-        else Logging.mainLogger.info("0");
+        TreeSupport.printBinaryTree(node,prefix,x -> x.left,x -> x.right,x -> x.data);
     }
     public static <T> void pPrint(Node<T> root,StringBuilder sb) {
         if(root==null) return;

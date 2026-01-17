@@ -11,8 +11,7 @@ public class MNode<T> {
         if(mNode2!=null) mNode2.preorder(consumer);
     }
     static <T> void relabel(MNode<T> node,final Iterator<T> i) {
-        Consumer<MNode<T>> relabel=x-> { if(x!=null&&i!=null) x.data=i.hasNext()?i.next():null; };
-        preorder(node,relabel);
+        TreeSupport.relabel(node,i,(target,data) -> target.data=data,MNode::preorder);
     }
     @Override public String toString() { return "MNode2 [data="+data+"]"; }
     public MNode(T data,MNode<T> parent) {
@@ -22,8 +21,8 @@ public class MNode<T> {
     }
     public static <T> Node<T> from(MNode<T> mNode2) {
         if(mNode2==null) { return null; }
-        boolean ok=processed.add(mNode2.data);
-        if(!ok) Logging.mainLogger.info(mNode2.data+" MNode2 already processed!");
+        TreeSupport.markProcessed(processed,mNode2.data,
+                mNode2.data+" MNode2 already processed!");
         Node<T> left=null,tail=null;
         for(int i=0;i<mNode2.children.size();++i) {
             MNode<T> child=mNode2.children.get(i);
@@ -42,11 +41,7 @@ public class MNode<T> {
         return binaryNode;
     }
     public static <T> void print(MNode<T> tree,String indent,boolean last) {
-        Logging.mainLogger.info(indent+"+- "+(tree!=null?tree.data:"0"));
-        indent+=last?"   ":"|  ";
-        if(tree!=null) for(int i=0;i<tree.children.size();i++) {
-            print(tree.children.get(i),indent,i==tree.children.size()-1);
-        }
+        TreeSupport.printMwayTree(tree,indent,last,node -> node.children,node -> node.data);
     }
     @Override public int hashCode() { return Objects.hash(data); }
     @Override public boolean equals(Object obj) {
@@ -60,20 +55,7 @@ public class MNode<T> {
         return equal;
     }
     private boolean deepEquals_(MNode<T> other,boolean ckeckEqual) {
-        // lambda?
-        if(this==other) return true;
-        else if(other==null) return false;
-        if(ckeckEqual) {
-            //Logging.mainLogger.info("cheching: "+this+" "+other);
-            if(!equals(other)) return false;
-        }
-        if(children.size()!=other.children.size()) return false;
-        for(int i=0;i<children.size();++i) {
-            MNode<T> child=children.get(i);
-            MNode<T> otherChild=other.children.get(i);
-            if(!child.deepEquals_(otherChild,ckeckEqual)) return false;
-        }
-        return true;
+        return TreeSupport.deepEquals(this,other,ckeckEqual,(a,b) -> a.equals(b),mwayChildren());
     }
     public static <T> boolean deepEquals(MNode<T> node,MNode<T> other) {
         return node!=null?node.deepEquals_(other,true):other==null;
@@ -82,6 +64,7 @@ public class MNode<T> {
         return node!=null?node.deepEquals_(other,false):other==null;
     }
     public static LinkedHashSet<Object> processed() { return processed; }
+    public static void clearProcessed() { TreeSupport.clearProcessed(processed); }
     MNode<T> parent;
     ArrayList<MNode<T>> children=new ArrayList<>();
     // add a set temporarily to see if we are adding stuff in twice?
@@ -89,4 +72,13 @@ public class MNode<T> {
     final int id=++ids;
     static int ids;
     static LinkedHashSet<Object> processed=new LinkedHashSet<>();
+    @SuppressWarnings("rawtypes")
+    private static final TreeSupport.ChildrenAccess<MNode> MWAY_CHILDREN=new TreeSupport.ChildrenAccess<MNode>() {
+        @Override public int size(MNode node) { return node.children.size(); }
+        @Override public MNode childAt(MNode node,int index) { return (MNode)node.children.get(index); }
+    };
+    @SuppressWarnings("unchecked")
+    private static <T> TreeSupport.ChildrenAccess<MNode<T>> mwayChildren() {
+        return (TreeSupport.ChildrenAccess<MNode<T>>)MWAY_CHILDREN;
+    }
 }
