@@ -17,7 +17,7 @@ final class SgfModelRoundTripHarness {
 
     static void assertModelRestoreAndSave(Object key,String expectedSgf,Model model) {
         String actualSgf=TestIoSupport.restoreAndSave(model,expectedSgf);
-        SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
+        SgfHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
     static void assertModelRoundTripToString(Object key,String expectedSgf,ModelSaveMode saveMode,boolean log) {
@@ -26,7 +26,7 @@ final class SgfModelRoundTripHarness {
             Logging.mainLogger.info("ex: "+expectedSgf);
             Logging.mainLogger.info("ac: "+actualSgf);
         }
-        SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
+        SgfHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
     static void assertModelRoundTripTwice(String sgf) {
@@ -44,7 +44,7 @@ final class SgfModelRoundTripHarness {
 
     static void assertSgfRestoreAndSave(Object key,String expectedSgf) {
         String actualSgf=SgfTestSupport.restoreAndSave(expectedSgf);
-        SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
+        SgfHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
     static void assertModelRestoreAndSaveWithExplicitModel(Object key,String expectedSgf) {
@@ -52,18 +52,18 @@ final class SgfModelRoundTripHarness {
         Logging.mainLogger.info("ex: "+expectedSgf);
         String actualSgf=TestIoSupport.restoreAndSave(model,expectedSgf,key.toString());
         actualSgf=SgfNode.options.removeUnwanted(actualSgf);
-        SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
+        SgfHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
     static void assertModelSaveFromMNode(Object key,String expectedSgf,MNode root) {
         Model model=new Model();
         model.setRoot(root);
         String actualSgf=TestIoSupport.save(model,key.toString());
-        SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
+        SgfHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
     static void assertCanonicalRoundTripTwice(Object key,String expectedSgf) {
-        SgfRoundTripHarness.assert5NoLineFeeds(expectedSgf);
+        SgfHarness.assertNoLineFeeds(expectedSgf);
         try {
             String expectedSgf2=restoreAndSavePrepared(expectedSgf);
             String actualSgf=restoreAndSavePrepared(expectedSgf2);
@@ -76,7 +76,7 @@ final class SgfModelRoundTripHarness {
     private static String restoreAndSavePrepared(String sgf) {
         Model model=TestIoSupport.restoreNew(sgf);
         String saved=model.save();
-        return SgfRoundTripHarness.prepare4Actual(saved);
+        return SgfHarness.prepareActual(saved);
     }
 
     private static boolean checkBoardInRoot(Object key,String sgf) {

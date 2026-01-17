@@ -12,12 +12,16 @@ import org.junit.Test;
 import equipment.Board;
 import equipment.Coordinates;
 import equipment.Point;
+import equipment.Stone;
+import model.Model;
 import model.MNodeAcceptor.MakeList;
 import utilities.Iterators.Longs;
 import utilities.TestKeys;
 
-public class SgfStructureTestCase extends AbstractSgfFixtureTestCase implements RedBeanKeyed {
-    @Before public void setUpLabel() throws Exception {
+public class SgfStructureTestCase extends AbstractSgfKeyedTestCase implements RedBeanKeyed {
+    @Before public void setUpFixture() throws Exception {
+        expectedSgf=SgfTestSupport.loadExpectedSgf(key);
+        if(expectedSgf==null) { return; }
         root1=restoreExpectedMNode();
         root2=restoreExpectedMNode();
         MNode.label(root1,new Longs());
@@ -105,6 +109,19 @@ public class SgfStructureTestCase extends AbstractSgfFixtureTestCase implements 
         }
     }
 
+    @Test public void testFinderWithSimple() {
+        SgfNode games=SgfTestSupport.restoreFromKey(TestKeys.simpleWithVariations);
+        SgfTestSupport.assertFinderMatches(games);
+    }
+
+    @Test public void testFinderWith3Moves() {
+        Model model=new Model();
+        model.move(Stone.black,new Point(0,0));
+        model.move(Stone.white,new Point(0,1)); // fails if black - check later
+        model.move(Stone.black,new Point(0,2));
+        SgfTestSupport.assertFinderMatches(model.root().toBinaryTree());
+    }
+
     @Test public void testTwoMovesPath() {
         SgfMovesPath acceptor=new SgfMovesPath();
         restoreAndTraverse(acceptor);
@@ -160,6 +177,12 @@ public class SgfStructureTestCase extends AbstractSgfFixtureTestCase implements 
     private static void assertNotFound(MNode target,MNode root) {
         MNodeFinder finder=MNodeFinder.find(target,root,equalsPredicate);
         assertTrue(finder.ancestors.size()==0);
+    }
+
+    private SgfNode restoreAndTraverse(SgfAcceptor acceptor) {
+        SgfNode games=restoreExpectedSgf();
+        if(games!=null) SgfTestSupport.traverse(acceptor,games);
+        return games;
     }
 
     MNode root1;

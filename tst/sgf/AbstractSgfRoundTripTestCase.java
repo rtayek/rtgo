@@ -4,25 +4,25 @@ import static org.junit.Assert.*;
 import org.junit.*;
 public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTestCase {
     @Override protected String normalizeExpectedSgf(String rawSgf) {
-        return SgfRoundTripHarness.prepareExpectedSgf(key,rawSgf);
+        return SgfHarness.prepareExpectedSgf(key,rawSgf);
     }
     protected static void assertNoLineFeeds(String sgf) {
-        SgfRoundTripHarness.assert5NoLineFeeds(sgf);
+        SgfHarness.assertNoLineFeeds(sgf);
     }
     protected static String prepareSgf(String sgf) {
-        return SgfRoundTripHarness.prepare3Sgf(sgf);
+        return SgfHarness.prepareSgf(sgf);
     }
     private final String prepareActual(String actualSgf) {
-        return SgfRoundTripHarness.prepare4Actual(actualSgf);
+        return SgfHarness.prepareActual(actualSgf);
     }
     protected final void assertPreparedEquals(String preparedSgf) {
-        SgfRoundTripHarness.assert4PreparedEquals(key,expectedSgf,preparedSgf);
+        SgfHarness.assertPreparedEquals(key,expectedSgf,preparedSgf);
     }
     private final void assertPreparedRoundTrip(String actualSgf) {
-        SgfRoundTripHarness.assert6PreparedRoundTrip(key,expectedSgf,actualSgf);
+        SgfHarness.assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
     private final void assertPreparedRoundTripWithParenthesesCheck(String actualSgf,String label) {
-        SgfRoundTripHarness.assert2PreparedRoundTripWithParenthesesCheck(key,expectedSgf,actualSgf,label);
+        SgfHarness.assertPreparedRoundTripWithParenthesesCheck(key,expectedSgf,actualSgf,label);
     }
     private Boolean specialCases(String actualSgf) {
         Boolean ok=false; // no more assertions are needed
@@ -42,10 +42,10 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         return ok;
     }
     @Test public void testSgfSaveAndRestore() throws Exception {
-        SgfRoundTripHarness.assertSgfSaveAndRestore(key,expectedSgf);
+        SgfHarness.assertSgfSaveAndRestore(key,expectedSgf);
     }
     @Test public void testSgfRoundTrip() throws Exception {
-        SgfRoundTripHarness.assertSgfRoundTrip(key,expectedSgf);
+        SgfHarness.assertSgfRoundTrip(key,expectedSgf);
     }
     @Ignore @Test public void testSPreordergfRoundTrip() throws Exception {
         if(expectedSgf==null) return;
@@ -56,9 +56,9 @@ public abstract class AbstractSgfRoundTripTestCase extends AbstractSgfParserTest
         assertPreparedEquals(actualSgf);
     }
     @Test public void testRSgfoundTripeTwice() throws Exception {
-        SgfRoundTripHarness.assertRoundTripTwice(key,expectedSgf);
+        SgfHarness.assertRoundTripTwice(key,expectedSgf);
     }
     @Test public void testSgfCannonical() {
-        SgfRoundTripHarness.assertSgfCannonical(key,expectedSgf);
+        SgfHarness.assertSgfCannonical(key,expectedSgf);
     }
 }

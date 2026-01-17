@@ -29,22 +29,22 @@ import org.junit.runners.Parameterized.Parameters;
     }
 
     @Test public void testKey() {
-        SgfParserHarness.assertKeyPresent(key,expectedSgf);
+        SgfHarness.assertKeyPresent(key,expectedSgf);
     }
 
     @Test public void testParse() {
-        games=SgfParserHarness.assertParse(key,expectedSgf,!rawInput);
+        games=SgfHarness.assertParse(key,expectedSgf,!rawInput);
     }
 
     @Test public void testHexAscii() {
-        SgfParserHarness.assertHexAscii(key,expectedSgf);
+        SgfHarness.assertHexAscii(key,expectedSgf);
     }
 
     @Test public void testFlags() {
-        games=SgfParserHarness.assertFlags(key,expectedSgf,true,!rawInput);
+        games=SgfHarness.assertFlags(key,expectedSgf,true,!rawInput);
     }
 
     @Test public void testFlagsNew() {
-        games=SgfParserHarness.assertFlags(key,expectedSgf,false,!rawInput);
+        games=SgfHarness.assertFlags(key,expectedSgf,false,!rawInput);
     }
 }

@@ -26,7 +26,6 @@ public class OptionsABC implements Persistance { // an instance of options.
         private Enum<?>[] values() { // just for this enum constant.
             // this wants to get the values for this option if it's values are enums.
             // so this is not a T!
-            @SuppressWarnings("unchecked")
             Class<T> clazz=(Class<T>)t.getDeclaringClass();
             // this will not work.
             // we need to get the enums fro the default value?

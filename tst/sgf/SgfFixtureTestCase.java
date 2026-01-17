@@ -3,6 +3,7 @@ package sgf;
 import static org.junit.Assert.*;
 import java.util.Collection;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,9 +12,14 @@ import org.junit.runners.Parameterized.Parameters;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
 
-@RunWith(Parameterized.class) public class SgfFixtureTestCase extends AbstractSgfFixtureTestCase {
+@RunWith(Parameterized.class) public class SgfFixtureTestCase extends AbstractSgfKeyedTestCase {
     @Parameters(name="{0}") public static Collection<Object[]> parameters() {
         return SgfTestSupport.allSgfParameters();
+    }
+
+    @Before public void setUpFixture() throws Exception {
+        expectedSgf=SgfTestSupport.loadExpectedSgf(key);
+        if(expectedSgf==null) { return; }
     }
 
     @Test public void testThatGeneralTreeAlwaysHasRTProperty() {

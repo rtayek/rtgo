@@ -165,16 +165,11 @@
 			<test name="server.PlayGameOnServerTestCase" todir="${junit.output.dir}" />
 			<test name="server.StopWatchTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfParserTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfParserUnitTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfRoundTripTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfMNodeRoundTripTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfModelRoundTripTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfSmokeTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfFixtureTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfFinderUnitTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfMoveApiTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfMappingTestCase" todir="${junit.output.dir}" />
-			<test name="sgf.SgfMiscTestCase" todir="${junit.output.dir}" />
+			<test name="sgf.SgfUnitTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfStructureTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.SgfSlowFilesTestCase" todir="${junit.output.dir}" />
 			<test name="sgf.combine.ParameterizedCombineTestCase" todir="${junit.output.dir}" />

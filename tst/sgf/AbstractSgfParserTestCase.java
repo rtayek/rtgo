@@ -5,10 +5,10 @@ public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase
         return rawSgf;
     }
     private String prepareExpectedSgf(String sgf) {
-        return SgfParserHarness.prepareExpectedSgf(key,sgf);
+        return SgfHarness.prepareExpectedSgf(key,sgf);
     }
     @Override protected SgfNode restoreExpectedSgf() {
-        return SgfParserHarness.restoreExpectedSgf(expectedSgf,key);
+        return SgfHarness.restoreExpectedSgf(expectedSgf,key);
     }
     @Before public void setUp() throws Exception {
         rawSgf=SgfTestSupport.loadExpectedSgf(key);
@@ -16,20 +16,20 @@ public abstract class AbstractSgfParserTestCase extends AbstractSgfKeyedTestCase
         expectedSgf=normalizeExpectedSgf(rawSgf);
     }
     @Test public void testKey() throws Exception {
-        SgfParserHarness.assertKeyPresent(key,expectedSgf);
+        SgfHarness.assertKeyPresent(key,expectedSgf);
         // not currently failing except for one null key.
         // this only happens when all of the model tests are run together.
         //
         // maybe allow as an edge case?
     }
     @Test public void testParse() throws Exception {
-        games=SgfParserHarness.assertParse(key,expectedSgf);
+        games=SgfHarness.assertParse(key,expectedSgf);
     }
     private void assertFlags(boolean oldFlags) {
-        games=SgfParserHarness.assertFlags(key,expectedSgf,oldFlags);
+        games=SgfHarness.assertFlags(key,expectedSgf,oldFlags);
     }
     @Test public void testHexAscii() {
-        SgfParserHarness.assertHexAscii(key,expectedSgf);
+        SgfHarness.assertHexAscii(key,expectedSgf);
     }
     @Test public void testFlags() {
         assertFlags(true);

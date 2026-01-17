@@ -37,7 +37,7 @@ public class MainGui extends JPanel {
     }
     public boolean isApplet() { return applet!=null; }
     public JFrame frame() { return frame; }
-    @SuppressWarnings("deprecation") public JApplet applet() { return applet; }
+    public JApplet applet() { return applet; }
     public static void main(String[] args) { new MainGui(null); }
     public final JFrame frame;
     public final MyJApplet applet;

@@ -14,8 +14,6 @@ AbstractSgfParserTestCase
   +-- AbstractSgfRoundTripTestCase
   |     |
   |     +-- SgfRoundTripTestCase   (@RunWith(Parameterized.class))
-  |     +-- SgfSmokeTestCase       (@RunWith(Parameterized.class))
-  |     +-- SmallerParameterizedRoundTripTestCase (@RunWith(Parameterized.class))
   |
   +-- AbstractModelRoundtripTestCase
         |
@@ -28,19 +26,20 @@ And then a *separate but related* base:
 AbstractMNodeRoundTripTestCase
   |
   +-- SgfMNodeRoundTripTestCase    (@RunWith(Parameterized.class))
-  +-- MultipleGamesTestCase        (@RunWith(Parameterized.class))
   (does not extend AbstractSgfParserTestCase)
 ```
 
 Fixture-focused helpers:
 
 ```
-AbstractSgfFixtureTestCase
-  |
-  +-- SgfFixtureTestCase          (@RunWith(Parameterized.class))
-  +-- SgfFinderUnitTestCase       (non-parameterized)
-  +-- SgfMiscTestCase
-  +-- SgfStructureTestCase
+SgfFixtureTestCase          (@RunWith(Parameterized.class))
+SgfStructureTestCase
+```
+
+General unit tests:
+
+```
+SgfUnitTestCase
 ```
 
 Ignored/slow files:
