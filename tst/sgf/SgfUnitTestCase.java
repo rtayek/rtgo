@@ -174,23 +174,11 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testString() {
-        byte[] expected=testString.getBytes();
-        String encodedBytes=encode(expected);
-        byte[] actual=decode(encodedBytes);
-        boolean ok=Arrays.equals(expected,actual);
-        assertTrue(testString,ok);
-        String newString=new String(actual);
-        assertEquals(testString,testString,newString);
+        assertEncodedStringRoundTrip(testString,false);
     }
 
     @Test public void testStringFast() {
-        byte[] expected=testString.getBytes();
-        String encodedBytes=encodeFast(expected);
-        byte[] actual=decode(encodedBytes);
-        boolean ok=Arrays.equals(expected,actual);
-        assertTrue(testString,ok);
-        String newString=new String(actual);
-        assertEquals(testString,testString,newString);
+        assertEncodedStringRoundTrip(testString,true);
     }
 
     @Test public void testUnknownPropertiesArePreserved() {
@@ -272,14 +260,11 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testResignOutOfOrder() {
-        model.move(new Move2(MoveType.move,Stone.black,new Point()));
-        model.move(Move2.blackPass);
+        model.makeMoves(resignOutOfOrderMoves());
     }
 
     @Test public void testHash() {
-        model.move(new Move2(MoveType.move,Stone.black,new Point()));
-        model.move(Move2.whitePass);
-        model.move(Move2.blackPass);
+        model.makeMoves(resignOutOfOrderMovesWithWhitePass());
         // test for collision problem here
         // how?
     }
@@ -306,9 +291,7 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testgenerateMovesTime() {
-        for(int i=5;i<=19;i++) {
-            assertGeneratedMovesRoundTrip(i,false,true,false);
-        }
+        assertGeneratedMovesRoundTripRange(5,19,false,true,false);
     }
 
     @Test public void testGenerateSomeSillyMoves() { Model.generateSillyMoves(model,2); }
@@ -323,10 +306,8 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testGenerateSillyMovesTime() {
-        for(int i=5;i<=19;i++) {
-            if(i>5) break; // debuging
-            assertGeneratedMovesRoundTrip(i,true,false,true);
-        }
+        // debuging
+        assertGeneratedMovesRoundTripRange(5,5,true,false,true);
     }
 
     @Test public void testReplayMoves() {
@@ -479,14 +460,11 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testRTWithNoMoves() {
-        Model model=new Model();
-        assertRoundTripHasRt(model,false,true);
+        assertRtRoundTrip(false);
     }
 
     @Test public void testRT() {
-        Model model=new Model();
-        model.move(Stone.black,new Point());
-        assertRoundTripHasRt(model,false,true);
+        assertRtRoundTrip(true);
     }
 
     @Ignore @Test public void testCombineSimple() {
@@ -498,16 +476,13 @@ public class SgfUnitTestCase {
     }
 
     @Ignore @Test public void testCombineOldAnnotated() throws Exception {
-        boolean ok=SgfHarness.roundTripTwice(new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf"));
-        if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
+        assertRoundTripTwiceOrThrow(annotatedTestFile());
     }
 
     @Ignore @Test public void testCombineMain() throws Exception {
         Tee.tee(new File(Combine.sgfOutputFilename));
-        boolean ok=SgfHarness.roundTripTwice(new File(Combine.pathToHere,"ff4_ex.sgf"));
-        if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
-        ok=SgfHarness.roundTripTwice(new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf"));
-        if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
+        assertRoundTripTwiceOrThrow(new File(Combine.pathToHere,"ff4_ex.sgf"));
+        assertRoundTripTwiceOrThrow(annotatedTestFile());
         if(!testCombine("test.sgf")) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
     }
 
@@ -579,7 +554,7 @@ public class SgfUnitTestCase {
         sgfNode.sgfProperties=new ArrayList<>();
     }
 
-    @Test public void testRTStructure() {
+    @Test public void testSentinelStructure() {
         MNode mRoot=new MNode(null);
         try {
             mRoot.sgfProperties().add(SgfHarness.property(P.RT,"Tgo root"));
@@ -706,6 +681,11 @@ public class SgfUnitTestCase {
         Model actual=newModelWithRoot(size,ensureBoards);
         assertMovesRoundTrip(model,actual,expectedMoves,ensureBoards);
     }
+    private void assertGeneratedMovesRoundTripRange(int start,int end,boolean silly,boolean ensureBoards,boolean log) {
+        for(int i=start;i<=end;i++) {
+            assertGeneratedMovesRoundTrip(i,silly,ensureBoards,log);
+        }
+    }
 
     private void assertCopyConstructorRoundTrip(String sgf,boolean log) {
         Model model=new Model();
@@ -727,6 +707,11 @@ public class SgfUnitTestCase {
         SgfHarness.restore(model,sgfString);
         hasRT=Model.isSentinel(model.root());
         assertEquals("unexpected RT after round trip",expectedAfter,hasRT);
+    }
+    private void assertRtRoundTrip(boolean withMove) {
+        Model model=new Model();
+        if(withMove) model.move(Stone.black,new Point());
+        assertRoundTripHasRt(model,false,true);
     }
 
     private void assertMoveFlags(P id,boolean expectedMoveType,boolean expectedMove,boolean logChildren) {
@@ -824,6 +809,13 @@ public class SgfUnitTestCase {
         }
         return true;
     }
+    private static File annotatedTestFile() {
+        return new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf");
+    }
+    private void assertRoundTripTwiceOrThrow(File file) throws Exception {
+        boolean ok=SgfHarness.roundTripTwice(file);
+        if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
+    }
 
     private static List<File> loadStrangeFiles() {
         if(!strangeDir.exists()) fail(strangeDir+" does not exits!");
@@ -903,6 +895,15 @@ public class SgfUnitTestCase {
         byte[] actual=decode(s);
         assertEquals(String.valueOf(expected),expected,actual[0]);
     }
+    private void assertEncodedStringRoundTrip(String value,boolean fast) {
+        byte[] expected=value.getBytes();
+        String encodedBytes=fast?encodeFast(expected):encode(expected);
+        byte[] actual=decode(encodedBytes);
+        boolean ok=Arrays.equals(expected,actual);
+        assertTrue(value,ok);
+        String newString=new String(actual);
+        assertEquals(value,value,newString);
+    }
     private String prepareExpectedSgf(Object key) {
         String rawSgf=SgfHarness.loadExpectedSgf(key);
         return SgfHarness.prepareExpectedSgf(key,rawSgf);
@@ -970,6 +971,12 @@ public class SgfUnitTestCase {
     private void logMoves() {
         Logging.mainLogger.info("expected move: "+expectedMove);
         Logging.mainLogger.info("actual move: "+actualMove);
+    }
+    private List<Move2> resignOutOfOrderMoves() {
+        return Arrays.asList(new Move2(MoveType.move,Stone.black,new Point()),Move2.blackPass);
+    }
+    private List<Move2> resignOutOfOrderMovesWithWhitePass() {
+        return Arrays.asList(new Move2(MoveType.move,Stone.black,new Point()),Move2.whitePass,Move2.blackPass);
     }
 
     private final String testString="0123456789abcdefghijklmnopqrstuvwxyz";
