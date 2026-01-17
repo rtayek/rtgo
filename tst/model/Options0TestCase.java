@@ -4,6 +4,26 @@ import java.util.*;
 import org.junit.Test;
 import model.OptionsABC.*;
 public class Options0TestCase {
+    @Test public void testOptionNotNull() { assertNotNull(option); }
+    @Test public void testOptionCurrentValue() {
+        Integer expected=42;
+        assertEquals(expected,option.currentValue());
+    }
+    @Test public void testOptionReset() {
+        Integer expected=42;
+        Integer expected2=43;
+        option.setCurrentValue(expected2);
+        assertEquals(expected2,option.currentValue());
+        option.reset();
+        assertEquals(expected,option.currentValue());
+    }
+    @Test public void testOptionSetCurrentValue() {
+        Integer expected=43;
+        option.setCurrentValue(expected);
+        assertEquals(expected,option.currentValue());
+    }
+    @Test public void testOptionDefaultValue() { assertEquals(option.defaultValue,option.currentValue()); }
+    @Test public void testOptionToString() { String ecxpected="fred=42(42)"; assertEquals(ecxpected,option.toString()); }
     @Test public void testGet() { assertEquals(Frog.fred,option.t); }
     @Test public void testEnums() {
         LinkedHashSet<Enum<?>> expected=new LinkedHashSet<>();
@@ -63,7 +83,7 @@ public class Options0TestCase {
     }
     final Options0 options=new Options0();
     final Frog fred=Frog.fred;
-    final Option<Frog,Letter> option=options.get(fred);
+    final Option<Frog,Integer> option=options.get(fred);
     static final String propertiesFilename="frog.properties";
     // ype safety: The expression of type OptionsABC.Option
     // needs unchecked conversion to conform to OptionsABC.Option<OptionsABC.Frog>

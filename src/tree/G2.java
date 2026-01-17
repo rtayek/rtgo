@@ -3,7 +3,6 @@ import io.Logging;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
-import tree.BinaryTreeSupport;
 import utilities.Iterators.Longs;
 public class G2 {
     /*
@@ -16,51 +15,16 @@ public class G2 {
     first child and the right child as its next sibling.                // is this throwing if there is a variation on the first move in the game?
      */
     public static <T> Node<T> encodeDecode(Node<T> expected) {
-        // add string writer and return the tree
-        ArrayList<T> data=new ArrayList<>();
-        String actualEncoded=Node.encode(expected,data);
-        Node<T> actual=Node.decode(actualEncoded,data);
-        if(data.size()>0) Logging.mainLogger.info("leftoverdata: "+data);
-        return actual;
+        return Node.encodeDecode(expected);
     }
     public static <T> String decodeEncode(String expected,ArrayList<T> data) {
-        ArrayList<T> data0=new ArrayList<>(data);
-        Node<T> decoded=Node.decode(expected,data);
-        ArrayList<T> data2=new ArrayList<>();
-        String actual=Node.encode(decoded,data2);
-        if(data!=null) {
-            if(data.size()>0) {
-                Logging.mainLogger.info("leftover data: "+data);
-                //throw new RuntimeException("data us not epty!");
-            }
-            if(!data0.equals(data2)) {
-                Logging.mainLogger.info("d0 "+data0+"!="+data2);
-                //throw new RuntimeException(data0+"!="+data2);
-            }
-        }
-        return actual;
+        return Node.decodeEncode(expected,data);
     }
     static String roundTripLong(String expected,long number) {
-        List<Boolean> list=Node.bits(number,expected.length());
-        ArrayList<Long> data=new ArrayList<>(sequentialData);
-        // maybe add data as parameter?
-        Node<Long> node2=Node.decode(list,data);
-        String actual=Node.encode(node2,data);
-        return actual;
+        return Node.roundTripLong(expected,number);
     }
     public static String roundTripLong(String expected) {
-        // add string writer and return the tree
-        if(expected.equals("0")) // hack
-            return expected;
-        // do we really need this long stuff?s
-        long number=Long.parseLong(expected,2);
-        return roundTripLong(expected,number);
-    }
-    static class CountingConsumer<T> implements Consumer<Node<T>> {
-        @Override public void accept(Node<T> node) { //
-            if(node!=null) ++n;
-        }
-        int n;
+        return Node.roundTripLong(expected);
     }
     static class MyConsumer<T> implements Consumer<Node<T>> {
         @Override public void accept(Node<T> node) { //
@@ -73,7 +37,7 @@ public class G2 {
         final ArrayList<T> datas=new ArrayList<>();
         Consumer<Node<T>> add=x->datas.add(x!=null?x.data:null);
         // make this check for duplicates!
-        BinaryTreeSupport.preorder(node,x -> x.left,x -> x.right,add);
+        Node.preorder(node,add);
         return datas;
     }
     static <T> void p(Node<T> x) { // instance?
@@ -96,13 +60,13 @@ public class G2 {
         if(tree==null) return;
         Consumer<Node<T>> p=x->Logging.mainLogger.info(x.data+" ");
         Logging.mainLogger.info("preorder:  ");
-        BinaryTreeSupport.preorder(tree,x -> x.left,x -> x.right,p);
+        Node.preorder(tree,p);
         Logging.mainLogger.info("");
         Logging.mainLogger.info("inorder:   ");
-        BinaryTreeSupport.inorder(tree,x -> x.left,x -> x.right,p);
+        Node.inorder(tree,p);
         Logging.mainLogger.info("");
         Logging.mainLogger.info("postorder: ");
-        BinaryTreeSupport.postorder(tree,x -> x.left,x -> x.right,p);
+        Node.postorder(tree,p);
         Logging.mainLogger.info("");
     }
     public static <T> void printStuff(ArrayList<Node<T>> trees) {
@@ -110,7 +74,7 @@ public class G2 {
             Logging.mainLogger.info("tree "+i+": ");
             Node<T> tree=trees.get(i);
             final Consumer<Node<T>> p=x->pd(x);
-            BinaryTreeSupport.preorder(tree,x -> x.left,x -> x.right,p);
+            Node.preorder(tree,p);
             Logging.mainLogger.info("");
         }
     }
@@ -193,7 +157,7 @@ public class G2 {
         Logging.mainLogger.info("to data string: "+stringBuilder);
         String expected=Node.encode(tree,null);
         MyConsumer<Long> c2=new MyConsumer<Long>();
-        BinaryTreeSupport.postorder(tree,x -> x.left,x -> x.right,c2);
+        Node.postorder(tree,c2);
         String actual=Node.encode(c2.copy,null);
         Logging.mainLogger.info("ac: "+actual);
         if(!expected.equals(actual)) Logging.mainLogger.info("copy failure!");
@@ -223,7 +187,7 @@ public class G2 {
             Logging.mainLogger.info("tree "+i+": ");
             Node<Long> tree=some.get(i);
             final Consumer<Node<Long>> p=x1->pd(x1);
-            BinaryTreeSupport.preorder(tree,node -> node.left,node -> node.right,p);
+            Node.preorder(tree,p);
             Logging.mainLogger.info("");
             print(tree,"");
             Logging.mainLogger.info(String.valueOf(pPrint(tree)));
@@ -237,13 +201,5 @@ public class G2 {
         foo(tree);
     }
     // put all here as an instance variable?
-    static List<Long> sequentialData=new ArrayList<>();
-    static final int maxNodes=100;
     static Boolean verbose=false;
-    static {
-        ArrayList<Long> data=new ArrayList<>();
-        for(int i=0;i<maxNodes;++i) data.add((long)i); // start at 1?
-        sequentialData=Collections.unmodifiableList(data);
-        //Logging.mainLogger.info("end static init.");
-    }
 }

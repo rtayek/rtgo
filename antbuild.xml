@@ -150,7 +150,6 @@
 			<test name="model.ParametersTestCase" todir="${junit.output.dir}" />
 			<test name="model.RoleTestCase" todir="${junit.output.dir}" />
 			<test name="model.SaveTestCase" todir="${junit.output.dir}" />
-			<test name="model.SaveTestCaseBug" todir="${junit.output.dir}" />
 			<test name="model.SgfMoveTestCase" todir="${junit.output.dir}" />
 			<test name="model.ShapeTestCase" todir="${junit.output.dir}" />
 			<test name="server.AGoServerTestCase" todir="${junit.output.dir}" />

@@ -52,8 +52,7 @@ public class SgfUnitTestCase {
                 new File(Parser.sgfPath,"variation.sgf")
         );
         for(Object key:keys) {
-            String rawSgf=SgfHarness.loadExpectedSgf(key);
-            String expectedSgf=SgfHarness.prepareExpectedSgf(key,rawSgf);
+            String expectedSgf=prepareExpectedSgf(key);
             SgfHarness.assertSgfSaveAndRestore(key,expectedSgf);
             SgfHarness.assertSgfRoundTrip(key,expectedSgf);
             SgfHarness.assertRoundTripTwice(key,expectedSgf);
@@ -65,8 +64,7 @@ public class SgfUnitTestCase {
     @Test public void testMultipleGamesRoundTrip() {
         for(Object[] params:SgfHarness.multipleGameParameters()) {
             Object key=params[0];
-            String rawSgf=SgfHarness.loadExpectedSgf(key);
-            String expectedSgf=SgfHarness.prepareExpectedSgf(key,rawSgf);
+            String expectedSgf=prepareExpectedSgf(key);
             SgfHarness.assertMNodeRoundTrip(key,expectedSgf,SgfRoundTrip.MNodeSaveMode.standard,true);
             SgfHarness.assertMNodeRoundTrip(key,expectedSgf,SgfRoundTrip.MNodeSaveMode.direct,false);
         }
@@ -75,8 +73,7 @@ public class SgfUnitTestCase {
     @Ignore @Test public void testOgsRoundTripIgnored() {
         Set<Object> objects=new LinkedHashSet<>(Parser.sgfFiles("ogs"));
         for(Object key:objects) {
-            String rawSgf=SgfHarness.loadExpectedSgf(key);
-            String expectedSgf=SgfHarness.prepareExpectedSgf(key,rawSgf);
+            String expectedSgf=prepareExpectedSgf(key);
             SgfHarness.assertRoundTripTwice(key,expectedSgf);
         }
     }
@@ -515,9 +512,7 @@ public class SgfUnitTestCase {
     }
 
     @Ignore @Test public void testKogosJosekiDictionary() throws Exception {
-        boolean oldIgnoreFlags=SgfNode.ignoreMoveAndSetupFlags;
-        SgfNode.ignoreMoveAndSetupFlags=true;
-        try {
+        withIgnoreMoveAndSetupFlags(true,() -> {
             File file=SgfHarness.firstExistingFile(
                     new File(Combine.pathToHere,kogoFilename),
                     new File("sgf",kogoFilename)
@@ -528,15 +523,11 @@ public class SgfUnitTestCase {
             }
             boolean ok=SgfHarness.roundTripTwiceWithLogging(file);
             assertTrue(ok);
-        } finally {
-            SgfNode.ignoreMoveAndSetupFlags=oldIgnoreFlags;
-        }
+        });
     }
 
     @Ignore @Test public void testWierd() throws Exception {
-        boolean oldIgnoreFlags=SgfNode.ignoreMoveAndSetupFlags;
-        SgfNode.ignoreMoveAndSetupFlags=true;
-        try {
+        withIgnoreMoveAndSetupFlags(true,() -> {
             List<File> files=loadStrangeFiles();
             failFast=false;
             for(File file:files) try {
@@ -544,15 +535,11 @@ public class SgfUnitTestCase {
             } catch(Exception e) {
                 parserLogger.warning(this+" caught: "+e);
             }
-        } finally {
-            SgfNode.ignoreMoveAndSetupFlags=oldIgnoreFlags;
-        }
+        });
     }
 
     @Ignore @Test public void testFirstNodeOfWierd() throws Exception {
-        boolean oldIgnoreFlags=SgfNode.ignoreMoveAndSetupFlags;
-        SgfNode.ignoreMoveAndSetupFlags=true;
-        try {
+        withIgnoreMoveAndSetupFlags(true,() -> {
             List<File> files=loadStrangeFiles();
             failFast=false;
             List<SgfNode> all=new ArrayList<>();
@@ -563,9 +550,7 @@ public class SgfUnitTestCase {
                 Logging.mainLogger.info(this+" caught: "+e); //
             }
             parserLogger.warning(all.size()+" games in "+strangeDir);
-        } finally {
-            SgfNode.ignoreMoveAndSetupFlags=oldIgnoreFlags;
-        }
+        });
     }
 
     @Test public void testSgfCoordinates() {
@@ -917,6 +902,22 @@ public class SgfUnitTestCase {
         assertEquals(expectedHex,expectedHex,s);
         byte[] actual=decode(s);
         assertEquals(String.valueOf(expected),expected,actual[0]);
+    }
+    private String prepareExpectedSgf(Object key) {
+        String rawSgf=SgfHarness.loadExpectedSgf(key);
+        return SgfHarness.prepareExpectedSgf(key,rawSgf);
+    }
+    private interface ThrowingRunnable {
+        void run() throws Exception;
+    }
+    private void withIgnoreMoveAndSetupFlags(boolean enabled,ThrowingRunnable action) throws Exception {
+        boolean oldIgnoreFlags=SgfNode.ignoreMoveAndSetupFlags;
+        SgfNode.ignoreMoveAndSetupFlags=enabled;
+        try {
+            action.run();
+        } finally {
+            SgfNode.ignoreMoveAndSetupFlags=oldIgnoreFlags;
+        }
     }
 
     private static SgfNodeMapping mapNode(MNode node,Model model) {

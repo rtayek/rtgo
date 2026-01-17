@@ -4,14 +4,11 @@ import java.util.*;
 import java.util.function.Consumer;
 public class MNode<T> {
     public void preorder(Consumer<MNode<T>> consumer) {
-        if(consumer!=null) consumer.accept(this);
-        for(MNode<T> child:children) if(child!=null) child.preorder(consumer);
-    }
-    public static <T> void preorder(MNode<T> mNode2,Consumer<MNode<T>> consumer) {
-        if(mNode2!=null) mNode2.preorder(consumer);
+        TreeSupport.preorderMway(this,node -> node.children,consumer);
     }
     static <T> void relabel(MNode<T> node,final Iterator<T> i) {
-        TreeSupport.relabel(node,i,(target,data) -> target.data=data,MNode::preorder);
+        TreeSupport.relabel(node,i,(target,data) -> target.data=data,
+                (root,consumer) -> { if(root!=null) root.preorder(consumer); });
     }
     @Override public String toString() { return "MNode2 [data="+data+"]"; }
     public MNode(T data,MNode<T> parent) {
@@ -72,13 +69,10 @@ public class MNode<T> {
     final int id=++ids;
     static int ids;
     static LinkedHashSet<Object> processed=new LinkedHashSet<>();
-    @SuppressWarnings("rawtypes")
-    private static final TreeSupport.ChildrenAccess<MNode> MWAY_CHILDREN=new TreeSupport.ChildrenAccess<MNode>() {
-        @Override public int size(MNode node) { return node.children.size(); }
-        @Override public MNode childAt(MNode node,int index) { return (MNode)node.children.get(index); }
-    };
-    @SuppressWarnings("unchecked")
     private static <T> TreeSupport.ChildrenAccess<MNode<T>> mwayChildren() {
-        return (TreeSupport.ChildrenAccess<MNode<T>>)MWAY_CHILDREN;
+        return new TreeSupport.ChildrenAccess<MNode<T>>() {
+            @Override public int size(MNode<T> node) { return node.children.size(); }
+            @Override public MNode<T> childAt(MNode<T> node,int index) { return node.children.get(index); }
+        };
     }
 }

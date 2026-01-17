@@ -45,12 +45,7 @@ public class MoveTestCase {
     @Test public void testMovesToCurrentState0() throws Exception {
         Model expected=new Model();
         expected.ensureBoard();
-        List<Move2> moves=expected.movesToCurrentState();
-        if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move2.nullMove)) {
-            // remove these tests when the dust settles.
-            Logging.mainLogger.severe("removing null move from move list!");
-            moves.remove(moves.get(0));
-        }
+        List<Move2> moves=stripNullMove(expected.movesToCurrentState());
         Logging.mainLogger.info("");
         Logging.mainLogger.info(String.valueOf(moves));
         Model actual=new Model(); // maybe problems if custom width and depth?
@@ -59,11 +54,7 @@ public class MoveTestCase {
         Logging.mainLogger.info(String.valueOf(expected.board()));
         Logging.mainLogger.info(String.valueOf(actual.board()));
         assertTrue(expected.board().isEqual(actual.board()));
-        List<Move2> actualMoves=actual.movesToCurrentState();
-        if(actualMoves!=null&&actualMoves.size()>0&&actualMoves.get(0).equals(Move2.nullMove)) {
-            Logging.mainLogger.severe("removing null move from move list!");
-            actualMoves.remove(actualMoves.get(0));
-        }
+        List<Move2> actualMoves=stripNullMove(actual.movesToCurrentState());
         assertEquals(moves,actualMoves);
     }
     @Test public void testMovesToCurrentState1() throws Exception {
@@ -100,5 +91,13 @@ public class MoveTestCase {
         Move2 lastMove=model.lastMove2();
         String lastMoveGtp=model.lastMoveGTP();
         Logging.mainLogger.info(lastMove+" "+lastMoveGtp);
+    }
+    private List<Move2> stripNullMove(List<Move2> moves) {
+        if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move2.nullMove)) {
+            // remove these tests when the dust settles.
+            Logging.mainLogger.severe("removing null move from move list!");
+            moves.remove(moves.get(0));
+        }
+        return moves;
     }
 }

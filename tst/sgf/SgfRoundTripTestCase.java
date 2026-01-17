@@ -22,13 +22,11 @@ import model.Model;
     }
 
     @Test public void testSgfSaveAndRestore() throws Exception {
-        if(skipRoundTripTests()) return;
-        SgfHarness.assertSgfSaveAndRestore(key,expectedSgf);
+        runIfRoundTrip(() -> SgfHarness.assertSgfSaveAndRestore(key,expectedSgf));
     }
 
     @Test public void testSgfRoundTrip() throws Exception {
-        if(skipRoundTripTests()) return;
-        SgfHarness.assertSgfRoundTrip(key,expectedSgf);
+        runIfRoundTrip(() -> SgfHarness.assertSgfRoundTrip(key,expectedSgf));
     }
 
     @Ignore @Test public void testSPreordergfRoundTrip() throws Exception {
@@ -42,99 +40,101 @@ import model.Model;
     }
 
     @Test public void testRSgfoundTripeTwice() throws Exception {
-        if(skipRoundTripTests()) return;
-        SgfHarness.assertRoundTripTwice(key,expectedSgf);
+        runIfRoundTrip(() -> SgfHarness.assertRoundTripTwice(key,expectedSgf));
     }
 
-    @Test public void testSgfCannonical() {
-        if(skipRoundTripTests()) return;
-        SgfHarness.assertSgfCannonical(key,expectedSgf);
+    @Test public void testSgfCannonical() throws Exception {
+        runIfRoundTrip(() -> SgfHarness.assertSgfCannonical(key,expectedSgf));
     }
 
     @Test public void testMMNodeRoundTrip() throws Exception {
-        if(skipRoundTripTests()) return;
-        assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode.standard,true);
+        runIfRoundTrip(() -> assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode.standard,true));
     }
 
     @Test public void testMMNodeDirectRoundTrip() throws Exception {
-        if(skipRoundTripTests()) return;
-        assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode.direct,false);
+        runIfRoundTrip(() -> assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode.direct,false));
     }
 
     @Test public void testModelRT0() throws Exception {
-        if(skipRoundTripTests()) return;
-        // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
-        SgfHarness.assertModelRestoreAndSave(key,expectedSgf,true);
+        runIfRoundTrip(() -> {
+            // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
+            SgfHarness.assertModelRestoreAndSave(key,expectedSgf,true);
+        });
     }
 
     @Test public void testModelRT0NewWay() throws Exception {
-        if(skipRoundTripTests()) return;
-        // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
-        SgfHarness.assertModelRestoreAndSave(key,expectedSgf,false);
+        runIfRoundTrip(() -> {
+            // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
+            SgfHarness.assertModelRestoreAndSave(key,expectedSgf,false);
+        });
     }
 
     @Test public void testModelRestoreAndSave() throws Exception {
-        if(skipRoundTripTests()) return;
-        // then it does a restore and a save.
-        // this one looks more complicated than is necessary.
-        //the round trip above could be package if we removed it.
-        SgfHarness.assertSgfRestoreAndSave(key,expectedSgf);
-        // failing probably due to add new root problem
-        SgfHarness.assertModelRestoreAndSaveWithExplicitModel(key,expectedSgf);
+        runIfRoundTrip(() -> {
+            // then it does a restore and a save.
+            // this one looks more complicated than is necessary.
+            //the round trip above could be package if we removed it.
+            SgfHarness.assertSgfRestoreAndSave(key,expectedSgf);
+            // failing probably due to add new root problem
+            SgfHarness.assertModelRestoreAndSaveWithExplicitModel(key,expectedSgf);
+        });
     }
 
     @Test public void testLongRoundTrip() throws Exception {
-        if(skipRoundTripTests()) return;
-        SgfHarness.assertModelRoundTripToString(key,expectedSgf,model.ModelHelper.ModelSaveMode.sgfNode,false);
+        runIfRoundTrip(() -> SgfHarness.assertModelRoundTripToString(key,expectedSgf,
+                model.ModelHelper.ModelSaveMode.sgfNode,false));
     }
 
     @Test public void testModelRestoreAndSave1() throws Exception {
-        if(skipRoundTripTests()) return;
-        MNode root=restoreExpectedMNode();
-        SgfHarness.assertModelSaveFromMNode(key,expectedSgf,root);
+        runIfRoundTrip(() -> {
+            MNode root=restoreExpectedMNode();
+            SgfHarness.assertModelSaveFromMNode(key,expectedSgf,root);
+        });
     }
 
     @Test public void testLongRoundTrip21() throws Exception {
-        if(skipRoundTripTests()) return;
-        SgfHarness.assertModelRoundTripToString(key,expectedSgf,model.ModelHelper.ModelSaveMode.sgfNodeChecked,true);
+        runIfRoundTrip(() -> SgfHarness.assertModelRoundTripToString(key,expectedSgf,
+                model.ModelHelper.ModelSaveMode.sgfNodeChecked,true));
     }
 
-    @Test public void testCannonicalRoundTripTwice() {
-        if(skipRoundTripTests()) return;
-        SgfHarness.assertCanonicalRoundTripTwice(key,expectedSgf);
+    @Test public void testCannonicalRoundTripTwice() throws Exception {
+        runIfRoundTrip(() -> SgfHarness.assertCanonicalRoundTripTwice(key,expectedSgf));
     }
 
-    @Test public void testCheckBoardInRoot() {
-        if(skipRoundTripTests()) return;
-        String sgf=rawSgf!=null?rawSgf:expectedSgf;
-        SgfHarness.assertCheckBoardInRoot(key,sgf);
+    @Test public void testCheckBoardInRoot() throws Exception {
+        runIfRoundTrip(() -> {
+            String sgf=rawSgf!=null?rawSgf:expectedSgf;
+            SgfHarness.assertCheckBoardInRoot(key,sgf);
+        });
     }
 
-    @Test public void testThatGeneralTreeRootIsAentinel() {
-        if(skipRoundTripTests()) return;
-        // this will depend on whether the add new root switch is on.
-        SgfNode games=restoreExpectedSgf();
-        MNode root=MNode.toGeneralTree(games);
-        // this may not be present
-        // check the add new root flag in mnode.
-        if(root!=null) {
-            SgfProperty property=root.sgfProperties().get(0);
-            assertEquals(P.RT,property.p());
-        }
+    @Test public void testThatGeneralTreeRootIsAentinel() throws Exception {
+        runIfRoundTrip(() -> {
+            // this will depend on whether the add new root switch is on.
+            SgfNode games=restoreExpectedSgf();
+            MNode root=MNode.toGeneralTree(games);
+            // this may not be present
+            // check the add new root flag in mnode.
+            if(root!=null) {
+                SgfProperty property=root.sgfProperties().get(0);
+                assertEquals(P.RT,property.p());
+            }
+        });
     }
 
-    @Test public void testSaveMultupleGames() {
-        if(skipRoundTripTests()) return;
-        Model model=SgfHarness.restoreNew(fixtureSgf());
-        boolean hasMultipleGames=model.root().children().size()>1;
-        String sgfString=model.save();
-        boolean containsRTNode=sgfString.contains("RT[Tgo root]");
-        // when games.right!=null ==> multiple games
-        // and we end up with an RT in the sgf!
-        // assertEquals(hasMultipleGames,containsRTNode);
-        // but we do not want the RT node in the sgf!
-        // need to check the add new root switch.
-        // 11/28/22 seems like we are doing this somewhere else.
+    @Test public void testSaveMultupleGames() throws Exception {
+        runIfRoundTrip(() -> {
+            Model model=SgfHarness.restoreNew(fixtureSgf());
+            boolean hasMultipleGames=model.root().children().size()>1;
+            String sgfString=model.save();
+            boolean containsRTNode=sgfString.contains("RT[Tgo root]");
+            // when games.right!=null ==> multiple games
+            // and we end up with an RT in the sgf!
+            // assertEquals(hasMultipleGames,containsRTNode);
+            // but we do not want the RT node in the sgf!
+            // need to check the add new root switch.
+            // 11/28/22 seems like we are doing this somewhere else.
+        });
     }
 
     @Ignore @Test public void testLeastCommonAncester() { // slow, so ignore for now.
@@ -157,16 +157,16 @@ import model.Model;
                 }
     }
 
-    @Test public void testFinder() {
-        if(skipRoundTripTests()) return;
-        SgfHarness.assertFinderMatches(restoreExpectedSgf());
+    @Test public void testFinder() throws Exception {
+        runIfRoundTrip(() -> SgfHarness.assertFinderMatches(restoreExpectedSgf()));
     }
 
-    @Test public void testMultipleGames() { // how does it do that?
-        if(skipRoundTripTests()) return;
-        String actualSgf=SgfHarness.restoreAndSave(fixtureSgf());
-        // assertFalse(expectedSgf.contains(P.RT.toString()));
-        // why would we expect this?
+    @Test public void testMultipleGames() throws Exception { // how does it do that?
+        runIfRoundTrip(() -> {
+            String actualSgf=SgfHarness.restoreAndSave(fixtureSgf());
+            // assertFalse(expectedSgf.contains(P.RT.toString()));
+            // why would we expect this?
+        });
     }
 
     private void assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode saveMode,boolean logExpected) {
@@ -179,6 +179,13 @@ import model.Model;
 
     private boolean skipRoundTripTests() {
         return rawInput||expectedSgf==null;
+    }
+    private interface ThrowingRunnable {
+        void run() throws Exception;
+    }
+    private void runIfRoundTrip(ThrowingRunnable action) throws Exception {
+        if(skipRoundTripTests()) return;
+        action.run();
     }
 }
 

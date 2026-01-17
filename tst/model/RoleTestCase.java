@@ -26,52 +26,22 @@ public class RoleTestCase {
         assertFalse(model.checkAction(Role.observer,What.move));
     }
     @Test public void testPlayBlackWhenRoleIsPlayBlack() {
-        model.setRole(Role.playBlack);
-        boolean ok=model.checkAction(model.role(),What.move);
-        MoveResult moveResult=model.moveAndPlaySound(Stone.black,new Point());
-        assertEquals(MoveResult.legal,moveResult);
-        assertTrue(ok==MoveResult.legal.equals(moveResult));
+        assertRoleMove(Role.playBlack,Stone.black,new Point(),false,MoveResult.legal);
     }
     @Test public void testPlayBlackWhenRoleIsPlayWhite() {
-        model.setRole(Role.playWhite);
-        boolean ok=model.checkAction(model.role(),What.move);
-        MoveResult moveResult=model.moveAndPlaySound(Stone.black,new Point(1,1));
-        assertNotEquals(MoveResult.legal,moveResult);
-        assertEquals(MoveResult.badRole,moveResult);
-        assertTrue(ok==MoveResult.legal.equals(moveResult));
+        assertRoleMove(Role.playWhite,Stone.black,new Point(1,1),false,MoveResult.badRole);
     }
     @Test public void testPlayWhiteWhenRoleIsPlayWhite() {
-        model.move(Stone.black,new Point()); // ensure that it's white's turn.
-        model.setRole(Role.playWhite);
-        boolean ok=model.checkAction(model.role(),What.move);
-        MoveResult moveResult=model.moveAndPlaySound(Stone.white,new Point(1,1));
-        assertEquals(MoveResult.legal,moveResult);
-        assertTrue(ok==MoveResult.legal.equals(moveResult));
+        assertRoleMove(Role.playWhite,Stone.white,new Point(1,1),true,MoveResult.legal);
     }
     @Test public void testPlayWhiteWhenRoleIsPlayBlack() {
-        model.move(Stone.black,new Point()); // ensure that it's white's turn.
-        model.setRole(Role.playBlack);
-        boolean ok=model.checkAction(model.role(),What.move);
-        MoveResult moveResult=model.moveAndPlaySound(Stone.white,new Point(1,1));
-        assertNotEquals(MoveResult.legal,moveResult);
-        assertEquals(MoveResult.badRole,moveResult);
-        assertTrue(ok==MoveResult.legal.equals(moveResult));
+        assertRoleMove(Role.playBlack,Stone.white,new Point(1,1),true,MoveResult.badRole);
     }
     @Test public void testCanNotPlayBlackWhenRoleIsObserver() {
-        model.setRole(Role.observer);
-        boolean ok=model.checkAction(model.role(),What.move);
-        MoveResult moveResult=model.moveAndPlaySound(Stone.black,new Point(1,1));
-        assertNotEquals(MoveResult.legal,moveResult);
-        assertEquals(MoveResult.badRole,moveResult);
-        assertTrue(ok==MoveResult.legal.equals(moveResult));
+        assertRoleMove(Role.observer,Stone.black,new Point(1,1),false,MoveResult.badRole);
     }
     @Test public void testCanNotPlayWhiteWhenRoleIsObserver() {
-        model.setRole(Role.observer);
-        boolean ok=model.checkAction(model.role(),What.move);
-        MoveResult moveResult=model.moveAndPlaySound(Stone.white,new Point(1,1));
-        assertNotEquals(MoveResult.legal,moveResult);
-        assertEquals(MoveResult.badRole,moveResult);
-        assertTrue(ok==MoveResult.legal.equals(moveResult));
+        assertRoleMove(Role.observer,Stone.white,new Point(1,1),false,MoveResult.badRole);
     }
     // from load existing
     // all models had role-anything.
@@ -110,6 +80,14 @@ public class RoleTestCase {
         moveResult=model.move(move);
         assertEquals(MoveResult.occupied,moveResult);
         // should this be allowed if role is anything?
+    }
+    private void assertRoleMove(Role role,Stone stone,Point point,boolean ensureWhiteTurn,MoveResult expected) {
+        if(ensureWhiteTurn) model.move(Stone.black,new Point());
+        model.setRole(role);
+        boolean ok=model.checkAction(model.role(),What.move);
+        MoveResult moveResult=model.moveAndPlaySound(stone,point);
+        assertEquals(expected,moveResult);
+        assertTrue(ok==MoveResult.legal.equals(moveResult));
     }
     final Model model=new Model();
     final Point point=new Point();

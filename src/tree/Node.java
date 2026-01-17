@@ -1,9 +1,7 @@
 package tree;
-import static tree.G2.*;
 import static utilities.Utilities.*;
-import java.util.*;
 import io.Logging;
-import tree.G2.CountingConsumer;
+import java.util.*;
 public class Node<T> {
     public Node(T data) { this.data=data; }
     public Node(T data,Node<T> left,Node<T> right) { this.data=data; this.left=left; this.right=right; }
@@ -14,18 +12,17 @@ public class Node<T> {
         copy.right=(copy(node.right));
         return copy;
     }
-    public static <T,U> Node<U> reLabelCopy_(Node<T> node,Iterator<U> iterator) {
+    private static <T,U> Node<U> relabelCopyInternal(Node<T> node,Iterator<U> iterator) {
         if(node==null) return null;
         U data=iterator!=null&&iterator.hasNext()?iterator.next():null;
         Node<U> copy=new Node<U>(data);
-        copy.left=reLabelCopy_(node.left,iterator);
-        copy.right=reLabelCopy_(node.right,iterator);
+        copy.left=relabelCopyInternal(node.left,iterator);
+        copy.right=relabelCopyInternal(node.right,iterator);
         return copy;
     }
     public static <T,U> Node<U> reLabelCopy(Node<T> node,Iterator<U> iterator) {
         if(node==null) return null;
-        Node<U> copy=reLabelCopy_(node,iterator);
-        return copy;
+        return relabelCopyInternal(node,iterator);
     }
     public static <T> void mirror(Node<T> root) {
         if(root==null) return;
@@ -84,6 +81,42 @@ public class Node<T> {
         List<Character> characters=Arrays.asList(toObjects(binaryString.toCharArray()));
         return decode_(new ArrayList<>(characters),data);
     }
+    public static <T> Node<T> encodeDecode(Node<T> expected) {
+        ArrayList<T> data=new ArrayList<>();
+        String actualEncoded=Node.encode(expected,data);
+        Node<T> actual=Node.decode(actualEncoded,data);
+        if(data.size()>0) Logging.mainLogger.info("leftoverdata: "+data);
+        return actual;
+    }
+    public static <T> String decodeEncode(String expected,ArrayList<T> data) {
+        ArrayList<T> data0=new ArrayList<>(data);
+        Node<T> decoded=Node.decode(expected,data);
+        ArrayList<T> data2=new ArrayList<>();
+        String actual=Node.encode(decoded,data2);
+        if(data!=null) {
+            if(data.size()>0) {
+                Logging.mainLogger.info("leftover data: "+data);
+                //throw new RuntimeException("data us not epty!");
+            }
+            if(!data0.equals(data2)) {
+                Logging.mainLogger.info("d0 "+data0+"!="+data2);
+                //throw new RuntimeException(data0+"!="+data2);
+            }
+        }
+        return actual;
+    }
+    static String roundTripLong(String expected,long number) {
+        List<Boolean> list=Node.bits(number,expected.length());
+        ArrayList<Long> data=new ArrayList<>(SEQUENTIAL_DATA);
+        Node<Long> node2=Node.decode(list,data);
+        String actual=Node.encode(node2,data);
+        return actual;
+    }
+    public static String roundTripLong(String expected) {
+        if(expected.equals("0")) return expected;
+        long number=Long.parseLong(expected,2);
+        return roundTripLong(expected,number);
+    }
     private static <T> Node<T> decode(BitReader bits,List<T> data,boolean setEncoded) {
         if(!bits.hasNext()) return null;
         boolean b=bits.next();
@@ -133,7 +166,7 @@ public class Node<T> {
     }
     public static <T> int count(Node<T> node) {
         CountingConsumer<T> consumer=new CountingConsumer<>();
-        BinaryTreeSupport.postorder(node,x -> x.left,x -> x.right,consumer);
+        postorder(node,consumer);
         return consumer.n;
     }
     public static <T> boolean structureDeepEquals(Node<T> node,Node<T> other) {
@@ -200,23 +233,43 @@ public class Node<T> {
     }
     static <T> void relabel(Node<T> node,final Iterator<T> i) {
         TreeSupport.relabel(node,i,(target,data) -> target.data=data,
-                (root,consumer) -> BinaryTreeSupport.preorder(root,x -> x.left,x -> x.right,consumer));
+                (root,consumer) -> preorder(root,consumer));
+    }
+    public static <T> void preorder(Node<T> node,java.util.function.Consumer<Node<T>> consumer) {
+        BinaryTreeSupport.preorder(node,x -> x.left,x -> x.right,consumer);
+    }
+    public static <T> void inorder(Node<T> node,java.util.function.Consumer<Node<T>> consumer) {
+        BinaryTreeSupport.inorder(node,x -> x.left,x -> x.right,consumer);
+    }
+    public static <T> void postorder(Node<T> node,java.util.function.Consumer<Node<T>> consumer) {
+        BinaryTreeSupport.postorder(node,x -> x.left,x -> x.right,consumer);
     }
     Node<T> left,right;
     public T data;
     String encoded;
     final int id=++ids;
     static int ids;
+    static boolean verbose=false;
     static Set<Object> processed=new LinkedHashSet<>();
+    private static final int MAX_ROUND_TRIP_NODES=100;
+    private static final List<Long> SEQUENTIAL_DATA=buildSequentialData();
+    private static class CountingConsumer<T> implements java.util.function.Consumer<Node<T>> {
+        @Override public void accept(Node<T> node) {
+            if(node!=null) ++n;
+        }
+        int n;
+    }
+    private static List<Long> buildSequentialData() {
+        ArrayList<Long> data=new ArrayList<>();
+        for(int i=0;i<MAX_ROUND_TRIP_NODES;++i) data.add((long)i); // start at 1?
+        return Collections.unmodifiableList(data);
+    }
     public static Set<Object> processed() { return processed; }
     public static void clearProcessed() { TreeSupport.clearProcessed(processed); }
-    @SuppressWarnings("rawtypes")
-    private static final TreeSupport.ChildrenAccess<Node> BINARY_CHILDREN=new TreeSupport.ChildrenAccess<Node>() {
-        @Override public int size(Node node) { return 2; }
-        @Override public Node childAt(Node node,int index) { return index==0?node.left:node.right; }
-    };
-    @SuppressWarnings("unchecked")
     private static <T> TreeSupport.ChildrenAccess<Node<T>> binaryChildren() {
-        return (TreeSupport.ChildrenAccess<Node<T>>)BINARY_CHILDREN;
+        return new TreeSupport.ChildrenAccess<Node<T>>() {
+            @Override public int size(Node<T> node) { return 2; }
+            @Override public Node<T> childAt(Node<T> node,int index) { return index==0?node.left:node.right; }
+        };
     }
 }

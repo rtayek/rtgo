@@ -44,6 +44,13 @@ final class TreeSupport {
             printMwayTree(childList.get(i),indent,i==childList.size()-1,children,data);
         }
     }
+    static <N> void preorderMway(N node,Function<N,List<N>> children,Consumer<N> consumer) {
+        if(node==null) return;
+        if(consumer!=null) consumer.accept(node);
+        List<N> childList=children!=null?children.apply(node):null;
+        if(childList==null) return;
+        for(N child:childList) if(child!=null) preorderMway(child,children,consumer);
+    }
     private static <N> void printBinaryTreeInternal(N node,String prefix,boolean isLeft,Function<N,N> left,
             Function<N,N> right,Function<N,?> data) {
         Logging.mainLogger.info(prefix+(isLeft?"|-- ":"\\-- ")+(node!=null?data.apply(node):"0"));
