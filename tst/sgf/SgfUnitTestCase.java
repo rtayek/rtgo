@@ -100,12 +100,9 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testNoMoves() throws java.io.IOException {
-        assertRoundTrip("new way",false);
+        assertRoundTrip("new way");
     }
 
-    @Test public void testNOneovesTheOldWay() throws java.io.IOException {
-        assertRoundTrip("old way",true);
-    }
 
     @Test public void testContainsQuotedControlCharacters() {
         String key="foo\\nba\r",string=key;
@@ -838,9 +835,9 @@ public class SgfUnitTestCase {
         return actual;
     }
 
-    private void assertRoundTrip(String name,boolean oldWay) throws java.io.IOException {
+    private void assertRoundTrip(String name) throws java.io.IOException {
         Logging.setLevels(Level.INFO);
-        Model m=new Model(name,oldWay);
+        Model m=new Model(name);
         final String actual=dtrt(m);
         assertEquals(sgf,actual);
     }

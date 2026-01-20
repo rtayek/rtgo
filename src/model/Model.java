@@ -117,12 +117,6 @@ public class Model extends Observable { // model of a go game or problem forrest
 		this("");
 	}
 	public Model(String name) {
-		this(name,false);
-	}
-	public Model(String name,boolean useOldWay) {
-		this.useOldWay=useOldWay;
-		// if(name.contains("19")) Logging.mainLogger.severe("frog model has 19
-		// in name.");
 		this.name=name;
 		setRoot();
 	}
@@ -782,10 +776,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		setChangedAndNotify(new Event.Hint(Event.nodeChanged,"do"));
 	}
 	public void do_(MNode node) { // set node and execute the sgf
-		if(useOldWay) Logging.mainLogger.warning("using old way");
-		else Logging.mainLogger.info("using new way");
-		if(useOldWay) executeNode(node);
-		else domain(node);
+		domain(node);
 	}
 	public void push() { // see if we can eliminate copying the board
 		Board copy=board()!=null?board().copy():null;
@@ -1508,7 +1499,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(!color.equals(Stone.black)) {
 			Logging.mainLogger.info("expected black at A1, got "+color);
 		}
-		Model m=new Model("",true);
+		Model m=new Model("");
 		point=Coordinates.fromGtpCoordinateSystem("A1",19);
 		color=m.board().at(point);
 		Logging.mainLogger.info("color at A1: "+color);
@@ -1527,19 +1518,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// normal();
 		Logging.setUpLogging();
 		Logging.setLevels(Level.OFF);
-		Model model=new Model("",true);
+		Model model=new Model("");
 		String sgf=model.save();
-		Logging.mainLogger.info("new way: "+sgf);
-		model=new Model("",false);
-		sgf=model.save();
-		Logging.mainLogger.info("old way: "+sgf);
-		Logging.mainLogger.info("&&&&&&&&&&&&&&&&&&&&&&&");
-		model=new Model("",true);
 		dtrt(model);
-		Logging.mainLogger.info("&&&&&&&&&&&&&&&&&&&&&&&");
-		model=new Model("",false);
-		dtrt(model);
-		Logging.mainLogger.info("&&&&&&&&&&&&&&&&&&&&&&&");
 	}
 	public int verbosity;
 	// move stuff like type, shape, and band to parameter
@@ -1591,5 +1572,4 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public final long id=++ids;
 	public boolean stopWaiting;
 	static long ids;
-	public boolean useOldWay;
 }

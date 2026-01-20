@@ -55,17 +55,10 @@ import model.Model;
         runIfRoundTrip(() -> assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode.direct,false));
     }
 
-    @Test public void testModelRT0() throws Exception {
-        runIfRoundTrip(() -> {
-            // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
-            SgfHarness.assertModelRestoreAndSave(key,expectedSgf,true);
-        });
-    }
-
     @Test public void testModelRT0NewWay() throws Exception {
         runIfRoundTrip(() -> {
             // fails with (;RT[Tgo root];FF[4]C[root](;C[a];C[b](;C[c])(;C[d];C[e]))(;C[f](;C[g];C[h];C[i])(;C[j])))
-            SgfHarness.assertModelRestoreAndSave(key,expectedSgf,false);
+            SgfHarness.assertModelRestoreAndSave(key,expectedSgf);
         });
     }
 

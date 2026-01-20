@@ -314,8 +314,8 @@ public final class SgfHarness {
     }
 
     // Model round-trip support
-    static void assertModelRestoreAndSave(Object key,String expectedSgf,boolean oldWay) {
-        Model model=new Model("",oldWay);
+    static void assertModelRestoreAndSave(Object key,String expectedSgf) {
+        Model model=new Model("");
         assertModelRestoreAndSave(key,expectedSgf,model);
     }
 
