@@ -15,9 +15,10 @@ public class LoadExistinGameTestCase extends GameTestSupport {
     // how do we let one person drive this?
     @Override @Before public void setUp() throws Exception {
         setServerPort(IOs.noPort);
+        startGameThreadInSetUp = false;
         super.setUp();
-        black=game.blackFixture.backEnd.model;
-        white=game.whiteFixture.backEnd.model;
+        black = game.blackFixture.backEnd.model;
+        white = game.whiteFixture.backEnd.model;
     }
     @Ignore @Test public void testInit() throws InterruptedException { game.startGameThread(); game.checkStatus(); }
     // ignoring just to clean up th eoutput
@@ -26,7 +27,7 @@ public class LoadExistinGameTestCase extends GameTestSupport {
         game.startPlayerBackends();
         Game.loadExistinGame(file,recorder,game);
         assertTrue(game.areBoardsEqual());
-        game.startGameThread();
+        startGameThreadNow();
         Logging.mainLogger.info(recorder.role()+" "+black.role()+" "+white.role());
     }
     @Test public void testLoadGame() throws InterruptedException { restoreGame(); }

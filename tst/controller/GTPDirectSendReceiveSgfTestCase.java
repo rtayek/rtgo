@@ -11,7 +11,7 @@ import sgf.*;
 import utilities.*;
 // this may belong in the sgf package.
 // this tests the custom gtp commands to send and receive sgf strings.
-@RunWith(Parameterized.class) public class GTPDirectSendReceiveSgfTestCase {
+@RunWith(Parameterized.class) public class GTPDirectSendReceiveSgfTestCase extends ControllerGtpTestSupport {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         expectedSgf=getSgfData(key);
@@ -30,9 +30,7 @@ import utilities.*;
         original=new Model();
         SgfHarness.restore(original,expectedSgf);
         String sendCommand=Command.tgo_send_sgf.name();
-        GTPBackEnd gtpBackEnd=new GTPBackEnd(sendCommand,original);
-        gtpBackEnd.useHexAscii=useHexAscii;
-        String string=gtpBackEnd.runCommands(true);
+        String string=runGtpCommandString(original,sendCommand);
         Response response=Response.response(string);
         String actualSgf=response.response;
         if(actualSgf.endsWith("\n\n")) actualSgf=actualSgf.substring(0,actualSgf.length()-2);
@@ -55,9 +53,7 @@ import utilities.*;
     String sendSgfToModel(String expectedSgf,Model model) {
         if(useHexAscii) expectedSgf=HexAscii.encode(expectedSgf.getBytes());
         String fromCommand=Command.tgo_receive_sgf.name()+" "+expectedSgf;
-        GTPBackEnd gtpBackEnd=new GTPBackEnd(fromCommand,model);
-        gtpBackEnd.useHexAscii=useHexAscii;
-        String string=gtpBackEnd.runCommands(true);
+        String string=runGtpCommandString(model,fromCommand);
         //String string=GTPBackEnd.runCommands(fromCommand,model,true);
         // see if this can be done without supplying the model like the real world.
         Response response=Response.response(string);
@@ -83,7 +79,6 @@ import utilities.*;
         System.out.println("actualSgf:\n"+actualSgf);	
         assertEquals(key.toString().toString(),expectedSgf,actualSgf);
     }
-    boolean useHexAscii=true;
     final Object key;
     String expectedSgf;
     Model original;

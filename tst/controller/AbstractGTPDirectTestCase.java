@@ -15,7 +15,7 @@ import utilities.MyTestWatcher;
 //@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 // some of these need to be done directly in the model.
 // as well as b the bac end when we have role=something!
-public abstract class AbstractGTPDirectTestCase {
+public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // these create a back end with a buffered string reader passed to it.
     // the string reader has the command(s).
@@ -39,18 +39,18 @@ public abstract class AbstractGTPDirectTestCase {
     // almost all of these make a new gtp backen for each command.
     // except maybe for the one's that take a list of commands.
     @Test public void testGtpOneEmptyCommand() throws Exception {
-        String actual=new GTPBackEnd("",directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, "", directJustRun);
         assertTrue(actual.equals(""));
         Response response=Response.response(actual);
         //assertTrue(response.isOk()); // this is failing
     }
     @Test public void testGtpSomeEmptyCommands() throws Exception {
         // bad, engine should not return anything :(
-        String actual=new GTPBackEnd("",directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, "", directJustRun);
         assertTrue(actual.equals(""));
-        actual=new GTPBackEnd("\n",directModel).runCommands(directJustRun);
+        actual=runGtpCommandString(directModel, "\n", directJustRun);
         assertTrue(actual.equals(""));
-        actual=new GTPBackEnd(twoLineFeeds,directModel).runCommands(directJustRun);
+        actual=runGtpCommandString(directModel, twoLineFeeds, directJustRun);
         assertTrue(actual.equals(""));
     }
     @Test public void testGtpSplit() throws Exception {
@@ -60,42 +60,42 @@ public abstract class AbstractGTPDirectTestCase {
         Logging.mainLogger.info(""+Arrays.asList(s));
     }
     @Test public void testGtpEmptyCommand2() throws Exception {
-        String actual=new GTPBackEnd("  \t \r \f \r\n",directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, "  \t \r \f \r\n", directJustRun);
         assertEquals("",actual);
     }
     @Test public void testGtpLineFeeds() throws Exception {
-        String actual=new GTPBackEnd(Command.name.name(),directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, Command.name.name(), directJustRun);
         assertTrue(actual.startsWith(""+okCharacter));
-        actual=new GTPBackEnd(Command.name.name()+'\n',directModel).runCommands(directJustRun);
+        actual=runGtpCommandString(directModel, Command.name.name()+'\n', directJustRun);
         assertTrue(actual.startsWith(""+okCharacter));
-        actual=new GTPBackEnd(Command.name.name()+twoLineFeeds,directModel).runCommands(directJustRun);
+        actual=runGtpCommandString(directModel, Command.name.name()+twoLineFeeds, directJustRun);
         assertTrue(actual.startsWith(""+okCharacter));
     }
     @Test public void testGtpCreate() throws Exception {}
     @Test public void testGtpProtocolVersion() throws Exception {
-        String actual=new GTPBackEnd(Command.protocol_version.name(),directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, Command.protocol_version.name(), directJustRun);
         assertEquals(okString+protocolVersionString+twoLineFeeds,actual);
     }
     @Test public void testGtpName() throws Exception {
-        String response=new GTPBackEnd(Command.name.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.name.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testHtpNameCommandWithIdentityNumber() throws Exception {
         Integer id=123;
         Command command=Command.name;
-        String response=new GTPBackEnd(""+id+" "+command.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, ""+id+" "+command.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
         assertEquals(id,actual.id);
     }
     @Test public void testGtpQuit() throws Exception {
-        String response=new GTPBackEnd(Command.quit.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.quit.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testGtpListCommands() throws Exception {
-        String response=new GTPBackEnd("list_commands",directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, "list_commands", directJustRun);
         // why isn't this a command?
         Response actual=Response.response(response); // why not in command?
         Command[] values=Command.values();
@@ -110,20 +110,20 @@ public abstract class AbstractGTPDirectTestCase {
         else assertTrue(actual.response.endsWith(command.name()));
     }
     @Test public void testGypUnknownCommand() throws Exception {
-        String response=new GTPBackEnd("some-unknown-command",directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, "some-unknown-command", directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isBad());
         assertTrue(actual.response.startsWith(GTPBackEnd.unknownCommandMessage));
     }
     @Test public void testGtpUnknownCommandWithIdNumber() throws Exception {
-        String response=new GTPBackEnd(256+" "+"some-unknown-command",directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, 256+" "+"some-unknown-command", directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isBad());
         assertTrue(actual.response.startsWith(GTPBackEnd.unknownCommandMessage));
     }
     @Test public void testGtpKnownCommandQuit() throws Exception {
         Command command=Command.known_command;
-        String response=new GTPBackEnd(command.name()+" "+Command.quit,directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, command.name()+" "+Command.quit, directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
         if(Response.checkForTwoLineFeeds(actual.response)) {
@@ -134,7 +134,7 @@ public abstract class AbstractGTPDirectTestCase {
     }
     @Test public void testGtpKnownCommandWithMissingArgument() throws Exception {
         Command command=Command.known_command;
-        String response=new GTPBackEnd(command.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, command.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isBad());
         if(Response.checkForTwoLineFeeds(actual.response)) {
@@ -145,13 +145,13 @@ public abstract class AbstractGTPDirectTestCase {
     }
     @Test public void testGtpBoardsize0() throws Exception {
         Command command=Command.boardsize;
-        String response=new GTPBackEnd(command.name()+" "+"0",directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, command.name()+" "+"0", directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isBad());
     }
     void checkModelBoardSize(int n) {
         Command command=Command.boardsize;
-        String response=new GTPBackEnd(command.name()+" "+n,directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, command.name()+" "+n, directJustRun);
         Response actual=Response.response(response);
         if(!actual.isOk()) Logging.mainLogger.info(String.valueOf(response));
         assertTrue(actual.isOk());
@@ -172,24 +172,24 @@ public abstract class AbstractGTPDirectTestCase {
     //@Test public void testBoardsize37() throws Exception { checkModelBoardSize(37); }
     @Test public void testSGtptandardBoardsize() throws Exception {
         Command command=Command.boardsize;
-        String response=new GTPBackEnd(command.name()+" "+Board.standard,directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, command.name()+" "+Board.standard, directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testGtpClearBoard() throws Exception {
-        String response=new GTPBackEnd(Command.clear_board.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.clear_board.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
         Logging.mainLogger.info("'"+actual.response+"'");
     }
     @Test public void testGtpKomi() throws Exception {
         Command command=Command.komi;
-        String response=new GTPBackEnd(command.name()+" 1234.5678",directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, command.name()+" 1234.5678", directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testGtpKomiWithSyntaxError() throws Exception {
-        String response=new GTPBackEnd(Command.komi.name()+" foo",directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.komi.name()+" foo", directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isBad());
         if(Response.checkForTwoLineFeeds(actual.response)) {
@@ -203,7 +203,7 @@ public abstract class AbstractGTPDirectTestCase {
         Point point=new Point(0,0);
         directModel.ensureBoard();
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
-        String response=new GTPBackEnd(Command.play.name()+" Black "+noI,directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.play.name()+" Black "+noI, directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
         assertEquals(Stone.black,directModel.board().at(point));
@@ -212,7 +212,7 @@ public abstract class AbstractGTPDirectTestCase {
         // look at sgf stuff. combine maybe
     }
     @Test public void testGtpPlayBlackA1() throws Exception {
-        String response=new GTPBackEnd("play black A1",directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, "play black A1", directJustRun);
         Response actual=Response.response(response);
         Logging.mainLogger.info(String.valueOf(response));
         assertTrue(actual.isOk());
@@ -223,7 +223,7 @@ public abstract class AbstractGTPDirectTestCase {
     }
     @Test public void testGtpPassWithClearBoard() throws Exception {
         String commands=""+Command.clear_board+'\n'+Command.play.name()+" "+Move2.blackPass.nameWithColor()+"\n";
-        String response=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, commands, directJustRun);
         // this has 2 commands
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
@@ -231,21 +231,20 @@ public abstract class AbstractGTPDirectTestCase {
     }
     @Test public void testGtpPass() throws Exception {
         String command=Command.play.name()+" "+Move2.blackPass.nameWithColor();
-        String response=new GTPBackEnd(command,directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, command, directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
         assertEquals(Move2.blackPass,directModel.lastMove2());
     }
     @Test public void testGtpResign2() throws Exception {
-        String response=new GTPBackEnd(Command.play.name()+" "+Move2.blackResign.nameWithColor(),directModel)
-                .runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.play.name()+" "+Move2.blackResign.nameWithColor(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
         Move2 lastMove=directModel.lastMove2();
         assertEquals(Move2.blackResign,lastMove);
     }
     @Test public void testPlayOffTheBoard() throws Exception {
-        String actual=new GTPBackEnd(Command.play.name()+" Black Z101",directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, Command.play.name()+" Black Z101", directJustRun);
         assertEquals(badString+Failure.illegal_move.toString2()+twoLineFeeds,actual);
     }
     @Test public void testPlayIllegalMove() throws Exception {
@@ -255,7 +254,7 @@ public abstract class AbstractGTPDirectTestCase {
         Logging.mainLogger.info("noI: "+noI);
         String commands=Command.play.name()+" Black "+noI+'\n'+Command.play.name()+" White A1"+'\n';
         // this has 2 commands
-        String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, commands, directJustRun);
         Response[] responses=Response.responses(actual);
         Logging.mainLogger.info(responses.length+" responses.");
         Logging.mainLogger.info(""+responses);
@@ -263,10 +262,10 @@ public abstract class AbstractGTPDirectTestCase {
         assertTrue(responses[1].isBad());
         assertTrue(responses[1].response.contains(Failure.illegal_move.toString2()));
     }
-    public static Response[] playTwoMovesOnTheSamePoint(boolean justRun) throws Exception {
+    public Response[] playTwoMovesOnTheSamePoint(boolean justRun) throws Exception {
         Model model=new Model("model"); // make sure it's the same one chekString uses.
         String commands=Command.play.name()+" Black A1"+"\n"+Command.play.name()+" White A1"+"\n";
-        String actual=new GTPBackEnd(commands,model).runCommands(justRun);
+        String actual=runGtpCommandString(model, commands, justRun);
         Response[] responses=Response.responses(actual);
         Logging.mainLogger.info(responses.length+" responses.");
         Logging.mainLogger.info(""+responses);
@@ -279,11 +278,11 @@ public abstract class AbstractGTPDirectTestCase {
         assertTrue(responses[1].isBad());
         assertTrue(responses[1].response.contains(Failure.illegal_move.toString2()));
     }
-    public static Response[] send(String[] commands,boolean directJustRun) {
+    public Response[] send(String[] commands,boolean directJustRun) {
         final Model directModel=new Model("model");
         StringBuffer stringBuffer=new StringBuffer();
         for(String string:commands) stringBuffer.append(string).append('\n');
-        String actual=new GTPBackEnd(stringBuffer.toString(),directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, stringBuffer.toString(), directJustRun);
         Response[] responses=Response.responses(actual);
         return responses;
     }
@@ -306,7 +305,7 @@ public abstract class AbstractGTPDirectTestCase {
             assertTrue(responses[1].isBad());
         } else {
             String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
-            String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
+            String actual=runGtpCommandString(directModel, commands, directJustRun);
             // was there some reason i needed access to the model?
             Response[] responses=Response.responses(actual);
             Logging.mainLogger.info(responses.length+" responses.");
@@ -318,7 +317,7 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testBlackPlayTwoMovesInARowDiect() throws Exception {
         // this should be allowed?
         String commands=Command.play.name()+" Black "+"A1"+'\n'+Command.play.name()+" Black A2"+'\n';
-        String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, commands, directJustRun);
         Response[] responses=Response.responses(actual);
         Logging.mainLogger.info(responses.length+" responses.");
         Logging.mainLogger.info(""+responses);
@@ -331,34 +330,34 @@ public abstract class AbstractGTPDirectTestCase {
         String noI=Coordinates.toGtpCoordinateSystem(point,directModel.board().width(),directModel.board().depth());
         String commands=Command.play.name()+" Black "+noI+'\n'+Command.undo.name()+"\n";
         // i may have to roll up a new model?
-        String actual=new GTPBackEnd(commands,directModel).runCommands(directJustRun);
+        String actual=runGtpCommandString(directModel, commands, directJustRun);
         assertTrue(actual.startsWith(""+okCharacter));
         assertEquals(Stone.vacant,directModel.board().at(point));
     }
     @Test public void testTgo_stop() throws Exception {
-        String response=new GTPBackEnd(Command.tgo_stop.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.tgo_stop.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testTgo_stopWithCheckString() throws Exception {
         Model model=new Model("model"); // why a new model?
-        String actual=new GTPBackEnd(Command.tgo_stop.name(),model).runCommands(directJustRun);
+        String actual=runGtpCommandString(model, Command.tgo_stop.name(), directJustRun);
         //String actual=runCommands(Command.tgo_stop.name(),model,directJustRun);
         assertTrue(actual.startsWith("= true"));
         // maybe this should be contains? if we have id's?
     }
     @Test public void testTgo_Black() throws Exception {
-        String response=new GTPBackEnd(Command.tgo_black.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.tgo_black.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testTgo_White() throws Exception {
-        String response=new GTPBackEnd(Command.tgo_white.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.tgo_white.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testToSGFCommand() throws Exception {
-        String response=new GTPBackEnd(Command.tgo_send_sgf.name(),directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.tgo_send_sgf.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
@@ -366,22 +365,21 @@ public abstract class AbstractGTPDirectTestCase {
     @Test public void testFromSGFCommand() throws Exception {
         String sgf="(;)";
         if(useHexAscii) sgf=HexAscii.encode(sgf);
-        String response=new GTPBackEnd(Command.tgo_receive_sgf.name()+' '+sgf,directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.tgo_receive_sgf.name()+' '+sgf, directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testFromSGFCommand2() throws Exception {
         String sgf="(;)(;)";
         if(useHexAscii) sgf=HexAscii.encode(sgf);
-        String response=new GTPBackEnd(Command.tgo_receive_sgf.name()+' '+sgf,directModel).runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.tgo_receive_sgf.name()+' '+sgf, directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
     }
     @Test public void testFromSGFCommandFoo() throws Exception {
         // need to encode sgf into hex ascii if backend expects it.
         // like: if(useHexAscii) { sgfString=encode(sgfString);
-        String response=new GTPBackEnd(Command.tgo_receive_sgf.name()+" not sgf",directModel)
-                .runCommands(directJustRun);
+        String response=runGtpCommandString(directModel, Command.tgo_receive_sgf.name()+" not sgf", directJustRun);
         Response actual=Response.response(response);
         assertFalse(actual.isOk());
     }
@@ -395,7 +393,9 @@ public abstract class AbstractGTPDirectTestCase {
     Set<Thread> initialThreads;
     int ids;
     final Model directModel=new Model("model");
-    boolean useHexAscii=true;
+    @Override protected Model createModel() {
+        return directModel;
+    }
     static EnumSet<Command> skipped=EnumSet.of(Command.genmove);
     // genmove hangs. figure out a workaround!
 }

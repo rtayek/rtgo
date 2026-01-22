@@ -12,7 +12,7 @@ import model.*;
 import model.ModelHelper2;
 import sgf.SgfHarness;
 import utilities.MyTestWatcher;
-public class GTPShoveTestCase {
+public class GTPShoveTestCase extends ControllerGtpTestSupport {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // how to shove all variations?
     // maybe just invent loadSGF command and send it!
@@ -77,7 +77,7 @@ public class GTPShoveTestCase {
             actual.setBoard(board);
             // probably need to set other stuff like shape etc.
         }
-        Response[] responses=GTPBackEnd.runCommands(gtpMoves,actual,justRun);
+        Response[] responses=runGtpCommands(actual,gtpMoves);
         for(Response response:responses) assertTrue(response.isOk());
         Logging.mainLogger.info(String.valueOf(expected));
         Logging.mainLogger.info(String.valueOf(actual));
@@ -109,6 +109,5 @@ public class GTPShoveTestCase {
     }
     Model expected=new Model("model");
     GameFixture game;
-    boolean justRun=true;
 }
 

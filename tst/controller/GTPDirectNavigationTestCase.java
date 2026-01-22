@@ -3,10 +3,9 @@ import static org.junit.Assert.*;
 import java.util.*;
 import org.junit.*;
 import equipment.*;
-import model.Model;
 import utilities.MyTestWatcher;
 // where does test for delete belong?
-public class GTPDirectNavigationTestCase {
+public class GTPDirectNavigationTestCase extends ControllerGtpTestSupport {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // maybe add tests that fail if trying to navigate somewhere that does not exist.
     @Before public void setUp() throws Exception {}
@@ -15,7 +14,7 @@ public class GTPDirectNavigationTestCase {
     @Test public void testUp() throws Exception {
         ArrayList<String> strings=new ArrayList<>(startGameAndPlayOneMoveAtA1);
         strings.add(Command.tgo_up.name().toString());
-        Response[] responses=GTPBackEnd.runCommands(strings,model,true);
+        Response[] responses=runGtpCommands(strings);
         for(int i=0;i<responses.length;i++) assertTrue(responses[i].isOk());
         assertEquals("true",responses[responses.length-1].response);
         assertEquals(Stone.vacant,model.board().at(new Point(0,0)));
@@ -24,7 +23,7 @@ public class GTPDirectNavigationTestCase {
         ArrayList<String> strings=new ArrayList<>(startGameAndPlayOneMoveAtA1);
         strings.add(Command.tgo_up.name().toString());
         strings.add(Command.tgo_down.name().toString());
-        Response[] responses=GTPBackEnd.runCommands(strings,model,true);
+        Response[] responses=runGtpCommands(strings);
         for(int i=0;i<responses.length;i++) assertTrue(responses[i].isOk());
         assertEquals(Stone.black,model.board().at(new Point(0,0)));
     }
@@ -33,7 +32,7 @@ public class GTPDirectNavigationTestCase {
         strings.add(Command.tgo_up.name().toString());
         strings.add(Command.play.name().toString()+" black A2");
         strings.add(Command.tgo_left.name().toString()); // back to main line
-        Response[] responses=GTPBackEnd.runCommands(strings,model,true);
+        Response[] responses=runGtpCommands(strings);
         for(int i=0;i<responses.length;i++) assertTrue(responses[i].isOk());
         assertEquals("true",responses[responses.length-1].response);
         assertEquals(Stone.black,model.board().at(new Point(0,0)));
@@ -44,7 +43,7 @@ public class GTPDirectNavigationTestCase {
         strings.add(Command.play.name().toString()+" black A2");
         strings.add(Command.tgo_left.name().toString()); // back to main line
         strings.add(Command.tgo_right.name().toString()); // variation
-        Response[] responses=GTPBackEnd.runCommands(strings,model,true);
+        Response[] responses=runGtpCommands(strings);
         for(int i=0;i<responses.length;i++) assertTrue(responses[i].isOk());
         assertEquals("true",responses[responses.length-1].response);
         assertEquals(Stone.black,model.board().at(new Point(0,1)));
@@ -55,5 +54,4 @@ public class GTPDirectNavigationTestCase {
         startGameAndPlayOneMoveAtA1.add(Command.clear_board.name());
         startGameAndPlayOneMoveAtA1.add(Command.play.name()+" black A1");
     }
-    Model model=new Model("model");
 }
