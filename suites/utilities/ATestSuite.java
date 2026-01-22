@@ -6,9 +6,11 @@ import org.junit.internal.TextListener;
 import org.junit.runner.*;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import utilities.SuiteSupport;
 import utilities.ATestSuite.*;
-@RunWith(Suite.class) @SuiteClasses({A1TestCase.class,A2TestCase.class,}) public class ATestSuite {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());;
+@RunWith(Suite.class)
+@SuiteClasses({A1TestCase.class,A2TestCase.class,})
+public class ATestSuite extends SuiteSupport {
     public static class A1TestCase {
         @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
                 @Test public void test1() { assertTrue(true); }

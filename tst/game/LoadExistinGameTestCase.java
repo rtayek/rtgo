@@ -3,23 +3,22 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.util.logging.Level;
 import org.junit.*;
-import controller.GameFixture;
 import equipment.*;
 import io.*;
 import io.IOs;
 import model.*;
 import model.Model.*;
 import model.Move2.MoveType;
-public class LoadExistinGameTestCase {
+public class LoadExistinGameTestCase extends GameTestSupport {
     // how do we go to a particular position?
     // use finder and goto node
     // how do we let one person drive this?
-    @Before public void setUp() throws Exception {
-        game=Game.setUpStandaloneLocalGame(IOs.noPort);
+    @Override @Before public void setUp() throws Exception {
+        setServerPort(IOs.noPort);
+        super.setUp();
         black=game.blackFixture.backEnd.model;
         white=game.whiteFixture.backEnd.model;
     }
-    @After public void tearDown() throws Exception { game.stop(); }
     @Ignore @Test public void testInit() throws InterruptedException { game.startGameThread(); game.checkStatus(); }
     // ignoring just to clean up th eoutput
     void restoreGame() {
@@ -53,7 +52,6 @@ public class LoadExistinGameTestCase {
     Point point=new Point(3,3);
     Move2 move;
     MoveResult moveResult;
-    GameFixture game;
     Model recorder=new Model(),black,white;
     File file=new File("data/wasinroot/existing9x9Game.sgf");
 }

@@ -20,7 +20,7 @@ import io.Init;
 // lets try and move this to tst/utilities/
 // https://www.baeldung.com/junit-tests-run-programmatically-from-java
 // maybe try some repeated tests for fixing timeout problems
-@RunWith(MyAllTests.AllTestsRunner.class) public final class MyAllTests {
+@RunWith(MyAllTests.AllTestsRunner.class) public final class MyAllTests extends SuiteSupport {
     //@BeforeClass public static void setUpClass() { System.out.println("set up suite class"); }
     //@AfterClass public static void tearDownClass() { System.out.println("tear down suite class"); godwrapupTests(); }
     private MyAllTests() {}

@@ -22,7 +22,7 @@ repositories { mavenCentral() }
    test {
       java {
         srcDirs = ["tst", "slow", "suites"]
-        exclude "server/**"   //  just one seems to work for all!
+        //exclude "server/**"   //  just one seems to work for all!
         //exclude "server/**"  
         //exclude "slow/server/ParameterizedTestCase.java"
       }
