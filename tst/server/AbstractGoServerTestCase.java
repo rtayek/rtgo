@@ -79,4 +79,12 @@ public abstract class AbstractGoServerTestCase {
     public int width,depth;
     public GameFixture game;
     Watchdog watchdog;
+
+    protected final void playMoves(Move2... moves) throws Exception {
+        for(Move2 move:moves) {
+            BothEnds from=move.color.equals(Stone.black)?game.blackFixture:game.whiteFixture;
+            BothEnds to=from==game.blackFixture?game.whiteFixture:game.blackFixture;
+            game.playOneMoveAndWait(from,to,move);
+        }
+    }
 }

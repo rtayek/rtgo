@@ -6,7 +6,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import utilities.*;
-@RunWith(Parameterized.class) public class ParameterizedTestCase extends GoServerTestCase {
+// was excluded some time ago.
+// some of the test cases do not exist in this project but do exist in earlier versions.
+/*@RunWith(Parameterized.class) public class ParameterizedTestCase extends GoServerTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Override @Before public void setUp() throws Exception {
         super.setUp();
@@ -21,3 +23,4 @@ import utilities.*;
     static Integer previous=-1;
     static final int n=1000; // 1000 fails a lot around 685
 }
+*/
