@@ -3,9 +3,8 @@ import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import io.IOs;
-import utilities.MyTestWatcher;
-public class BoundTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class BoundTestCase extends TestSupport {
     @Test public void testLogicForAlreadyBoundSocket() throws Exception {
         GoServer goServer=GoServer.startServer(IOs.testPort);
         assertTrue(goServer.serverSocket.isBound());

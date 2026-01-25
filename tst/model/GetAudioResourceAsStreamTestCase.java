@@ -1,12 +1,10 @@
 package model;
 import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
-import org.junit.Rule;
 import org.junit.Test;
 import audio.Audio;
-import utilities.MyTestWatcher;
-public class GetAudioResourceAsStreamTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class GetAudioResourceAsStreamTestCase extends TestSupport {
     @Test public void testFilename() { inputStream=clazz.getResourceAsStream(filename); assertNotNull(inputStream); }
     @Test public void testAbsolutePath() {
         inputStream=clazz.getResourceAsStream("/audio/"+filename);

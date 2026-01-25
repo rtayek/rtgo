@@ -1,5 +1,4 @@
 package server;
-import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

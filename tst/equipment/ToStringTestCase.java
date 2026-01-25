@@ -2,9 +2,8 @@ package equipment;
 import org.junit.*;
 import equipment.Board.*;
 import io.Logging;
-import utilities.MyTestWatcher;
-public class ToStringTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class ToStringTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testToStringImpl() {

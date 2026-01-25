@@ -19,7 +19,6 @@ import equipment.*;
 import equipment.Board.*;
 import io.*;
 import model.Move2.MoveType;
-import static model.ModelHelper2.*;
 import server.NamedThreadGroup.NamedThread;
 import sgf.*;
 import utilities.*;
@@ -367,7 +366,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// not necessarily the main line!
 		ensureBoard();
 		List<Move2> moves=movesToCurrentState();
-		List<String> gtpMoves=toGTPMoves(moves,board().width(),board().depth());
+		List<String> gtpMoves=ModelHelper2.toGTPMoves(moves,board().width(),board().depth());
 		return gtpMoves;
 	}
 	public List<Move2> movesToCurrentState() {

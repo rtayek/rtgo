@@ -4,9 +4,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.*;
 import java.util.logging.LogManager;
 import org.junit.*;
-import utilities.MyTestWatcher;
-public class TeeTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class TeeTestCase extends TestSupport {
     // https://stackoverflow.com/questions/27825682/flushing-streamhandlers-during-debugging-using-java-util-logging-autoflush
     // https://gist.github.com/jiayao/36606389023f67fd5278d2d18656d388
     @Before public void setUp() throws Exception {

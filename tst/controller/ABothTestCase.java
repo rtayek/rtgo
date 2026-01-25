@@ -5,9 +5,8 @@ import org.junit.*;
 import equipment.Board;
 import io.IOs.End.Holder;
 import io.Logging;
-import utilities.MyTestWatcher;
-public class ABothTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());;
+import utilities.TestSupport;
+public class ABothTestCase extends TestSupport {
     @Before public void setUp() throws Exception {
         both=new BothEnds();
         Holder holder=Holder.duplex();

@@ -2,12 +2,10 @@ package equipment;
 import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import equipment.Board.*;
-import utilities.MyTestWatcher;
-public class NonSquareBoardTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class NonSquareBoardTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testBoardImplIntInt() {

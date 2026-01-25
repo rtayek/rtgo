@@ -1,9 +1,8 @@
 package equipment;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
-import utilities.MyTestWatcher;
-public class PointTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class PointTestCase extends TestSupport {
     @Test public void testPoint() { Point point=new Point(); assertEquals(0,point.x); assertEquals(0,point.y); }
     @Test public void testPointIntInt() {
         Point point=new Point(1,2);

@@ -5,9 +5,8 @@ import java.io.PrintStream;
 import java.util.logging.*;
 import org.junit.*;
 import io.Logging.MyFormatter;
-import utilities.MyTestWatcher;
-public class LoggingTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class LoggingTestCase extends TestSupport {
     @Before public void setUp() throws Exception {
         Logging.useColor=false;
         LogManager.getLogManager().reset();

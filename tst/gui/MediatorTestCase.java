@@ -3,10 +3,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import org.junit.*;
 import model.Model;
-import utilities.MyTestWatcher;
+import utilities.TestSupport;
 // not a good name. these have nothing to do with mediator.
-public class MediatorTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+public class MediatorTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testGetExtension() {

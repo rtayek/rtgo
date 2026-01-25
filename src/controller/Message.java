@@ -1,23 +1,13 @@
 package controller;
-import static controller.GTPBackEnd.tab;
 import java.util.Arrays;
 import io.Logging;
 public class Message {
     Message(String string) {
-        String stripped=strip(string);
+        String stripped=GtpParsing.strip(string);
         if(stripped!=null&&!stripped.isEmpty()) {
-            String[] tokens=stripped.split(" ");
-            try {
-                id=Integer.parseInt(tokens[0]);
-            } catch(NumberFormatException e) {} // usually throws
-            String[] old=tokens;
-            if(id!=-1) {
-                tokens=new String[old.length-1];
-                System.arraycopy(old,1,tokens,0,tokens.length);
-            } else {
-                tokens=new String[old.length];
-                System.arraycopy(old,0,tokens,0,tokens.length);
-            }
+            GtpParsing.ParsedTokens parsed=GtpParsing.parseTokens(stripped);
+            id=parsed.id;
+            String[] tokens=parsed.tokens;
             if(tokens.length>=1) {
                 command=Command.from(tokens[0]);
             } else Logging.mainLogger.warning(""+" "+"gtp: command seems to be a number: "+string);
@@ -30,38 +20,13 @@ public class Message {
                 arguments=new String[2];
                 arguments[0]=tokens[0];
                 arguments[1]=stripped.substring(hack+Command.tgo_receive_sgf.name().length());
-                arguments[1]=strip(arguments[1]);
+                arguments[1]=GtpParsing.strip(arguments[1]);
                 // now we have problems with a bunch of line feeds
                 Logging.mainLogger.info(String.valueOf(this.toString()));
             }
         }
     }
     @Override public String toString() { return id+" "+command+" "+Arrays.asList(arguments); }
-    static String strip(String string) {
-        String stripped="";
-        String trimmed=string.trim();
-        for(int i=0;i<trimmed.length();i++) { // remove most control characters
-            Character c=trimmed.charAt(i);
-            if(Character.isISOControl(c)) { // check the spec on this
-                if(c.equals('\n')||c.equals(tab)) stripped+=c;
-            } else stripped+=c;
-        }
-        trimmed=stripped;
-        stripped="";
-        for(int i=0;i<trimmed.length();i++) { // remove comment
-            Character c=trimmed.charAt(i);
-            if(c.equals('#')) break;
-            else stripped+=c;
-        }
-        trimmed=stripped.trim();
-        stripped="";
-        for(int i=0;i<trimmed.length();i++) { // change tab to space
-            Character c=trimmed.charAt(i);
-            if(c.equals('\t')) stripped+=' ';
-            else stripped+=c;
-        }
-        return stripped.trim();
-    }
     public static void main(String[] args) {}
     Integer id=-1;
     Command command; // maybe this class belong in command?

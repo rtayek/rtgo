@@ -1,15 +1,13 @@
 package model;
 import static org.junit.Assert.*;
 import java.util.List;
-import org.junit.Rule;
 import org.junit.Test;
 import equipment.*;
 import io.Logging;
 import model.Model.*;
 import static model.Move2.*;
-import utilities.MyTestWatcher;
-public class MoveTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class MoveTestCase extends TestSupport {
     @Test public void testThatWeCanMakeAMoveOnANewModel() {
         Model model=new Model();
         MoveResult ok=model.move(Stone.black,new Point());

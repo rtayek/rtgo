@@ -7,8 +7,7 @@ import io.Logging;
 //import model.Model;
 //import model.Model.MoveResult;
 import utilities.*;
-public class BlockTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+public class BlockTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testBlock() {

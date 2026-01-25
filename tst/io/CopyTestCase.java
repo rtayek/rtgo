@@ -2,9 +2,8 @@ package io;
 import static org.junit.Assert.assertEquals;
 import java.io.Writer;
 import org.junit.*;
-import utilities.MyTestWatcher;
-public class CopyTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class CopyTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void test0NoThread0() throws Exception {

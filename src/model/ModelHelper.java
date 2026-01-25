@@ -34,6 +34,22 @@ public final class ModelHelper {
 
     private ModelHelper() {}
 
+    static Model newModelWithBoardFrom(Model original) {
+        return newModelWithBoardFrom(original, null);
+    }
+
+    static Model newModelWithBoardFrom(Model original, String name) {
+        Model model = name == null ? new Model() : new Model(name);
+        if (original != null && original.board() != null) {
+            int width = original.board().width();
+            int depth = original.board().depth();
+            model.setRoot(width, depth);
+            Board board = Board.factory.create(width, depth);
+            model.setBoard(board);
+        }
+        return model;
+    }
+
     static GameNode toGameNode(Model model,sgf.MNode node) { return toGameNode(model,node,null); }
     private static GameNode toGameNode(Model model,sgf.MNode node,GameNode parent) {
         if(node==null) return null;

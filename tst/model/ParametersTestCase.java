@@ -6,9 +6,8 @@ import java.util.Properties;
 import org.junit.*;
 import equipment.Board;
 import equipment.Board.Topology;
-import utilities.MyTestWatcher;
-public class ParametersTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class ParametersTestCase extends TestSupport {
     @Ignore @Test public void testInitializeParametersWithDefaults() {
         Integer width=(int)Parameters.width.currentValue();
         assertEquals(Board.standard,width); // just check the width

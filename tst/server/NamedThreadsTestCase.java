@@ -5,9 +5,8 @@ import org.junit.*;
 import io.*;
 import io.IOs.Stopable;
 import server.NamedThreadGroup.NamedThread;
-import utilities.MyTestWatcher;
-public class NamedThreadsTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class NamedThreadsTestCase extends TestSupport {
     static class R implements Runnable,Stopable {
         @Override public void run() {
             try {

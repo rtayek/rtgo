@@ -3,13 +3,11 @@ import io.Logging;
 import sgf.SgfHarness;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import equipment.*;
 import equipment.Board.*;
-import utilities.MyTestWatcher;
-public class TopologyAndShapeTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class TopologyAndShapeTestCase extends TestSupport {
     private Model newModelWithRoot(Topology topology,Shape shape) {
         Model model=new Model();
         model.setRoot(n,n,topology,shape);

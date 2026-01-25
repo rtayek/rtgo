@@ -27,7 +27,6 @@ import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import model.Model;
 import model.MNodeAcceptor.MNodeFinder;

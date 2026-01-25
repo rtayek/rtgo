@@ -12,8 +12,7 @@ import io.*;
 import model.*;
 import model.Move2.MoveType;
 import utilities.*;
-@RunWith(Parameterized.class) public class StanAloneGoServerTestCase { // standalone tests
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+@RunWith(Parameterized.class) public class StanAloneGoServerTestCase extends TestSupport { // standalone tests
     static final int n=1;
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
     // intermittent failure.
@@ -48,12 +47,14 @@ import utilities.*;
     }
     @Test() public void testPlayOneMove() throws Exception {
         printStuff(game);
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
+        playMoves(new Move2(MoveType.move,Stone.black,new Point()));
         Logging.mainLogger.info("exit testPlayOneMove()");
     }
     @Test() public void testPlayTwoMoves() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move2(MoveType.move,Stone.white,new Point(0,1)));
+        playMoves(
+                new Move2(MoveType.move,Stone.black,new Point()),
+                new Move2(MoveType.move,Stone.white,new Point(0,1))
+        );
     }
     @Test(/*timeout=1000/*timeoutTime*/) public void testPlaySomeMoves() throws Exception {
         int n=1; // will fail on small boards
@@ -61,9 +62,15 @@ import utilities.*;
         for(int i=0;i<n;++i) {
             BothEnds player=i%2==0?game.blackFixture:game.whiteFixture;
             Stone color=game.color(player);
-            BothEnds opponent=game.opponent(player);
-            game.playOneMoveAndWait(player,opponent,new Move2(MoveType.move,color,new Point(0,i)));
+            playMoves(new Move2(MoveType.move,color,new Point(0,i)));
             assertTrue(game.blackFixture.backEnd.model.board().isEqual(game.whiteFixture.backEnd.model.board()));
+        }
+    }
+    private void playMoves(Move2... moves) throws Exception {
+        for(Move2 move:moves) {
+            BothEnds from=move.color.equals(Stone.black)?game.blackFixture:game.whiteFixture;
+            BothEnds to=from==game.blackFixture?game.whiteFixture:game.blackFixture;
+            game.playOneMoveAndWait(from,to,move);
         }
     }
     int i;

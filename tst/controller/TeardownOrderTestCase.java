@@ -7,11 +7,10 @@ import io.IOs.Stopable;
 import model.Model;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
-import utilities.MyTestWatcher;
-public /*abstract*/ class TeardownOrderTestCase {
+import utilities.TestSupport;
+public /*abstract*/ class TeardownOrderTestCase extends TestSupport {
     // this is confused. looks like a runner for both.
     // but it tries to stop recorder, black, and white which are null!
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     //static class
     class Runner implements Runnable,Stopable {
         Runner(BothEnds both) { this.both=both; }

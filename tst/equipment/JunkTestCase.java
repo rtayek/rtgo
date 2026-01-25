@@ -5,9 +5,8 @@ import org.junit.*;
 import equipment.Board.Topology;
 import io.Logging;
 import utilities.*;
-public class JunkTestCase {
+public class JunkTestCase extends TestSupport {
     // maybe not junk = may be useful
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testTopology() {

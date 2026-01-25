@@ -3,9 +3,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.*;
 import org.junit.*;
-import utilities.MyTestWatcher;
-public class ConnectWithoutAcceptTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class ConnectWithoutAcceptTestCase extends TestSupport {
     private void check() throws IOException {
         ServerSocket serverSocket=null;
         try {

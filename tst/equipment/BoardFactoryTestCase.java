@@ -3,9 +3,8 @@ import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import equipment.Board.*;
-import utilities.MyTestWatcher;
-public class BoardFactoryTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class BoardFactoryTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testCreateInt() {

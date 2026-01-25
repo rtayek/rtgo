@@ -4,9 +4,8 @@ import java.io.IOException;
 import org.junit.*;
 import controller.GTPFrontEnd;
 import io.IOs.Duplex;
-import utilities.MyTestWatcher;
-public class DuplexTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class DuplexTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test() public void testCreatTwoEnds() throws Exception {

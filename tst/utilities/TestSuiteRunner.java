@@ -4,8 +4,7 @@ import org.junit.*;
 import org.junit.runner.*;
 public class TestSuiteRunner {
     // should have been found!
-    public static class ATestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+    public static class ATestCase extends TestSupport {
         @Test public void testOk() throws Exception { assertTrue("baz",true); }
         @Ignore @Test public void testFail() throws Exception { fail("foo"); }
         @Ignore @Test public void testError() throws Exception { throw new RuntimeException("bar"); }

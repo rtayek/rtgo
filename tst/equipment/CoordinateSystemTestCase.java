@@ -4,9 +4,8 @@ import java.awt.geom.Point2D;
 import org.junit.*;
 import io.Logging;
 import model.Model;
-import utilities.MyTestWatcher;
-public class CoordinateSystemTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class CoordinateSystemTestCase extends TestSupport {
     @Test public void CheckStandard() {
         Point point=new Point();
         String string=Coordinates.toGtpCoordinateSystem(point,board.width(),board.depth());

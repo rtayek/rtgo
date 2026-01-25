@@ -11,22 +11,13 @@ public class Response { // message has the same member variables!
             id=-1;
             okOrBad=badCharacter;
         } else if(string.length()>=2) {
-            int id=-1;
             okOrBad=string.charAt(0);
             string=string.substring(1);
-            String[] tokens=string.split(" ");
+            String[] tokens=GtpParsing.splitTokens(string);
             // this is going to break when sending sgf back!
             // it probably needs to be encoded in hex ascii.
-            if(tokens.length>0) try {
-                id=Integer.parseInt(tokens[0]);
-            } catch(NumberFormatException e) {
-                ;
-            }
-            this.id=id;
-            for(int i=1;i<tokens.length;i++) {
-                s+=tokens[i];
-                if(i!=tokens.length-1) s+=" ";
-            }
+            this.id=GtpParsing.parseId(tokens);
+            s=GtpParsing.joinTokensFrom(tokens,1);
             // this breaks a lot
             //if(checkForTwoLineFeeds(s)) s=s.substring(0,s.length()-2);
         } else {

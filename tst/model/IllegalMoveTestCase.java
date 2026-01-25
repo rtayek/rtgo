@@ -7,9 +7,8 @@ import equipment.*;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
 import sgf.*;
-import utilities.MyTestWatcher;
-public class IllegalMoveTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class IllegalMoveTestCase extends TestSupport {
     @Test public void testResignOutOfOrder() {
         model.move(new Move2(MoveType.pass,Stone.white,null));
         model.move(Move2.blackPass);

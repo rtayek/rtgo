@@ -6,10 +6,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import io.Logging;
-import utilities.MyTestWatcher;
+import utilities.TestSupport;
 // lets test all the strange cases here
-@RunWith(Parameterized.class) public class ParameterizedBoardShapeAndTopologyTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+@RunWith(Parameterized.class) public class ParameterizedBoardShapeAndTopologyTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     public ParameterizedBoardShapeAndTopologyTestCase(Board board) { assertNotNull(board); this.board=board; }

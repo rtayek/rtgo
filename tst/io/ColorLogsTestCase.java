@@ -1,9 +1,8 @@
 package io;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
-import utilities.MyTestWatcher;
-public class ColorLogsTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class ColorLogsTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void test() {

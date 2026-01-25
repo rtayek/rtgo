@@ -6,9 +6,8 @@ import org.junit.*;
 import model.*;
 import model.ModelIo;
 import sgf.Parser;
-import utilities.MyTestWatcher;
-public class NavigateTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class NavigateTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testEach() {

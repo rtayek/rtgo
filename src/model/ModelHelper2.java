@@ -6,21 +6,14 @@ import controller.Command;
 import controller.GTPBackEnd;
 import controller.GTPFrontEnd;
 import controller.Response;
-import equipment.Board;
 import equipment.Point;
 import equipment.Stone;
 import io.Logging;
 import io.IOs.End.Holder;
-public class ModelHelper2 {
+public final class ModelHelper2 {
+	private ModelHelper2() {}
 	public static Model pushGTPMovesToCurrentStateDirect(Model original,boolean oneAtATime) {
-		Model model=new Model();
-		if(original.board()!=null) { // normally no access to both of these at
-										// the same time
-			model.setRoot(original.board().width(),original.board().depth());
-			Board board=Board.factory.create(original.board().width(),original.board().depth());
-			model.setBoard(board);
-			// probably need to set other stuff like shape etc.
-		}
+		Model model=ModelHelper.newModelWithBoardFrom(original);
 		// should set the board shape and topology also?
 		List<String> gtpMoves=original.gtpMovesToCurrentState();
 		boolean ok=GTPBackEnd.checkMoveCommandsDirect(model,gtpMoves,oneAtATime);
@@ -44,13 +37,7 @@ public class ModelHelper2 {
 		} else frontEnd.sendAndReceive(gtpMoves);
 	}
 	public static Model pushGTPMovesToCurrentStateBoth(Model original,boolean oneAtATime) {
-		Model model=new Model("model");
-		if(original.board()!=null) { // normally no access to both of these at
-										// the same time
-			model.setRoot(original.board().width(),original.board().depth());
-			Board board=Board.factory.create(original.board().width(),original.board().depth());
-			model.setBoard(board);
-		}
+		Model model=ModelHelper.newModelWithBoardFrom(original,"model");
 		BothEnds both=new BothEnds();
 		Holder holder=Holder.duplex();
 		both.setupBoth(holder,"test",model);

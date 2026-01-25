@@ -8,9 +8,8 @@ import io.IOs;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
 import sgf.SgfHarness;
-import utilities.MyTestWatcher;
-public class ColorBugTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class ColorBugTestCase extends TestSupport {
     @Before public void setUp() throws Exception { model.setRoot(); }
     void randomMove2() {
         int width=model.board().width();
@@ -66,4 +65,3 @@ public class ColorBugTestCase {
     Random random=new Random();
     final int directions=Navigate.values().length;
 }
-

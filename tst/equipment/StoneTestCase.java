@@ -2,9 +2,8 @@ package equipment;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import io.Logging;
-import utilities.MyTestWatcher;
-public class StoneTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class StoneTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testToCharacter() {

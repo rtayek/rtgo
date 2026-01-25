@@ -5,9 +5,8 @@ import java.util.logging.Logger;
 import org.junit.*;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
-import utilities.MyTestWatcher;
-public class StopWatchTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class StopWatchTestCase extends TestSupport {
     private static final Logger logger=Logger.getLogger("");
     private static void logInfo(Description description,String status,long nanos) {
         String testName=description.getMethodName();

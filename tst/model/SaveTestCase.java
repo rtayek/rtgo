@@ -7,9 +7,8 @@ import org.junit.*;
 import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
-import utilities.MyTestWatcher;
-public class SaveTestCase {
-	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class SaveTestCase extends TestSupport {
 	private void assertA1RoundTrip() throws IOException {
 		Model model=new Model("");
 		model.ensureBoard();
@@ -35,4 +34,3 @@ public class SaveTestCase {
 	// @Test public void testA1A2restored() throws IOException {}
 	String foo="(;B[as];W[ar])";
 }
-

@@ -6,9 +6,8 @@ import controller.*;
 import io.*;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
-import utilities.MyTestWatcher;
-public class ManyGamesTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class ManyGamesTestCase extends TestSupport {
     class Players implements Runnable {
         Players(GameFixture game) { this.game=game; }
         public void start() { (namedThread=NamedThreadGroup.createNamedThread(game.id,this,"players")).start(); }

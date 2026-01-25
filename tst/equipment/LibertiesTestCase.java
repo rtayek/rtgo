@@ -7,9 +7,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import equipment.Board.Topology;
 import io.Logging;
-import utilities.MyTestWatcher;
-@RunWith(Parameterized.class) public class LibertiesTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+@RunWith(Parameterized.class) public class LibertiesTestCase extends TestSupport {
     public LibertiesTestCase(Topology topology) { this.topology=topology; }
     @BeforeClass public static void setUpBeforeClass() throws Exception {}
     @AfterClass public static void tearDownAfterClass() throws Exception {}

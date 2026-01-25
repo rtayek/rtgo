@@ -1,11 +1,9 @@
 package equipment;
 import static org.junit.Assert.assertEquals;
-import org.junit.Rule;
 import org.junit.Test;
 import model.Model;
-import utilities.MyTestWatcher;
-public class ScreenCoordinatesTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class ScreenCoordinatesTestCase extends TestSupport {
     @Test public void testSize() {
         for(int n=1;n<=Model.LargestBoardSize;n++) {
             Board board=new BoardImpl(n,0);

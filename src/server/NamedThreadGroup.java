@@ -290,16 +290,18 @@ public class NamedThreadGroup { // one set of named threads.
         }
         interruptNamedThreads("sas interrupt"); // was not commented out
     }
-    // remove duplicate code
+    private static void stopGroup(NamedThreadGroup namedThreadGroup,long groupId) throws InterruptedException {
+        if(namedThreadGroup!=null) {
+            if(namedThreadGroup.namedThreadsWithRunnables.size()>0) {
+                namedThreadGroup.stopAllStopables_();
+            } else Logging.mainLogger.info("empty "+groupId+" "+namedThreadGroup);
+        } else Logging.mainLogger.info("no map entry for key: "+groupId);
+    }
     public static void stopAllStopables(long groupId) throws InterruptedException {
-        NamedThreadGroup namedThreadGroup=groupIdToNamedThreadGroup.get(groupId);
-        if(namedThreadGroup!=null) if(namedThreadGroup.namedThreadsWithRunnables.size()>0) {
-            namedThreadGroup.stopAllStopables_();
-        } else Logging.mainLogger.info("empty "+groupId+" "+namedThreadGroup);
-        else Logging.mainLogger.info("no map entry for key: "+groupId);
+        stopGroup(groupIdToNamedThreadGroup.get(groupId),groupId);
     }
     public static void stopAllStopables() throws InterruptedException {
-        for(Long key:groupIdToNamedThreadGroup.keySet()) stopAllStopables(key);
+        for(Long key:groupIdToNamedThreadGroup.keySet()) stopGroup(groupIdToNamedThreadGroup.get(key),key);
     }
     public static int printNamedThreadGroups(boolean print) {
         // not necessarily active

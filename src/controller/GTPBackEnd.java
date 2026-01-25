@@ -150,7 +150,7 @@ public class GTPBackEnd implements Runnable,Stopable {
     }
     private boolean processCommand(String string) {
         if(isWaitingForMove()) Logging.mainLogger.severe(model.name+" waiting for move!.");
-        String stripped=Message.strip(string);
+        String stripped=GtpParsing.strip(string);
         if(stripped==null||stripped.isEmpty()) return true;
         Message message=new Message(stripped);
         // spaces break below. 5 arhuments insead of 1.

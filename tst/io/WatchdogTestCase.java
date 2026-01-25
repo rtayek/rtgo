@@ -8,8 +8,7 @@ import org.junit.*;
 import controller.GTPBackEnd;
 import server.NamedThreadGroup;
 import utilities.*;
-@Ignore public class WatchdogTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+@Ignore public class WatchdogTestCase extends TestSupport {
     @Before public void setUp() throws Exception {
         String name="main";
         Thread target=NamedThreadGroup.findThread(name);

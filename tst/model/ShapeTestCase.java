@@ -5,9 +5,8 @@ import org.junit.*;
 import equipment.*;
 import equipment.Board.*;
 import io.Logging;
-import utilities.MyTestWatcher;
-public class ShapeTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class ShapeTestCase extends TestSupport {
     @Test public void test1() throws Exception {
         List<Point> points=Board.squares(1,19,19);
         Logging.mainLogger.warning(String.valueOf(points.toString()));

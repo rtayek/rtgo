@@ -3,9 +3,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.*;
 import org.junit.*;
 import io.IOs.Pipe;
-import utilities.MyTestWatcher;
-public class PipeTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class PipeTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     static String writeFlushRead(BufferedReader in,Writer out,String string) throws IOException {
