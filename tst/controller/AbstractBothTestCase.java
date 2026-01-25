@@ -12,26 +12,20 @@ import io.*;
 import io.IOs.End.Holder;
 import model.Model;
 import utilities.*;
-public abstract class AbstractBothTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+public abstract class AbstractBothTestCase extends ControllerHolderTestSupport {
     // currently does NOT extend any test case.
     // these setup a front end and a back end (Both).
     // most do start gtp backend threads. maybe not all use/need them.
     // these use the front end to send gtp commands
     // and receive the response.
     public static class DuplexTestCase extends AbstractBothTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());;
-        @Override @Before public void setUp() throws Exception { holder=Holder.duplex(); super.setUp(); }
-        @Override @After public void tearDown() throws Exception { super.tearDown(); }
+        @Override protected Holder createHolder() throws Exception { return Holder.duplex(); }
     }
     public static class SocketTestCase extends AbstractBothTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-        @Override @Before public void setUp() throws Exception { holder=Holder.trick(IOs.anyPort); super.setUp(); }
-        @Override @After public void tearDown() throws Exception { super.tearDown(); }
+        @Override protected Holder createHolder() throws Exception { return Holder.trick(IOs.anyPort); }
     }
     @RunWith(Suite.class) @SuiteClasses({SocketTestCase.class,
         DuplexTestCase.class,}) public static class BothTestSuite {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @BeforeClass public static void setUpClass() {
             Logging.mainLogger.info(String.valueOf(Init.first));
             Logging.mainLogger.info("set up suite class");
@@ -46,7 +40,6 @@ public abstract class AbstractBothTestCase {
     }
     @Ignore @RunWith(Parameterized.class) public static class ParameterizedBothTestSuitee extends BothTestSuite {
         // this does not work.
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         public ParameterizedBothTestSuitee(int i) { this.i=i; }
         @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
         final int i;
@@ -163,6 +156,5 @@ public abstract class AbstractBothTestCase {
     }
     BothEnds both;
     Integer serverPort;
-    Holder holder;
     static final int timeout=0;;
 }

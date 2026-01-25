@@ -12,8 +12,7 @@ import io.*;
 import io.IOs.End.Holder;
 import model.*;
 import utilities.*;
-public abstract class AbstractGameFixtureTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSupport {
     // no threads are started by this class except for recorder thread
     // maybe this belongs in some both test case?
     // maybe
@@ -29,35 +28,27 @@ public abstract class AbstractGameFixtureTestCase {
     // it looks that way, we have broken them again.
     // 7/2/22 this test case id weird. fix it!
     public static class DuplexTestCase extends AbstractGameFixtureTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());;
         @RunWith(Parameterized.class) public static class ParameterizedTestCase extends DuplexTestCase {
-            @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
             public ParameterizedTestCase(int i) { this.i=i; }
             @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
             final int i;
             static final int n=2;
         }
-        @Override @Before public void setUp() throws Exception { blackHolder=Holder.duplex(); super.setUp(); }
-        @Override @After public void tearDown() throws Exception { super.tearDown(); }
+        @Override protected Holder createHolder() throws Exception { return Holder.duplex(); }
     }
     public static class SocketTestCase extends AbstractGameFixtureTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @RunWith(Parameterized.class) public static class ParameterizedTestCase extends SocketTestCase {
-            @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
             public ParameterizedTestCase(int i) { this.i=i; }
             @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
             final int i;
             static final int n=2;
         }
-        @Override @Before public void setUp() throws Exception { blackHolder=Holder.trick(IOs.anyPort); super.setUp(); }
-        @Override @After public void tearDown() throws Exception { super.tearDown(); }
+        @Override protected Holder createHolder() throws Exception { return Holder.trick(IOs.anyPort); }
     }
     @RunWith(Suite.class) @SuiteClasses({DuplexTestCase.class,SocketTestCase.class}) public static class ATestSuite {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     }
     @RunWith(Suite.class) @SuiteClasses({DuplexTestCase.ParameterizedTestCase.class,
             SocketTestCase.ParameterizedTestCase.class}) public static class ParameterizedTestSuite {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         // also should have been found by grep - add my test watcher !
     }
     @BeforeClass public static void setUpClass() { Logging.mainLogger.info("static start: "+staticEt); }
@@ -71,6 +62,10 @@ public abstract class AbstractGameFixtureTestCase {
     @AfterClass public static void tearDownClass() {
         //printHistograms();
     }
+    @Override protected void onHolderCreated(Holder holder) {
+        blackHolder = holder;
+    }
+
     @Before public void setUp() throws Exception {
         // recorder thread is started.
         // set up just one both fixture for black.
