@@ -2,8 +2,8 @@ package controller;
 
 import java.util.Arrays;
 
-final class GtpParsing {
-    static final class ParsedTokens {
+public final class GtpParsing {
+    public static final class ParsedTokens {
         final int id;
         final String[] tokens;
 
@@ -15,7 +15,7 @@ final class GtpParsing {
 
     private GtpParsing() {}
 
-    static ParsedTokens parseTokens(String string) {
+    public static ParsedTokens parseTokens(String string) {
         String[] tokens = splitTokens(string);
         int id = parseId(tokens);
         if (id != -1) {
@@ -24,11 +24,23 @@ final class GtpParsing {
         return new ParsedTokens(id, tokens);
     }
 
-    static String[] splitTokens(String string) {
+    public static String[] normalizeArguments(String stripped, String[] tokens) {
+        if (tokens.length > 0 && tokens[0].equals(Command.tgo_receive_sgf.name())) {
+            int index = stripped.indexOf(Command.tgo_receive_sgf.name());
+            String[] arguments = new String[2];
+            arguments[0] = tokens[0];
+            arguments[1] = stripped.substring(index + Command.tgo_receive_sgf.name().length());
+            arguments[1] = strip(arguments[1]);
+            return arguments;
+        }
+        return tokens;
+    }
+
+    public static String[] splitTokens(String string) {
         return string.split(" ");
     }
 
-    static int parseId(String[] tokens) {
+    public static int parseId(String[] tokens) {
         if (tokens.length > 0) {
             try {
                 return Integer.parseInt(tokens[0]);
@@ -39,7 +51,7 @@ final class GtpParsing {
         return -1;
     }
 
-    static String joinTokensFrom(String[] tokens, int startIndex) {
+    public static String joinTokensFrom(String[] tokens, int startIndex) {
         if (tokens.length <= startIndex) return "";
         StringBuilder sb = new StringBuilder();
         for (int i = startIndex; i < tokens.length; i++) {
@@ -49,7 +61,7 @@ final class GtpParsing {
         return sb.toString();
     }
 
-    static String strip(String string) {
+    public static String strip(String string) {
         if (string == null) return null;
         String stripped = "";
         String trimmed = string.trim();

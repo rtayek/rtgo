@@ -94,10 +94,7 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
         // why isn't this a command?
         Response actual=Response.response(response); // why not in command?
         Command[] values=Command.values();
-        if(Response.checkForTwoLineFeeds(actual.response)) {
-            Logging.mainLogger.warning("removing line feeds from response!");
-            actual.response=actual.response.substring(0,actual.response.length()-2);
-        }
+        stripTrailingTwoLineFeeds(actual);
         assertTrue(actual.response.endsWith(values[values.length-1].name()));
         assertTrue(actual.response.startsWith('\n'+values[0].name()+"\n"));
         for(Command command:values) if(!command.equals(Command.values()[Command.values().length-1]))
@@ -121,10 +118,7 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
         String response=runGtpCommandString(directModel, command.name()+" "+Command.quit, directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isOk());
-        if(Response.checkForTwoLineFeeds(actual.response)) {
-            Logging.mainLogger.warning("removing line feeds from response!");
-            actual.response=actual.response.substring(0,actual.response.length()-2);
-        }
+        stripTrailingTwoLineFeeds(actual);
         assertEquals("true",actual.response);
     }
     @Test public void testGtpKnownCommandWithMissingArgument() throws Exception {
@@ -132,10 +126,7 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
         String response=runGtpCommandString(directModel, command.name(), directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isBad());
-        if(Response.checkForTwoLineFeeds(actual.response)) {
-            Logging.mainLogger.warning("removing line feeds from response!");
-            actual.response=actual.response.substring(0,actual.response.length()-2);
-        }
+        stripTrailingTwoLineFeeds(actual);
         assertEquals(Failure.syntax_error.toString2(),actual.response);
     }
     @Test public void testGtpBoardsize0() throws Exception {
@@ -152,6 +143,12 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
         assertTrue(actual.isOk());
         assertEquals(directModel.board().width(),n);
         assertEquals(directModel.board().depth(),n);
+    }
+    private static void stripTrailingTwoLineFeeds(Response response) {
+        if(Response.checkForTwoLineFeeds(response.response)) {
+            Logging.mainLogger.warning("removing line feeds from response!");
+            response.response=response.response.substring(0,response.response.length()-2);
+        }
     }
     @Test public void testGtpBoardsize1() throws Exception { checkModelBoardSize(1); }
     @Test public void testGtpBoardsize2() throws Exception { checkModelBoardSize(2); }
@@ -187,10 +184,7 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
         String response=runGtpCommandString(directModel, Command.komi.name()+" foo", directJustRun);
         Response actual=Response.response(response);
         assertTrue(actual.isBad());
-        if(Response.checkForTwoLineFeeds(actual.response)) {
-            Logging.mainLogger.warning("removing line feeds from response!");
-            actual.response=actual.response.substring(0,actual.response.length()-2);
-        }
+        stripTrailingTwoLineFeeds(actual);
         assertEquals(Failure.syntax_error.toString2(),actual.response);
     }
     @Test public void testGtpPlayOneMove() throws Exception {
