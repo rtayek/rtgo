@@ -41,10 +41,13 @@ public final class ModelHelper {
     static Model newModelWithBoardFrom(Model original, String name) {
         Model model = name == null ? new Model() : new Model(name);
         if (original != null && original.board() != null) {
-            int width = original.board().width();
-            int depth = original.board().depth();
-            model.setRoot(width, depth);
-            Board board = Board.factory.create(width, depth);
+            Board originalBoard = original.board();
+            int width = originalBoard.width();
+            int depth = originalBoard.depth();
+            Board.Topology topology = originalBoard.topology();
+            Board.Shape shape = originalBoard.shape();
+            model.setRoot(width, depth, topology, shape);
+            Board board = Board.factory.create(width, depth, topology, shape);
             model.setBoard(board);
         }
         return model;

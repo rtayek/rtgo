@@ -23,6 +23,7 @@ import io.Init;
 @RunWith(MyAllTests.AllTestsRunner.class) public final class MyAllTests extends SuiteSupport {
     //@BeforeClass public static void setUpClass() { System.out.println("set up suite class"); }
     //@AfterClass public static void tearDownClass() { System.out.println("tear down suite class"); godwrapupTests(); }
+    private static final boolean verbose=false;
     private MyAllTests() {}
     // Finds and runs tests.
     public static class AllTestsRunner extends Suite {
@@ -31,7 +32,7 @@ import io.Init;
             super(clazz,findClasses());
         }
         private static void findClasses(final List<File> classFiles,final File dir) {
-            System.out.println("classFiles: "+classFiles+", dir: "+dir);
+            if(verbose) System.out.println("classFiles: "+classFiles+", dir: "+dir);
             File[] files=dir.listFiles();
             if(files!=null) for(File file:files) {
                 if(file.isDirectory()) {
@@ -42,16 +43,16 @@ import io.Init;
         private static Class<?>[] findClasses() {
             List<File> classFiles=new ArrayList<File>();
             String packagepath=MyAllTests.class.getPackage().getName().replace(".","/");
-            System.out.println("package path: "+packagepath);
+            if(verbose) System.out.println("package path: "+packagepath);
             File relativeDir=new File(classesDir.getAbsolutePath()+"\\"+packagepath);
-            System.out.println("relative dir: "+relativeDir);
-            System.out.println("dir: "+classesDir);
+            if(verbose) System.out.println("relative dir: "+relativeDir);
+            if(verbose) System.out.println("dir: "+classesDir);
             findClasses(classFiles,relativeDir);
             List<Class<?>> classes=convertToClasses(classFiles,classesDir);
             return classes.toArray(new Class[classes.size()]);
         }
         private static void initializeBeforeTests() {
-            System.out.println("initializeBeforeTests: "+Init.first);
+            if(verbose) System.out.println("initializeBeforeTests: "+Init.first);
         }
         private static List<Class<?>> convertToClasses(final List<File> classFiles,final File classesDir) {
             List<Class<?>> classes=new ArrayList<Class<?>>();
@@ -93,7 +94,7 @@ import io.Init;
     private static File findClassesDir() {
         try {
             String path=MyAllTests.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-            System.out.println("path: "+path);
+            if(verbose) System.out.println("path: "+path);
             return new File(URLDecoder.decode(path,"UTF-8"));
         } catch(UnsupportedEncodingException impossible) {
             // using default encoding, has to exist

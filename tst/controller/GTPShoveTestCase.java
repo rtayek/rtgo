@@ -68,13 +68,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
         expected.up();
         List<String> gtpMoves=expected.gtpMovesToCurrentState();
         Model actual=new Model("actual");
-        //actual.ensureBoard();
-        if(expected.board()!=null) { // normally no access to both of these at the same time
-            actual.setRoot(expected.board().width(),expected.board().depth());
-            Board board=Board.factory.create(expected.board().width(),expected.board().depth());
-            actual.setBoard(board);
-            // probably need to set other stuff like shape etc.
-        }
+        ModelHelper2.configureModelWithBoardFrom(actual,expected);
         Response[] responses=runGtpCommands(actual,gtpMoves);
         for(Response response:responses) assertTrue(response.isOk());
         Logging.mainLogger.info(String.valueOf(expected));

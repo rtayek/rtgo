@@ -17,9 +17,8 @@ public class PushTestCase {
         Model black=game.blackFixture.backEnd.model;
         Model white=game.whiteFixture.backEnd.model;
         if(expected.board()!=null) { // normally no access to both of these at the same time
-            black.setRoot(expected.board().width(),expected.board().depth());
-            white.setRoot(expected.board().width(),expected.board().depth());
-            // probably need to set other stuff like shape etc.
+            ModelHelper2.configureModelWithBoardFrom(black,expected);
+            ModelHelper2.configureModelWithBoardFrom(white,expected);
         } else Logging.mainLogger.info("expected has null board!");
         game.printStatus();
         assertTrue(game.namedThread==null);

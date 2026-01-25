@@ -63,28 +63,27 @@ public final class GtpParsing {
 
     public static String strip(String string) {
         if (string == null) return null;
-        String stripped = "";
         String trimmed = string.trim();
+        StringBuilder sb = new StringBuilder(trimmed.length());
         for (int i = 0; i < trimmed.length(); i++) { // remove most control characters
-            Character c = trimmed.charAt(i);
+            char c = trimmed.charAt(i);
             if (Character.isISOControl(c)) { // check the spec on this
-                if (c.equals('\n') || c.equals(GTPBackEnd.tab)) stripped += c;
-            } else stripped += c;
+                if (c == '\n' || c == GTPBackEnd.tab) sb.append(c);
+            } else sb.append(c);
         }
-        trimmed = stripped;
-        stripped = "";
+        trimmed = sb.toString();
+        sb.setLength(0);
         for (int i = 0; i < trimmed.length(); i++) { // remove comment
-            Character c = trimmed.charAt(i);
-            if (c.equals('#')) break;
-            else stripped += c;
+            char c = trimmed.charAt(i);
+            if (c == '#') break;
+            sb.append(c);
         }
-        trimmed = stripped.trim();
-        stripped = "";
+        trimmed = sb.toString().trim();
+        sb.setLength(0);
         for (int i = 0; i < trimmed.length(); i++) { // change tab to space
-            Character c = trimmed.charAt(i);
-            if (c.equals('\t')) stripped += ' ';
-            else stripped += c;
+            char c = trimmed.charAt(i);
+            sb.append(c == '\t' ? ' ' : c);
         }
-        return stripped.trim();
+        return sb.toString().trim();
     }
 }

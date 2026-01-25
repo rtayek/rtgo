@@ -60,5 +60,5 @@ public class ABothTestCase extends TestSupport {
         Logging.mainLogger.info("static init a both test case.");
         Logging.mainLogger.info(String.valueOf(first));
     }
-    static final int timeout=0; // maybe get rid of this eventually?
+    private static final int timeout=0; // maybe get rid of this eventually?
 }

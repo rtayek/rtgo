@@ -7,6 +7,7 @@ import io.*;
 import io.IOs.End;
 import io.IOs.End.Holder;
 import model.Model;
+import model.ModelHelper2;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 import utilities.Pair;
@@ -124,7 +125,7 @@ public class BothEnds { // has both a front end and a back end.
     }
     static void runBoth(Model expected,boolean useThread) throws Exception {
         Model actual=new Model();
-        actual.setRoot(expected.board().width(),expected.board().depth());
+        ModelHelper2.configureModelWithBoardFrom(actual,expected);
         List<String> gtpMoves=expected.gtpMovesToCurrentState();
         boolean ok=checkMoveCommandsDirect(actual,gtpMoves,false);
         if(!ok) Logging.mainLogger.severe("run both fails on: "+gtpMoves);
