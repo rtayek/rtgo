@@ -12,7 +12,6 @@ import utilities.*;
 // this may belong in the sgf package.
 // this tests the custom gtp commands to send and receive sgf strings.
 @RunWith(Parameterized.class) public class GTPDirectSendReceiveSgfTestCase extends ControllerGtpTestSupport {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         expectedSgf=getSgfData(key);
         expectedSgf=SgfHarness.prepareExpectedSgf(key,expectedSgf);

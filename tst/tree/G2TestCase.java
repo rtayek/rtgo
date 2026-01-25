@@ -6,9 +6,8 @@ import java.util.*;
 import org.junit.*;
 import tree.G2.Generator;
 import utilities.Iterators.Longs;
-import utilities.MyTestWatcher;
-public class G2TestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public class G2TestCase extends TestSupport {
     // round trip?
     // parameterize?
     // so far, none of these tests use a non null value for data.

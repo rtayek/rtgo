@@ -2,9 +2,8 @@ package equipment;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
-import utilities.MyTestWatcher;
-/*@FixMethodOrder(MethodSorters.NAME_ASCENDING)*/public abstract class BoardTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+/*@FixMethodOrder(MethodSorters.NAME_ASCENDING)*/public abstract class BoardTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testWidth() {

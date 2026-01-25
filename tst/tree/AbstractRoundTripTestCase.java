@@ -6,9 +6,8 @@ import static tree.MNode.print;
 import static tree.Node.deepEquals;
 import static tree.Node.from;
 import org.junit.*;
-import utilities.MyTestWatcher;
-public abstract class AbstractRoundTripTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public abstract class AbstractRoundTripTestCase extends TestSupport {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testNodeRoundTrip() {

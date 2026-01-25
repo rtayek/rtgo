@@ -11,9 +11,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import tree.G2.Generator;
 import utilities.Iterators.*;
-import utilities.MyTestWatcher;
-@RunWith(Parameterized.class) public class CatalanTestCase {
-	@Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+@RunWith(Parameterized.class) public class CatalanTestCase extends TestSupport {
 	public CatalanTestCase(int nodes) {
 		this.nodes=nodes;
 	}

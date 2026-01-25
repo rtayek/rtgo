@@ -3,9 +3,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
 import equipment.Board.Shape;
-import utilities.MyTestWatcher;
 /*@FixMethodOrder(MethodSorters.NAME_ASCENDING)*/ public class BoardImplTestCase extends BoardABCTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     //public BoardImplTestCase(BoardImpl boardImpl) {
     //	this.boardImpl=boardImpl;
     //}

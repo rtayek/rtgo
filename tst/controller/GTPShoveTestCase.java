@@ -11,9 +11,7 @@ import equipment.*;
 import model.*;
 import model.ModelHelper2;
 import sgf.SgfHarness;
-import utilities.MyTestWatcher;
 public class GTPShoveTestCase extends ControllerGtpTestSupport {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // how to shove all variations?
     // maybe just invent loadSGF command and send it!
     @Before public void setUp() throws Exception {

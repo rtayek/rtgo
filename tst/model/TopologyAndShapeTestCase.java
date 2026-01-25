@@ -8,7 +8,7 @@ import org.junit.Test;
 import equipment.*;
 import equipment.Board.*;
 import utilities.MyTestWatcher;
-public class TopologyAndShapeTTestCase {
+public class TopologyAndShapeTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     private Model newModelWithRoot(Topology topology,Shape shape) {
         Model model=new Model();
@@ -70,4 +70,5 @@ public class TopologyAndShapeTTestCase {
     final int n=19;
     final Board board=Board.factory.create(n,n,Topology.normal,Shape.hole1);
 }
+
 

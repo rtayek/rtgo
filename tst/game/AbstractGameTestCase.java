@@ -38,30 +38,41 @@ public abstract class AbstractGameTestCase extends GameTestSupport { // these te
     // these guys need a game running.
     @Test() public void testPlayZeroMoves() throws Exception {}
     @Test() public void testPlayOneMove() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
+        playMoves(new Move2(MoveType.move,Stone.black,new Point()));
     }
     @Test() public void testPlayTwoMoves() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move2(MoveType.move,Stone.white,new Point(1,0)));
+        playMoves(
+                new Move2(MoveType.move,Stone.black,new Point()),
+                new Move2(MoveType.move,Stone.white,new Point(1,0))
+        );
     }
     @Test() public void testPlayThreeMoves() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move2(MoveType.move,Stone.white,new Point(1,0)));
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point(2,0)));
+        playMoves(
+                new Move2(MoveType.move,Stone.black,new Point()),
+                new Move2(MoveType.move,Stone.white,new Point(1,0)),
+                new Move2(MoveType.move,Stone.black,new Point(2,0))
+        );
     }
     @Test() public void testPassOnce() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackPass);
+        playMoves(Move2.blackPass);
     }
     @Test() public void testPassTwice() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackPass);
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,Move2.whitePass);
+        playMoves(Move2.blackPass,Move2.whitePass);
     }
     @Test() public void testPassThreTimes() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackPass);
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,Move2.whitePass);
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackPass);
+        playMoves(Move2.blackPass,Move2.whitePass,Move2.blackPass);
     }
     @Test() public void testResign() throws Exception {
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackResign);
+        playMoves(Move2.blackResign);
+    }
+
+    protected final void playMoves(Move2... moves) throws Exception {
+        for(Move2 move:moves) {
+            if(move.color.equals(Stone.black)) {
+                game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,move);
+            } else {
+                game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,move);
+            }
+        }
     }
 }

@@ -45,7 +45,7 @@ public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSu
         }
         @Override protected Holder createHolder() throws Exception { return Holder.trick(IOs.anyPort); }
     }
-    @RunWith(Suite.class) @SuiteClasses({DuplexTestCase.class,SocketTestCase.class}) public static class ATestSuite {
+    @RunWith(Suite.class) @SuiteClasses({DuplexTestCase.class,SocketTestCase.class}) public static class GameFixtureTestSuite {
     }
     @RunWith(Suite.class) @SuiteClasses({DuplexTestCase.ParameterizedTestCase.class,
             SocketTestCase.ParameterizedTestCase.class}) public static class ParameterizedTestSuite {
@@ -92,63 +92,19 @@ public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSu
     }
     @Test() public void testSetupAndTeardown() throws Exception {}
     @Test() public void testResign() throws Exception {
-        Model model=game.blackFixture.backEnd.model;
-        int moves=model.moves();
-        String expected=Move2.blackResign.name();
-        game.blackFixture.backEnd.model.playOneMove(Stone.black,expected);
-        model.waitForMoveCompleteOnBoard(moves);
-        assertEquals(expected,model.lastMoveGTP());
+        playMovesAlternating(Move2.blackResign.name());
     }
     @Test() public void testPass() throws Exception {
-        Model model=game.blackFixture.backEnd.model;
-        int moves=model.moves();
-        String expected=Move2.blackPass.name();
-        game.blackFixture.backEnd.model.playOneMove(Stone.black,expected);
-        model.waitForMoveCompleteOnBoard(moves);
-        assertEquals(expected,model.lastMoveGTP());
+        playMovesAlternating(Move2.blackPass.name());
     }
     @Test() public void testA1() throws Exception {
-        Model model=game.blackFixture.backEnd.model;
-        String expected="A1";
-        // maybe sync this
-        int moves=model.moves();
-        game.blackFixture.backEnd.model.playOneMove(Stone.black,expected);
-        model.waitForMoveCompleteOnBoard(moves);
-        assertEquals(expected,model.lastMoveGTP());
+        playMovesAlternating("A1");
     }
     @Test() public void testA1A2() throws Exception {
-        Model model=game.blackFixture.backEnd.model;
-        String expected="A1";
-        int moves=model.moves();
-        game.blackFixture.backEnd.model.playOneMove(Stone.black,expected);
-        model.waitForMoveCompleteOnBoard(moves);
-        assertEquals(expected,model.lastMoveGTP());
-        expected="A2";
-        //assertEquals(Stone.black,model.board().);
-        moves=model.moves();
-        game.blackFixture.backEnd.model.playOneMove(Stone.white,expected);
-        model.waitForMoveCompleteOnBoard(moves);
-        assertEquals(expected,model.lastMoveGTP());
+        playMovesAlternating("A1","A2");
     }
     @Test() public void testA1A2A3() throws Exception {
-        Model black=game.blackFixture.backEnd.model;
-        String expected="A1";
-        int moves=black.moves();
-        game.blackFixture.backEnd.model.playOneMove(Stone.black,expected);
-        black.waitForMoveCompleteOnBoard(moves);
-        assertEquals(expected,black.lastMoveGTP());
-        expected="A2";
-        //assertEquals(Stone.black,model.board().);
-        moves=black.moves();
-        game.blackFixture.backEnd.model.playOneMove(Stone.white,expected);
-        black.waitForMoveCompleteOnBoard(moves);
-        assertEquals(expected,black.lastMoveGTP());
-        expected="A3";
-        //assertEquals(Stone.black,model.board().);
-        moves=black.moves();
-        game.blackFixture.backEnd.model.playOneMove(Stone.black,expected);
-        black.waitForMoveCompleteOnBoard(moves);
-        assertEquals(expected,black.lastMoveGTP());
+        playMovesAlternating("A1","A2","A3");
     }
     public static void main(String[] args) {
         Logging.mainLogger.info(String.valueOf(Init.first));
@@ -156,6 +112,20 @@ public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSu
         JUnitCore jUnitCore=new JUnitCore();
         jUnitCore.run(AbstractGameFixtureTestCase.ParameterizedTestSuite.class);
         Logging.mainLogger.info("exit main");
+    }
+    private void playMovesAlternating(String... moves) throws Exception {
+        Model model=game.blackFixture.backEnd.model;
+        Stone stone=Stone.black;
+        for(String move:moves) {
+            playOneMove(model,stone,move);
+            stone=stone.otherColor();
+        }
+    }
+    private void playOneMove(Model model,Stone stone,String move) throws Exception {
+        int moves=model.moves();
+        model.playOneMove(stone,move);
+        model.waitForMoveCompleteOnBoard(moves);
+        assertEquals(move,model.lastMoveGTP());
     }
     static Histogram gameFixture=new Histogram(10,0,100);
     static Histogram setUp=new Histogram(10,0,100);
@@ -169,3 +139,4 @@ public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSu
     static final int timeout=0;;
     static final Et staticEt=new Et();
 }
+

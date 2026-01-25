@@ -7,12 +7,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import io.Logging;
 import model.Model;
-import utilities.*;
+import utilities.ParameterArray;
+import utilities.TestSupport;
 // test that almost all of the gtp commands are known and recognized.
-public abstract class AbstractKnownCommandsTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+public abstract class AbstractKnownCommandsTestCase extends TestSupport {
     @RunWith(Parameterized.class) public static class ParameterizedTestCase extends AbstractKnownCommandsTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         public ParameterizedTestCase(Command command) { this.command=command; }
         @Parameters public static Collection<Object[]> data() {
             Collection<Object> objects=Arrays.asList((Object[])Command.values());

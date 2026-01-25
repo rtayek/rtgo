@@ -7,21 +7,17 @@ import io.*;
 import io.IOs;
 import model.*;
 import model.Move2.MoveType;
-import utilities.MyTestWatcher;
-public abstract class AbstractGoServerTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+import utilities.TestSupport;
+public abstract class AbstractGoServerTestCase extends TestSupport {
     public static class GoServerRealSocketTestCase extends AbstractGoServerTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @Override @Before public void setUp() throws Exception { serverPort=IOs.defaultPort; super.setUp(); }
         @Override @After public void tearDown() throws Exception { if(game!=null) game.stop(); super.tearDown(); }
     }
     public static class GoServerSocketTestCase extends AbstractGoServerTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @Override @Before public void setUp() throws Exception { serverPort=IOs.anyPort; super.setUp(); }
         @Override @After public void tearDown() throws Exception { if(game!=null) game.stop(); super.tearDown(); }
     }
     public static class GoServerDuplexTestCase extends AbstractGoServerTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         // tests failing on interrupted exception
         @Override @Before public void setUp() throws Exception { serverPort=IOs.noPort; super.setUp(); }
         @Override @After public void tearDown() throws Exception { if(game!=null) game.stop(); super.tearDown(); }
@@ -48,38 +44,35 @@ public abstract class AbstractGoServerTestCase {
     @Test() public void testZeroeMovse() throws Exception { check(); }
     @Test() public void testPlayOneMove() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
+        playMoves(new Move2(MoveType.move,Stone.black,new Point()));
     }
     @Test() public void testPlayTwoMoves() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move2(MoveType.move,Stone.white,new Point(1,0)));
+        playMoves(
+                new Move2(MoveType.move,Stone.black,new Point()),
+                new Move2(MoveType.move,Stone.white,new Point(1,0))
+        );
     }
     @Test() public void testPlayThreeMoves() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point()));
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,new Move2(MoveType.move,Stone.white,new Point(1,0)));
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,new Move2(MoveType.move,Stone.black,new Point(2,0)));
+        playMoves(
+                new Move2(MoveType.move,Stone.black,new Point()),
+                new Move2(MoveType.move,Stone.white,new Point(1,0)),
+                new Move2(MoveType.move,Stone.black,new Point(2,0))
+        );
     }
     @Test() public void testPassOnce() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackPass);
+        playMoves(Move2.blackPass);
     }
     @Test() public void testPassTwice() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackPass);
-        game.playOneMoveAndWait(game.whiteFixture,game.blackFixture,Move2.whitePass);
+        playMoves(Move2.blackPass,Move2.whitePass);
     }
     @Test() public void testResign() throws Exception {
         check();
-        game.playOneMoveAndWait(game.blackFixture,game.whiteFixture,Move2.blackResign);
+        playMoves(Move2.blackResign);
     }
-    GoServer goServer;
-    public Integer serverPort;
-    public int width,depth;
-    public GameFixture game;
-    Watchdog watchdog;
-
     protected final void playMoves(Move2... moves) throws Exception {
         for(Move2 move:moves) {
             BothEnds from=move.color.equals(Stone.black)?game.blackFixture:game.whiteFixture;
@@ -87,4 +80,9 @@ public abstract class AbstractGoServerTestCase {
             game.playOneMoveAndWait(from,to,move);
         }
     }
+    GoServer goServer;
+    public Integer serverPort;
+    public int width,depth;
+    public GameFixture game;
+    Watchdog watchdog;
 }

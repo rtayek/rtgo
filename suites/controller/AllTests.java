@@ -9,7 +9,6 @@ import utilities.SuiteSupport;
 @RunWith(Suite.class) @SuiteClasses({ //
     AbstractGTPDirectTestCase.GTPDirectTestSuite.class, //
     AbstractBothTestCase.BothTestSuite.class, //
-    AbstractGameFixtureTestCase.ATestSuite.class, //
     AbstractGameFixtureTestCase.ParameterizedTestSuite.class, //
     //
     AbstractKnownCommandsTestCase.ParameterizedTestCase.class, //
@@ -24,3 +23,4 @@ import utilities.SuiteSupport;
         
     }
 }
+

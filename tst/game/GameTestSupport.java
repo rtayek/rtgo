@@ -4,11 +4,9 @@ import controller.GameFixture;
 import io.IOs;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
-import utilities.MyTestWatcher;
+import utilities.TestSupport;
 
-public abstract class GameTestSupport {
-    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
+public abstract class GameTestSupport extends TestSupport {
     protected GameFixture game;
     protected Integer serverPort = IOs.anyPort;
     protected static final int timeout = 0;

@@ -1,13 +1,11 @@
 package sgf;
 import org.junit.*;
 import org.junit.runners.Parameterized;
-import utilities.MyTestWatcher;
 import utilities.TestKeys;
-public abstract class AbstractSgfParserTestCase {
+import utilities.TestSupport;
+public abstract class AbstractSgfParserTestCase extends TestSupport {
     @Parameterized.Parameter public Object key;
     protected String expectedSgf;
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
-
     protected Object defaultKey() {
         return null;
     }

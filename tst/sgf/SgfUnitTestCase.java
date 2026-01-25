@@ -39,10 +39,9 @@ import sgf.combine.Combine;
 import io.Tee;
 import utilities.TestKeys;
 import utilities.Iterators.Longs;
-import utilities.MyTestWatcher;
+import utilities.TestSupport;
 
-public class SgfUnitTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+public class SgfUnitTestCase extends TestSupport {
     @Test public void testSmokeRoundTrip() {
         List<Object> keys=List.of(
                 TestKeys.emptyWithSemicolon,
@@ -1006,4 +1005,3 @@ public class SgfUnitTestCase {
         sgfModel.setBoard(Board.factory.create(Board.standard));
     }
 }
-

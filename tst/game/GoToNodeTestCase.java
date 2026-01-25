@@ -6,7 +6,7 @@ import org.junit.*;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
 import sgf.*;
-public class GoToNodeTesCase {
+public class GoToNodeTestCase {
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testGoToLocalNode() {
@@ -58,4 +58,5 @@ public class GoToNodeTesCase {
     }
     Model model=new Model();
 }
+
 

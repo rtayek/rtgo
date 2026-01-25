@@ -2,12 +2,10 @@ package controller;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import io.IOs.End.Holder;
-import utilities.MyTestWatcher;
+import utilities.TestSupport;
 
-public abstract class ControllerHolderTestSupport {
-    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
+public abstract class ControllerHolderTestSupport extends TestSupport {
     protected Holder holder;
 
     protected abstract Holder createHolder() throws Exception;

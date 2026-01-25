@@ -3,9 +3,7 @@ import org.junit.*;
 import controller.GameFixture;
 import io.*;
 import io.IOs;
-import utilities.MyTestWatcher;
 public class SillyGameTestCase extends AbstractGoServerTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Override @Before public void setUp() throws Exception {
         Logging.mainLogger.info(this+" starting setup.");
         serverPort=IOs.anyPort;

@@ -3,10 +3,8 @@ import io.Logging;
 import org.junit.*;
 import org.junit.runner.*;
 import io.IOs;
-import utilities.MyTestWatcher;
 // tries to runb a test programmatically from main();
 public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Override @Before public void setUp() throws Exception {
         serverPort=IOs.anyPort;
         super.setUp();

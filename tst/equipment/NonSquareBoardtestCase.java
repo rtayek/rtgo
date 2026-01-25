@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import equipment.Board.*;
 import utilities.MyTestWatcher;
-public class NonSquareBoardtestCase {
+public class NonSquareBoardTestCase {
     @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
@@ -27,3 +27,4 @@ public class NonSquareBoardtestCase {
     }
     BoardImpl b=new BoardImpl(Board.standard,Board.standard/2,Topology.normal,Shape.normal,0);
 }
+

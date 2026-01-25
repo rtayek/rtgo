@@ -3,10 +3,8 @@ import static org.junit.Assert.*;
 import java.util.*;
 import org.junit.*;
 import equipment.*;
-import utilities.MyTestWatcher;
 // where does test for delete belong?
 public class GTPDirectNavigationTestCase extends ControllerGtpTestSupport {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // maybe add tests that fail if trying to navigate somewhere that does not exist.
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}

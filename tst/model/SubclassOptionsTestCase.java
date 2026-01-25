@@ -29,6 +29,7 @@ class OptionsD extends OptionsSubclass {
         new OptionSubclass<Foo>(Foo.bar);
     }
 }
-public class SublassOptionsTestCase {
+public class SubclassOptionsTestCase {
     @Test public void test() { new OptionsA(); new OptionsB(); new OptionsC(); new OptionsD(); }
 }
+

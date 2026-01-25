@@ -11,27 +11,22 @@ import equipment.*;
 import io.*;
 import model.*;
 import sgf.HexAscii;
-import utilities.MyTestWatcher;
 //@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 // some of these need to be done directly in the model.
 // as well as b the bac end when we have role=something!
 public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // these create a back end with a buffered string reader passed to it.
     // the string reader has the command(s).
     // the commands get run by  the runCommands method.
     // either by just calling run() or starting a thread.
     // in either case. it then waits for done.
     public static class DirectTestCase extends AbstractGTPDirectTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @Before public void setUp() throws Exception { directJustRun=true; }
     }
     public static class ThreadTestCase extends AbstractGTPDirectTestCase {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         @Before public void setUp() throws Exception { directJustRun=false; }
     }
     @RunWith(Suite.class) @SuiteClasses({DirectTestCase.class,ThreadTestCase.class}) public class GTPDirectTestSuite {
-        @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
         // eclipse can't find this!
         // this should have been found by grep!
         // eclipse still can't find this!
@@ -170,7 +165,7 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
     //@Test public void testBoardsize26() throws Exception { checkModelBoardSize(26); }
     //@Test public void testBoardsize27() throws Exception { checkModelBoardSize(27); }
     //@Test public void testBoardsize37() throws Exception { checkModelBoardSize(37); }
-    @Test public void testSGtptandardBoardsize() throws Exception {
+    @Test public void testGtpBoardsizeStandard() throws Exception {
         Command command=Command.boardsize;
         String response=runGtpCommandString(directModel, command.name()+" "+Board.standard, directJustRun);
         Response actual=Response.response(response);
@@ -399,3 +394,4 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
     static EnumSet<Command> skipped=EnumSet.of(Command.genmove);
     // genmove hangs. figure out a workaround!
 }
+

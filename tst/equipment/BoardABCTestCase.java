@@ -4,9 +4,7 @@ import java.util.List;
 import org.junit.*;
 import equipment.Board.*;
 import io.Logging;
-import utilities.MyTestWatcher;
 /*@FixMethodOrder(MethodSorters.NAME_ASCENDING)*/public abstract class BoardABCTestCase extends BoardTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
     // this test case may not need to be run for a bunch of strange boards?
     @Test public void testBoardABC() { assertNotNull(boardABC); }
     @Test public void testTypeABC() { assertEquals(topology,boardABC.topology); }

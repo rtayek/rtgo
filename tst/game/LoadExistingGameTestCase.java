@@ -9,7 +9,7 @@ import io.IOs;
 import model.*;
 import model.Model.*;
 import model.Move2.MoveType;
-public class LoadExistinGameTestCase extends GameTestSupport {
+public class LoadExistingGameTestCase extends GameTestSupport {
     // how do we go to a particular position?
     // use finder and goto node
     // how do we let one person drive this?
@@ -56,3 +56,4 @@ public class LoadExistinGameTestCase extends GameTestSupport {
     Model recorder=new Model(),black,white;
     File file=new File("data/wasinroot/existing9x9Game.sgf");
 }
+
