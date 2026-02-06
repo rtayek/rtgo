@@ -2,7 +2,7 @@ package tree;
 import io.Logging;
 import java.util.*;
 import tree.G2.Generator;
-import utilities.Iterators.Longs;
+import com.tayek.util.core.Iterators.Longs;
 public class Catalan {
     public static final long c(final int n,final int r) { // binomial coefficient
         long i,p;

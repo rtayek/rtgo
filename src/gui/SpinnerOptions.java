@@ -6,7 +6,7 @@ import gui.Spinners.OldSpinners;
 import io.Logging;
 import model.*;
 import model.Interfaces.*;
-import utilities.Range;
+import com.tayek.util.core.Range;
 // we need a clas in between options abc and this class.
 abstract class WidgetOptions extends OptionsABC implements Widgets {
     public abstract class WidgetOption<T extends Enum<T>,R extends Comparable<R>>extends Option<T,R> implements Widget {

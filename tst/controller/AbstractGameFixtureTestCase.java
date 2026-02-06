@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import java.util.Collection;
 import com.tayek.util.core.Et;
 import com.tayek.util.core.Histogram;
+import com.tayek.util.core.ParameterArray;
 import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.*;
@@ -11,7 +12,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 import equipment.Stone;
 import io.*;
-import io.IOs.End.Holder;
+import com.tayek.util.io.End.Holder;
 import model.*;
 import utilities.*;
 public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSupport {
@@ -59,7 +60,7 @@ public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSu
         Logging.mainLogger.info(" game: "+gameFixture);
         Logging.mainLogger.info("setup: "+setUp);
         Logging.mainLogger.info(" down: "+tearDown);
-        Logging.mainLogger.info("total: "+tearDown);
+        Logging.mainLogger.info("total: "+total);
     }
     @AfterClass public static void tearDownClass() {
         //printHistograms();

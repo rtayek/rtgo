@@ -8,7 +8,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.io.IOException;
-import io.Indent;
+import com.tayek.util.io.Indent;
 import static io.Logging.parserLogger;
 /**
  * Shared round-trip helpers for SGF and MNode flows.

@@ -1,6 +1,6 @@
 package sgf;
 
-import io.Indent;
+import com.tayek.util.io.Indent;
 import io.Logging;
 import io.IOs;
 import io.TestIo;
@@ -20,7 +20,7 @@ import model.ModelHelper.ModelSaveMode;
 import model.ModelIo;
 import model.Navigate;
 import sgf.SgfNode.SgfOptions;
-import utilities.ParameterArray;
+import com.tayek.util.core.ParameterArray;
 import utilities.SgfTestParameters;
 
 public final class SgfHarness {

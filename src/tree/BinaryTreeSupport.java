@@ -3,7 +3,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import utilities.Holder;
+import com.tayek.util.core.Holder;
 public final class BinaryTreeSupport {
     private BinaryTreeSupport() {}
     public static <T> T lastSibling(T start,Function<T,T> right,Holder<Integer> count) {

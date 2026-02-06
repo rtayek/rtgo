@@ -3,7 +3,7 @@ import io.Logging;
 import static tree.MNode.print;
 import java.util.*;
 import tree.G2.Generator;
-import utilities.Iterators.*;
+import com.tayek.util.core.Iterators.*;
 public class RedBean {
     public static Node<Character> binary() {
         // this may not be coded up correctly

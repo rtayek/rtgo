@@ -10,7 +10,7 @@ import equipment.Board;
 import equipment.Point;
 import equipment.Stone;
 import io.Logging;
-import io.IOs.End.Holder;
+import com.tayek.util.io.End.Holder;
 public final class ModelHelper2 {
 	private ModelHelper2() {}
 	public static void configureModelWithBoardFrom(Model target,Model source) {

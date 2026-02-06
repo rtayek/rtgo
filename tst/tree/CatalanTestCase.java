@@ -4,13 +4,13 @@ import static org.junit.Assert.*;
 import static tree.Catalan.*;
 import static tree.Node.*;
 import static tree.Node.roundTripLong;
-import static utilities.ParameterArray.modulo;
+import static com.tayek.util.core.ParameterArray.modulo;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import tree.G2.Generator;
-import utilities.Iterators.*;
+import com.tayek.util.core.Iterators.*;
 import utilities.TestSupport;
 @RunWith(Parameterized.class) public class CatalanTestCase extends TestSupport {
 	public CatalanTestCase(int nodes) {

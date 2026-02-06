@@ -1,5 +1,5 @@
 package sgf;
-import static io.Constants.lineSeparator;
+import static com.tayek.util.io.Constants.lineSeparator;
 import java.util.logging.*;
 public class ASimpleFormatter extends SimpleFormatter {
     @Override public synchronized String format(LogRecord record) {

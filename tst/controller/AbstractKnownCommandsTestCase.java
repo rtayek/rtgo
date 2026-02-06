@@ -7,7 +7,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import io.Logging;
 import model.Model;
-import utilities.ParameterArray;
+import com.tayek.util.core.ParameterArray;
 import utilities.TestSupport;
 // test that almost all of the gtp commands are known and recognized.
 public abstract class AbstractKnownCommandsTestCase extends TestSupport {

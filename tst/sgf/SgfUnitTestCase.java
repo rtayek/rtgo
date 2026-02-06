@@ -37,7 +37,7 @@ import model.MNodeTestIo;
 import sgf.combine.Combine;
 import io.Tee;
 import utilities.TestKeys;
-import utilities.Iterators.Longs;
+import com.tayek.util.core.Iterators.Longs;
 import utilities.TestSupport;
 
 public class SgfUnitTestCase extends TestSupport {

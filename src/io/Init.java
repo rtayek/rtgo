@@ -6,6 +6,8 @@ import java.util.logging.*;
 import controller.GTPBackEnd;
 import server.NamedThreadGroup;
 import com.tayek.util.core.Et;
+import com.tayek.util.log.ColorLogs;
+import com.tayek.util.log.Sequence;
 // https://developer.ibm.com/tutorials/j-introducing-junit5-part2-vintage-jupiter-extension-model/
 // 3 calls to stack trace, but that seems ok.
 public enum Init {
@@ -19,6 +21,7 @@ public enum Init {
         if(verbose) Logging.mainLogger.info("fotreground: "+forground);
         ColorLogs.blackOrWhite=forground==null?ColorLogs.color_BLACK:ColorLogs.color_WHITE;
         Sequence.blackOrWhite=forground!=null?Sequence.black:Sequence.white;
+        Sequence.setNameToColorIndex(NamedThreadGroup.nameToColorIndex);
         if(verbose) Logging.mainLogger.info("blackOrWhite: "+Sequence.blackOrWhite);
         LogManager.getLogManager().reset();
         // maybe omit this stuff below?

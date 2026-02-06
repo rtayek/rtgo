@@ -1,6 +1,6 @@
 package io;
 import io.Logging;
-import static io.Constants.lineSeparator;
+import static com.tayek.util.io.Constants.lineSeparator;
 import static java.lang.Math.max;
 import java.io.*;
 import java.util.*;

@@ -4,7 +4,7 @@ import static utilities.Utilities.*;
 import java.io.File;
 import java.util.*;
 import model.Interfaces.Persistance;
-import utilities.Range;
+import com.tayek.util.core.Range;
 public class OptionsABC implements Persistance { // an instance of options.
     public class Option<T extends Enum<T>,R extends Comparable<R>> { // an instance of one option.
         // should this be abstract?

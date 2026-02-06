@@ -3,6 +3,8 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.logging.Formatter;
+import com.tayek.util.log.ColorLogs;
+import com.tayek.util.log.Sequence;
 import sgf.ASimpleFormatter;
 public class Logging {
     public static StreamHandler flushingStreamHandler(OutputStream outputStream) {

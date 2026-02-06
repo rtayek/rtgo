@@ -1,5 +1,6 @@
 package io;
 import static org.junit.Assert.assertEquals;
+import com.tayek.util.log.ColorLogs;
 import org.junit.*;
 import utilities.TestSupport;
 public class ColorLogsTestCase extends TestSupport {

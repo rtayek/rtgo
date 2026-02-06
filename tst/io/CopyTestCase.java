@@ -1,6 +1,7 @@
 package io;
 import static org.junit.Assert.assertEquals;
 import java.io.Writer;
+import com.tayek.util.io.Copy;
 import org.junit.*;
 import utilities.TestSupport;
 public class CopyTestCase extends TestSupport {

@@ -1,5 +1,5 @@
 package io;
-import static io.Constants.lineSeparator;
+import static com.tayek.util.io.Constants.lineSeparator;
 import static io.Logging.flushingStreamHandler;
 import static org.junit.Assert.*;
 import java.io.*;

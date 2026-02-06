@@ -3,7 +3,7 @@ import static io.Init.first;
 import static org.junit.Assert.assertTrue;
 import org.junit.*;
 import equipment.Board;
-import io.IOs.End.Holder;
+import com.tayek.util.io.End.Holder;
 import io.Logging;
 import utilities.TestSupport;
 public class ABothTestCase extends TestSupport {

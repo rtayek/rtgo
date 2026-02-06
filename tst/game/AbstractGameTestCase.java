@@ -9,7 +9,7 @@ import equipment.Stone;
 import io.IOs;
 import model.Move2;
 import model.Move2.MoveType;
-import utilities.ParameterArray;
+import com.tayek.util.core.ParameterArray;
 public abstract class AbstractGameTestCase extends GameTestSupport { // these test cases require a running game.
     public static class GameSocketTestCase extends AbstractGameTestCase {
         @Override @Before public void setUp() throws Exception {

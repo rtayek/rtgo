@@ -5,7 +5,7 @@ import static tree.Node.*;
 import java.util.*;
 import org.junit.*;
 import tree.G2.Generator;
-import utilities.Iterators.Longs;
+import com.tayek.util.core.Iterators.Longs;
 import utilities.TestSupport;
 public class G2TestCase extends TestSupport {
     // round trip?

@@ -70,6 +70,7 @@ checkstyleMain {
 checkstyleTest {
   source = fileTree("tst") { include "**/*.java" }
 }
+// add other roots of source trees.
 
 application {
   mainClass = "utilities.Dispatcher"

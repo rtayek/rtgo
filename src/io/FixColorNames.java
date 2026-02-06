@@ -5,7 +5,7 @@ import java.nio.file.*;
 import java.util.List;
 public class FixColorNames { // generate ctor call for sequence enums.
     public static void main(String[] args) throws IOException {
-        Path path=Path.of("src/io/ColorLogs.java");
+        Path path=Path.of("..","util","src","com","tayek","util","log","ColorLogs.java");
         List<String> lines=Files.readAllLines(path);
         String target="color_";
         for(String line:lines) {

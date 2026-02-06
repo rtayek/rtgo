@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.UIManager.LookAndFeelInfo;
+import com.tayek.util.io.Indent;
+import com.tayek.util.io.MainGetOpt;
 import io.*;
 import io.IOs;
 import model.Model;

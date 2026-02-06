@@ -6,18 +6,19 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.Consumer;
+import com.tayek.util.io.Indent;
 import controller.GTPBackEnd;
 import server.NamedThreadGroup.NamedThread;
-import utilities.Pair;
 // move more io methods here
 // maybe move pipe and duplex classes here
+// these are or will be moved to util project.
 public class IOs {
     public interface Stopable {
         void stop() throws IOException,InterruptedException;
         default boolean isStopping() { return false; }
         boolean setIsStopping();
     }
-    public static class Idea {
+    private static class Idea {
         volatile transient boolean newDone=false;
         void blockingReadLoopIdea(Consumer<String> consumer) {
             try {
@@ -39,156 +40,6 @@ public class IOs {
         }
         BufferedReader in;
         Thread thread;
-    }
-    public static class Pipe {
-        public Pipe(BufferedReader in,Writer out) { this.in=in; this.out=out; }
-        public Pipe() { // one way pipe that is a U.
-            PipedOutputStream pos=new PipedOutputStream();
-            out=new OutputStreamWriter(pos);
-            PipedInputStream input;
-            try {
-                input=new PipedInputStream(pos);
-            } catch(IOException e) {
-                mainLogger.warning(this+" caught: "+e);
-                throw new RuntimeException(e);
-            }
-            in=new BufferedReader(new InputStreamReader(input));
-        }
-        @Override public String toString() { return "Pipe [in="+in+", out="+out+"]"; }
-        public final BufferedReader in;
-        public final Writer out;
-    }
-    public static class End implements Stopable { // one end of a 2-way pipe
-        public End(BufferedReader in,Writer out) { this.in=in; this.out=out; this.socket=null; }
-        public End(Socket socket) { this.in=in_(socket); this.out=out_(socket); this.socket=socket; }
-        public End(String string,Writer out) { this(toBufferedReader(string),out); }
-        public End(String string) { this(toBufferedReader(string),new StringWriter()); }
-        public Socket socket() { return socket; }
-        public boolean send(String string) { return false; }
-        public String receive() { return null; }
-        public void close() throws IOException { in.close(); out.close(); }
-        public BufferedReader in() { return in; }
-        public Writer out() { return out; }
-        public Thread thread() { return thread; }
-        @Override public boolean isStopping() { return isStopping; }
-        @Override public boolean setIsStopping() { boolean rc=isStopping; isStopping=true; return rc; }
-        @Override public void stop() { isStopping=true; IOs.myClose(in,out,socket,thread,name(),this); }
-        public String toShortString() {
-            return "End [in="+in+", out="+out+", socket="+socket+", thread="+thread+", name="+name+"]";
-        }
-        @Override public String toString() {
-            return "End [isStopping="+isStopping+", socket="+socket+", in="+in+", out="+out+", thread="+thread+", name="
-                    +name+"]";
-        }
-        public String name() { return name; }
-        boolean isStopping;
-        protected transient String sent,received;
-        public final BufferedReader in;
-        public final Writer out;
-        public NamedThread thread;
-        public final Socket socket;
-        String name;
-        public static class Holder { // holds one or both ends of a socket or a tow way pipe.
-            private Holder(End front,End back) { this.front=front; this.back=back; }
-            @Override public String toString() { return "Holder [front="+front+", back="+back+"]"; }
-            public static Holder frontEnd(End end) { return new Holder(end,null); }
-            private static Holder remoteBackEnd(int port) {
-                // has a back end connection to go server.
-                // and no front end
-                Holder holder=null;
-                Socket backEnd=new Socket();
-                boolean ok=connect(IOs.host,port,100,backEnd);
-                if(ok) holder=new Holder(null,new End(backEnd));
-                else {
-                    try {
-                        backEnd.close();
-                    } catch(IOException e) {
-                        e.printStackTrace();
-                    }
-                    throw new RuntimeException("connect fails!");
-                }
-                return holder;
-            }
-            public static Holder trick(int port) { // local connection (maybe not?)
-                End front=null,back=null;
-                try(ServerSocket serverSocket=new ServerSocket(port);) {
-                    Socket frontEnd=new Socket();
-                    if(frontEnd==null) throw new RuntimeException("socket is null!");
-                    boolean ok=connect("localhost",serverSocket.getLocalPort(),100,frontEnd);
-                    if(!ok) throw new RuntimeException("can not connect!");
-                    Socket backEnd=serverSocket.accept(); // trick
-                    // or could use server socket's local port????
-                    if(backEnd==null) throw new RuntimeException("backend is null!");
-                    front=new End(frontEnd);
-                    if(front==null) throw new RuntimeException("front is null!");
-                    back=new End(backEnd);
-                    if(back==null) throw new RuntimeException("back is null!");
-                    serverSocket.close();
-                } catch(Exception e) {
-                    Logging.mainLogger.info("in create(), caught: "+e);
-                    serverLogger.warning("in create(), caught: "+e);
-                    throw new RuntimeException("create can not connect!");
-                } finally {
-                    // if(serverSocket!=null) serverSocket.close();
-                }
-                //return new Holder(front,back);
-                Holder holder=new Holder(front,back);
-                return holder;
-            }
-            public static synchronized Holder duplex() { // two way pipe
-                Duplex duplex=new Duplex();
-                End front=duplex.front;
-                End back=duplex.back;
-                return new Holder(front,back);
-            }
-            public static synchronized Holder create(int port) {
-                if(port==noPort) return duplex();
-                else if(port==anyPort) return trick(port);
-                else { // some real port number >0.
-                    return remoteBackEnd(port);
-                }
-            }
-            public final End front,back;
-        }
-        public static class Holders extends Pair<Holder,Holder> {
-            public Holders(Holder first,Holder second) { super(first,second); }
-            public static Holders create(int port) { return new Holders(Holder.create(port),Holder.create(port)); }
-            public static Holders holders(int port) {
-                Holder blackHolder=null;
-                Holder whiteHolder=null;
-                if(port==IOs.noPort) {
-                    blackHolder=Holder.duplex();
-                    whiteHolder=Holder.duplex();
-                } else if(port==IOs.anyPort) {
-                    blackHolder=Holder.trick(port);
-                    whiteHolder=Holder.trick(port);
-                } else { // a real port, might be in use
-                    // if server is running maybe do not use trick?
-                    // this may help us consolidate.
-                    // why does this differ from  create?
-                    // why do we need this?
-                    blackHolder=Holder.trick(port);
-                    whiteHolder=Holder.trick(port);
-                }
-                Holders holders=new Holders(blackHolder,whiteHolder);
-                return holders;
-            }
-        }
-    }
-    public static class Duplex {
-        public Duplex() {
-            Pipe p1=new Pipe();
-            Pipe p2=new Pipe();
-            front=new End(p1.in,p2.out);
-            back=new End(p2.in,p1.out);
-        }
-        @Override public String toString() {
-            return "Duplex [front="+front.toShortString()+", back="+back.toShortString()+", name="+name+"]";
-        }
-        public String getName() { return name; }
-        public void setName(String name) { this.name=name; }
-        public final End front,back;
-        private transient String name="unnamed";
     }
     public static String toString(Thread thread) {
         if(thread!=null) if(thread.getName().contains(timeLimitedThreadName)) {

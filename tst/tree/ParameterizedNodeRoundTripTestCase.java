@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import utilities.Iterators.Longs;
+import com.tayek.util.core.Iterators.Longs;
 @RunWith(Parameterized.class) public class ParameterizedNodeRoundTripTestCase extends AbstractRoundTripTestCase {
     @Parameters(name="{0}") public static Collection<Object[]> parameters() {
         List<Object[]> parameters=new ArrayList<>();

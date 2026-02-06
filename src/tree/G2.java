@@ -3,7 +3,7 @@ import io.Logging;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
-import utilities.Iterators.Longs;
+import com.tayek.util.core.Iterators.Longs;
 public class G2 {
     /*
     Given a general tree with ordered but not indexed children,

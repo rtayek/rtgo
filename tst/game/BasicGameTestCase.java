@@ -6,7 +6,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import controller.GameFixture;
 import com.tayek.util.core.Et;
-import utilities.ParameterArray;
+import com.tayek.util.core.ParameterArray;
 
 @RunWith(Parameterized.class) public class BasicGameTestCase extends GameTestSupport {
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }

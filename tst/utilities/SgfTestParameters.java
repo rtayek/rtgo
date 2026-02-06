@@ -2,6 +2,7 @@ package utilities;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import com.tayek.util.core.ParameterArray;
 import sgf.Parser;
 public final class SgfTestParameters {
     private SgfTestParameters() {}

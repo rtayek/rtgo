@@ -5,7 +5,7 @@ import static tree.RedBean.binary;
 import java.util.*;
 import org.junit.*;
 import tree.G2.Generator;
-import utilities.Iterators.Longs;
+import com.tayek.util.core.Iterators.Longs;
 public class RoundTripTestCase extends AbstractRoundTripTestCase {
     //ArrayList<Node<Character>> trees=new ArrayList<>();
     @Override @Before public void setUp() throws Exception {}

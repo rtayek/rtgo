@@ -3,6 +3,7 @@ import io.Logging;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
 import java.util.*;
+import com.tayek.util.core.ParameterArray;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
