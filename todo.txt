@@ -1,0 +1,3 @@
+use tmp dir and files.
+split out test files that do io.
+refactor to use jar.

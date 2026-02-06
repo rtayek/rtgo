@@ -60,30 +60,25 @@ public abstract class AbstractBothTestCase extends ControllerHolderTestSupport {
         both.stop();
         //int n=NamedThreadGroup.printAllNamedThreads("teardown both atc");
     }
-    @Test() public void testBothConnected() throws Exception {
+    private void startBackEndOrThrow(String testId) {
         @SuppressWarnings("unused") Thread back=both.backEnd.startGTP(0);
         if(back==null) {
-            Logging.mainLogger.severe("test 6.3 startGTP returns null!");
-            if(GTPBackEnd.throwOnstartGTPFailure) throw new RuntimeException("6.3 can not run backend!");
+            Logging.mainLogger.severe("test "+testId+" startGTP returns null!");
+            if(GTPBackEnd.throwOnstartGTPFailure) throw new RuntimeException(testId+" can not run backend!");
         }
     }
+    @Test() public void testBothConnected() throws Exception {
+        startBackEndOrThrow("6.3");
+    }
     @Test() public void testBothConnectedSend() throws Exception {
-        @SuppressWarnings("unused") Thread back=both.backEnd.startGTP(0);
-        if(back==null) {
-            Logging.mainLogger.severe("test 6.5 startGTP returns null!");
-            if(GTPBackEnd.throwOnstartGTPFailure) throw new RuntimeException("6.5 can not run backend!");
-        }
+        startBackEndOrThrow("6.5");
         both.frontEnd.sendString("notACommand");
         Response response=both.frontEnd.receive();
         assertNotNull(response);
         assertTrue(!response.isOk());
     }
     @Test() public void testBothConnectedNameCommand() {
-        @SuppressWarnings("unused") Thread back=both.backEnd.startGTP(0);
-        if(back==null) {
-            Logging.mainLogger.severe("test 7 startGTP returns null!");
-            if(GTPBackEnd.throwOnstartGTPFailure) throw new RuntimeException("7 can not run backend!");
-        }
+        startBackEndOrThrow("7");
         //both.backEnd.waitForDone();
         // different code than test connected tgo stop
         // does a send, wait, receive
@@ -95,11 +90,7 @@ public abstract class AbstractBothTestCase extends ControllerHolderTestSupport {
     @Test() public void testBothConnectedGenmoveTrue() throws Exception {
         // there are two if these. refactor!
         Logging.mainLogger.info("enter test at "+first.et);
-        @SuppressWarnings("unused") Thread back=both.backEnd.startGTP(0);
-        if(back==null) {
-            Logging.mainLogger.severe("test 8 startGTP returns null!");
-            if(GTPBackEnd.throwOnstartGTPFailure) throw new RuntimeException("8 can not run backend!");
-        }
+        startBackEndOrThrow("8");
         Logging.mainLogger.info("gtp thread started at "+first.et);
         both.backEnd.setGenerateMove(true);
         both.frontEnd.sendString(Command.boardsize.name()+" "+Board.standard);
@@ -121,11 +112,7 @@ public abstract class AbstractBothTestCase extends ControllerHolderTestSupport {
     }
     @Test() public void testBothConnectedGenmoveFalse() throws Exception {
         Model model=both.backEnd.model;
-        @SuppressWarnings("unused") Thread back=both.backEnd.startGTP(0);
-        if(back==null) {
-            Logging.mainLogger.severe("test 9 startGTP returns null!");
-            if(GTPBackEnd.throwOnstartGTPFailure) throw new RuntimeException("9 can not run backend!");
-        }
+        startBackEndOrThrow("9");
         both.backEnd.model.setRole(Model.Role.anything);
         both.frontEnd.name="testConnectGenmoveAndCheckResponse";
         both.backEnd.setGenerateMove(false);
@@ -142,11 +129,7 @@ public abstract class AbstractBothTestCase extends ControllerHolderTestSupport {
         assertTrue(response2.response.startsWith("B2"));
     }
     @Test() public void testBothConnectedTgo_stop() throws Exception {
-        @SuppressWarnings("unused") Thread back=both.backEnd.startGTP(0);
-        if(back==null) {
-            Logging.mainLogger.severe("test 10 startGTP returns null!");
-            if(GTPBackEnd.throwOnstartGTPFailure) throw new RuntimeException("10 can not run backend!");
-        }
+        startBackEndOrThrow("10");
         both.frontEnd.sendString(Command.tgo_stop.name());
         //both.backEnd.waitForDone(); // not needed?
         Response response=both.frontEnd.receive();

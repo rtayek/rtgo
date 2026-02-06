@@ -10,7 +10,11 @@ plugins {
   id "application"
 }
 
-repositories { mavenCentral() }
+repositories {
+  mavenLocal()
+  maven { url = uri("${System.properties['user.home']}/.m2/repository") }
+  mavenCentral()
+}
 
   sourceSets {
     main {
@@ -31,6 +35,7 @@ repositories { mavenCentral() }
   
 dependencies {
   implementation files("lib/java-getopt-1.0.13.jar")
+  implementation "com.tayek:utilities:0.0"
   testImplementation "junit:junit:4.13.2"
 }
 

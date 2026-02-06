@@ -15,27 +15,7 @@ public class CommandLine {
     // we need the command line options
     // and we need the commands for the command line.
     private static void usage() {
-        System.out.println("usage:");
-        //System.out.println("CommandLine.main() -role black, white, obseever, anything.");
-        System.out.println("h - help.");
-        System.out.println("c - add a new command line view.");
-        System.out.println("m x y - move at (x,y).");
-        System.out.println("M - unmove.");
-        System.out.println("u - up.");
-        System.out.println("d - down.");
-        System.out.println("r - right.");
-        System.out.println("l - left.");
-        System.out.println("t - top.");
-        System.out.println("b - bottom.");
-        System.out.println("D - delete.");
-        System.out.println("o file - open file (no spaces allowed!");
-        System.out.println("n - new game.");
-        System.out.println("g - new gui for model.");
-        System.out.println("p - print view.");
-        System.out.println("q - quit.");
-        System.out.println("s - connect to server");
-        System.out.println("S - disconnect from server");
-        System.out.println("T - toggle treeview.");
+        for(String line:usageLines) System.out.println(line);
     }
     private String[] splitNext(String command,int i) {
         while(command.charAt(i)==' ') i++;
@@ -188,4 +168,27 @@ public class CommandLine {
             "c","s",});
     Model model=new Model("cl model");
     TreeView myTreeView;
+    private static final String[] usageLines=new String[] {
+            "usage:",
+            // "CommandLine.main() -role black, white, obseever, anything.",
+            "h - help.",
+            "c - add a new command line view.",
+            "m x y - move at (x,y).",
+            "M - unmove.",
+            "u - up.",
+            "d - down.",
+            "r - right.",
+            "l - left.",
+            "t - top.",
+            "b - bottom.",
+            "D - delete.",
+            "o file - open file (no spaces allowed!",
+            "n - new game.",
+            "g - new gui for model.",
+            "p - print view.",
+            "q - quit.",
+            "s - connect to server",
+            "S - disconnect from server",
+            "T - toggle treeview.",
+    };
 }

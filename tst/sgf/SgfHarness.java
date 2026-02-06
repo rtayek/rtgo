@@ -42,7 +42,7 @@ public final class SgfHarness {
     }
 
     public static Model restoreNew(String sgf) {
-        Model model=new Model();
+        Model model=newModel();
         restore(model,sgf);
         return model;
     }
@@ -315,7 +315,7 @@ public final class SgfHarness {
 
     // Model round-trip support
     static void assertModelRestoreAndSave(Object key,String expectedSgf) {
-        Model model=new Model("");
+        Model model=newModel("");
         assertModelRestoreAndSave(key,expectedSgf,model);
     }
 
@@ -352,7 +352,7 @@ public final class SgfHarness {
     }
 
     static void assertModelRestoreAndSaveWithExplicitModel(Object key,String expectedSgf) {
-        Model model=new Model();
+        Model model=newModel();
         Logging.mainLogger.info("ex: "+expectedSgf);
         String actualSgf=SgfHarness.restoreAndSave(model,expectedSgf,key.toString());
         actualSgf=SgfNode.options.removeUnwanted(actualSgf);
@@ -360,8 +360,7 @@ public final class SgfHarness {
     }
 
     static void assertModelSaveFromMNode(Object key,String expectedSgf,MNode root) {
-        Model model=new Model();
-        model.setRoot(root);
+        Model model=newModelWithRoot(root);
         String actualSgf=SgfHarness.save(model,key.toString());
         assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
@@ -440,6 +439,20 @@ public final class SgfHarness {
         SgfNode node=new SgfNode();
         node.add(property(id,value));
         return node;
+    }
+
+    private static Model newModel() {
+        return new Model();
+    }
+
+    private static Model newModel(String name) {
+        return new Model(name);
+    }
+
+    private static Model newModelWithRoot(MNode root) {
+        Model model=newModel();
+        model.setRoot(root);
+        return model;
     }
 
     private static String[] restoreAndSaveTwice(String sgf) {

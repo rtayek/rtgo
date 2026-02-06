@@ -19,6 +19,7 @@ import static model.Move2.*;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 import sgf.MNode;
+// https://www.lysator.liu.se/~gunnar/gtp/
 // https://www.gnu.org/software/gnugo/gnugo_19.html
 //how to stick into gogui:
 //"C:\Program Files\Java\jdk1.8.0_40\bin\java.exe" -cp bin controller.GTP

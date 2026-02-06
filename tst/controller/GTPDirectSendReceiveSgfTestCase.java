@@ -12,6 +12,7 @@ import utilities.*;
 // this may belong in the sgf package.
 // this tests the custom gtp commands to send and receive sgf strings.
 @RunWith(Parameterized.class) public class GTPDirectSendReceiveSgfTestCase extends ControllerGtpTestSupport {
+    private static final boolean verbose=false;
     @Before public void setUp() throws Exception {
         expectedSgf=getSgfData(key);
         expectedSgf=SgfHarness.prepareExpectedSgf(key,expectedSgf);
@@ -41,12 +42,16 @@ import utilities.*;
         }
         return actualSgf;
     }
+    private void logSgfComparison(String expected,String actual) {
+        if(!verbose) return;
+        Logging.mainLogger.info("expectedSgf:\n"+expected);
+        Logging.mainLogger.info("actualSgf:\n"+actual);
+    }
     @Test public void testGetSgfFromModel() throws Exception {
         String actualSgf=getSgfFromModel(expectedSgf);
         actualSgf=SgfNode.options.prepareSgf(actualSgf);
         //Parser.printDifferences(expectedSgf,actualSgf);
-        System.out.println("expectedSgf:\n"+expectedSgf);
-        System.out.println("actualSgf:\n"+actualSgf);	
+        logSgfComparison(expectedSgf,actualSgf);
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
     String sendSgfToModel(String expectedSgf,Model model) {
@@ -74,8 +79,7 @@ import utilities.*;
         assertTrue(Navigate.down.canDo(model));
         //Logging.mainLogger.info(model);
         actualSgf=SgfNode.options.prepareSgf(actualSgf);
-        System.out.println("expectedSgf:\n"+expectedSgf);
-        System.out.println("actualSgf:\n"+actualSgf);	
+        logSgfComparison(expectedSgf,actualSgf);
         assertEquals(key.toString().toString(),expectedSgf,actualSgf);
     }
     final Object key;

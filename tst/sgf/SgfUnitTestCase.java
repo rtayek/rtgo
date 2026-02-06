@@ -647,6 +647,16 @@ public class SgfUnitTestCase extends TestSupport {
         if(ensureBoard) model.ensureBoard();
         return model;
     }
+    private static Model newModelWithBoard() {
+        Model model=new Model();
+        model.ensureBoard();
+        return model;
+    }
+    private static Model newModelWithBoard(int size) {
+        Model model=new Model();
+        model.setBoard(Board.factory.create(size));
+        return model;
+    }
 
     private void assertGenerateAndMakeMovesPreserveTurn(Integer size,int moves) {
         if(size!=null) model.setRoot(size,size);
@@ -987,20 +997,11 @@ public class SgfUnitTestCase extends TestSupport {
     private static final File strangeDir=new File("strangesgf/");
     private static final String kogoFilename="KogosJosekiDictionary.sgf";
 
-    Model model=new Model();
-    {
-        model.ensureBoard();
-    }
+    Model model=newModelWithBoard();
 
-    Model basicModel=new Model();
-    {
-        basicModel.ensureBoard();
-    }
+    Model basicModel=newModelWithBoard();
     Move2 expectedMove,actualMove;
     int moves;
 
-    final Model sgfModel=new Model();
-    {
-        sgfModel.setBoard(Board.factory.create(Board.standard));
-    }
+    final Model sgfModel=newModelWithBoard(Board.standard);
 }
