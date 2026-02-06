@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import controller.GameFixture;
-import utilities.Et;
+import com.tayek.util.core.Et;
 import utilities.ParameterArray;
 
 @RunWith(Parameterized.class) public class BasicGameTestCase extends GameTestSupport {

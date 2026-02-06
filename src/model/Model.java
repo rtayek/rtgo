@@ -6,6 +6,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.logging.Level;
+import com.tayek.util.core.Et;
+import com.tayek.util.core.Histogram;
 //import org.junit.rules.ExpectedException;
 import audio.Audio;
 import controller.Command;

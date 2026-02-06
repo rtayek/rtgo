@@ -2,6 +2,8 @@ package controller;
 import static io.Init.first;
 import static org.junit.Assert.*;
 import java.util.Collection;
+import com.tayek.util.core.Et;
+import com.tayek.util.core.Histogram;
 import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.*;

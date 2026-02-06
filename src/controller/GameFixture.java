@@ -5,6 +5,8 @@ import static io.Init.first;
 import static io.Logging.*;
 import java.io.*;
 import java.util.*;
+import com.tayek.util.core.Et;
+import com.tayek.util.core.Histogram;
 import controller.GTPFrontEnd.PipeEofException;
 import equipment.*;
 import io.*;

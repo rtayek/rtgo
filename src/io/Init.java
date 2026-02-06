@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.logging.*;
 import controller.GTPBackEnd;
 import server.NamedThreadGroup;
-import utilities.Et;
+import com.tayek.util.core.Et;
 // https://developer.ibm.com/tutorials/j-introducing-junit5-part2-vintage-jupiter-extension-model/
 // 3 calls to stack trace, but that seems ok.
 public enum Init {

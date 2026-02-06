@@ -12,6 +12,7 @@ import io.*;
 import model.*;
 import model.Move2.MoveType;
 import utilities.*;
+import com.tayek.util.core.Histogram;
 @RunWith(Parameterized.class) public class StanAloneGoServerTestCase extends TestSupport { // standalone tests
     static final int n=1;
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
