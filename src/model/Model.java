@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.logging.Level;
+import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.core.Et;
 import com.tayek.util.core.Histogram;
 import com.tayek.util.io.Indent;

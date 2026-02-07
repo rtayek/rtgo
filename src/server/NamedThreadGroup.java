@@ -5,7 +5,7 @@ import java.lang.Thread.State;
 import java.util.*;
 import controller.GTPBackEnd;
 import io.*;
-import io.IOs.Stopable;
+import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.core.Et;
 import com.tayek.util.log.ColorLogs;
 public class NamedThreadGroup { // one set of named threads.

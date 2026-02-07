@@ -3,11 +3,12 @@ import static controller.GTPBackEnd.*;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.io.End;
 import io.*;
-import io.IOs.*;
+import io.IOs;
 import server.NamedThreadGroup.NamedThread;
-public class GTPFrontEnd implements Runnable,Stopable { // front end for GTP
+public class GTPFrontEnd implements Stopable { // front end for GTP
     // try to consolidate the i/o.
     @SuppressWarnings("serial") public static class PipeException extends RuntimeException {
         PipeException(String cause) { super(cause); }

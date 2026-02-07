@@ -3,11 +3,11 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import org.junit.*;
 import io.*;
-import io.IOs.Stopable;
+import com.tayek.util.concurrent.Stopable;
 import server.NamedThreadGroup.NamedThread;
 import utilities.TestSupport;
 public class NamedThreadsTestCase extends TestSupport {
-    static class R implements Runnable,Stopable {
+    static class R implements Stopable {
         @Override public void run() {
             try {
                 Thread.sleep(100);
@@ -20,7 +20,7 @@ public class NamedThreadsTestCase extends TestSupport {
         @Override public void stop() throws IOException,InterruptedException {}
         boolean isStopping;
     };
-    static class R2 implements Runnable,Stopable {
+    static class R2 implements Stopable {
         @Override public void run() {
             try {
                 Thread.sleep(100);

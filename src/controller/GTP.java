@@ -1,5 +1,5 @@
 package controller;
-import io.IOs.Stopable;
+import com.tayek.util.concurrent.Stopable;
 interface GTPx extends Stopable {
 	// does not appear to be used at present.
     boolean messageSansLinefeed(Character character,Integer id,String string);

@@ -3,16 +3,17 @@ import static io.Logging.serverLogger;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.core.Et;
 import com.tayek.util.io.End;
 import controller.*;
 import io.*;
 import io.IOs;
-import io.IOs.*;
+import io.IOs;
 import com.tayek.util.io.End.Holders;
 import model.Model;
 import server.NamedThreadGroup.NamedThread;
-public class GoServer implements Runnable,Stopable {
+public class GoServer implements Stopable {
     private GoServer(ServerSocket serverSocket) {
         //deleteServerSGFFiles(); // call from tests instead
         // or put test games into a different folder.

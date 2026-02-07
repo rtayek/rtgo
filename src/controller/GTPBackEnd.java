@@ -7,13 +7,14 @@ import static utilities.Utilities.cat;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.core.Et;
 import com.tayek.util.io.End;
 import equipment.*;
 import gui.*;
 import io.*;
 import io.IOs;
-import io.IOs.*;
+import io.IOs;
 import model.*;
 import model.MNodeAcceptor.MNodeFinder;
 import model.Model.*;
@@ -32,7 +33,7 @@ import sgf.MNode;
 //it reads commands and waits for a move after a genmove
 //the above sorta works (or at least it used to).
 //enum Argument { int_, float_, string, vertex, color, move, boolean_ }
-public class GTPBackEnd implements Runnable,Stopable {
+public class GTPBackEnd implements Stopable {
     // 8/6/22 maybe we can isolate the 2 line feeds thing.
     // maybe put it in a wrapper around message/response send/receve?
     public GTPBackEnd(End end,Model model) {

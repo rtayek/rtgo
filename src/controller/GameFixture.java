@@ -5,20 +5,21 @@ import static io.Init.first;
 import static io.Logging.*;
 import java.io.*;
 import java.util.*;
+import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.core.Et;
 import com.tayek.util.core.Histogram;
 import com.tayek.util.io.End;
 import controller.GTPFrontEnd.PipeEofException;
 import equipment.*;
 import io.*;
-import io.IOs.*;
+import io.IOs;
 import com.tayek.util.io.End.Holder;
 import model.*;
 import static model.Move2.*;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 import utilities.*;
-public class GameFixture implements Runnable,Stopable {
+public class GameFixture implements Stopable {
     public enum States { starting, waitForBlackMove, waitForWhiteMove, ended, }
     public GameFixture(Model recorder) {
         recorder.setRole(Model.Role.anything);

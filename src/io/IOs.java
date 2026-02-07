@@ -6,6 +6,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.Consumer;
+import com.tayek.util.concurrent.Stopable;
+import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import controller.GTPBackEnd;
 import server.NamedThreadGroup.NamedThread;
@@ -13,11 +15,6 @@ import server.NamedThreadGroup.NamedThread;
 // maybe move pipe and duplex classes here
 // these are or will be moved to util project.
 public class IOs {
-    public interface Stopable {
-        void stop() throws IOException,InterruptedException;
-        default boolean isStopping() { return false; }
-        boolean setIsStopping();
-    }
     private static class Idea {
         volatile transient boolean newDone=false;
         void blockingReadLoopIdea(Consumer<String> consumer) {
@@ -263,32 +260,10 @@ public class IOs {
             } else Logging.mainLogger.info("attempt to interrupt thread that is not alive or already interrupted!");
         } else Logging.mainLogger.info("attempt to interrupt null thread!");
     }
-    public static Reader toReader(File file) {
-        Reader reader=null;
-        if(file.exists()&&file.canRead()) {
-            try {
-                reader=new FileReader(file);
-            } catch(IOException e) {
-                Logging.mainLogger.warning(file+" caught: "+e);
-            }
-        }
-        return reader;
-    }
-    public static Reader toReader(String string) {
-        return new StringReader(string);
-    }
-    public static BufferedReader toBufferedReader(String string) {
-        return new BufferedReader(new StringReader(string));
-    }
-    public static Writer toWriter(File file) {
-        Writer writer=null;
-        try {
-            writer=new FileWriter(file);
-        } catch(IOException e) {
-            Logging.mainLogger.warning(file+" caught: "+e);
-        }
-        return writer;
-    }
+    public static Reader toReader(File file) { return FileIO.toReader(file); }
+    public static Reader toReader(String string) { return FileIO.toReader(string); }
+    public static BufferedReader toBufferedReader(String string) { return FileIO.toBufferedReader(string); }
+    public static Writer toWriter(File file) { return FileIO.toWriter(file); }
     @SuppressWarnings("unused") public static synchronized Set<Thread> activeThreads() {
         int n=Thread.activeCount();
         Thread[] threads=new Thread[2*n];

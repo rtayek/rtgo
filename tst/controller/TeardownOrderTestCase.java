@@ -3,7 +3,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import org.junit.*;
 import io.*;
-import io.IOs.Stopable;
+import com.tayek.util.concurrent.Stopable;
 import model.Model;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
@@ -12,7 +12,7 @@ public /*abstract*/ class TeardownOrderTestCase extends TestSupport {
     // this is confused. looks like a runner for both.
     // but it tries to stop recorder, black, and white which are null!
     //static class
-    class Runner implements Runnable,Stopable {
+    class Runner implements Stopable {
         Runner(BothEnds both) { this.both=both; }
         public @Override void run() {
             while(true) { // no way to break out
