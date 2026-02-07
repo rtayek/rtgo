@@ -1,7 +1,7 @@
 package sgf;
 import io.Logging;
 import static io.IOs.noIndent;
-import static io.IOs.toReader;
+import static com.tayek.util.io.FileIO.toReader;
 import static sgf.Parser.parentheses;
 import static sgf.Parser.restoreSgf;
 import java.io.Reader;
@@ -87,3 +87,4 @@ public final class SgfRoundTrip {
         return root;
     }
 }
+

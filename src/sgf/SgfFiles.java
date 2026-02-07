@@ -1,6 +1,6 @@
 package sgf;
 import io.Logging;
-import static io.IOs.toReader;
+import static com.tayek.util.io.FileIO.toReader;
 import static sgf.Parser.*;
 import java.util.*;
 import io.Init;
@@ -34,3 +34,4 @@ public class SgfFiles {
         }
     }
 }
+

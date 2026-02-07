@@ -2,12 +2,12 @@ package sgf;
 import io.Logging;
 import static io.Logging.parserLogger;
 import java.io.File;
-import io.IOs;
+import com.tayek.util.io.FileIO;
 public class FixSgf {
     void fix(File in,File out) {
         // looks like a round trip!
-        MNode root=MNode.restore(IOs.toReader(in));
-        boolean ok=MNode.save(IOs.toWriter(out),root,null);
+        MNode root=MNode.restore(FileIO.toReader(in));
+        boolean ok=MNode.save(FileIO.toWriter(out),root,null);
         if(!ok) parserLogger.severe("fix failed for: "+in);
     }
     void run(File directory) {
@@ -26,3 +26,4 @@ public class FixSgf {
         new FixSgf().run(directory);
     }
 }
+

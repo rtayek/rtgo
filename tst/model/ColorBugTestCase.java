@@ -2,9 +2,9 @@ package model;
 import static org.junit.Assert.*;
 import java.io.*;
 import java.util.Random;
+import com.tayek.util.io.FileIO;
 import org.junit.*;
 import equipment.*;
-import io.IOs;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
 import sgf.SgfHarness;
@@ -34,7 +34,7 @@ public class ColorBugTestCase extends TestSupport {
         }
         File temporaryFile=File.createTempFile("tgo-","sgf");
         temporaryFile.deleteOnExit();
-        boolean ok=model.save(IOs.toWriter(temporaryFile));
+        boolean ok=model.save(FileIO.toWriter(temporaryFile));
         assertTrue(ok);
         Model actual=new Model();
         SgfHarness.restore(model,"");
@@ -65,3 +65,4 @@ public class ColorBugTestCase extends TestSupport {
     Random random=new Random();
     final int directions=Navigate.values().length;
 }
+

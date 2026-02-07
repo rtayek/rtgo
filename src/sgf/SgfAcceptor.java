@@ -2,8 +2,8 @@ package sgf;
 import static sgf.Parser.*;
 import java.io.*;
 import java.util.*;
+import com.tayek.util.io.FileIO;
 import io.*;
-import io.IOs;
 
 public interface SgfAcceptor {
     void accept(SgfNode node);
@@ -117,13 +117,14 @@ class Traverser {
         File dir=new File(sgfPath);
         Logging.mainLogger.info("||||");
         File file=new File(dir,"1635215-056-rtayek-Sighris.sgf");
-        SgfNode games=restoreSgf(IOs.toReader(file));
+        SgfNode games=restoreSgf(FileIO.toReader(file));
         traverser.visit(games);
         Logging.mainLogger.info("||||");
         String sgfString=getSgfData("oneMoveAtA1");
-        games=restoreSgf(IOs.toReader(sgfString));
+        games=restoreSgf(FileIO.toReader(sgfString));
         traverser.visit(games);
     }
     SgfAcceptor acceptor;
     Stack<SgfNode> nodes=new Stack<>();
 }
+

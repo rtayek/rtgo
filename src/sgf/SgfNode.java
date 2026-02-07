@@ -2,6 +2,7 @@ package sgf;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;
+import static com.tayek.util.io.FileIO.toReader;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;

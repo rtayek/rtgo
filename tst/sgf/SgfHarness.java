@@ -1,6 +1,7 @@
 package sgf;
 
 import com.tayek.util.io.Indent;
+import com.tayek.util.io.FileIO;
 import io.Logging;
 import io.IOs;
 import io.TestIo;
@@ -70,7 +71,7 @@ public final class SgfHarness {
 
     public static String modelRoundTripToString(String sgf,ModelHelper.ModelSaveMode saveMode) {
         if(sgf==null) return null;
-        return modelRoundTripToString(IOs.toReader(sgf),saveMode);
+        return modelRoundTripToString(FileIO.toReader(sgf),saveMode);
     }
 
     public static String restoreAndSave(Model model,String sgf) {
@@ -115,20 +116,20 @@ public final class SgfHarness {
     }
 
     public static SgfNode restore(String sgf) {
-        return restore(sgf!=null?IOs.toReader(sgf):null);
+        return restore(sgf!=null?FileIO.toReader(sgf):null);
     }
 
     public static MNode restoreMNode(String sgf) {
-        return sgf!=null?MNode.restore(IOs.toReader(sgf)):null;
+        return sgf!=null?MNode.restore(FileIO.toReader(sgf)):null;
     }
 
     public static MNode quietLoadMNode(String sgf) {
-        return sgf!=null?MNode.quietLoad(IOs.toReader(sgf)):null;
+        return sgf!=null?MNode.quietLoad(FileIO.toReader(sgf)):null;
     }
 
     public static String mNodeRoundTrip(String sgf,SgfRoundTrip.MNodeSaveMode saveMode) {
         if(sgf==null) return null;
-        return TestIo.writeToString(writer->SgfRoundTrip.mNodeRoundTrip(IOs.toReader(sgf),writer,saveMode));
+        return TestIo.writeToString(writer->SgfRoundTrip.mNodeRoundTrip(FileIO.toReader(sgf),writer,saveMode));
     }
 
     public static String save(SgfNode node,Indent indent) {
@@ -152,7 +153,7 @@ public final class SgfHarness {
 
     public static boolean roundTripTwice(String sgf) {
         if(sgf==null) return true;
-        return SgfRoundTrip.roundTripTwice(IOs.toReader(sgf));
+        return SgfRoundTrip.roundTripTwice(FileIO.toReader(sgf));
     }
 
     public static boolean roundTripTwice(Reader reader) {
@@ -406,7 +407,7 @@ public final class SgfHarness {
     }
 
     public static boolean roundTripTwice(File file) {
-        return SgfHarness.roundTripTwice(IOs.toReader(file));
+        return SgfHarness.roundTripTwice(FileIO.toReader(file));
     }
 
     static boolean roundTripTwiceWithLogging(File file) {
@@ -545,4 +546,5 @@ public final class SgfHarness {
         }
     }
 }
+
 

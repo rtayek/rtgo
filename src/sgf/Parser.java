@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import com.tayek.util.core.Et;
+import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
 import io.IOs;
@@ -221,7 +222,7 @@ public class Parser {
 																								// the
 																								// test
 																								// case.
-		Reader reader=IOs.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
+		Reader reader=FileIO.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
 		boolean ok=sgfRoundTripTwice(reader);
 		if(!ok) throw new Exception("test fails");
 	}
@@ -288,7 +289,7 @@ public class Parser {
 			String sgf=getSgfData(key);
 			int p=parentheses(sgf);
 			if(p!=0) Logging.mainLogger.info("parentheses count: "+p);
-			SgfNode games=restoreSgf(IOs.toReader(sgf));
+			SgfNode games=restoreSgf(FileIO.toReader(sgf));
 			if(games!=null) if(games.right!=null) {
 				many.add(key);
 				Logging.mainLogger.info(key+" has more than one game: "+games.right);
@@ -317,7 +318,7 @@ public class Parser {
 			Logging.mainLogger.info("key: "+key);
 			String expectedSgf=getSgfData(key);
 			expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
-			SgfNode games=expectedSgf!=null?restoreSgf(IOs.toReader(expectedSgf)):null;
+			SgfNode games=expectedSgf!=null?restoreSgf(FileIO.toReader(expectedSgf)):null;
 			if(games!=null) if(games.right!=null) Logging.mainLogger.info(key+" right: "+games.right);
 			// Logging.mainLogger.info(games);
 		}
@@ -496,3 +497,4 @@ public class Parser {
 		badSgfFiles.add(new File("strangesgf/variations/5er, some vars, defect 1.sgf"));
 	}
 }
+

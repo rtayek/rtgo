@@ -1,9 +1,10 @@
 package model;
+
+import com.tayek.util.io.FileIO;
 import static sgf.Parser.*;
 import java.io.*;
 import java.util.Stack;
 import io.*;
-import io.IOs;
 
 import sgf.*;
 class Traverser { // half of a visitor
@@ -25,38 +26,38 @@ class Traverser { // half of a visitor
         MNodeAcceptor acceptor=new MNodeAcceptor.PrintAcceptor();
         Traverser traverser=new Traverser(acceptor);
         String expectedSgf=getSgfData("simpleWithVariations");
-        SgfNode games_=restoreSgf(IOs.toReader(expectedSgf));
+        SgfNode games_=restoreSgf(FileIO.toReader(expectedSgf));
         if(games_!=null) if(games_.right!=null) Logging.mainLogger.info(" 2 more than one game!");
         MNode games=MNode.toGeneralTree(games_);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         if(true) return;
         file=new File(sgfPath,"1635215-056-rtayek-Sighris.sgf");
-        games_=restoreSgf(IOs.toReader(file));
+        games_=restoreSgf(FileIO.toReader(file));
         games=MNode.toGeneralTree(games_);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         expectedSgf=getSgfData("oneMoveAtA1");
-        games_=restoreSgf(IOs.toReader(expectedSgf));
+        games_=restoreSgf(FileIO.toReader(expectedSgf));
         games=MNode.toGeneralTree(games_);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         file=new File(sgfPath,"ray-SmartGo-2022-01-07.sgf");
-        games_=restoreSgf(IOs.toReader(file));
+        games_=restoreSgf(FileIO.toReader(file));
         Logging.mainLogger.warning(file+" "+games_);
         games=MNode.toGeneralTree(games_);
         Logging.mainLogger.warning(file+" "+games);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         expectedSgf=getSgfData("empty");
-        games_=restoreSgf(IOs.toReader(expectedSgf));
+        games_=restoreSgf(FileIO.toReader(expectedSgf));
         Logging.mainLogger.warning(file+" "+games_);
         games=MNode.toGeneralTree(games_);
         Logging.mainLogger.warning(file+" "+games);
         traverser.visit(games);
         Logging.mainLogger.info(""+" "+"|||");
         file=new File(sgfPath,"reallyempty.sgf");
-        games_=restoreSgf(IOs.toReader(file));
+        games_=restoreSgf(FileIO.toReader(file));
         Logging.mainLogger.info(String.valueOf(games_));
         games=MNode.toGeneralTree(games_);
         Logging.mainLogger.info(String.valueOf(games));
@@ -65,3 +66,5 @@ class Traverser { // half of a visitor
     MNodeAcceptor acceptor;
     Stack<MNode> stack=new Stack<>();
 }
+
+

@@ -2,10 +2,12 @@ package sgf;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;
+import static com.tayek.util.io.FileIO.toReader;
 import java.io.*;
 //http://en.wikipedia.org/wiki/Binary_tree#Encoding_general_trees_as_binary_trees
 //http://blogs.msdn.com/b/ericlippert/archive/2010/04/19/every-binary-tree-there-is.aspx
 import java.util.*;
+import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
 import model.MNodeAcceptor.MNodeFinder;
@@ -188,7 +190,7 @@ public class MNode {
 	}
 	private static MNode quietLoad(File file) {
 		Logging.mainLogger.info("loading: "+file);
-		Reader reader=IOs.toReader(file);
+		Reader reader=FileIO.toReader(file);
 		MNode root=quietLoad(reader);
 		return root;
 	}
@@ -314,3 +316,4 @@ public class MNode {
 	private static boolean ignoreMoveAndSetupFlags=true; // was false
 	private static int ids;
 }
+

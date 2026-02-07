@@ -8,6 +8,7 @@ import java.util.*;
 import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.core.Et;
 import com.tayek.util.core.Histogram;
+import com.tayek.util.io.FileIO;
 import com.tayek.util.io.End;
 import controller.GTPFrontEnd.PipeEofException;
 import equipment.*;
@@ -231,7 +232,7 @@ public class GameFixture implements Stopable {
                     try {
                         File file=new File(directory,"game"+fileId+".sgf");
                         Logging.mainLogger.info(String.valueOf(file));
-                        Writer writer=IOs.toWriter(file);
+                        Writer writer=FileIO.toWriter(file);
                         boolean wasSaved=recorderFixture.backEnd.model.save(writer);
                         writer.close();
                         if(!wasSaved) {
@@ -441,3 +442,4 @@ public class GameFixture implements Stopable {
     public static final String directory="serverGames";
     public static final int longSleepTime=10;
 }
+

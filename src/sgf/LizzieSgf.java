@@ -3,7 +3,7 @@ import io.Logging;
 import static sgf.Parser.restoreSgf;
 import java.io.File;
 import java.util.*;
-import io.IOs;
+import com.tayek.util.io.FileIO;
 /*
        case VK_E:
 
@@ -455,7 +455,7 @@ class LizzieSgf {
         MyAcceptor myAcceptor=new MyAcceptor();
         Traverser traverser=new Traverser(myAcceptor);
         File file=new File("lizzie1.sgf");
-        SgfNode games=restoreSgf(IOs.toReader(file));
+        SgfNode games=restoreSgf(FileIO.toReader(file));
         traverser.visit(games);
         //Logging.mainLogger.info("lizzies nodes: "+myAcceptor.idToNode);
         for(Integer key:myAcceptor.idToNode.keySet()) {
@@ -470,3 +470,4 @@ class LizzieSgf {
         }
     }
 }
+

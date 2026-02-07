@@ -1,6 +1,7 @@
 package model;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
+import static com.tayek.util.io.FileIO.toReader;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.Socket;

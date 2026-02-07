@@ -1,5 +1,7 @@
 package model;
 
+import com.tayek.util.io.FileIO;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -18,7 +20,7 @@ import io.Logging;
 import sgf.*;
 import utilities.Utilities;
 import static io.IOs.noIndent;
-import static io.IOs.toReader;
+import static com.tayek.util.io.FileIO.toReader;
 import static sgf.Parser.restoreSgf;
 
 /**
@@ -273,3 +275,5 @@ public final class ModelHelper {
         return SgfRoundTrip.saveSgfToString(actual,noIndent);
     }
 }
+
+

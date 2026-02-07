@@ -2,6 +2,7 @@ package sgf;
 
 import io.Logging;
 import io.IOs;
+import com.tayek.util.io.FileIO;
 import static io.IOs.noIndent;
 import static io.IOs.standardIndent;
 import static io.Logging.parserLogger;
@@ -414,7 +415,7 @@ public class SgfUnitTestCase extends TestSupport {
     @Test public void testSave() {
         File file=new File("tmp/saved.sgf");
         if(file.exists()) file.delete();
-        boolean ok=model.save(IOs.toWriter(file));
+        boolean ok=model.save(FileIO.toWriter(file));
         assertTrue(ok);
         assertTrue(file.exists());
     }
@@ -514,7 +515,7 @@ public class SgfUnitTestCase extends TestSupport {
             failFast=false;
             List<SgfNode> all=new ArrayList<>();
             for(File file:files) try {
-                SgfNode games=restoreSgf(IOs.toReader(file));
+                SgfNode games=restoreSgf(FileIO.toReader(file));
                 all.add(games);
             } catch(Exception e) {
                 Logging.mainLogger.info(this+" caught: "+e); //
@@ -1005,3 +1006,4 @@ public class SgfUnitTestCase extends TestSupport {
 
     final Model sgfModel=newModelWithBoard(Board.standard);
 }
+
