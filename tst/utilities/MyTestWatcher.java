@@ -1,16 +1,18 @@
 package utilities;
 import static io.Init.first;
-import com.tayek.util.junit.BasicTestWatcher;
+import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import com.tayek.util.core.Et;
 import io.*;
 import io.IOs;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.Check;
-public class MyTestWatcher extends BasicTestWatcher {
-    public MyTestWatcher(Class<? extends Object> klass) { super(klass); this.verbosity=defaultVerbosity; }
-    @Override public String ets() { return "at: "+first.et+", after: "+et; }
+public class MyTestWatcher extends TestWatcher {
+    public MyTestWatcher(Class<? extends Object> klass) { this.klass=klass; this.verbosity=defaultVerbosity; }
+    public String ets() { return "at: "+first.et+", after: "+et; }
     @Override protected void starting(Description description) {
-        super.starting(description);
+        ++tests;
+        et.reset();
         //Init.first.restoreSystmeIO();
         if(verbosity)
             Logging.mainLogger.info("starting test: "+key+" "+klass.getName()+"."+description.getMethodName()+" "+ets());
@@ -20,7 +22,6 @@ public class MyTestWatcher extends BasicTestWatcher {
         check.startCheck();
     }
     @Override protected void finished(Description description) {
-        super.finished(description);
         String finished="finished test "+first.testsRun.size()+" "+ets();
         if(verbosity) Logging.mainLogger.info(String.valueOf(finished));
         if(IOs.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread! "+ets());
@@ -36,13 +37,11 @@ public class MyTestWatcher extends BasicTestWatcher {
         }
     }
     @Override protected void failed(Throwable e,Description description) {
-        super.failed(e,description);
         if(IOs.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread!");
         if(verbosity); //Logging.mainLogger.info(reset+description.getMethodName()+" failed!");
         //Logging.mainLogger.info(key+" failed. "+klass);
     }
     @Override protected void succeeded(Description description) {
-        super.succeeded(description);
         if(IOs.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread!");
         if(verbosity); //Logging.mainLogger.info(reset+description.getMethodName()+" succeeded.");
     }
@@ -51,6 +50,9 @@ public class MyTestWatcher extends BasicTestWatcher {
     public boolean verbosity;
     public boolean resetTestEt=false;
     public boolean saveTestsRun=false;
+    private final Et et=new Et();
+    public final Class<? extends Object> klass;
+    public static int tests;
     public static final int unknowm=-1,controller=311,controllerSuite=261,game=83,server=37;
     public static int lastTest=unknowm;
     public static boolean defaultVerbosity=true;
