@@ -1,4 +1,5 @@
 package tree;
+import utilities.MyTestWatcher;
 import io.Logging;
 import static org.junit.Assert.*;
 import static tree.Node.*;
@@ -6,8 +7,8 @@ import java.util.*;
 import org.junit.*;
 import tree.G2.Generator;
 import com.tayek.util.core.Iterators.Longs;
-import utilities.TestSupport;
-public class G2TestCase extends TestSupport {
+public class G2TestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     // round trip?
     // parameterize?
     // so far, none of these tests use a non null value for data.
@@ -85,3 +86,4 @@ public class G2TestCase extends TestSupport {
     ArrayList<Node<Long>> trees;
     //ArrayList<ArrayList<Node<Long>>> all;
 }
+

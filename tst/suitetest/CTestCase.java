@@ -1,6 +1,8 @@
 package suitetest;
+import utilities.MyTestWatcher;
 import org.junit.*;
-import utilities.TestSupport;
-public class CTestCase extends TestSupport { //
+public class CTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass()); //
     @Test public void test() {}
 }
+

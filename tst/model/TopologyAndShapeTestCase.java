@@ -1,4 +1,6 @@
 package model;
+import org.junit.Rule;
+import utilities.MyTestWatcher;
 import io.Logging;
 import sgf.SgfHarness;
 import static org.junit.Assert.*;
@@ -6,8 +8,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import equipment.*;
 import equipment.Board.*;
-import utilities.TestSupport;
-public class TopologyAndShapeTestCase extends TestSupport {
+public class TopologyAndShapeTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     private Model newModelWithRoot(Topology topology,Shape shape) {
         Model model=new Model();
         model.setRoot(n,n,topology,shape);
@@ -68,5 +70,6 @@ public class TopologyAndShapeTestCase extends TestSupport {
     final int n=19;
     final Board board=Board.factory.create(n,n,Topology.normal,Shape.hole1);
 }
+
 
 

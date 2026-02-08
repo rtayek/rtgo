@@ -1,12 +1,13 @@
 package model;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
 import equipment.*;
 import equipment.Board.*;
 import io.Logging;
-import utilities.TestSupport;
-public class ShapeTestCase extends TestSupport {
+public class ShapeTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void test1() throws Exception {
         List<Point> points=Board.squares(1,19,19);
         Logging.mainLogger.warning(String.valueOf(points.toString()));
@@ -31,3 +32,4 @@ public class ShapeTestCase extends TestSupport {
         }
     }
 }
+

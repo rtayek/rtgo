@@ -1,9 +1,10 @@
 package equipment;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 import io.Logging;
-import utilities.TestSupport;
-public class StoneTestCase extends TestSupport {
+public class StoneTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testToCharacter() {
@@ -17,3 +18,4 @@ public class StoneTestCase extends TestSupport {
     }
     @Test public void testToString() { for(Stone stone:Stone.values()) assertEquals(stone.name(),stone.toString()); }
 }
+

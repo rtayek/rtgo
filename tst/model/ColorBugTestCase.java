@@ -1,4 +1,5 @@
 package model;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.io.*;
 import java.util.Random;
@@ -8,8 +9,8 @@ import equipment.*;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
 import sgf.SgfHarness;
-import utilities.TestSupport;
-public class ColorBugTestCase extends TestSupport {
+public class ColorBugTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception { model.setRoot(); }
     void randomMove2() {
         int width=model.board().width();
@@ -65,4 +66,5 @@ public class ColorBugTestCase extends TestSupport {
     Random random=new Random();
     final int directions=Navigate.values().length;
 }
+
 

@@ -1,12 +1,13 @@
 package controller;
+import utilities.MyTestWatcher;
 import static io.Init.first;
 import static org.junit.Assert.assertTrue;
 import org.junit.*;
 import equipment.Board;
 import com.tayek.util.io.End.Holder;
 import io.Logging;
-import utilities.TestSupport;
-public class ABothTestCase extends TestSupport {
+public class ABothTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         both=new BothEnds();
         Holder holder=Holder.duplex();
@@ -62,3 +63,4 @@ public class ABothTestCase extends TestSupport {
     }
     private static final int timeout=0; // maybe get rid of this eventually?
 }
+

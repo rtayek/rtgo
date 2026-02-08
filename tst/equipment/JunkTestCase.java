@@ -1,11 +1,13 @@
 package equipment;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertEquals;
 import java.util.*;
 import org.junit.*;
 import equipment.Board.Topology;
 import io.Logging;
 import utilities.*;
-public class JunkTestCase extends TestSupport {
+public class JunkTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     // maybe not junk = may be useful
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
@@ -44,3 +46,4 @@ public class JunkTestCase extends TestSupport {
         expectedMap.put(Topology.torus,new Pair<Integer,Integer>(4,8));
     }
 }
+

@@ -1,4 +1,5 @@
 package controller;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.util.*;
 import org.junit.*;
@@ -8,9 +9,9 @@ import org.junit.runners.Parameterized.Parameters;
 import io.Logging;
 import model.Model;
 import com.tayek.util.core.ParameterArray;
-import utilities.TestSupport;
 // test that almost all of the gtp commands are known and recognized.
-public abstract class AbstractKnownCommandsTestCase extends TestSupport {
+public abstract class AbstractKnownCommandsTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @RunWith(Parameterized.class) public static class ParameterizedTestCase extends AbstractKnownCommandsTestCase {
         public ParameterizedTestCase(Command command) { this.command=command; }
         @Parameters public static Collection<Object[]> data() {
@@ -53,3 +54,4 @@ public abstract class AbstractKnownCommandsTestCase extends TestSupport {
     // can i use this (skipped) to skip the receive and gto commands instead of explicitly mentioning them?
     //static EnumSet<Command> skipped=EnumSet.noneOf(Command.class);
 }
+

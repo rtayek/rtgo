@@ -1,4 +1,5 @@
 package suitetest;
+import utilities.MyTestWatcher;
 import io.Logging;
 import static io.Init.first;
 import org.junit.*;
@@ -7,12 +8,13 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import io.Init;
 import suitetest.ATestCase.Hide.AllTests2Suite;
-import utilities.TestSupport;
-public class ATestCase extends TestSupport {
+public class ATestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     public interface I {}
     static class Hide {
         @RunWith(Suite.class) @SuiteClasses({ATestCase.class,BTestCase.class,
-                CTestCase.class}) public static class AllTests2Suite extends TestSupport implements I {
+                CTestCase.class}) public static class AllTests2Suite implements I {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
             {
                 Logging.mainLogger.info("suite");
             }
@@ -27,3 +29,5 @@ public class ATestCase extends TestSupport {
         jUnitCore.run(AllTests2Suite.class);
     }
 }
+
+

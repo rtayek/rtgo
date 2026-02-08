@@ -1,5 +1,7 @@
 package sgf;
 
+import org.junit.Rule;
+import utilities.MyTestWatcher;
 import io.Logging;
 import io.IOs;
 import com.tayek.util.io.FileIO;
@@ -39,9 +41,8 @@ import sgf.combine.Combine;
 import io.Tee;
 import utilities.TestKeys;
 import com.tayek.util.core.Iterators.Longs;
-import utilities.TestSupport;
-
-public class SgfUnitTestCase extends TestSupport {
+public class SgfUnitTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void testSmokeRoundTrip() {
         List<Object> keys=List.of(
                 TestKeys.emptyWithSemicolon,
@@ -1006,4 +1007,5 @@ public class SgfUnitTestCase extends TestSupport {
 
     final Model sgfModel=newModelWithBoard(Board.standard);
 }
+
 

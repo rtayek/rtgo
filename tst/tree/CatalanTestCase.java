@@ -1,4 +1,5 @@
 package tree;
+import utilities.MyTestWatcher;
 import io.Logging;
 import static org.junit.Assert.*;
 import static tree.Catalan.*;
@@ -11,8 +12,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import tree.G2.Generator;
 import com.tayek.util.core.Iterators.*;
-import utilities.TestSupport;
-@RunWith(Parameterized.class) public class CatalanTestCase extends TestSupport {
+@RunWith(Parameterized.class) public class CatalanTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
 	public CatalanTestCase(int nodes) {
 		this.nodes=nodes;
 	}
@@ -130,3 +131,5 @@ import utilities.TestSupport;
 	Iterator<Long> iterator=new Longs();
 	public static final int max=7; // 11
 }
+
+

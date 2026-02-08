@@ -1,8 +1,8 @@
 package io;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertEquals;
 import java.io.*;
 import org.junit.*;
-import utilities.TestSupport;
 class Looper implements Runnable {
     @Override public void run() {
         try {
@@ -84,7 +84,8 @@ class MyReader implements Runnable { // maybe call this cat?
     final PipedOutputStream pout;
     boolean done;
 }
-public class ThreadTestCase extends TestSupport {
+public class ThreadTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void testYielder() throws InterruptedException {
         int old=Thread.activeCount();
         Thread thread=new Thread(new Yielder(),"yielder");
@@ -137,3 +138,4 @@ public class ThreadTestCase extends TestSupport {
         Logging.mainLogger.info("is interrupted: "+thread.isInterrupted());
     }
 }
+

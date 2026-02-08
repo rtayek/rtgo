@@ -1,4 +1,5 @@
 package model;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import static utilities.Utilities.*;
 import java.io.File;
@@ -6,8 +7,8 @@ import java.util.Properties;
 import org.junit.*;
 import equipment.Board;
 import equipment.Board.Topology;
-import utilities.TestSupport;
-public class ParametersTestCase extends TestSupport {
+public class ParametersTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Ignore @Test public void testInitializeParametersWithDefaults() {
         Integer width=(int)Parameters.width.currentValue();
         assertEquals(Board.standard,width); // just check the width
@@ -45,3 +46,4 @@ public class ParametersTestCase extends TestSupport {
         fail("nyi");
     }
 }
+

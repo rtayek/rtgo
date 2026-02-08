@@ -1,11 +1,12 @@
 package controller;
 
+import org.junit.Rule;
+import utilities.MyTestWatcher;
 import org.junit.After;
 import org.junit.Before;
 import com.tayek.util.io.End.Holder;
-import utilities.TestSupport;
-
-public abstract class ControllerHolderTestSupport extends TestSupport {
+public abstract class ControllerHolderTestSupport {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     protected Holder holder;
 
     protected abstract Holder createHolder() throws Exception;
@@ -22,3 +23,4 @@ public abstract class ControllerHolderTestSupport extends TestSupport {
 
     protected void onHolderCreated(Holder holder) {}
 }
+

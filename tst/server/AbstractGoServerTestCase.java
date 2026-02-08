@@ -1,4 +1,5 @@
 package server;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertNotNull;
 import org.junit.*;
 import controller.*;
@@ -7,8 +8,8 @@ import io.*;
 import io.IOs;
 import model.*;
 import model.Move2.MoveType;
-import utilities.TestSupport;
-public abstract class AbstractGoServerTestCase extends TestSupport {
+public abstract class AbstractGoServerTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     public static class GoServerRealSocketTestCase extends AbstractGoServerTestCase {
         @Override @Before public void setUp() throws Exception { serverPort=IOs.defaultPort; super.setUp(); }
         @Override @After public void tearDown() throws Exception { if(game!=null) game.stop(); super.tearDown(); }
@@ -86,3 +87,4 @@ public abstract class AbstractGoServerTestCase extends TestSupport {
     public GameFixture game;
     Watchdog watchdog;
 }
+

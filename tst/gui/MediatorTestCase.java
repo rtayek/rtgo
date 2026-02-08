@@ -1,11 +1,12 @@
 package gui;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertTrue;
 import java.io.File;
 import org.junit.*;
 import model.Model;
-import utilities.TestSupport;
 // not a good name. these have nothing to do with mediator.
-public class MediatorTestCase extends TestSupport {
+public class MediatorTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testGetExtension() {
@@ -22,3 +23,4 @@ public class MediatorTestCase extends TestSupport {
         assertTrue(file.getName().endsWith(".sgf"));
     }
 }
+

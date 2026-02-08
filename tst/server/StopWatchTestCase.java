@@ -1,12 +1,13 @@
 package server;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import org.junit.*;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
-import utilities.TestSupport;
-public class StopWatchTestCase extends TestSupport {
+public class StopWatchTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     private static final Logger logger=Logger.getLogger("");
     private static void logInfo(Description description,String status,long nanos) {
         String testName=description.getMethodName();
@@ -37,3 +38,4 @@ public class StopWatchTestCase extends TestSupport {
         // this seems fragile.
     }
 }
+

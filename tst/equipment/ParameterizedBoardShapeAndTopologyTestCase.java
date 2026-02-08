@@ -1,4 +1,5 @@
 package equipment;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertNotNull;
 import java.util.*;
 import org.junit.*;
@@ -6,9 +7,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import io.Logging;
-import utilities.TestSupport;
 // lets test all the strange cases here
-@RunWith(Parameterized.class) public class ParameterizedBoardShapeAndTopologyTestCase extends TestSupport {
+@RunWith(Parameterized.class) public class ParameterizedBoardShapeAndTopologyTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     public ParameterizedBoardShapeAndTopologyTestCase(Board board) { assertNotNull(board); this.board=board; }
@@ -39,3 +40,5 @@ import utilities.TestSupport;
     @Test public void testBoard() { assertNotNull(board); }
     final Board board;
 }
+
+

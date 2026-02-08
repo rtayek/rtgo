@@ -1,11 +1,13 @@
 package equipment;
+import org.junit.Rule;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import equipment.Board.*;
-import utilities.TestSupport;
-public class NonSquareBoardTestCase extends TestSupport {
+public class NonSquareBoardTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testBoardImplIntInt() {
@@ -25,4 +27,5 @@ public class NonSquareBoardTestCase extends TestSupport {
     }
     BoardImpl b=new BoardImpl(Board.standard,Board.standard/2,Topology.normal,Shape.normal,0);
 }
+
 

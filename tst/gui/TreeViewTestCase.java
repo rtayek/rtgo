@@ -1,8 +1,9 @@
 package gui;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import org.junit.*;
-import utilities.TestSupport;
-public class TreeViewTestCase extends TestSupport {
+public class TreeViewTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         //Init.first.restoreSystmeIO();
     }
@@ -14,3 +15,4 @@ public class TreeViewTestCase extends TestSupport {
         assertTrue(myTreeView.tree.getCellRenderer() instanceof TreeView.NodeRenderer);
     }
 }
+

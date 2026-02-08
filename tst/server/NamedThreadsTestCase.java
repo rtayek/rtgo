@@ -1,12 +1,13 @@
 package server;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import org.junit.*;
 import io.*;
 import com.tayek.util.concurrent.Stopable;
 import server.NamedThreadGroup.NamedThread;
-import utilities.TestSupport;
-public class NamedThreadsTestCase extends TestSupport {
+public class NamedThreadsTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     static class R implements Stopable {
         @Override public void run() {
             try {
@@ -89,3 +90,4 @@ public class NamedThreadsTestCase extends TestSupport {
     }
     private NamedThreadGroup namedThreadGroup=new NamedThreadGroup(NamedThreadGroup.standAlone);
 }
+

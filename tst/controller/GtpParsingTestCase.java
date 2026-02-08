@@ -1,9 +1,10 @@
 package controller;
+import org.junit.Rule;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import utilities.TestSupport;
-
-public class GtpParsingTestCase extends TestSupport {
+public class GtpParsingTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void testNormalizeArgumentsForSimpleCommand() {
         String input="name";
         String stripped=GtpParsing.strip(input);
@@ -27,3 +28,4 @@ public class GtpParsingTestCase extends TestSupport {
         assertEquals(sgf,arguments[1]);
     }
 }
+

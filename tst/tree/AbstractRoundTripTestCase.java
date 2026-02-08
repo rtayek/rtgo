@@ -1,4 +1,5 @@
 package tree;
+import utilities.MyTestWatcher;
 import io.Logging;
 import static org.junit.Assert.*;
 import static tree.MNode.from;
@@ -6,8 +7,8 @@ import static tree.MNode.print;
 import static tree.Node.deepEquals;
 import static tree.Node.from;
 import org.junit.*;
-import utilities.TestSupport;
-public abstract class AbstractRoundTripTestCase extends TestSupport {
+public abstract class AbstractRoundTripTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testNodeRoundTrip() {
@@ -32,3 +33,4 @@ public abstract class AbstractRoundTripTestCase extends TestSupport {
     Node<Long> bRoot;
     MNode<Long> mRoot;
 }
+

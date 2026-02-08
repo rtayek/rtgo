@@ -1,4 +1,6 @@
 package model;
+import org.junit.Rule;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.Test;
@@ -6,8 +8,8 @@ import equipment.*;
 import io.Logging;
 import model.Model.*;
 import static model.Move2.*;
-import utilities.TestSupport;
-public class MoveTestCase extends TestSupport {
+public class MoveTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void testThatWeCanMakeAMoveOnANewModel() {
         Model model=new Model();
         MoveResult ok=model.move(Stone.black,new Point());
@@ -99,3 +101,4 @@ public class MoveTestCase extends TestSupport {
         return moves;
     }
 }
+

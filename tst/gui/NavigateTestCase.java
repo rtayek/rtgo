@@ -1,4 +1,5 @@
 package gui;
+import utilities.MyTestWatcher;
 import static model.Navigate.*;
 import static org.junit.Assert.*;
 import java.io.File;
@@ -6,8 +7,8 @@ import org.junit.*;
 import model.*;
 import model.ModelIo;
 import sgf.Parser;
-import utilities.TestSupport;
-public class NavigateTestCase extends TestSupport {
+public class NavigateTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testEach() {
@@ -32,3 +33,4 @@ public class NavigateTestCase extends TestSupport {
     }
     Model model=new Model();
 }
+

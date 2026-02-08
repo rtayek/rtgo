@@ -1,12 +1,13 @@
 package io;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.logging.*;
 import org.junit.*;
 import io.Logging.MyFormatter;
-import utilities.TestSupport;
-public class LoggingTestCase extends TestSupport {
+public class LoggingTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         Logging.useColor=false;
         LogManager.getLogManager().reset();
@@ -50,3 +51,4 @@ public class LoggingTestCase extends TestSupport {
     Logger logger;
     Handler[] handlers;
 }
+

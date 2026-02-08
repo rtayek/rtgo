@@ -1,4 +1,8 @@
 package utilities;
 
-public abstract class SuiteSupport extends TestSupport {
+import org.junit.Rule;
+import utilities.MyTestWatcher;
+public abstract class SuiteSupport {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
 }
+

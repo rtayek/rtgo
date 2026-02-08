@@ -1,11 +1,12 @@
 package equipment;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertEquals;
 import java.awt.geom.Point2D;
 import org.junit.*;
 import io.Logging;
 import model.Model;
-import utilities.TestSupport;
-public class CoordinateSystemTestCase extends TestSupport {
+public class CoordinateSystemTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void CheckStandard() {
         Point point=new Point();
         String string=Coordinates.toGtpCoordinateSystem(point,board.width(),board.depth());
@@ -132,3 +133,4 @@ public class CoordinateSystemTestCase extends TestSupport {
     Board board=new BoardImpl(Board.standard,0);
     static double epsilon=1e-9;
 }
+

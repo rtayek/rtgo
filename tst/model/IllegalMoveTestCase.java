@@ -1,4 +1,5 @@
 package model;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import static sgf.Parser.getSgfData;
 import java.io.*;
@@ -7,8 +8,8 @@ import equipment.*;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
 import sgf.*;
-import utilities.TestSupport;
-public class IllegalMoveTestCase extends TestSupport {
+public class IllegalMoveTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void testResignOutOfOrder() {
         model.move(new Move2(MoveType.pass,Stone.white,null));
         model.move(Move2.blackPass);
@@ -75,3 +76,4 @@ public class IllegalMoveTestCase extends TestSupport {
     }
     final String expectedSGF=getSgfData(Parser.consecutiveMoves);
 }
+

@@ -1,4 +1,5 @@
 package equipment;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.util.*;
 import org.junit.*;
@@ -7,8 +8,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import equipment.Board.Topology;
 import io.Logging;
-import utilities.TestSupport;
-@RunWith(Parameterized.class) public class LibertiesTestCase extends TestSupport {
+@RunWith(Parameterized.class) public class LibertiesTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     public LibertiesTestCase(Topology topology) { this.topology=topology; }
     @BeforeClass public static void setUpBeforeClass() throws Exception {}
     @AfterClass public static void tearDownAfterClass() throws Exception {}
@@ -100,3 +101,5 @@ import utilities.TestSupport;
     Topology topology;
     Board board;
 }
+
+

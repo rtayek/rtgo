@@ -1,4 +1,5 @@
 package equipment;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
@@ -7,7 +8,8 @@ import io.Logging;
 //import model.Model;
 //import model.Model.MoveResult;
 import utilities.*;
-public class BlockTestCase extends TestSupport {
+public class BlockTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testBlock() {
@@ -99,3 +101,4 @@ public class BlockTestCase extends TestSupport {
     @Test public void testFindCapturedStones() { Logging.mainLogger.warning("not implemented."); }
     Board board=Board.factory.create(5,Topology.normal);
 }
+

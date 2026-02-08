@@ -1,4 +1,5 @@
 package model;
+import utilities.MyTestWatcher;
 import io.Logging;
 import sgf.SgfHarness;
 import static org.junit.Assert.*;
@@ -7,8 +8,8 @@ import org.junit.*;
 import equipment.Coordinates;
 import equipment.Point;
 import equipment.Stone;
-import utilities.TestSupport;
-public class SaveTestCase extends TestSupport {
+public class SaveTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
 	private void assertA1RoundTrip() throws IOException {
 		Model model=new Model("");
 		model.ensureBoard();
@@ -34,3 +35,4 @@ public class SaveTestCase extends TestSupport {
 	// @Test public void testA1A2restored() throws IOException {}
 	String foo="(;B[as];W[ar])";
 }
+

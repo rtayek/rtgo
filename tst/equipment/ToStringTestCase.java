@@ -1,9 +1,10 @@
 package equipment;
+import utilities.MyTestWatcher;
 import org.junit.*;
 import equipment.Board.*;
 import io.Logging;
-import utilities.TestSupport;
-public class ToStringTestCase extends TestSupport {
+public class ToStringTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testToStringImpl() {
@@ -19,3 +20,4 @@ public class ToStringTestCase extends TestSupport {
         }
     }
 }
+

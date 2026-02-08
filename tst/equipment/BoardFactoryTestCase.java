@@ -1,10 +1,11 @@
 package equipment;
+import utilities.MyTestWatcher;
 import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import equipment.Board.*;
-import utilities.TestSupport;
-public class BoardFactoryTestCase extends TestSupport {
+public class BoardFactoryTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {}
     @After public void tearDown() throws Exception {}
     @Test public void testCreateInt() {
@@ -48,3 +49,4 @@ public class BoardFactoryTestCase extends TestSupport {
     }
     Board board;
 }
+

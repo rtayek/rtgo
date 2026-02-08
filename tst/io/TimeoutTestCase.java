@@ -1,9 +1,10 @@
 package io;
+import utilities.MyTestWatcher;
 import static controller.GTPBackEnd.timeoutTime;
 import org.junit.*;
 import controller.GTPBackEnd;
-import utilities.TestSupport;
-public class TimeoutTestCase extends TestSupport {
+public class TimeoutTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @After public void tearDown() throws Exception {}
     @Ignore @Test(timeout=timeoutTime) public void testTimeout() throws Exception {
         boolean forever=true;
@@ -15,3 +16,4 @@ public class TimeoutTestCase extends TestSupport {
         while(true) if(!forever) break;
     }
 }
+

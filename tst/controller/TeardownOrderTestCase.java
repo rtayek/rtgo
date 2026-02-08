@@ -1,4 +1,5 @@
 package controller;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.io.IOException;
 import org.junit.*;
@@ -7,8 +8,8 @@ import com.tayek.util.concurrent.Stopable;
 import model.Model;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
-import utilities.TestSupport;
-public /*abstract*/ class TeardownOrderTestCase extends TestSupport {
+public /*abstract*/ class TeardownOrderTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     // this is confused. looks like a runner for both.
     // but it tries to stop recorder, black, and white which are null!
     //static class
@@ -74,3 +75,5 @@ public /*abstract*/ class TeardownOrderTestCase extends TestSupport {
     }
     BothEnds recorder,black,white;
 }
+
+

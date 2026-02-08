@@ -1,4 +1,5 @@
 package io;
+import utilities.MyTestWatcher;
 import io.Logging;
 import static org.junit.Assert.*;
 import java.lang.Thread.State;
@@ -9,7 +10,8 @@ import org.junit.*;
 import controller.GTPBackEnd;
 import server.NamedThreadGroup;
 import utilities.*;
-@Ignore public class WatchdogTestCase extends TestSupport {
+@Ignore public class WatchdogTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
         String name="main";
         Thread target=NamedThreadGroup.findThread(name);
@@ -73,3 +75,5 @@ import utilities.*;
         Logging.mainLogger.info("static init: "+Init.first.et);
     }
 }
+
+

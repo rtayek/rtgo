@@ -1,6 +1,8 @@
 package so10931684;
+import utilities.MyTestWatcher;
 import org.junit.*;
-import utilities.TestSupport;
-public class ATestCase extends TestSupport { //
+public class ATestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass()); //
     @Test public void test() {}
 }
+

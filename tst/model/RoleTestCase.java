@@ -1,12 +1,14 @@
 package model;
+import org.junit.Rule;
+import utilities.MyTestWatcher;
 import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import equipment.*;
 import model.Model.*;
 import model.Move2.MoveType;
-import utilities.TestSupport;
-public class RoleTestCase extends TestSupport {
+public class RoleTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     // many more cases here.
     // also gtp is supposed to be able to handle consecutive moves by the same player
     // this tests moveAndPlaySound().
@@ -90,3 +92,4 @@ public class RoleTestCase extends TestSupport {
     final Model model=new Model();
     final Point point=new Point();
 }
+

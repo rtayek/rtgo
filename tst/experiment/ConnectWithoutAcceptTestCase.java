@@ -1,10 +1,11 @@
 package experiment;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.*;
 import org.junit.*;
-import utilities.TestSupport;
-public class ConnectWithoutAcceptTestCase extends TestSupport {
+public class ConnectWithoutAcceptTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     private void check() throws IOException {
         ServerSocket serverSocket=null;
         try {
@@ -25,3 +26,4 @@ public class ConnectWithoutAcceptTestCase extends TestSupport {
     }
     static int port=12345;
 }
+

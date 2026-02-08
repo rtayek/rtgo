@@ -1,12 +1,14 @@
 package controller;
 
+import org.junit.Rule;
+import utilities.MyTestWatcher;
 import java.util.Arrays;
 import java.util.List;
 import model.Model;
-import utilities.TestSupport;
 import utilities.Utilities;
 
-public abstract class ControllerGtpTestSupport extends TestSupport {
+public abstract class ControllerGtpTestSupport {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     protected Model model;
     protected boolean useHexAscii = true;
 
@@ -67,3 +69,4 @@ public abstract class ControllerGtpTestSupport extends TestSupport {
         return Response.responses(backEnd.runCommands(justRun));
     }
 }
+

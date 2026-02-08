@@ -1,9 +1,10 @@
 package sgf;
+import utilities.MyTestWatcher;
 import org.junit.*;
 import org.junit.runners.Parameterized;
 import utilities.TestKeys;
-import utilities.TestSupport;
-public abstract class AbstractSgfParserTestCase extends TestSupport {
+public abstract class AbstractSgfParserTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Parameterized.Parameter public Object key;
     protected String expectedSgf;
     protected Object defaultKey() {
@@ -65,4 +66,5 @@ public abstract class AbstractSgfParserTestCase extends TestSupport {
     public SgfNode games;
     protected boolean rawInput;
 }
+
 

@@ -1,10 +1,11 @@
 package server;
+import utilities.MyTestWatcher;
 import io.Logging;
 import static org.junit.Assert.*;
 import org.junit.*;
 import io.IOs;
-import utilities.TestSupport;
-public class BoundTestCase extends TestSupport {
+public class BoundTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void testLogicForAlreadyBoundSocket() throws Exception {
         GoServer goServer=GoServer.startServer(IOs.testPort);
         assertTrue(goServer.serverSocket.isBound());
@@ -17,3 +18,4 @@ public class BoundTestCase extends TestSupport {
         goServer2.stop();
     }
 }
+

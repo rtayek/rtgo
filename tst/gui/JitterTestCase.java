@@ -1,8 +1,9 @@
 package gui;
+import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import org.junit.*;
-import utilities.TestSupport;
-public class JitterTestCase extends TestSupport {
+public class JitterTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Test public void testZero() { Jitter jitter=Jitter.get(0,0); assertEquals(Jitter.zero,jitter); }
     @Test public void test19by19() {
         Jitter jitter=Jitter.get(19,19);
@@ -17,3 +18,4 @@ public class JitterTestCase extends TestSupport {
         assertTrue(jitter==jitter2);
     }
 }
+

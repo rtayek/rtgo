@@ -1,4 +1,5 @@
 package server;
+import utilities.MyTestWatcher;
 import static controller.GameFixture.printStuff;
 import static org.junit.Assert.*;
 import java.util.Collection;
@@ -14,7 +15,8 @@ import model.*;
 import model.Move2.MoveType;
 import utilities.*;
 import com.tayek.util.core.Histogram;
-@RunWith(Parameterized.class) public class StanAloneGoServerTestCase extends TestSupport { // standalone tests
+@RunWith(Parameterized.class) public class StanAloneGoServerTestCase {
+    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass()); // standalone tests
     static final int n=1;
     @Parameters public static Collection<Object[]> data() { return ParameterArray.modulo(n); }
     // intermittent failure.
@@ -84,3 +86,5 @@ import com.tayek.util.core.Histogram;
     Histogram hSetup=new Histogram();
     Histogram hStartTest=new Histogram();
 }
+
+
