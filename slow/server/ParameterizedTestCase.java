@@ -9,7 +9,7 @@ import utilities.*;
 // was excluded some time ago.
 // some of the test cases do not exist in this project but do exist in earlier versions.
 /*@RunWith(Parameterized.class) public class ParameterizedTestCase extends GoServerTestCase {
-    @Rule public MyTestWatcher watcher=new MyTestWatcher(getClass());
+    @Rule public utilities.MyTestWatcher watcher=new utilities.MyTestWatcher(getClass());
     @Override @Before public void setUp() throws Exception {
         super.setUp();
         if(!i.equals(previous)) serverLogger.info("parameter: "+i);
