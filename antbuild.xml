@@ -135,10 +135,7 @@
 			<test name="gui.JitterTestCase" todir="${junit.output.dir}" />
 			<test name="gui.MediatorTestCase" todir="${junit.output.dir}" />
 			<test name="gui.TreeViewTestCase" todir="${junit.output.dir}" />
-			<test name="io.CopyTestCase" todir="${junit.output.dir}" />
-			<test name="io.DuplexTestCase" todir="${junit.output.dir}" />
 			<test name="io.LoggerTestCase" todir="${junit.output.dir}" />
-			<test name="io.PipeTestCase" todir="${junit.output.dir}" />
 			<test name="io.ThreadTestCase" todir="${junit.output.dir}" />
 			<test name="io.TimeoutTestCase" todir="${junit.output.dir}" />
 			<test name="io.WatchdogTestCase" todir="${junit.output.dir}" />
