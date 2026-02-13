@@ -4,7 +4,7 @@ import static sgf.Parser.restoreSgf;
 import java.io.*;
 import java.util.*;
 import com.tayek.util.io.FileIO;
-import utilities.Pair;
+import com.tayek.util.core.Pair;
 public class Lec {
     static int howSimilar(String previous,String string) {
         int n=Integer.MAX_VALUE;

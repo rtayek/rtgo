@@ -2,7 +2,7 @@ package equipment;
 import java.util.*;
 import equipment.Board.Topology;
 import io.Logging;
-import utilities.Pair;
+import com.tayek.util.core.Pair;
 public record Block(Stone who,List<Point> points,int liberties) {
     public Block(Board board,Point point,boolean[][] processed) { this(build(board,point,processed)); }
     public Block(Board board,int x,int y,boolean[][] processed) { this(board,new Point(x,y),processed); }

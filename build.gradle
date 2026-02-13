@@ -40,7 +40,7 @@ dependencies {
 }
 
 java {
-  toolchain { languageVersion = JavaLanguageVersion.of(24) }
+  toolchain { languageVersion = JavaLanguageVersion.of(25) }
   // If you prefer not to use toolchains yet, remove the toolchain block
   // and keep source/targetCompatibility below instead.
   // sourceCompatibility = JavaVersion.VERSION_16

@@ -1,8 +1,9 @@
 package model;
 import io.Logging;
-import static utilities.Utilities.*;
 import java.io.File;
 import java.util.*;
+import com.tayek.util.core.EnumProperties;
+import com.tayek.util.io.PropertiesIO;
 import equipment.Board;
 import equipment.Board.*;
 import model.Model.Role;
@@ -32,29 +33,27 @@ public enum Parameters { // properties
         // common code below
         // looks like loadPropertiesFromCurrentValues
         // looks like setPropertiesFromCurrentValues
-        Properties properties=new Properties();
-        for(Parameters p:Parameters.values()) properties.put(p.name(),p.currentValue().toString());
+        Properties properties=EnumProperties.toProperties(Parameters.values(),Parameters::currentValue);
         //Logging.mainLogger.config("writing new properties to: "+propertiesFilename+": "+properties);
-        store(properties,propertiesFilename);
+        PropertiesIO.writePropertiesFile(properties,propertiesFilename);
     }
     public static void resetAll() { for(Parameters parameter:Parameters.values()) parameter.reset(); }
     static void setCurrentValuesFromProperties(Properties properties) {
-        for(Parameters parameter:values()) if(properties.containsKey(parameter.name())) {
-            parameter.currentValue=parameter.fromString(properties.getProperty(parameter.name()));
-        } else Logging.mainLogger.info("can not find property: "+parameter.name()+" in "+properties);
+        EnumProperties.apply(properties,values(),(parameter,property)->parameter.currentValue=parameter.fromString(property),
+                (parameter)->Logging.mainLogger.info("can not find property: "+parameter.name()+" in "+properties));
     }
     static void setPropertiesFromCurrentValues(Properties properties) {
-        for(Parameters parameter:values()) properties.setProperty(parameter.name(),parameter.currentValue.toString());
+        EnumProperties.putInto(properties,values(),Parameters::currentValue);
     }
     static void setCurrentValuesFromPropertiesFile() {
         Properties properties=new Properties();
-        load(properties,propertiesFilename);
+        PropertiesIO.loadPropertiesFile(properties,propertiesFilename);
         setCurrentValuesFromProperties(properties);
     }
     static void storeCurrentValuesInPropertiesFile(String filename) {
         Properties properties=new Properties();
         setPropertiesFromCurrentValues(properties);
-        store(properties,filename);
+        PropertiesIO.writePropertiesFile(properties,filename);
     }
     static void initializeParameters(String filename) {
         // we need a way to reset

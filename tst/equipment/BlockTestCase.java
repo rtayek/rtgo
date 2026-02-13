@@ -3,6 +3,7 @@ import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.*;
+import com.tayek.util.core.Pair;
 import equipment.Board.*;
 import io.Logging;
 //import model.Model;

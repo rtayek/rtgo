@@ -1,6 +1,6 @@
 package audio;
-import java.io.*;
-import javax.sound.sampled.*;
+import java.io.InputStream;
+import com.tayek.util.audio.AudioClips;
 import io.Logging;
 import model.Model.Where;
 import server.NamedThreadGroup;
@@ -8,26 +8,12 @@ public class Audio implements Runnable {
     public enum Sound { challenge, stone, atari, capture, pass, illegal; }
     private Audio(String filename) { this.filename=filename; }
     static InputStream getResourceAsStream(String filename) { return Audio.class.getResourceAsStream(filename); }
-    static AudioInputStream getAudioInputSream(String filename) throws UnsupportedAudioFileException,IOException {
-        AudioInputStream inputStream=AudioSystem
-                .getAudioInputStream(new BufferedInputStream(getResourceAsStream(filename)));
-        return inputStream;
-    }
     @Override public void run() {
         started=true;
         completed=false;
         try {
-            Clip clip=AudioSystem.getClip();
-            AudioInputStream inputStream=getAudioInputSream(filename);
-            if(inputStream!=null) {
-                clip.open(inputStream);
-                FloatControl gainControl=(FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-                gainControl.setValue(+6.0f); // ?
-                clip.start();
-                while(clip.getMicrosecondLength()!=clip.getMicrosecondPosition()) Thread.sleep(10);
-                Logging.mainLogger.info("audio"+" "+" null input stream!");
-            }
-            completed=true;
+            completed=AudioClips.playWav(Audio.class,filename,+6.0f,true);
+            if(!completed) Logging.mainLogger.info("audio"+" "+" null input stream!");
         } catch(Exception e) {
             Logging.mainLogger.severe(this+" caught: "+e);
             completed=false;

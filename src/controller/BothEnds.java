@@ -10,7 +10,7 @@ import model.Model;
 import model.ModelHelper2;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
-import utilities.Pair;
+import com.tayek.util.core.Pair;
 public class BothEnds { // has both a front end and a back end.
     public BothEnds() {}
     public void setupBoth(Holder holder,String frontEndName,Model model) {
