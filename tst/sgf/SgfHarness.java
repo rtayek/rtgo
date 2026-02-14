@@ -7,7 +7,7 @@ import io.IOs;
 import io.TestIo;
 import static org.junit.Assert.*;
 import static sgf.SgfNode.SgfOptions.containsQuotedControlCharacters;
-import static utilities.Utilities.implies;
+import static com.tayek.util.core.Misc.implies;
 import java.io.File;
 import java.io.Reader;
 import java.util.ArrayList;

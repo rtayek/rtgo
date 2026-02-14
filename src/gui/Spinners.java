@@ -1,7 +1,5 @@
 package gui;
-import static utilities.Utilities.*;
 import java.awt.*;
-import java.io.File;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -11,6 +9,7 @@ import equipment.Board.Topology;
 import io.Logging;
 import model.*;
 import model.Interfaces.*;
+import com.tayek.util.io.PropertiesIO;
 public class Spinners {
     public static class NewSpinners {
         public static class SpinnersABC implements Persistance,Widgets {
@@ -110,23 +109,21 @@ public class Spinners {
                 for(SpinnerWithAnEnum<?> parameter:buttons())
                     properties.setProperty(parameter.t.name(),parameter.currentValue.toString());
             }
-            @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
+            Properties currentValuesAsProperties() {
                 Properties properties=new Properties();
-                load(properties,propertiesFilename);
+                setPropertiesFromCurrentValues(properties);
+                return properties;
+            }
+            @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
+                Properties properties=PropertiesIO.loadOrCreatePropertiesFile(currentValuesAsProperties(),propertiesFilename);
                 Logging.mainLogger.info("loaded: "+properties);
                 setCurrentValuesFromProperties(properties);
             }
             @Override public void storeCurrentValuesInPropertiesFile(String filename) {
-                Properties properties=new Properties();
-                setPropertiesFromCurrentValues(properties);
-                store(properties,filename);
+                PropertiesIO.writePropertiesFile(currentValuesAsProperties(),filename);
             }
             @Override public void initializeParameters(String filename) {
-                // can we move this to base class?
-                // maybe
-                File file=new File(filename);
-                if(file.exists()) loadCurrentValuesFromPropertiesFile(filename);
-                else storeCurrentValuesInPropertiesFile(filename);
+                loadCurrentValuesFromPropertiesFile(filename);
             }
             @Override public String toString() {
                 LinkedHashMap<String,Object> map=new LinkedHashMap<>();

@@ -3,7 +3,7 @@ import static io.Init.first;
 import static model.MNodeAcceptor.MNodeFinder.labelPredicate;
 import static sgf.HexAscii.*;
 //import static sgf.Parser.getSgfData; // get rid of this!
-import static utilities.Utilities.cat;
+import static com.tayek.util.core.Texts.cat;
 import java.io.*;
 import java.net.*;
 import java.util.*;

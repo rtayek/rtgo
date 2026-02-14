@@ -1,12 +1,12 @@
 package model;
 import utilities.MyTestWatcher;
 import static org.junit.Assert.*;
-import static utilities.Utilities.*;
 import java.io.File;
 import java.util.Properties;
 import org.junit.*;
 import equipment.Board;
 import equipment.Board.Topology;
+import com.tayek.util.io.PropertiesIO;
 public class ParametersTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Ignore @Test public void testInitializeParametersWithDefaults() {
@@ -21,15 +21,15 @@ public class ParametersTestCase {
         String filename="test.properties";
         File file=new File(filename);
         if(file.exists()) file.delete();
-        store(new Properties(),filename);
+        PropertiesIO.writePropertiesFile(new Properties(),filename);
         assertTrue(new File(filename).exists());
     }
     @Test public void testSaveAndReadAPropertiesFile() {
         Properties expected=new Properties();
         Parameters.setPropertiesFromCurrentValues(expected);
-        store(expected,"test.properties");
+        PropertiesIO.writePropertiesFile(expected,"test.properties");
         Properties actual=new Properties();
-        load(actual,"test.properties");
+        PropertiesIO.loadPropertiesFile(actual,"test.properties");
         assertEquals(expected,actual);
     }
     @Test public void testChange() {
@@ -46,4 +46,5 @@ public class ParametersTestCase {
         fail("nyi");
     }
 }
+
 

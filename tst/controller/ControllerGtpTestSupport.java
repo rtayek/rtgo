@@ -5,7 +5,7 @@ import utilities.MyTestWatcher;
 import java.util.Arrays;
 import java.util.List;
 import model.Model;
-import utilities.Utilities;
+import com.tayek.util.core.Texts;
 
 public abstract class ControllerGtpTestSupport {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
@@ -64,7 +64,7 @@ public abstract class ControllerGtpTestSupport {
     }
 
     protected Response[] runGtpCommands(Model model, List<String> commands, boolean justRun) {
-        GTPBackEnd backEnd = new GTPBackEnd(Utilities.cat(commands), model);
+        GTPBackEnd backEnd = new GTPBackEnd(Texts.cat(commands), model);
         backEnd.useHexAscii = useHexAscii;
         return Response.responses(backEnd.runCommands(justRun));
     }

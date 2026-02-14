@@ -1,7 +1,7 @@
 package sgf;
 import io.Logging;
-import static utilities.Utilities.fromFile;
 import java.io.*;
+import com.tayek.util.io.FileIO;
 public class WierdSgfFiles {
     public static void main(String[] argument) throws Exception {
         File fileList=new File("sgffiles.txt");
@@ -14,7 +14,7 @@ public class WierdSgfFiles {
                 if(!line.contains("SGF_DEFECT+WEIRD_FILES")) if(n<100) {
                     Logging.mainLogger.info(n+" "+file+" ");
                     StringBuffer stringBuffer=new StringBuffer();
-                    fromFile(stringBuffer,file);
+                    FileIO.fromFile(stringBuffer,file);
                     Logging.mainLogger.info("'"+stringBuffer+"'");
                 }
             }

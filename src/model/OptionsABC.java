@@ -1,10 +1,9 @@
 package model;
 import io.Logging;
-import static utilities.Utilities.*;
-import java.io.File;
 import java.util.*;
 import model.Interfaces.Persistance;
 import com.tayek.util.core.Range;
+import com.tayek.util.io.PropertiesIO;
 public class OptionsABC implements Persistance { // an instance of options.
     public class Option<T extends Enum<T>,R extends Comparable<R>> { // an instance of one option.
         // should this be abstract?
@@ -62,23 +61,21 @@ public class OptionsABC implements Persistance { // an instance of options.
     @Override public void setPropertiesFromCurrentValues(Properties properties) {
         for(Option<?,?> option:options()) properties.setProperty(option.t.name(),option.currentValue.toString());
     }
-    @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
+    Properties currentValuesAsProperties() {
         Properties properties=new Properties();
-        load(properties,propertiesFilename);
+        setPropertiesFromCurrentValues(properties);
+        return properties;
+    }
+    @Override public void loadCurrentValuesFromPropertiesFile(String propertiesFilename) {
+        Properties properties=PropertiesIO.loadOrCreatePropertiesFile(currentValuesAsProperties(),propertiesFilename);
         Logging.mainLogger.info(String.valueOf(properties));
         setCurrentValuesFromProperties(properties);
     }
     @Override public void storeCurrentValuesInPropertiesFile(String filename) {
-        Properties properties=new Properties();
-        setPropertiesFromCurrentValues(properties);
-        store(properties,filename);
+        PropertiesIO.writePropertiesFile(currentValuesAsProperties(),filename);
     }
     @Override public void initializeParameters(String filename) {
-        // can we move this to base class?
-        // we are in the base class
-        File file=new File(filename);
-        if(file.exists()) loadCurrentValuesFromPropertiesFile(filename);
-        else storeCurrentValuesInPropertiesFile(filename);
+        loadCurrentValuesFromPropertiesFile(filename);
     }
     @Override public String toString() {
         LinkedHashMap<String,Object> map=new LinkedHashMap<>();

@@ -2,12 +2,12 @@ package equipment;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import io.Logging;
-import utilities.Utilities;
+import com.tayek.util.core.Stacks;
 public class Coordinates {
     public static String toGtpCoordinateSystem(Point point,int width,int depth) { // no i!
         String moveString="";
         if(!new Rectangle(0,0,width,depth).contains(point)) {
-            Logging.mainLogger.severe("point is off the board: "+point+" "+width+" "+depth+" "+Utilities.method(3));
+            Logging.mainLogger.severe("point is off the board: "+point+" "+width+" "+depth+" "+Stacks.method(3));
             //throw new RuntimeException("point is off the board!");
         }
         char letter=(char)('a'+point.x);

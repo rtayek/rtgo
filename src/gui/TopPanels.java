@@ -1,5 +1,5 @@
 package gui;
-import static utilities.Utilities.store;
+import static com.tayek.util.io.PropertiesIO.writePropertiesFile;
 import java.awt.LayoutManager;
 import java.awt.event.*;
 import java.util.Properties;
@@ -78,7 +78,7 @@ public class TopPanels {
             // and not the old parameter
             for(SpinnerWithAnEnum<?> b:spinners.buttons()) properties.put(b.t.name(),b.currentValue.toString());
             //Logging.mainLogger.config("writing new properties to: "+propertiesFilename+": "+properties);
-            store(properties,Parameters.propertiesFilename);
+            writePropertiesFile(properties,Parameters.propertiesFilename);
         }
         final Mediator mediator;
         ButtonsABC<Navigate> buttons=new MyButtons();

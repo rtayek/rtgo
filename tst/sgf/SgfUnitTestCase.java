@@ -13,7 +13,7 @@ import static model.MNodeAcceptor.MNodeFinder.*;
 import static sgf.HexAscii.*;
 import static sgf.Parser.restoreSgf;
 import static sgf.SgfNode.SgfOptions.*;
-import static utilities.Utilities.addFiles;
+import static com.tayek.util.io.FileIO.addFiles;
 import java.io.File;
 import java.io.Reader;
 import java.util.ArrayList;

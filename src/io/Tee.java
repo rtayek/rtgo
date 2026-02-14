@@ -4,20 +4,18 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 import io.Logging.MyFormatter;
-public class Tee extends FilterOutputStream {
+public class Tee extends com.tayek.util.misc.Tee {
     // make this into a writer or make a version for writers
     // not a good idea unless we use the apache thing
     public Tee(OutputStream foo) {
         super(foo); // this.out is the underlying stream.
-        streams.addElement(foo);
         printStream=new PrintStream(this,true) { // only println() is overwritter!
             @Override public void println(String string) { super.println(prefix+string); }
         };
     }
-    public synchronized void addOutputStream(OutputStream out) { streams.addElement(out); }
     @Override public synchronized void write(byte[] data,int offset,int length) throws IOException {
         Integer i=0;
-        for(Enumeration<OutputStream> e=streams.elements();e.hasMoreElements();) {
+        for(Enumeration<OutputStream> e=outputs().elements();e.hasMoreElements();) {
             OutputStream out=e.nextElement();
             if(verbose) {
                 String index=i.toString();
@@ -144,5 +142,4 @@ public class Tee extends FilterOutputStream {
     public String prefix="T ";
     PrintStream previousOut,previousErr;
     public final PrintStream printStream;
-    Vector<OutputStream> streams=new Vector<OutputStream>();
 }

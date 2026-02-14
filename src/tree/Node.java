@@ -1,5 +1,6 @@
 package tree;
-import static utilities.Utilities.*;
+import static com.tayek.util.core.Misc.implies;
+import static com.tayek.util.core.Texts.toObjects;
 import io.Logging;
 import java.util.*;
 public class Node<T> {

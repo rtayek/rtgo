@@ -274,7 +274,7 @@ public class Parser {
 		if(key==null) throw new RuntimeException(key+" key is null!");
 		if(key==null) return null;
 		if(key instanceof String) sgf=statocSgfData.get(key);
-		else if(key instanceof File) sgf=utilities.Utilities.fromFile((File)key);
+		else if(key instanceof File) sgf=FileIO.fromFile((File)key);
 		else {
 			Logging.mainLogger.info(key+" is not a string or a file!");
 			IOs.stackTrace(10);

@@ -18,7 +18,6 @@ import equipment.Stone;
 import equipment.Board.Shape;
 import io.Logging;
 import sgf.*;
-import utilities.Utilities;
 import static io.IOs.noIndent;
 import static com.tayek.util.io.FileIO.toReader;
 import static sgf.Parser.restoreSgf;
@@ -235,7 +234,7 @@ public final class ModelHelper {
     public static MNode modelRoundTrip(Reader reader,Writer writer,ModelSaveMode saveMode) {
         if(reader==null) return null;
         StringBuffer sb=new StringBuffer();
-        Utilities.fromReader(sb,reader);
+        FileIO.fromReader(sb,reader);
         return modelRoundTrip(sb.toString(),writer,saveMode);
     }
     public static MNode modelRoundTrip2(String expectedSgf,Writer writer) {
