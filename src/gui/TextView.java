@@ -5,9 +5,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.*;
 import javax.swing.*;
+import com.tayek.util.misc.Tee;
 import io.Logging;
 import io.Logging.MyFormatter;
-import io.Tee;
 @SuppressWarnings("serial") public class TextView extends JPanel {
     public TextView() {
         setLayout(new BorderLayout());

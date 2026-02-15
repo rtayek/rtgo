@@ -4,6 +4,7 @@ import static io.Logging.flushingStreamHandler;
 import static org.junit.Assert.*;
 import java.io.*;
 import java.util.logging.*;
+import com.tayek.util.misc.Tee;
 import org.junit.*;
 import io.Logging.MyFormatter;
 public class TeeAndLoggingTestCase {

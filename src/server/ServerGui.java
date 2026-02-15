@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.logging.Handler;
 import javax.swing.*;
+import com.tayek.util.misc.Tee;
 import gui.TextView;
 import io.*;
 import io.Logging.MyFormatter;

@@ -1,6 +1,7 @@
 package io;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import com.tayek.util.misc.Tee;
 class TestTee extends Tee {
     TestTee(OutputStream out,ConsoleStreams console) {
         super(out);

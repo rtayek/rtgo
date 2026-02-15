@@ -6,6 +6,8 @@ import java.util.logging.*;
 import controller.GTPBackEnd;
 import server.NamedThreadGroup;
 import com.tayek.util.core.Et;
+import com.tayek.util.core.Texts;
+import com.tayek.util.io.FileIO;
 import com.tayek.util.log.ColorLogs;
 import com.tayek.util.log.Sequence;
 // https://developer.ibm.com/tutorials/j-introducing-junit5-part2-vintage-jupiter-extension-model/
@@ -104,15 +106,7 @@ public enum Init {
         wrapupTests_();
     }
     public void saveTestsRun(String fileName) {
-        File file=new File(fileName);
-        Writer writer;
-        try {
-            writer=new FileWriter(file);
-            for(String testName:testsRun) writer.write(testName+'\n');
-            writer.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        FileIO.write(Texts.cat(testsRun),new File(fileName));
     }
     public void lastPrint() {
         NamedThreadGroup.printThraedsAtEnd();

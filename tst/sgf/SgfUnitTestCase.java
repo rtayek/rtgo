@@ -38,7 +38,7 @@ import model.Move2;
 import model.Move2.MoveType;
 import model.MNodeTestIo;
 import sgf.combine.Combine;
-import io.Tee;
+import com.tayek.util.misc.Tee;
 import utilities.TestKeys;
 import com.tayek.util.core.Iterators.Longs;
 public class SgfUnitTestCase {
