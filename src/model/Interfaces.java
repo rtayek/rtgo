@@ -12,7 +12,7 @@ public interface Interfaces {
     }
     interface Widget { //
         boolean isValueInWidget(Object value);
-        boolean setValueInWisget(Object value);
+        boolean setValueInWidget(Object value);
         boolean setValueInWidgetFromCurrentValue();
     }
     interface Widgets { //

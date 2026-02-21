@@ -6,11 +6,7 @@ import com.tayek.util.io.PropertiesIO;
 import equipment.Board;
 import equipment.Board.*;
 import model.Model.Role;
-// matbe we can salvage some of this suff
 public enum Parameters { // properties
-    // same problem with enums that have buttons
-    // write new code with spinners that have an enum.
-    // done - see new paramter spinner class.
     width(Board.standard),depth(Board.standard),shape(Shape.normal) {
         @Override public Shape fromString(String string) { return Shape.valueOf(string); }
     },
@@ -25,7 +21,6 @@ public enum Parameters { // properties
     public Object fromString(String string) { return Integer.valueOf(string); } // maybe should be double?
     public Object currentValue() { return currentValue; }
     @Override public String toString() { return name()+"="+currentValue+"("+defaultValue+")"; }
-    // also old change
     public static void change(Parameters parameter,Object value) {
         //Logging.mainLogger.info(parameter.name()+" changed from: "+parameter.currentValue()+"+ to: "+value);
         parameter.currentValue=value; // fromn spinner
@@ -62,7 +57,8 @@ public enum Parameters { // properties
     // investigate what this means. look around new game in model.
     // 7/11/2021 yes, and we don't seem to be using them
     // maybe keep the current values from the spinners in here?
-    // no, they need to be in the new spinners.
+    // yes: Parameters is the source of truth, spinner UI reads/writes it.
+    // 2/21/36 using codex to refactor.
     public final Object defaultValue;
     private Object currentValue;
     public static final String propertiesFilename="tgo.properties";

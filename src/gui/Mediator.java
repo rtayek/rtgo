@@ -11,10 +11,7 @@ import equipment.*;
 import gui.EastPanels.NewEastPanel;
 import gui.SouthPanels.NewSouthPanel;
 import gui.SpinnerOptions.SpinnerOption;
-import gui.Spinners.NewSpinners.SpinnersABC.SpinnerWithAnEnum;
-import gui.Spinners.OldSpinners;
 import gui.TopPanels.NewTopPanel;
-import gui.TopPanels.TopPanel;
 import io.*;
 import model.*;
 import model.Event;
@@ -56,31 +53,12 @@ class Mediator implements Observer,ActionListener {
         }
         // make all of the panels (new panel path only)
         newTopPanel=new NewTopPanel(this);
-        if(useNewSpinners) {
-            if(useSpinnerOptions) {
-                Logging.mainLogger.info("using spinner options.");
-                newTopPanel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
-                for(Option<?,?> button:newTopPanel.spinnerParameterOptions.options()) {
-                    SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)button;
-                    spinnerOption.jSpinner.addChangeListener(TopPanel.changeListener);
-                    newTopPanel.add(spinnerOption.jSpinner);
-                }
-            } else {
-                Logging.mainLogger.info("using new spinners.");
-                newTopPanel.spinners.setValuesInWidgetsFromCurrentValues();
-                for(SpinnerWithAnEnum<?> button:newTopPanel.spinners.buttons()) {
-                    button.jSpinner.addChangeListener(TopPanel.changeListener);
-                    newTopPanel.add(button.jSpinner);
-                }
-            }
-        } else {
-            Logging.mainLogger.info("using old spinners.");
-            OldSpinners.staticStValuesInWidgetsFromCurrentValues();
-            for(Parameters parameter:OldSpinners.map.keySet()) {
-                OldSpinners spinner=OldSpinners.map.get(parameter);
-                spinner.jSpinner.addChangeListener(TopPanel.changeListener);
-                newTopPanel.add(spinner.jSpinner);
-            }
+        Logging.mainLogger.info("using spinner options.");
+        newTopPanel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
+        for(Option<?,?> button:newTopPanel.spinnerParameterOptions.options()) {
+            SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)button;
+            spinnerOption.jSpinner.addChangeListener(newTopPanel.changeListener);
+            newTopPanel.add(spinnerOption.jSpinner);
         }
         newTopPanel.setBackground(Color.green);
         main.add(newTopPanel,BorderLayout.PAGE_START);
@@ -373,8 +351,6 @@ class Mediator implements Observer,ActionListener {
     final NewSouthPanel newSouthPanel;
     final NewEastPanel newEastPanel;
     final NewWestPanel newWestPanel;
-    static boolean useSpinnerOptions=true;
-    static boolean useNewSpinners=true;
     double boardHeightInPixels=18*40*3/4.;
     //
     transient File lastLoadDirectory,lastSaveDirectory,lastOpenFile;

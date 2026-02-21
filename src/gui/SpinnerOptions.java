@@ -12,10 +12,8 @@ abstract class WidgetOptions extends OptionsABC implements Widgets {
     public abstract class WidgetOption<T extends Enum<T>,R extends Comparable<R>>extends Option<T,R> implements Widget {
         public WidgetOption(T t,Object defaultValue,Range<R> range) { super(t,defaultValue,range); }
     }
-    JComponent jComponent;
 }
 public class SpinnerOptions extends WidgetOptions {
-    Class<Parameters> c=Parameters.class; // hack
     public class SpinnerOption<T extends Enum<T>,R extends Comparable<R>>extends WidgetOption<T,R> {
         public SpinnerOption(T t,Object defaultValue,Range<R> range,JSpinner jSpinner,String tooltipText,
                 KeyStroke keyStroke) {
@@ -34,7 +32,7 @@ public class SpinnerOptions extends WidgetOptions {
             for(Object o:model.getList()) if(o.equals(value)) return true;
             return false;
         }
-        @Override public boolean setValueInWisget(Object value) {
+        @Override public boolean setValueInWidget(Object value) {
             if(value==null) { Logging.mainLogger.warning("null value for parameter: "+t); return false; }
             if(isValueInWidget(value)) {
                 SpinnerListModel model=(SpinnerListModel)jSpinner.getModel();
@@ -46,7 +44,7 @@ public class SpinnerOptions extends WidgetOptions {
         @Override public boolean setValueInWidgetFromCurrentValue() { // for this parameter
             boolean rc=false;
             rc=isValueInWidget(currentValue());
-            if(rc) setValueInWisget(currentValue());
+            if(rc) setValueInWidget(currentValue());
             // maybe need to set the spinner in the spinner with an enum?
             // using the old parameters class
             // not sure, look at this later perhaps?
@@ -80,6 +78,8 @@ class SpinnerParameterOptions extends SpinnerOptions {
     // running Main.main(0 does not.
     // so we need to initialize earlier?
     // how much of the above code can we push up into the abc or the options class?
+    // the above is old.
+    // 2/21/26 using codex to refactor.
     {
         new SpinnerOption<Parameters,Topology>(Parameters.topology,(Topology)Parameters.topology.defaultValue,
                 (Range<Topology>)null,OldSpinners.spinner(Parameters.topologies,150),(String)null,(KeyStroke)null) {
