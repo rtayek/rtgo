@@ -1,7 +1,6 @@
 package gui;
 import static org.junit.Assert.*;
 import org.junit.*;
-import gui.WestPanels.WestPanel.ConnectButtons;
 public class MainTestCase {
     @Before public void setUp() throws Exception {
         //Init.first.restoreSystmeIO();
