@@ -8,18 +8,19 @@ import javax.swing.*;
 import audio.Audio;
 import audio.Audio.Sound;
 import equipment.*;
-import gui.EastPanels.*;
-import gui.SouthPanels.*;
+import gui.EastPanels.NewEastPanel;
+import gui.SouthPanels.NewSouthPanel;
 import gui.SpinnerOptions.SpinnerOption;
 import gui.Spinners.NewSpinners.SpinnersABC.SpinnerWithAnEnum;
 import gui.Spinners.OldSpinners;
-import gui.TopPanels.*;
-import gui.WestPanels.WestPanel;
+import gui.TopPanels.NewTopPanel;
+import gui.TopPanels.TopPanel;
 import io.*;
 import model.*;
 import model.Event;
 import model.OptionsABC.Option;
 import sgf.*;
+import gui.WestPanels.NewWestPanel;
 class Mediator implements Observer,ActionListener {
     // anyway to disconnect this from the model?
     // like for web presentation?
@@ -53,104 +54,49 @@ class Mediator implements Observer,ActionListener {
             main.remove(old);
             main.validate();
         }
-        // make all of the panels
-        if(useNewTopPanel) {
-            topPanel=null;
-            newTopPanel=new NewTopPanel(this);
-            // these get added here.
-            // the oldest parameter stuff gets added the new top panel constructor.
-            if(useNewSpinners) {
-                if(useSpinnerOptions) {
-                    Logging.mainLogger.info("using spinner options.");
-                    newTopPanel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
-                    for(Option<?,?> button:newTopPanel.spinnerParameterOptions.options()) {
-                        SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)button;
-                        spinnerOption.jSpinner.addChangeListener(TopPanel.changeListener);
-                        newTopPanel.add(spinnerOption.jSpinner);
-                    }
-                } else {
-                    Logging.mainLogger.info("using new spinners.");
-                    // newTopPanel.spinners.initializeParameters(Parameters.propertiesFilename);
-                    newTopPanel.spinners.setValuesInWidgetsFromCurrentValues();
-                    // button should be widget or something
-                    for(SpinnerWithAnEnum<?> button:newTopPanel.spinners.buttons()) {
-                        button.jSpinner.addChangeListener(TopPanel.changeListener);
-                        newTopPanel.add(button.jSpinner);
-                    }
+        // make all of the panels (new panel path only)
+        newTopPanel=new NewTopPanel(this);
+        if(useNewSpinners) {
+            if(useSpinnerOptions) {
+                Logging.mainLogger.info("using spinner options.");
+                newTopPanel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
+                for(Option<?,?> button:newTopPanel.spinnerParameterOptions.options()) {
+                    SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)button;
+                    spinnerOption.jSpinner.addChangeListener(TopPanel.changeListener);
+                    newTopPanel.add(spinnerOption.jSpinner);
                 }
             } else {
-                Logging.mainLogger.info("using old spinners.");
-                OldSpinners.staticStValuesInWidgetsFromCurrentValues();
-                for(Parameters parameter:OldSpinners.map.keySet()) {
-                    OldSpinners spinner=OldSpinners.map.get(parameter);
-                    spinner.jSpinner.addChangeListener(TopPanel.changeListener);
-                    newTopPanel.add(spinner.jSpinner);
+                Logging.mainLogger.info("using new spinners.");
+                newTopPanel.spinners.setValuesInWidgetsFromCurrentValues();
+                for(SpinnerWithAnEnum<?> button:newTopPanel.spinners.buttons()) {
+                    button.jSpinner.addChangeListener(TopPanel.changeListener);
+                    newTopPanel.add(button.jSpinner);
                 }
             }
-            newTopPanel.setBackground(Color.green);
-            main.add(newTopPanel,BorderLayout.PAGE_START);
-            newTopPanel.buttons.enableAll(this);
         } else {
-            topPanel=new TopPanel(this);
-            newTopPanel=null;
+            Logging.mainLogger.info("using old spinners.");
             OldSpinners.staticStValuesInWidgetsFromCurrentValues();
-            // these get added here.
-            // the newer stuff gets added in the mediator
             for(Parameters parameter:OldSpinners.map.keySet()) {
                 OldSpinners spinner=OldSpinners.map.get(parameter);
-                spinner.jSpinner.addChangeListener(TopPanel.changeListener); // maybe add after inited from parameters?
-                topPanel.add(spinner.jSpinner);
+                spinner.jSpinner.addChangeListener(TopPanel.changeListener);
+                newTopPanel.add(spinner.jSpinner);
             }
-            topPanel.setBackground(Color.green);
-            main.add(topPanel,BorderLayout.PAGE_START);
-            TopPanel.Buttons.enableAll(this);
         }
-        if(useNewSouthPanel) {
-            newSouthPanel=new NewSouthPanel(this);
-            southPanel=null;
-            newSouthPanel.setBackground(Color.green);
-            main.add(newSouthPanel,BorderLayout.PAGE_END);
-            newSouthPanel.buttons.enableAll(this);
-        } else {
-            newSouthPanel=null;
-            southPanel=new SouthPanel(this);
-            southPanel.setBackground(Color.green);
-            main.add(southPanel,BorderLayout.PAGE_END);
-            SouthPanel.Buttons.enableAll(this);
-        }
-        if(useNwwEastPanel) {
-            eastPanel=null;
-            newEastPanel=new NewEastPanel(this);
-            newEastPanel.setBackground(Color.pink);
-            main.add(newEastPanel,BorderLayout.LINE_END);
-            newEastPanel.buttons.enableAll(this);
-        } else {
-            eastPanel=new EastPanel(this);
-            newEastPanel=null;
-            eastPanel.setBackground(Color.pink);
-            main.add(eastPanel,BorderLayout.LINE_END);
-            EastPanel.Buttons.enableAll(this);
-            // old=borderLayout.getLayoutComponent(BorderLayout.LINE_START);
-            // if(old!=null) { mainGui.remove(old); mainGui.validate(); }
-        }
-        if(!useNewWestPanel) {
-            westPanel=new WestPanels.WestPanel(this);
-            newWestPanel=null;
-            westPanel.setBackground(Color.yellow);
-            main.add(westPanel,BorderLayout.LINE_START);
-            WestPanel.ConnectButtons.enableAll(this);
-            Logging.mainLogger.info("old west panel)");
-            // Main.listComponentsIn(westPanel,null,true);
-        } else {
-            westPanel=null;
-            newWestPanel=new WestPanels.NewWestPanel(this);
-            newWestPanel.setBackground(Color.yellow);
-            main.add(newWestPanel,BorderLayout.LINE_START);
-            newWestPanel.buttons.enableAll(this);
-            // above is wrong. must be myt enums
-            // Logging.mainLogger.info("west panel)");
-            // Main.listComponentsIn(westPanel,null,true);
-        }
+        newTopPanel.setBackground(Color.green);
+        main.add(newTopPanel,BorderLayout.PAGE_START);
+        newTopPanel.buttons.enableAll(this);
+        newSouthPanel=new NewSouthPanel(this);
+        newSouthPanel.setBackground(Color.green);
+        main.add(newSouthPanel,BorderLayout.PAGE_END);
+        newSouthPanel.buttons.enableAll(this);
+        newEastPanel=new NewEastPanel(this);
+        newEastPanel.setBackground(Color.pink);
+        main.add(newEastPanel,BorderLayout.LINE_END);
+        newEastPanel.buttons.enableAll(this);
+        newWestPanel=new NewWestPanel(this);
+        newWestPanel.setBackground(Color.yellow);
+        main.add(newWestPanel,BorderLayout.LINE_START);
+        newWestPanel.buttons.enableAll(this);
         // status.setBorder(BorderFactory.createLineBorder(Color.black));
         extra=new JPanel(); // near the bottom
         extra.setAlignmentX(Component.CENTER_ALIGNMENT); // fixes alignment problem
@@ -336,30 +282,18 @@ class Mediator implements Observer,ActionListener {
                         case newTree:
                         case nodeChanged:
                         case illegalMove:
-                            if(!useNewTopPanel) TopPanel.Buttons.enableAll(this);
-                            else newTopPanel.buttons.enableAll(this);
-                            // this will all need to be changed.
-                            if(!useNewSouthPanel) {
-                                SouthPanel.Buttons.scroll.abstractButton.setEnabled(false);
-                                SouthPanel.Buttons.scroll.abstractButton.setSelected(false);
-                                SouthPanel.Buttons.enableAll(this);
-                            } else {
-                                ButtonsABC<SouthPanels.MyEnums>.ButtonWithEnum scroll=newSouthPanel.buttons
-                                        .get(SouthPanels.MyEnums.scroll);
-                                scroll.abstractButton.setEnabled(false);
-                                scroll.abstractButton.setSelected(useNewSouthPanel);
-                                newSouthPanel.buttons.enableAll(this);
-                            }
+                            newTopPanel.buttons.enableAll(this);
+                            ButtonsABC<SouthPanels.MyEnums>.ButtonWithEnum scroll=newSouthPanel.buttons
+                                    .get(SouthPanels.MyEnums.scroll);
+                            scroll.abstractButton.setEnabled(false);
+                            scroll.abstractButton.setSelected(true);
+                            newSouthPanel.buttons.enableAll(this);
                             break;
                         default:
                             Logging.mainLogger.warning(model.name+" "+"unhandled event hint: "+hint);
                     }
                 } else Logging.mainLogger.fine(model.name+" "+"hint="+hint);
-                if(useNewWestPanel) {
-                    // newWestPanel.setActionMap(l); // this may be what i am trying to do with
-                    // buttons with an enum?
-                    newWestPanel.setPlayerColor();
-                } else westPanel.setPlayerColor();
+                newWestPanel.setPlayerColor();
                 if(gamePanel!=null) {
                     Logging.mainLogger.fine(model.name+" "+"request repaint");
                     gamePanel.repaint();
@@ -435,20 +369,12 @@ class Mediator implements Observer,ActionListener {
     final JLabel lastMove=new JLabel(" ");
     // final JLabel sgfProperties=new JLabel(" ");
     final JTextArea sgfProperties=new JTextArea();
-    final TopPanels.TopPanel topPanel;
-    final TopPanels.NewTopPanel newTopPanel;
-    final SouthPanels.SouthPanel southPanel;
-    final SouthPanels.NewSouthPanel newSouthPanel;
-    final EastPanels.EastPanel eastPanel;
-    final EastPanels.NewEastPanel newEastPanel;
-    final WestPanels.WestPanel westPanel;
-    final WestPanels.NewWestPanel newWestPanel;
+    final NewTopPanel newTopPanel;
+    final NewSouthPanel newSouthPanel;
+    final NewEastPanel newEastPanel;
+    final NewWestPanel newWestPanel;
     static boolean useSpinnerOptions=true;
     static boolean useNewSpinners=true;
-    static boolean useNewTopPanel=true;
-    static boolean useNewSouthPanel=true;
-    static boolean useNewWestPanel=true;
-    static boolean useNwwEastPanel=true;
     double boardHeightInPixels=18*40*3/4.;
     //
     transient File lastLoadDirectory,lastSaveDirectory,lastOpenFile;
