@@ -1,4 +1,6 @@
-package gui;
+package gui.demo;
+import gui.Main;
+import gui.TextView;
 import io.Logging;
 import model.Model;
 public class X {

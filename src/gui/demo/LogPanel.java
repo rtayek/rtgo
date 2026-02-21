@@ -1,4 +1,4 @@
-package gui;
+package gui.demo;
 import java.awt.*;
 import java.util.*;
 import java.util.logging.Level;

@@ -1,4 +1,4 @@
-package gui;
+package gui.demo;
 import java.io.File;
 import java.util.*;
 import javax.swing.*;
@@ -13,15 +13,15 @@ public class Plaf extends MainGui {
     }
     void foo() {
         try {
-            GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(null,lastLoadDirectory);
-            if(selection!=null) {
-                lastOpenFile=selection.file();
-                lastLoadDirectory=selection.directory();
+            JFileChooser chooser=new JFileChooser(lastLoadDirectory);
+            int rc=chooser.showOpenDialog(null);
+            if(rc==JFileChooser.APPROVE_OPTION) {
+                lastOpenFile=chooser.getSelectedFile();
+                lastLoadDirectory=lastOpenFile.getParentFile();
                 Logging.mainLogger.info(String.valueOf(lastOpenFile));
             }
         } catch(Exception ex) {
             ex.printStackTrace();
-            Toast.toast(ex.toString());
         }
     }
     public static void setPlaf(LookAndFeelInfo plaf_) {

@@ -1,7 +1,8 @@
-package gui;
+package gui.demo;
 import java.awt.BorderLayout;
 import java.awt.event.*;
 import java.io.PrintStream;
+import gui.TextAreaOutputStream;
 import io.Logging;
 import javax.swing.*;
 @SuppressWarnings("serial") public class TextAreaOutputStreamTest extends JPanel {

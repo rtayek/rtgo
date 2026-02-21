@@ -1,4 +1,4 @@
-package gui;
+package gui.demo;
 import java.awt.*;
 import io.Logging;
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package gui;
+package gui.demo;
 import javax.swing.JFrame;
 @SuppressWarnings("serial") public class Title extends JFrame {
     public Title() {
