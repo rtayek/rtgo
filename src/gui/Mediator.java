@@ -28,71 +28,17 @@ class Mediator implements Observer,ActionListener {
             // throw new RuntimeException("oops");
         }
         this.model=model;
-        // connector=new Connector(model);
-        // looks like this is the case where we do not connect!
-        // at least right away
-        // maybe we can roll up a back end each time
-        // and put the connect in the constructor?
         this.main=main;
         this.textView=textView;
-        GraphicsDevice gd=GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        int width=gd.getDisplayMode().getWidth();
-        int height=gd.getDisplayMode().getHeight();
-        boardHeightInPixels=.5*height;
-        Logging.mainLogger.info(model.name+" width="+width+", height="+height+", pixels="+boardHeightInPixels);
-        JMenuBar jMenuBar=createMenuBar();
-        if(main.isApplet()) main.applet().setJMenuBar(jMenuBar);
-        else main.frame().setJMenuBar(jMenuBar);
-        BorderLayout borderLayout=(BorderLayout)main.getLayout();
-        Component old=borderLayout.getLayoutComponent(BorderLayout.PAGE_START);
-        // old=null; fixed the left panel problem. but it's probably not the cause
-        if(old!=null) {
-            Logging.mainLogger.fine("removing: "+old.getName());
-            main.remove(old);
-            main.validate();
-        }
-        // make all of the panels (new panel path only)
-        newTopPanel=new NewTopPanel(this);
-        Logging.mainLogger.info("using spinner options.");
-        newTopPanel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
-        for(Option<?,?> button:newTopPanel.spinnerParameterOptions.options()) {
-            SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)button;
-            spinnerOption.jSpinner.addChangeListener(newTopPanel.changeListener);
-            newTopPanel.add(spinnerOption.jSpinner);
-        }
-        newTopPanel.setBackground(Color.green);
-        main.add(newTopPanel,BorderLayout.PAGE_START);
-        newTopPanel.buttons.enableAll(this);
-        newSouthPanel=new NewSouthPanel(this);
-        newSouthPanel.setBackground(Color.green);
-        main.add(newSouthPanel,BorderLayout.PAGE_END);
-        newSouthPanel.buttons.enableAll(this);
-        newEastPanel=new NewEastPanel(this);
-        newEastPanel.setBackground(Color.pink);
-        main.add(newEastPanel,BorderLayout.LINE_END);
-        newEastPanel.buttons.enableAll(this);
-        newWestPanel=new NewWestPanel(this);
-        newWestPanel.setBackground(Color.yellow);
-        main.add(newWestPanel,BorderLayout.LINE_START);
-        newWestPanel.buttons.enableAll(this);
-        // status.setBorder(BorderFactory.createLineBorder(Color.black));
-        extra=new JPanel(); // near the bottom
-        extra.setAlignmentX(Component.CENTER_ALIGNMENT); // fixes alignment problem
-        extra.setName("extrta panel");
-        // extra.setBorder(BorderFactory.createLineBorder(Color.black));
-        extra.setLayout(new BoxLayout(extra,BoxLayout.Y_AXIS));
-        extra.add(status);
-        status.setName("status");
-        // lastMove.setBorder(BorderFactory.createLineBorder(Color.black));
-        extra.add(lastMove);
-        extra.add(sgfProperties);
-        // try not doing this
-        // initializeGamePanel(); // in lieu of a splash screen
-        // the above is causing problems when the gui is not completely
-        // initialized!
-        Mediator.this.model.addObserver(this);
-        // model.addObserver(new Text(model));
-        // model.notify(Event.start,"new mediator");
+        boardHeightInPixels=determineBoardHeightInPixels();
+        installMenuBar();
+        removeExistingTopPanel();
+        newTopPanel=createTopPanel();
+        newSouthPanel=createSouthPanel();
+        newEastPanel=createEastPanel();
+        newWestPanel=createWestPanel();
+        extra=createExtraPanel();
+        model.addObserver(this);
         if(false) main.addKeyListener(new KeyListener() {
             @Override public void keyTyped(KeyEvent arg0) {}
             @Override public void keyReleased(KeyEvent arg0) {}
@@ -105,6 +51,74 @@ class Mediator implements Observer,ActionListener {
             }
         });
         Logging.mainLogger.info("end mediator init.");
+    }
+    private double determineBoardHeightInPixels() {
+        GraphicsDevice gd=GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int width=gd.getDisplayMode().getWidth();
+        int height=gd.getDisplayMode().getHeight();
+        double pixels=.5*height;
+        Logging.mainLogger.info(model.name+" width="+width+", height="+height+", pixels="+pixels);
+        return pixels;
+    }
+    private void installMenuBar() {
+        JMenuBar jMenuBar=createMenuBar();
+        if(main.isApplet()) main.applet().setJMenuBar(jMenuBar);
+        else main.frame().setJMenuBar(jMenuBar);
+    }
+    private void removeExistingTopPanel() {
+        BorderLayout borderLayout=(BorderLayout)main.getLayout();
+        Component old=borderLayout.getLayoutComponent(BorderLayout.PAGE_START);
+        if(old!=null) {
+            Logging.mainLogger.fine("removing: "+old.getName());
+            main.remove(old);
+            main.validate();
+        }
+    }
+    private NewTopPanel createTopPanel() {
+        NewTopPanel panel=new NewTopPanel(this);
+        Logging.mainLogger.info("using spinner options.");
+        panel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
+        for(Option<?,?> button:panel.spinnerParameterOptions.options()) {
+            SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)button;
+            spinnerOption.jSpinner.addChangeListener(panel.changeListener);
+            panel.add(spinnerOption.jSpinner);
+        }
+        panel.setBackground(Color.green);
+        main.add(panel,BorderLayout.PAGE_START);
+        panel.buttons.enableAll(this);
+        return panel;
+    }
+    private NewSouthPanel createSouthPanel() {
+        NewSouthPanel panel=new NewSouthPanel(this);
+        panel.setBackground(Color.green);
+        main.add(panel,BorderLayout.PAGE_END);
+        panel.buttons.enableAll(this);
+        return panel;
+    }
+    private NewEastPanel createEastPanel() {
+        NewEastPanel panel=new NewEastPanel(this);
+        panel.setBackground(Color.pink);
+        main.add(panel,BorderLayout.LINE_END);
+        panel.buttons.enableAll(this);
+        return panel;
+    }
+    private NewWestPanel createWestPanel() {
+        NewWestPanel panel=new NewWestPanel(this);
+        panel.setBackground(Color.yellow);
+        main.add(panel,BorderLayout.LINE_START);
+        panel.buttons.enableAll(this);
+        return panel;
+    }
+    private JPanel createExtraPanel() {
+        JPanel panel=new JPanel();
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.setName("extrta panel");
+        panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+        panel.add(status);
+        status.setName("status");
+        panel.add(lastMove);
+        panel.add(sgfProperties);
+        return panel;
     }
     public JMenuBar createMenuBar() {
         JMenuBar menuBar=new JMenuBar();

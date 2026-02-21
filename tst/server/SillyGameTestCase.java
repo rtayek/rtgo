@@ -19,5 +19,4 @@ public class SillyGameTestCase extends AbstractGoServerTestCase {
         check();
         GameFixture.playSillyGame(game,moves);
     }
-    Thread target;
 }
