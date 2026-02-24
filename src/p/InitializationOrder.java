@@ -1,4 +1,5 @@
 package p;
+import java.util.logging.Level;
 import io.Logging;
 interface InitializationOrder {
     abstract static class First {
@@ -22,5 +23,8 @@ interface InitializationOrder {
             Logging.mainLogger.info("4");
         }
     }
-    public static void main(String[] args) { Logging.mainLogger.info("? InitialzationOrder.main"); }
+    public static void main(String[] args) { 
+    	Logging.mainLogger.setLevel(Level.ALL);
+    	Logging.mainLogger.info("? InitialzationOrder.main");
+    	}
 }

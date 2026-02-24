@@ -92,7 +92,6 @@ public class CommandLine {
                 print(model);
                 break;
             case 'q':
-                if(true) throw new RuntimeException("got a q!");
                 break;
             case 's':
                 if(model.gtp==null) {

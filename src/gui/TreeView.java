@@ -48,17 +48,6 @@ import utilities.*;
 					switch(event) {
 						case newTree: // fix up display
 							repplaceTree(model);
-							if(false) {
-								// below is duplicated from change
-								// just a quick hack to get the root selected.
-								MNode current=model.currentNode();
-								DefaultMutableTreeNode root=(DefaultMutableTreeNode)tree.getModel().getRoot();
-								TreePath treePath=find(current,root);
-								tree.setSelectionPath(treePath);
-								tree.scrollPathToVisible(treePath);
-								// but it does not work when starting the client
-								// or restoring from a file.
-							}
 							break;
 						case nodeChanged: // in model
 							// this is called for every move?
@@ -140,8 +129,8 @@ import utilities.*;
 		else Logging.mainLogger.info(model.name+" "+"node is null in add children!");
 	}
 	static final class NodeRenderer extends DefaultTreeCellRenderer {
-		@Override public Component getTreeCellRendererComponent(JTree tree,Object value,boolean selected,boolean expanded,
-				boolean leaf,int row,boolean hasFocus) {
+		@Override public Component getTreeCellRendererComponent(JTree tree,Object value,boolean selected,boolean expanded,boolean leaf,int row,
+				boolean hasFocus) {
 			Component component=super.getTreeCellRendererComponent(tree,value,selected,expanded,leaf,row,hasFocus);
 			if(value instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode node=(DefaultMutableTreeNode)value;
@@ -176,7 +165,7 @@ import utilities.*;
 		menu.getAccessibleContext().setAccessibleDescription("Open a file");
 		menuBar.add(menu);
 		JMenuItem menuItem=new JMenuItem("Open ...",KeyEvent.VK_O);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.ALT_MASK));
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,InputEvent.ALT_DOWN_MASK));
 		menuItem.getAccessibleContext().setAccessibleDescription("This doesn't really do anything");
 		menu.add(menuItem);
 		menuItem.addActionListener(this);

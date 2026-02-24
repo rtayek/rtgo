@@ -119,6 +119,8 @@ public enum Init {
         Logging.mainLogger.info("1.5 Init.Main.main(), first: "+first); // needs to be here
     }
     public static void main(String[] args) {
+        Logging.mainLogger.setLevel(Level.ALL);
+        System.out.println("enter Init.main()");
         Logging.mainLogger.info("enter Init.main()");
         //Logging.mainLogger.info(first);
         first.initiaizeTests();
@@ -141,7 +143,7 @@ public enum Init {
     private SortedMap<String,Object> stuff=new TreeMap<>();
     public final ArrayList<String> testsRun=new ArrayList<>();
     public boolean once;
-    static boolean verbose=false;
+    static boolean verbose=true;
     static {
         if(verbose) Logging.mainLogger.info("? Init.main static init");
     }
