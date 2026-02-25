@@ -100,17 +100,31 @@ public class MoveTestCase {
         model.sgfMakeMove(Stone.black,new Point(2,1));
         model.sgfMakeMove(Stone.black,new Point(1,2));
         model.sgfMakeMove(Stone.white,new Point(1,1)); // self-capture at center
-        assertEquals(Stone.vacant,model.board().at(1,1));
-        int expected=1;
-        assertEquals(expected,model.prisoners(Stone.white));
+        assertEquals(Stone.vacant,model.board().at(1,1)); // make sure captured stone is removed.
+        assertEquals(0,model.prisoners(Stone.black));
+        assertEquals(1,model.prisoners(Stone.white));
         int whitePrisonersAfterSelfCapture=model.prisoners(Stone.white);
-        /*
         model.sgfMakeMove(Stone.black,new Point(0,0)); // normal move, no self-capture
         assertEquals(whitePrisonersAfterSelfCapture,model.prisoners(Stone.white));
         model.sgfMakeMove(Stone.white,new Point(1,1)); // self-capture at center
         assertEquals(Stone.vacant,model.board().at(1,1));
         assertEquals(2,model.prisoners(Stone.white));
-        */
+    }
+    @Test public void testRepeatedSelfCaptureIsLegalInMovePath() {
+        Model model=new Model();
+        model.setRole(Role.anything);
+        model.setRoot(3,3);
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(0,1)));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(1,0)));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(2,1)));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(1,2)));
+        assertEquals(MoveResult.legal,model.move(Stone.white,new Point(1,1)));
+        assertEquals(Stone.vacant,model.board().at(1,1));
+        assertEquals(1,model.prisoners(Stone.white));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(0,0)));
+        assertEquals(MoveResult.legal,model.move(Stone.white,new Point(1,1)));
+        assertEquals(Stone.vacant,model.board().at(1,1));
+        assertEquals(2,model.prisoners(Stone.white));
     }
     private List<Move2> stripNullMove(List<Move2> moves) {
         if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move2.nullMove)) {

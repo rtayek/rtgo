@@ -697,7 +697,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 					addChildWithOneProperty(child,p,sgfCoordinates);
 					down_(currentNode().children().size()-1); // might be a
 																// variation
-					if(!isduplicateHash()) {
+					if(!isduplicateHash()||state.selfCaptured!=null) {
 						return MoveResult.legal;
 					} else {
 						Logging.mainLogger.info(name+" "+"duplicate hash!");
@@ -1372,7 +1372,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 			selfCaptured=null;
 			// check for pass?
 			if(stone.equals(Stone.vacant)) throw new RuntimeException("bad move");
-			if(board.at(point)!=Stone.vacant) Logging.mainLogger.severe("sgf is moving onan occupied point: "+point);
+			if(board.at(point)!=Stone.vacant) throw new RuntimeException("sgf is moving on an occupied point: "+point);
 			board.setAt(point.x,point.y,stone);
 			lastMoveGTP=Coordinates.toGtpCoordinateSystem(point,board.width(),board.depth());
 			lastColorGTP=stone;
@@ -1433,7 +1433,8 @@ public class Model extends Observable { // model of a go game or problem forrest
 			moves--;
 			toggleTurn();
 		}
-		long hash(Board board) {
+		long hash(Board board) { // we may need to add prisoner counts and/or whose turn it is tp move.
+			// does this belong in the board class?
 			long hash=0;
 			for(int x=0;x<board.width();x++)
 				for(int y=0;y<board.depth();y++)
