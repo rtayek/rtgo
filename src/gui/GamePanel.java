@@ -69,23 +69,14 @@ public class GamePanel extends JPanel {
 		Logging.mainLogger.info("line width in pixels: "+boardHeightInPixels*Line.lineThickness);
 		initialize(boardHeightInPixels);
 		addMouseListener(new MouseListener() {
-			@Override public void mouseReleased(MouseEvent e) {
-				releases++;
-			}
-			@Override public void mousePressed(MouseEvent e) {
-				presses++;
-			}
-			@Override public void mouseExited(MouseEvent e) {
-				setCursor(cursor);
-			}
+			@Override public void mouseReleased(MouseEvent e) { releases++; }
+			@Override public void mousePressed(MouseEvent e) { presses++; }
+			@Override public void mouseExited(MouseEvent e) { setCursor(cursor); }
 			@Override public void mouseEntered(MouseEvent e) {
 				cursor=getCursor();
-				setCursor(blackCursor);
+				cursor(mediator.model.turn());
 			}
-			@Override public void mouseClicked(MouseEvent e) {
-				clicks++;
-				processClick(e);
-			}
+			@Override public void mouseClicked(MouseEvent e) { clicks++; processClick(e); }
 			@SuppressWarnings("unused") int presses,releases,clicks;
 		});
 		addKeyListener(new KeyListener() {
@@ -93,9 +84,7 @@ public class GamePanel extends JPanel {
 			@Override public void keyReleased(KeyEvent arg0) {}
 			@Override public void keyPressed(KeyEvent arg0) {
 				Logging.mainLogger.info(mediator.model.name+" "+this+" key listener "+arg0);
-				if(arg0.getKeyCode()==KeyEvent.VK_DELETE) {
-					mediator.model.delete();
-				}
+				if(arg0.getKeyCode()==KeyEvent.VK_DELETE) mediator.model.delete();
 			}
 		});
 		if(Mediator.useKeys) KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
@@ -116,18 +105,10 @@ public class GamePanel extends JPanel {
 	}
 	public void cursor(Stone who) {
 		switch(who) {
-			case black: // should be black stone
-				setCursor(new Cursor(Cursor.HAND_CURSOR));
-				break;
-			case white: // should be white stone
-				setCursor(new Cursor(Cursor.HAND_CURSOR));
-				break;
-			case edge: // should be x
-				setCursor(new Cursor(Cursor.HAND_CURSOR));
-				break;
-			case vacant: // should be x
-				setCursor(new Cursor(Cursor.HAND_CURSOR));
-				break;
+			case black: setCursor(blackCursor!=null?blackCursor:new Cursor(Cursor.HAND_CURSOR)); break;
+			case white: setCursor(whiteCursor!=null?whiteCursor:new Cursor(Cursor.HAND_CURSOR)); break;
+			case edge:
+			case vacant: setCursor(new Cursor(Cursor.HAND_CURSOR)); break;
 		}
 	}
 	private MNode isAlreadyInTree(Point closest) {

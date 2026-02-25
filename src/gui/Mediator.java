@@ -44,10 +44,7 @@ class Mediator implements Observer,ActionListener {
 			@Override public void keyReleased(KeyEvent arg0) {}
 			@Override public void keyPressed(KeyEvent arg0) {
 				Logging.mainLogger.info(Mediator.this.model.name+" "+this+" key listener "+arg0);
-				if(arg0.getKeyCode()==KeyEvent.VK_DELETE) {
-					Logging.mainLogger.info(Mediator.this.model.name+" "+"unmove from keyPressed() in "+this);
-					Mediator.this.model.delete();
-				}
+				if(arg0.getKeyCode()==KeyEvent.VK_DELETE) { Logging.mainLogger.info(Mediator.this.model.name+" "+"unmove from keyPressed() in "+this); Mediator.this.model.delete(); }
 			}
 		});
 		Logging.mainLogger.info("end mediator init.");
@@ -141,7 +138,7 @@ class Mediator implements Observer,ActionListener {
 		gameMenu.setDisplayedMnemonicIndex(2);
 		gameMenu.getAccessibleContext().setAccessibleDescription("File menu");
 		menuBar.add(gameMenu);
-		bindMenuOpenShortcut(menuBar,gameMenu,KeyEvent.VK_M); // codex claims this is a robustness workaround.
+		bindMenuOpenShortcut(menuBar,gameMenu,KeyEvent.VK_M);
 		menuItem=new JMenuItem("New Game",KeyEvent.VK_N);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,InputEvent.ALT_DOWN_MASK));
 		menuItem.getAccessibleContext().setAccessibleDescription("Start a new game");
@@ -189,9 +186,7 @@ class Mediator implements Observer,ActionListener {
 		KeyStroke keyStroke=KeyStroke.getKeyStroke(keyCode,InputEvent.ALT_DOWN_MASK);
 		menuBar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke,actionKey);
 		menuBar.getActionMap().put(actionKey,new AbstractAction() {
-			@Override public void actionPerformed(ActionEvent event) {
-				MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[] {menuBar,menu,menu.getPopupMenu()});
-			}
+			@Override public void actionPerformed(ActionEvent event) { MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[] {menuBar,menu,menu.getPopupMenu()}); }
 		});
 	}
 	@Override public void actionPerformed(ActionEvent e) {
@@ -340,7 +335,7 @@ class Mediator implements Observer,ActionListener {
 			if(invokeLater) SwingUtilities.invokeLater(new Runnable() {
 				@Override public void run() {
 					gamePanel.initialize(boardHeightInPixels);
-					gamePanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+					gamePanel.cursor(model.turn());
 					main.validate();
 					if(!main.isApplet()) main.frame().pack();
 					else; // https://community.oracle.com/thread/1294964
@@ -350,6 +345,7 @@ class Mediator implements Observer,ActionListener {
 			});
 			else {
 				gamePanel.initialize(boardHeightInPixels);
+				gamePanel.cursor(model.turn());
 				main.validate();
 				if(!main.isApplet()) main.frame().pack();
 				else; // https://community.oracle.com/thread/1294964
