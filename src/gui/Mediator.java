@@ -300,6 +300,7 @@ class Mediator implements Observer,ActionListener {
 							Logging.mainLogger.warning(model.name+" "+"unhandled event hint: "+hint);
 					}
 				} else Logging.mainLogger.fine(model.name+" "+"hint="+hint);
+				refreshStatusText();
 				newWestPanel.setPlayerColor();
 				if(gamePanel!=null) {
 					Logging.mainLogger.fine(model.name+" "+"request repaint");
@@ -307,6 +308,17 @@ class Mediator implements Observer,ActionListener {
 				} else Logging.mainLogger.warning(model.name+" "+"no game panel to update");
 			} else throw new RuntimeException("not our model!");
 		} else throw new RuntimeException("not a model!");
+	}
+	private void refreshStatusText() {
+		status.setText(""+model.prisoners(Stone.black)+" captured black stones"+", "+model.prisoners(Stone.white)+" captured white stones"+", "+model.komi()+" komi"
+				+", "+model.moves()+" moves.");
+		lastMove.setText("last move: "+model.lastMove2()+"\\nfoo\\nbar");
+		MNode currentNode=model.currentNode();
+		if(currentNode!=null) {
+			String properties=currentNode.toString();
+			properties+="\nfoo\nbar";
+			sgfProperties.setText(properties);
+		} else sgfProperties.setText("current node is null!");
 	}
 	private void addGamePanels() {
 		JPanel panel=new JPanel();

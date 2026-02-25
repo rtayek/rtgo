@@ -134,18 +134,23 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public boolean save(Writer writer) {
 		MNode root=root();
-        boolean found=isSentinel(root); // RT is a sentinel extra-root marker; no-op in the engine, must round-trip unchanged.
+		boolean found=isSentinel(root); // RT is a sentinel extra-root marker;
+										// no-op in the engine, must round-trip
+										// unchanged.
 		// add new root if we don't already have one.
 		if(!found) {
 			root=new MNode(null);
 			root.children().add(root());
-			Logging.mainLogger.info("added null root");	
+			Logging.mainLogger.info("added null root");
 			// how are we going to know if we added this?
 		} else Logging.mainLogger.info("root has RT");
 		boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
 		return ok;
 	}
-    public static boolean isSentinel(MNode root) { // RT is a sentinel extra-root marker; preserve for lossless round-trip.
+	public static boolean isSentinel(MNode root) { // RT is a sentinel
+													// extra-root marker;
+													// preserve for lossless
+													// round-trip.
 		boolean found=false;
 		for(SgfProperty p:root.sgfProperties()) {
 			if(p.p().equals(P.RT)) {
@@ -172,7 +177,6 @@ public class Model extends Observable { // model of a go game or problem forrest
 		}
 		MNode games=MNode.restore(reader);
 		Logging.mainLogger.info("restored root"+games);
-		
 		setRoot(games);
 	}
 	public Model(Model model,String name) { // copy constructor
@@ -744,10 +748,11 @@ public class Model extends Observable { // model of a go game or problem forrest
 			return;
 		}
 		try {
-            SgfNodeMapping mapping=SgfDomainActionMapper.mapNode(sgfMappingContext(),node); // node-level mapping
-            mapping.applyExtrasTo(node);
-            List<DomainAction> actions=mapping.actions();
-																								// mapping
+			SgfNodeMapping mapping=SgfDomainActionMapper.mapNode(sgfMappingContext(),node); // node-level
+																							// mapping
+			mapping.applyExtrasTo(node);
+			List<DomainAction> actions=mapping.actions();
+			// mapping
 			new DomainActionApplier(this).applyAll(actions);
 		} catch(Exception e) {
 			Logging.mainLogger.severe(name+" caught: "+e);
@@ -1364,20 +1369,25 @@ public class Model extends Observable { // model of a go game or problem forrest
 				Logging.mainLogger.severe(""+" "+"board is null!");
 				throw new RuntimeException("board is null!");
 			}
+			selfCaptured=null;
 			// check for pass?
-            if(stone.equals(Stone.vacant)) throw new RuntimeException("bad move");
-            if(board.at(point)!=Stone.vacant) Logging.mainLogger.severe("sgf is moving onan occupied point: "+point);
-            board.setAt(point.x,point.y,stone);
+			if(stone.equals(Stone.vacant)) throw new RuntimeException("bad move");
+			if(board.at(point)!=Stone.vacant) Logging.mainLogger.severe("sgf is moving onan occupied point: "+point);
+			board.setAt(point.x,point.y,stone);
 			lastMoveGTP=Coordinates.toGtpCoordinateSystem(point,board.width(),board.depth());
 			lastColorGTP=stone;
-			// find opponents blocks on adjacent intersections
-			// need to find them all so we can check for in atari
+			// Block
+			// selfcaptured=Block.findAdjacentSelfCapturedBlock(board,point,stone);
+			// System.out.println("found self capture block: "+selfcaptured);
+			// Logging.mainLogger.fine("found self capture block:
+			// "+selfcaptured);
 			capturedBlocks=Block.findAdjacentCapturedOpponentsBlocks(board,point,stone);
 			board.setTo(Stone.vacant,capturedBlocks);
 			if(capturedBlocks.size()>0); // Audio.playCaptureSound();
 			Block fromThisMove=Block.find(board,point);
 			if(fromThisMove.liberties()==0) { // can we assume
 												// capturedBlocks.size()==0
+				System.out.println("fromThisMove.liberties()==0"+" "+"self capture");
 				Logging.mainLogger.fine(""+" "+"self capture");
 				Logging.mainLogger.fine(""+" "+"removing "+fromThisMove);
 				for(Point point2:fromThisMove.points())
@@ -1388,7 +1398,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 			if(selfCaptured!=null) {
 				List<Block> selfCapturedBlocks=new ArrayList<>(1);
 				selfCapturedBlocks.add(selfCaptured);
+				System.out.println("self captured block: "+selfCapturedBlocks);
 				adjustPrisonerCountsForRemovedCapturedStones(selfCapturedBlocks);
+				System.out.println(blackPrisoners+" "+whitePrisoners);
 			}
 			List<Block> blocksInAtari=Block.findAdjacentOpponentsBlocksInAtari(board,point,stone);
 			inAtari=blocksInAtari!=null&&blocksInAtari.size()>0;
@@ -1445,7 +1457,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		private Stone turn=Stone.black;
 		private boolean inAtari;
 		private int blackPrisoners,whitePrisoners;
-		boolean aSingleStoneWasCaptured;
+		private boolean aSingleStoneWasCaptured;
 		private volatile int moves;
 		private String lastMoveGTP; // this is causing problems in a few places
 		private Stone lastColorGTP;

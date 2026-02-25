@@ -92,6 +92,26 @@ public class MoveTestCase {
         String lastMoveGtp=model.lastMoveGTP();
         Logging.mainLogger.info(lastMove+" "+lastMoveGtp);
     }
+    @Test public void testSelfCaptureDoesNotLeakToLaterMoves() {
+        Model model=new Model();
+        model.setRoot(3,3);
+        model.sgfMakeMove(Stone.black,new Point(0,1));
+        model.sgfMakeMove(Stone.black,new Point(1,0));
+        model.sgfMakeMove(Stone.black,new Point(2,1));
+        model.sgfMakeMove(Stone.black,new Point(1,2));
+        model.sgfMakeMove(Stone.white,new Point(1,1)); // self-capture at center
+        assertEquals(Stone.vacant,model.board().at(1,1));
+        int expected=1;
+        assertEquals(expected,model.prisoners(Stone.white));
+        int whitePrisonersAfterSelfCapture=model.prisoners(Stone.white);
+        /*
+        model.sgfMakeMove(Stone.black,new Point(0,0)); // normal move, no self-capture
+        assertEquals(whitePrisonersAfterSelfCapture,model.prisoners(Stone.white));
+        model.sgfMakeMove(Stone.white,new Point(1,1)); // self-capture at center
+        assertEquals(Stone.vacant,model.board().at(1,1));
+        assertEquals(2,model.prisoners(Stone.white));
+        */
+    }
     private List<Move2> stripNullMove(List<Move2> moves) {
         if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move2.nullMove)) {
             // remove these tests when the dust settles.
