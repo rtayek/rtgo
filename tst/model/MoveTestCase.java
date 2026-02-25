@@ -126,6 +126,28 @@ public class MoveTestCase {
         assertEquals(Stone.vacant,model.board().at(1,1));
         assertEquals(2,model.prisoners(Stone.white));
     }
+    @Test public void testRepeatedTwoStoneSelfCaptureIsLegalInMovePath() {
+        Model model=new Model();
+        model.setRole(Role.anything);
+        model.setRoot(4,4);
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(0,1)));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(2,1)));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(1,0)));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(0,2)));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(2,2)));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(1,3)));
+        assertEquals(MoveResult.legal,model.move(Stone.white,new Point(1,1)));
+        assertEquals(MoveResult.legal,model.move(Stone.white,new Point(1,2)));
+        assertEquals(Stone.vacant,model.board().at(1,1));
+        assertEquals(Stone.vacant,model.board().at(1,2));
+        assertEquals(2,model.prisoners(Stone.white));
+        assertEquals(MoveResult.legal,model.move(Stone.black,new Point(3,3))); // filler so next setup is not duplicate-hash.
+        assertEquals(MoveResult.legal,model.move(Stone.white,new Point(1,1)));
+        assertEquals(MoveResult.legal,model.move(Stone.white,new Point(1,2)));
+        assertEquals(Stone.vacant,model.board().at(1,1));
+        assertEquals(Stone.vacant,model.board().at(1,2));
+        assertEquals(4,model.prisoners(Stone.white));
+    }
     private List<Move2> stripNullMove(List<Move2> moves) {
         if(moves!=null&&moves.size()>0&&moves.get(0).equals(Move2.nullMove)) {
             // remove these tests when the dust settles.

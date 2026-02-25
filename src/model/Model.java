@@ -1385,11 +1385,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 			board.setTo(Stone.vacant,capturedBlocks);
 			if(capturedBlocks.size()>0); // Audio.playCaptureSound();
 			Block fromThisMove=Block.find(board,point);
-			if(fromThisMove.liberties()==0) { // can we assume
-												// capturedBlocks.size()==0
-				System.out.println("fromThisMove.liberties()==0"+" "+"self capture");
-				Logging.mainLogger.fine(""+" "+"self capture");
-				Logging.mainLogger.fine(""+" "+"removing "+fromThisMove);
+			if(fromThisMove.liberties()==0) {
 				for(Point point2:fromThisMove.points())
 					board.setAt(point2.x,point2.y,Stone.vacant);
 				selfCaptured=fromThisMove;
@@ -1398,9 +1394,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 			if(selfCaptured!=null) {
 				List<Block> selfCapturedBlocks=new ArrayList<>(1);
 				selfCapturedBlocks.add(selfCaptured);
-				System.out.println("self captured block: "+selfCapturedBlocks);
 				adjustPrisonerCountsForRemovedCapturedStones(selfCapturedBlocks);
-				System.out.println(blackPrisoners+" "+whitePrisoners);
 			}
 			List<Block> blocksInAtari=Block.findAdjacentOpponentsBlocksInAtari(board,point,stone);
 			inAtari=blocksInAtari!=null&&blocksInAtari.size()>0;
