@@ -14,11 +14,7 @@ import io.*;
 import model.Model;
 import model.ModelIo;
 import utilities.*;
-public class Main extends MainGui implements ActionListener,ComponentListener { // this
-																				// is
-																				// the
-																				// main
-																				// ui.
+public class Main extends MainGui implements ActionListener,ComponentListener {
 	public Main(MyJApplet applet,Model model,TextView textView) {
 		super(applet);
 		this.model=model;

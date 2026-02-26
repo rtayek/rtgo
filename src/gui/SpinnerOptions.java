@@ -1,7 +1,6 @@
 package gui;
+import java.util.List;
 import javax.swing.*;
-import equipment.Board;
-import equipment.Board.*;
 import gui.Spinners.OldSpinners;
 import io.Logging;
 import model.*;
@@ -20,8 +19,8 @@ public class SpinnerOptions extends WidgetOptions {
             super(t,defaultValue,range);
             this.jSpinner=jSpinner;
             jSpinner.setName(t.name());
-            this.tooltipText=t.name();
-            if(tooltipText!=null) jSpinner.setToolTipText(tooltipText);
+            this.tooltipText=tooltipText!=null?tooltipText:t.name();
+            if(this.tooltipText!=null) jSpinner.setToolTipText(this.tooltipText);
             this.keyStroke=keyStroke;
         }
         // add the other ctors later!
@@ -69,11 +68,23 @@ public class SpinnerOptions extends WidgetOptions {
 }
 class SpinnerParameterOptions extends SpinnerOptions {
     // change name
-    SpinnerParameterOptions() {
-        initializeParameters(Parameters.propertiesFilename);
-        // fix this name!
-    }
+    SpinnerParameterOptions() {}
     @Override public void enableAll(Mediator mediator) {}
+    @Override public void setValuesInWidgetsFromCurrentValues() {
+        for(Option<?,?> option:options()) {
+            Parameters parameter=(Parameters)option.t;
+            Object value=parameter.currentValue();
+            SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)option;
+            boolean ok=spinnerOption.setValueInWidget(value);
+            if(!ok) Logging.mainLogger.info("can not set spinner value for parameter: "+parameter+" to: "+value);
+            option.setCurrentValue(value);
+        }
+    }
+    private <R extends Comparable<R>> void addParameterSpinnerOption(Parameters parameter,List<R> values,int width) {
+        new SpinnerOption<Parameters,R>(parameter,parameter.defaultValue,(Range<R>)null,OldSpinners.spinner(values,width),(String)null,(KeyStroke)null) {
+            @Override public Object fromString(String string) { return parameter.fromString(string); }
+        };
+    }
     // new game works after change.
     // running Main.main(0 does not.
     // so we need to initialize earlier?
@@ -81,24 +92,12 @@ class SpinnerParameterOptions extends SpinnerOptions {
     // the above is old.
     // 2/21/26 using codex to refactor.
     {
-        new SpinnerOption<Parameters,Topology>(Parameters.topology,(Topology)Parameters.topology.defaultValue,
-                (Range<Topology>)null,OldSpinners.spinner(Parameters.topologies,150),(String)null,(KeyStroke)null) {
-            @Override public Object fromString(String string) { return Topology.valueOf(string); }
-        };
-        new SpinnerOption<Parameters,Shape>(Parameters.shape,(Shape)Parameters.shape.defaultValue,(Range<Shape>)null,
-                OldSpinners.spinner(Parameters.shapes,100),(String)null,(KeyStroke)null) {
-            @Override public Object fromString(String string) { return Shape.valueOf(string); }
-        };
-        new SpinnerOption<Parameters,Integer>(Parameters.width,(Integer)Board.standard,(Range<Integer>)null,
-                OldSpinners.spinner(Parameters.sizes,50),(String)null,(KeyStroke)null);
-        new SpinnerOption<Parameters,Integer>(Parameters.depth,(Integer)Board.standard,(Range<Integer>)null,
-                OldSpinners.spinner(Parameters.sizes,50),(String)null,(KeyStroke)null);
-        new SpinnerOption<Parameters,Integer>(Parameters.band,(Integer)Parameters.band.defaultValue,
-                (Range<Integer>)null,OldSpinners.spinner(Parameters.bands,30),(String)null,(KeyStroke)null);
-        new SpinnerOption<Parameters,Model.Role>(Parameters.role,(Model.Role)Parameters.role.defaultValue,
-                (Range<Model.Role>)null,OldSpinners.spinner(Parameters.roles,30),(String)null,(KeyStroke)null) {
-            @Override public Object fromString(String string) { return Model.Role.valueOf(string); }
-        };
+        addParameterSpinnerOption(Parameters.topology,Parameters.topologies,150);
+        addParameterSpinnerOption(Parameters.shape,Parameters.shapes,100);
+        addParameterSpinnerOption(Parameters.width,Parameters.sizes,50);
+        addParameterSpinnerOption(Parameters.depth,Parameters.sizes,50);
+        addParameterSpinnerOption(Parameters.band,Parameters.bands,30);
+        addParameterSpinnerOption(Parameters.role,Parameters.roles,30);
     }
     public static void main(String[] args) {}
 }

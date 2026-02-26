@@ -2,6 +2,7 @@ package gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.Function;
 import javax.swing.*;
@@ -140,7 +141,9 @@ public class GamePanel extends JPanel {
 			Point2D.Float point=toBoardCoordinates(new Point(e.getPoint()),board.depth());
 			Logging.mainLogger.info(mediator.model.name+" "+"click="+point);
 			Point closest=closest(point);
-			Model.Where where=Model.Where.isPoint(board,mediator.model.band(),point,closest);
+			
+			Model.Where.isPoint(board,mediator.model.band(),point,closest);
+			closest=toModelBoardPoint(closest);
 			Model.Role role=mediator.model.role();
 			Stone playerColor=null;
 			// if(mode.equals(Model.Mode.playBlack)) playerColor=Stone.black;
@@ -162,7 +165,7 @@ public class GamePanel extends JPanel {
 				boolean ok=mediator.model.checkAction(role,What.move);
 				if(!ok) {
 					Logging.mainLogger.info("not ok: "+role+" move");
-					Toast.toast("Move is no ok!");
+					Toast.toast("Move is not ok!");
 				}
 				MoveResult wasLegal=mediator.model.moveAndPlaySound(mediator.model.turn(),closest);
 				if(wasLegal==MoveResult.legal&&mediator.model.inAtari()) Audio.play(Sound.atari);
@@ -177,11 +180,12 @@ public class GamePanel extends JPanel {
 			if(board.isOnBoard(closest)) {
 				double distance=point.distance(closest);
 				if(distance<Model.epsilon) { // see what he clicked on
-					Stone stone=board.at(closest.x,closest.y);
-					Block block=Block.find(board,closest);
+					Point modelClosest=toModelBoardPoint(closest);
+					Stone stone=board.at(modelClosest.x,modelClosest.y);
+					Block block=Block.find(board,modelClosest);
 					Logging.mainLogger.info(mediator.model.name+" "+"you clicked on: "+block);
 					if(stone.equals(Stone.black)||stone.equals(Stone.white)) Toast.toast("you clicked on: "+block);
-					else Toast.toast("you clicked on a vacant or non board square: "+closest);
+					else Toast.toast("you clicked on a vacant or non board intersection: "+modelClosest);
 					// BlockImpl g=new BlockImpl(b,i,j,processed);
 				} else Logging.mainLogger.info(mediator.model.name+" "+"not close enough");
 			} else Logging.mainLogger.info(mediator.model.name+" "+"off the board");
@@ -241,6 +245,12 @@ public class GamePanel extends JPanel {
 		for(int x=0;x<board.width();x++)
 			addLine(x0+x*dx,y0,x0+x*dx,y0+(board.depth()-1)*dy);
 	}
+	private static Point cursorHotspot(Image image) {
+		int width=image.getWidth(null);
+		int height=image.getHeight(null);
+		if(width<=0||height<=0) return new Point(0,0);
+		return new Point(width/2,height/2);
+	}
 	void initialize(double boardHeightInPixels) {
 		if(mediator==null) {
 			Logging.mainLogger.info("game panel initialize board is null!");
@@ -259,7 +269,7 @@ public class GamePanel extends JPanel {
 		boardDepth=(int)Math.round(boardHeightInPixels);
 		boardWidth=(int)Math.round(boardHeightInPixels*aspectRatio);
 		lineWidth=boardDepth*Line.lineThickness;
-		jitter=Jitter.get(board.width(),board.depth());
+		jitter=useJitter?Jitter.get(board.width(),board.depth()):Jitter.zero;
 		int n=Math.max(board.width(),board.depth());
 		int dx_=boardWidth/(n-1);
 		int dy_=boardDepth/(n-1);
@@ -312,10 +322,12 @@ public class GamePanel extends JPanel {
 				throw new RuntimeException("bad ropology");
 			// break;
 		}
-		black=blackStone(dx,dy,getBackground());
+		Color color=new Color(0xffa500);
+		setBackground(color);
+		black=blackStone(dx,dy,color);
 		Logging.mainLogger.info("blac: "+black);
-		white=whiteStone(dx,dy,getBackground());
-		edge=edgeStone(dx,dy,getBackground());
+		white=whiteStone(dx,dy,color);
+		edge=edgeStone(dx,dy,color);
 		Dimension d=new Dimension(boardWidth+2*dx,boardDepth+2*dy);
 		boolean setSize=true;
 		if(setSize) {
@@ -326,18 +338,23 @@ public class GamePanel extends JPanel {
 			setMinimumSize(d);
 		}
 		// setOpaque(true);
-		Color color=new Color(0xffa500);
-		setBackground(color);
-		Point point=new Point();
 		Toolkit toolkit=Toolkit.getDefaultToolkit();
 		Logging.mainLogger.info(String.valueOf(black));
-		if(black!=null) blackCursor=toolkit.createCustomCursor(black,point,"black");
+		if(black!=null) blackCursor=toolkit.createCustomCursor(black,cursorHotspot(black),"black");
 		else Logging.mainLogger.warning("black stone imahe is null!");
-		if(white!=null) whiteCursor=toolkit.createCustomCursor(white,point,"white");
+		if(white!=null) whiteCursor=toolkit.createCustomCursor(white,cursorHotspot(white),"white");
 		else Logging.mainLogger.warning("white stone imahe is null!");
 	}
 	Point2D.Float toBoardCoordinates(Point screen,int depth) {
 		return Coordinates.toBoardCoordinates(screen,pUpperLeft,dp,depth);
+	}
+	private Point toModelBoardPoint(Point displayedBoardPoint) {
+		Point modelBoardPoint=new Point(mediator.model.offsetInverseX(displayedBoardPoint.x),mediator.model.offsetInverseY(displayedBoardPoint.y));
+		if(board!=null&&board.topology()==Topology.torus) {
+			modelBoardPoint.x=board.moduloWidth(modelBoardPoint.x);
+			modelBoardPoint.y=board.moduloDepth(modelBoardPoint.y);
+		}
+		return modelBoardPoint;
 	}
 	Point toScreenCoordinates(Point board,int depth) {
 		return Coordinates.toScreenCoordinates(board,pUpperLeft,dp,depth);
@@ -345,14 +362,18 @@ public class GamePanel extends JPanel {
 	private Image edgeStone(int width,int height,Color color) {
 		width=width+1; // should be a little larger?
 		height=height+1; // should be a little larger?
-		Image img=createImage(width,height);
+		Image img=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 		if(img==null) return img;
-		Graphics g=img.getGraphics();
-		g.setColor(color);
-		g.fillRect(0,0,width,height);
-		g.setColor(getBackground()/* Color.yellow */);
-		g.fillOval(0,0,width-1,height-1);
-		g.drawOval(0,0,width-1,height-1);
+		Graphics2D g=(Graphics2D)img.getGraphics();
+		try {
+			g.setColor(color);
+			g.fillRect(0,0,width,height);
+			g.setColor(getBackground()/* Color.yellow */);
+			g.fillOval(0,0,width-1,height-1);
+			g.drawOval(0,0,width-1,height-1);
+		} finally {
+			g.dispose();
+		}
 		// these two are different from
 		// either g.fillOval(-1, -1, width+1, height+1);
 		// or g.fillOval(0, 0, width-1, height-1);
@@ -361,35 +382,45 @@ public class GamePanel extends JPanel {
 	private Image blackStone(int width,int height,Color color) {
 		width=width+1; // should be a little larger?
 		height=height+1; // should be a little larger?
-		Image img=createImage(width,height);
+		Image img=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 		if(img==null) {
 			Logging.mainLogger.info(mediator.model.name+" "+"img is null");
 			return img;
 		}
-		Graphics g=img.getGraphics();
-		g.setColor(color);
-		g.fillRect(0,0,width,height);
-		g.setColor(Color.black);
-		g.fillOval(0,0,width-1,height-1);
-		g.drawOval(0,0,width-1,height-1);
+		Graphics2D g=(Graphics2D)img.getGraphics();
+		try {
+			g.setColor(color);
+			g.fillRect(0,0,width,height);
+			g.setColor(Color.black);
+			g.fillOval(0,0,width-1,height-1);
+			g.drawOval(0,0,width-1,height-1);
 		// these two are different from
 		// either g.fillOval(-1, -1, width+1, height+1);
 		// or g.fillOval(0, 0, width-1, height-1);
-		g.setColor(Color.white);
-		g.drawArc(width/5,height/5,width*3/5,height*3/5,-20,-60);
+			g.setColor(Color.white);
+			g.drawArc(width/5,height/5,width*3/5,height*3/5,-20,-60);
+		} finally {
+			g.dispose();
+		}
 		return img;
 	}
 	private Image whiteStone(int width,int height,Color color) {
-		Image img=createImage(width,height);
+		width=width+1; // should be a little larger?
+		height=height+1; // should be a little larger?
+		Image img=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 		if(img==null) return img;
-		Graphics g=img.getGraphics();
-		g.setColor(color);
-		g.fillRect(0,0,width,height);
-		g.setColor(Color.white);
-		g.fillOval(0,0,width-1,height-1);
-		g.setColor(Color.black);
-		g.drawOval(0,0,width-1,height-1);
-		g.drawArc(width/5,height/5,width*3/5,height*3/5,-20,-60);
+		Graphics2D g=(Graphics2D)img.getGraphics();
+		try {
+			g.setColor(color);
+			g.fillRect(0,0,width,height);
+			g.setColor(Color.white);
+			g.fillOval(0,0,width-1,height-1);
+			g.setColor(Color.black);
+			g.drawOval(0,0,width-1,height-1);
+			g.drawArc(width/5,height/5,width*3/5,height*3/5,-20,-60);
+		} finally {
+			g.dispose();
+		}
 		return img;
 	}
 	private void paintMoveNumber(Graphics g,Point screen) {
@@ -609,6 +640,7 @@ public class GamePanel extends JPanel {
 	private Image black,white,edge;
 	// toggle cursor only over vacant!
 	private Jitter jitter;
+	static final boolean useJitter=false;
 	private Cursor cursor,blackCursor,whiteCursor;
 	static final long serialVersionUID=1L;
 	public static final double aspectRatio=434.2/454.5;
