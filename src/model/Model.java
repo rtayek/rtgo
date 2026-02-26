@@ -306,7 +306,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(!shape.equals(Shape.normal)) addProperty(main,P.C,sgfBoardShape+shape);
 		String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
 		if(width==depth) string=Integer.valueOf(width).toString();
-		boolean alwaysSetBoardSize=false;// was true
+		boolean alwaysSetBoardSize=true;// was true
 		// false breaks a lot of tests
 		// 1/22/23
 		// trying false just to see who make the board // that is displayed by

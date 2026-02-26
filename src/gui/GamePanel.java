@@ -563,27 +563,7 @@ public class GamePanel extends JPanel {
 				g2.setStroke(old);
 			}
 			g.setColor(color);
-			int x=pLowerLeft.x,y=pLowerLeft.y;
-			x+=dx;
-			y+=dy/2;
-			if(board.topology().equals(Topology.torus)) {
-				y+=mediator.model.band()*dy+dy/2;
-				x-=5*dx;
-			}
 			drawCoordinates(g);
-			boolean drawCapturedStonesText=true;
-			if(drawCapturedStonesText) {
-				String string=""+mediator.model.prisoners(Stone.black)+" captured black stones"+", "+mediator.model.prisoners(Stone.white)
-						+" captured white stones"+", "+mediator.model.komi()+" komi"+", "+mediator.model.moves()+" moves.";
-				mediator.status.setText(string);
-				mediator.lastMove.setText("last move: "+mediator.model.lastMove2()+"\\nfoo\\nbar");
-				MNode currentNode=mediator.model.currentNode();
-				if(currentNode!=null) {
-					String properties=currentNode.toString();
-					properties+="\nfoo\nbar";
-					mediator.sgfProperties.setText(properties);
-				} else mediator.sgfProperties.setText("current node is null!");
-			} else drawStatus(g,x,y);
 		}
 	}
 	private void drawCoordinates(Graphics g) {

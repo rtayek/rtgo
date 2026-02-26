@@ -111,6 +111,11 @@ class Mediator implements Observer,ActionListener {
 		panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.setName("extrta panel");
 		panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+		sgfProperties.setEditable(false);
+		sgfProperties.setLineWrap(true);
+		sgfProperties.setWrapStyleWord(true);
+		sgfProperties.setRows(4);
+		sgfProperties.setColumns(60);
 		panel.add(status);
 		status.setName("status");
 		panel.add(lastMove);
@@ -348,9 +353,7 @@ class Mediator implements Observer,ActionListener {
 				@Override public void run() {
 					gamePanel.initialize(boardHeightInPixels);
 					gamePanel.cursor(model.turn());
-					main.validate();
-					if(!main.isApplet()) main.frame().pack();
-					else; // https://community.oracle.com/thread/1294964
+					main.revalidate();
 					Logging.mainLogger.fine(model.name+" "+"requesting repaint");
 					gamePanel.repaint();
 				}
@@ -358,9 +361,7 @@ class Mediator implements Observer,ActionListener {
 			else {
 				gamePanel.initialize(boardHeightInPixels);
 				gamePanel.cursor(model.turn());
-				main.validate();
-				if(!main.isApplet()) main.frame().pack();
-				else; // https://community.oracle.com/thread/1294964
+				main.revalidate();
 				Logging.mainLogger.fine(model.name+" "+"requesting repaint");
 				gamePanel.repaint();
 			}
@@ -371,9 +372,7 @@ class Mediator implements Observer,ActionListener {
 				main.remove(gamePanel);
 			}
 			addGamePanels();
-			main.validate();
-			if(!main.isApplet()) main.frame().pack();
-			else; // https://community.oracle.com/thread/1294964
+			main.revalidate();
 			gamePanel.repaint();
 		}
 	}

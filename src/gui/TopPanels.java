@@ -80,7 +80,6 @@ public class TopPanels {
                         Parameters parameter=Parameters.valueOf(name);
                         Object value=jSpinner.getValue();
                         Parameters.change(parameter,value);
-                        spinnerParameterOptions.getOption(parameter).setCurrentValue(value);
                     } catch(IllegalArgumentException ex) {
                         Logging.mainLogger.warning(jSpinner+" is not my spinner");
                     }

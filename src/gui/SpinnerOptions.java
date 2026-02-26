@@ -1,14 +1,15 @@
 package gui;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.List;
 import javax.swing.*;
-import gui.Spinners.OldSpinners;
 import io.Logging;
 import model.*;
 import model.Interfaces.*;
 import com.tayek.util.core.Range;
 // we need a clas in between options abc and this class.
 abstract class WidgetOptions extends OptionsABC implements Widgets {
-    public abstract class WidgetOption<T extends Enum<T>,R extends Comparable<R>>extends Option<T,R> implements Widget {
+	 public abstract class WidgetOption<T extends Enum<T>,R extends Comparable<R>>extends Option<T,R> implements Widget {
         public WidgetOption(T t,Object defaultValue,Range<R> range) { super(t,defaultValue,range); }
     }
 }
@@ -28,14 +29,14 @@ public class SpinnerOptions extends WidgetOptions {
         public boolean isEnabled() { return jSpinner.isEnabled(); }
         @Override public boolean isValueInWidget(Object value) { //ok - all the same
             SpinnerListModel model=(SpinnerListModel)jSpinner.getModel();
-            for(Object o:model.getList()) if(o.equals(value)) return true;
-            return false;
+            return model.getList().contains(value);
         }
         @Override public boolean setValueInWidget(Object value) {
             if(value==null) { Logging.mainLogger.warning("null value for parameter: "+t); return false; }
             if(isValueInWidget(value)) {
                 SpinnerListModel model=(SpinnerListModel)jSpinner.getModel();
-                for(Object o:model.getList()) if(o.equals(value)) { model.setValue(value); return true; }
+                model.setValue(value);
+                return true;
             }
             Logging.mainLogger.info(""+" "+"can not set spinner to: "+value);
             return false;
@@ -70,19 +71,24 @@ class SpinnerParameterOptions extends SpinnerOptions {
     // change name
     SpinnerParameterOptions() {}
     @Override public void enableAll(Mediator mediator) {}
-    @Override public void setValuesInWidgetsFromCurrentValues() {
-        for(Option<?,?> option:options()) {
-            Parameters parameter=(Parameters)option.t;
-            Object value=parameter.currentValue();
-            SpinnerOption<?,?> spinnerOption=(SpinnerOption<?,?>)option;
-            boolean ok=spinnerOption.setValueInWidget(value);
-            if(!ok) Logging.mainLogger.info("can not set spinner value for parameter: "+parameter+" to: "+value);
-            option.setCurrentValue(value);
-        }
+    private static JSpinner spinner(List<?> values,int width) {
+        SpinnerListModel model=new SpinnerListModel(values);
+        JSpinner jSpinner=new JSpinner(model);
+        Dimension d=jSpinner.getPreferredSize();
+        d.width=width;
+        jSpinner.setPreferredSize(d);
+        JSpinner.ListEditor editor=new JSpinner.ListEditor(jSpinner);
+        JTextField tf=editor.getTextField();
+        tf.setHorizontalAlignment(JTextField.CENTER);
+        tf.setFont(new Font("lucida sans regular",Font.PLAIN,16));
+        tf.setEditable(false);
+        jSpinner.setEditor(editor);
+        return jSpinner;
     }
     private <R extends Comparable<R>> void addParameterSpinnerOption(Parameters parameter,List<R> values,int width) {
-        new SpinnerOption<Parameters,R>(parameter,parameter.defaultValue,(Range<R>)null,OldSpinners.spinner(values,width),(String)null,(KeyStroke)null) {
+        new SpinnerOption<Parameters,R>(parameter,parameter.defaultValue,(Range<R>)null,spinner(values,width),(String)null,(KeyStroke)null) {
             @Override public Object fromString(String string) { return parameter.fromString(string); }
+            @Override public Object currentValue() { return parameter.currentValue(); }
         };
     }
     // new game works after change.
