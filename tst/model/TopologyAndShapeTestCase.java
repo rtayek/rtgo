@@ -2,7 +2,7 @@ package model;
 import org.junit.Rule;
 import utilities.MyTestWatcher;
 import io.Logging;
-import sgf.SgfHarness;
+import sgf.SgfTestIo;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,9 +45,9 @@ public class TopologyAndShapeTestCase {
         Logging.mainLogger.info("topology: "+model.boardTopology());
         Logging.mainLogger.info("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
-        String expected=SgfHarness.save(model);
+        String expected=ModelTrees.save(model);
         Model m=new Model();
-        String actual=SgfHarness.restoreAndSave(m,expected,restored->{
+        String actual=SgfTestIo.restoreAndSave(m,expected,restored->{
             restored.ensureBoard();
             restored.down(0); // need to execute the sgf
             assertNotNull(restored.board());
@@ -70,6 +70,7 @@ public class TopologyAndShapeTestCase {
     final int n=19;
     final Board board=Board.factory.create(n,n,Topology.normal,Shape.hole1);
 }
+
 
 
 

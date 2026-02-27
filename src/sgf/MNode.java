@@ -175,10 +175,10 @@ public class MNode {
 		return true; // for now
 	}
 	public static MNode mNodeRoundTrip(Reader reader,Writer writer) {
-		return SgfRoundTrip.mNodeRoundTrip(reader,writer,SgfRoundTrip.MNodeSaveMode.standard);
+		return SgfIo.mNodeRoundTrip(reader,writer,SgfIo.MNodeSaveMode.standard);
 	}
 	public static MNode mNodeDirectRoundTrip(Reader reader,Writer writer) {
-		return SgfRoundTrip.mNodeRoundTrip(reader,writer,SgfRoundTrip.MNodeSaveMode.direct);
+		return SgfIo.mNodeRoundTrip(reader,writer,SgfIo.MNodeSaveMode.direct);
 	}
 	public static MNode quietLoad(Reader reader) {
 		PrintStream old=System.out;

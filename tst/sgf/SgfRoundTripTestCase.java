@@ -49,11 +49,11 @@ import model.ModelTrees;
     }
 
     @Test public void testMMNodeRoundTrip() throws Exception {
-        runIfRoundTrip(() -> assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode.standard,true));
+        runIfRoundTrip(() -> assertMNodeRoundTrip(SgfIo.MNodeSaveMode.standard,true));
     }
 
     @Test public void testMMNodeDirectRoundTrip() throws Exception {
-        runIfRoundTrip(() -> assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode.direct,false));
+        runIfRoundTrip(() -> assertMNodeRoundTrip(SgfIo.MNodeSaveMode.direct,false));
     }
 
     @Test public void testModelRT0NewWay() throws Exception {
@@ -118,7 +118,7 @@ import model.ModelTrees;
 
     @Test public void testSaveMultupleGames() throws Exception {
         runIfRoundTrip(() -> {
-            Model model=SgfHarness.restoreNew(fixtureSgf());
+            Model model=ModelTrees.restoreNew(fixtureSgf());
             boolean hasMultipleGames=model.root().children().size()>1;
             String sgfString=ModelTrees.save(model);
             boolean containsRTNode=sgfString.contains("RT[Tgo root]");
@@ -157,13 +157,13 @@ import model.ModelTrees;
 
     @Test public void testMultipleGames() throws Exception { // how does it do that?
         runIfRoundTrip(() -> {
-            String actualSgf=SgfHarness.restoreAndSave(fixtureSgf());
+            String actualSgf=SgfIo.restoreAndSave(fixtureSgf());
             // assertFalse(expectedSgf.contains(P.RT.toString()));
             // why would we expect this?
         });
     }
 
-    private void assertMNodeRoundTrip(SgfRoundTrip.MNodeSaveMode saveMode,boolean logExpected) {
+    private void assertMNodeRoundTrip(SgfIo.MNodeSaveMode saveMode,boolean logExpected) {
         SgfHarness.assertMNodeRoundTrip(key,expectedSgf,saveMode,logExpected);
     }
 
@@ -182,4 +182,5 @@ import model.ModelTrees;
         action.run();
     }
 }
+
 

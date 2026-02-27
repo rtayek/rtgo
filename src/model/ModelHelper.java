@@ -240,7 +240,7 @@ public final class ModelHelper {
         if(games==null) return null;
         if(games.right!=null) Logging.mainLogger.info(" 2 more than one game!");
         if(saveMode==ModelSaveMode.sgfNodeChecked) {
-            SgfRoundTrip.saveSgfToString(games,noIndent);
+            SgfIo.saveSgfToString(games,noIndent);
         }
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();
@@ -265,7 +265,7 @@ public final class ModelHelper {
         }
         SgfNode sgfRoot=root.toBinaryTree();
         SgfNode actual=sgfRoot.left;
-        return SgfRoundTrip.saveSgfToString(actual,noIndent);
+        return SgfIo.saveSgfToString(actual,noIndent);
     }
 }
 

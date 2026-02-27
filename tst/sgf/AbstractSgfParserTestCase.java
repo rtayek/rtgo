@@ -25,7 +25,7 @@ public abstract class AbstractSgfParserTestCase {
         return SgfHarness.restoreExpectedSgf(expectedSgf,key);
     }
     protected MNode restoreExpectedMNode() {
-        return SgfHarness.restoreMNode(expectedSgf);
+        return SgfIo.restoreMNode(expectedSgf);
     }
     @Before public void setUp() throws Exception {
         ensureKey();
@@ -66,5 +66,6 @@ public abstract class AbstractSgfParserTestCase {
     public SgfNode games;
     protected boolean rawInput;
 }
+
 
 

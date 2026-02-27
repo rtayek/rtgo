@@ -63,6 +63,7 @@ local.properties
 serverGames/*.sgf
 sgfOutput.txt
 build/
+build-codex/
 #.classpath
 *.properties
 

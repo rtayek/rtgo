@@ -313,10 +313,10 @@ public class SgfNode {
         return true;
     }
     private static SgfNode sgfRestoreAndSave(Reader reader,Writer writer) {
-        return SgfRoundTrip.restoreAndSave(reader,writer);
+        return SgfIo.restoreAndSave(reader,writer);
     }
     public static String sgfRestoreAndSave(String expectedSgf) { //restore and save
-        return SgfRoundTrip.restoreAndSave(expectedSgf);
+        return SgfIo.restoreAndSave(FileIO.toReader(expectedSgf));
     }
     // lets try to make everyone use this one
     // except for maybe a restore then a save and a restore.
@@ -325,10 +325,10 @@ public class SgfNode {
     // apr 23
     // maybe rename to restoreSave and saveRestore?
     public static SgfNode sgfSaveAndRestore(SgfNode expected,StringWriter stringWriter) {
-        return SgfRoundTrip.saveAndRestore(expected,stringWriter);
+        return SgfIo.saveAndRestore(expected,stringWriter);
     }
     public static boolean sgfRoundTripTwice(Reader original) {
-        return SgfRoundTrip.roundTripTwice(original);
+        return SgfIo.roundTripTwice(original);
     }
     /*
     (;FF[4]C[root](;C[a];C[b](;C[c])

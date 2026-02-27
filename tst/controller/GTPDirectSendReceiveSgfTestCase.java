@@ -29,7 +29,7 @@ import utilities.*;
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();
-        SgfHarness.restore(original,expectedSgf);
+        ModelTrees.restore(original,expectedSgf);
         String sendCommand=Command.tgo_send_sgf.name();
         String string=runGtpCommandString(original,sendCommand);
         Response response=Response.response(string);
@@ -87,4 +87,5 @@ import utilities.*;
     String expectedSgf;
     Model original;
 }
+
 

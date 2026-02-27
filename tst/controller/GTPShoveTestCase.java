@@ -10,7 +10,6 @@ import org.junit.*;
 import equipment.*;
 import model.*;
 import model.ModelHelper2;
-import sgf.SgfHarness;
 public class GTPShoveTestCase extends ControllerGtpTestSupport {
     // how to shove all variations?
     // maybe just invent loadSGF command and send it!
@@ -58,7 +57,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
     @Test public void testRestoreAndShoveMainLineDirect() throws Exception {
         String sgf=getSgfData("simpleWithVariations");
         Model original=new Model();
-        SgfHarness.restore(original,sgf);
+        ModelTrees.restore(original,sgf);
         original.bottom();
         Model model=ModelHelper2.pushGTPMovesToCurrentStateDirect(original,false);
         assertTrue(model.board().isEqual(original.board()));
@@ -102,4 +101,5 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
     Model expected=new Model("model");
     GameFixture game;
 }
+
 

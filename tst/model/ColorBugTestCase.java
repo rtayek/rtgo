@@ -8,7 +8,6 @@ import org.junit.*;
 import equipment.*;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
-import sgf.SgfHarness;
 public class ColorBugTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception { ModelTrees.setRoot(model); }
@@ -38,7 +37,7 @@ public class ColorBugTestCase {
         boolean ok=ModelTrees.save(model,FileIO.toWriter(temporaryFile));
         assertTrue(ok);
         Model actual=new Model();
-        SgfHarness.restore(model,"");
+        ModelTrees.restore(model,"");
         fail("nyi");
         // go to the right move
         // how to test this?
@@ -66,5 +65,6 @@ public class ColorBugTestCase {
     Random random=new Random();
     final int directions=Navigate.values().length;
 }
+
 
 
