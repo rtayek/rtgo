@@ -11,7 +11,7 @@ import model.Move2.MoveType;
 import sgf.SgfHarness;
 public class ColorBugTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
-    @Before public void setUp() throws Exception { model.setRoot(); }
+    @Before public void setUp() throws Exception { ModelTrees.setRoot(model); }
     void randomMove2() {
         int width=model.board().width();
         int depth=model.board().depth();
@@ -35,7 +35,7 @@ public class ColorBugTestCase {
         }
         File temporaryFile=File.createTempFile("tgo-","sgf");
         temporaryFile.deleteOnExit();
-        boolean ok=model.save(FileIO.toWriter(temporaryFile));
+        boolean ok=ModelTrees.save(model,FileIO.toWriter(temporaryFile));
         assertTrue(ok);
         Model actual=new Model();
         SgfHarness.restore(model,"");
@@ -47,7 +47,7 @@ public class ColorBugTestCase {
         // or round trip the files? maybe not, could be big files like kogo's?
     }
     @Test public void test1() {
-        model.setRoot(3,3);
+        ModelTrees.setRoot(model,3,3);
         model.ensureBoard();
         model.moveAndPlaySound(model.turn(),"A1",model.board().width());
         Navigate.up.do_(model);
@@ -56,7 +56,7 @@ public class ColorBugTestCase {
         Navigate.down.do_(model);
     }
     @Test public void testUpAndDown() {
-        model.setRoot(3,3);
+        ModelTrees.setRoot(model,3,3);
         model.ensureBoard();
         model.moveAndPlaySound(model.turn(),"A1",model.board().width());
         Navigate.up.do_(model);

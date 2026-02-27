@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
+import com.tayek.util.io.FileIO;
 import audio.Audio;
 import audio.Audio.Sound;
 import equipment.*;
@@ -30,6 +31,7 @@ class Mediator implements Observer,ActionListener {
 		this.model=model;
 		this.main=main;
 		this.textView=textView;
+		registerActionHandlers();
 		boardHeightInPixels=determineBoardHeightInPixels();
 		installMenuBar();
 		removeExistingTopPanel();
@@ -149,6 +151,10 @@ class Mediator implements Observer,ActionListener {
 		menuItem.getAccessibleContext().setAccessibleDescription("Start a new game");
 		menuItem.addActionListener(this);
 		gameMenu.add(menuItem);
+		menuItem=new JMenuItem("Reset Parameters",KeyEvent.VK_E);
+		menuItem.getAccessibleContext().setAccessibleDescription("Reset game parameters to defaults");
+		menuItem.addActionListener(this);
+		gameMenu.add(menuItem);
 		gameMenu.addSeparator();
 		menuItem=new JMenuItem("Pass",KeyEvent.VK_P);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,InputEvent.ALT_DOWN_MASK));
@@ -196,78 +202,96 @@ class Mediator implements Observer,ActionListener {
 	}
 	@Override public void actionPerformed(ActionEvent e) {
 		Logging.mainLogger.info(model.name+" "+"action performed: "+e);
-		if(e.getActionCommand().equals("Open ...")) {
-			try {
-				Component parent=main.isApplet()?main.applet():main.frame();
-				GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(parent,lastLoadDirectory);
-				if(selection!=null) {
-					File file=selection.file();
-					ModelIo.restore(model,file);
-					// maybe here is where i can check for my root node?
-					// it would be in the first child.
-					String comment="from: "+file;
-					MNode root=model.root();
-					List<String> list=Arrays.asList(new String[] {comment});
-					SgfProperty property=new SgfProperty(P.C,list);
-					// comment may not be handled correctly.
-					// doc says text, so why the list?
-					root.sgfProperties().add(0,property);
-					lastLoadDirectory=selection.directory();
-					lastOpenFile=file;
+		Runnable actionHandler=actionHandlers.get(e.getActionCommand());
+		if(actionHandler!=null) actionHandler.run();
+		else Logging.mainLogger.warning(model.name+" "+"unhandled action command: "+e.getActionCommand());
+	}
+	private void registerActionHandlers() {
+		actionHandlers.put("Open ...",this::openAction);
+		actionHandlers.put("Save ...",this::saveAction);
+		actionHandlers.put("New Game",this::newGameAction);
+		actionHandlers.put("Reset Parameters",this::resetParametersAction);
+		actionHandlers.put("Pass",()->model.move(Move2.blackPass));
+		actionHandlers.put("Resign",()->model.move(Move2.blackResign));
+		actionHandlers.put("Tree view",this::toggleTreeViewAction);
+		actionHandlers.put("Console view",this::toggleConsoleViewAction);
+		actionHandlers.put("About",()->Toast.toast("Topological GO (alpha)"));
+	}
+	private void openAction() {
+		try {
+			Component parent=main.isApplet()?main.applet():main.frame();
+			GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(parent,lastLoadDirectory);
+			if(selection!=null) {
+				File file=selection.file();
+				ModelTrees.restore(model,FileIO.toReader(file));
+				// maybe here is where i can check for my root node?
+				// it would be in the first child.
+				String comment="from: "+file;
+				MNode root=model.root();
+				List<String> list=Arrays.asList(new String[] {comment});
+				SgfProperty property=new SgfProperty(P.C,list);
+				// comment may not be handled correctly.
+				// doc says text, so why the list?
+				root.sgfProperties().add(0,property);
+				lastLoadDirectory=selection.directory();
+				lastOpenFile=file;
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			Toast.toast(ex.toString());
+		}
+	}
+	private void saveAction() {
+		try {
+			Component parent=main.isApplet()?main.applet():main.frame();
+			GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseSaveSgf(parent,lastSaveDirectory);
+			if(selection!=null) {
+				File file=Model.insureExtension(selection.file(),Model.desiredExtension);
+				if(!ModelTrees.save(model,FileIO.toWriter(file))) {
+					Logging.mainLogger.warning(model.name+" "+"can not save to: "+file);
 				}
-			} catch(Exception ex) {
-				ex.printStackTrace();
-				Toast.toast(ex.toString());
+				lastSaveDirectory=file.getParentFile();
 			}
-		} else if(e.getActionCommand().equals("Save ...")) {
-			try {
-				Component parent=main.isApplet()?main.applet():main.frame();
-				GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseSaveSgf(parent,lastSaveDirectory);
-				if(selection!=null) {
-					File file=Model.insureExtension(selection.file(),Model.desiredExtension);
-					if(!ModelIo.save(model,file)) {
-						Logging.mainLogger.warning(model.name+" "+"can not save to: "+file);
-					}
-					lastSaveDirectory=file.getParentFile();
-				}
-			} catch(Exception ex) {
-				ex.printStackTrace();
-				Toast.toast(ex.toString());
-			}
-		} else if(e.getActionCommand().equals("New Game")) {
-			// get values from spinners
-			// no, that is what we used to do
-			// now let's set them in parameters
-			// and get the values from them
-			// sort of
-			// since we are loading parameters,
-			// we should set the spinners from the parameters.
-			// 7/15/21 spinners are set in initialization.
-			model.setRootFromParameters();
-			Audio.play(Sound.challenge);
-		} else if(e.getActionCommand().equals("Pass")) model.move(Move2.blackPass);
-		// maybe need to check turn here?
-		// yes, the are both for black.
-		// but pass() and resign() use turn().
-		else if(e.getActionCommand().equals("Resign")) model.move(Move2.blackResign);
-		// and here also?
-		else if(e.getActionCommand().equals("Tree view")) {
-			if(myTreeView==null) {
-				myTreeView=new TreeView(null,model); // try old to see why we
-														// did this?
-				// old way seems to work.
-				// new way does not find ancestors!
-				model.addObserver(myTreeView);
-			} else {
-				model.deleteObserver(myTreeView);
-				myTreeView.frame.dispose();
-				myTreeView=null;
-			}
-			// try to fix unselected root
-			model.setChangedAndNotify(Event.newTree);
-		} else if(e.getActionCommand().equals("Console view")) {
-			if(textView!=null) textView.frame.setVisible(!textView.frame.isVisible());
-		} else if(e.getActionCommand().equals("About")) Toast.toast("Topological GO (alpha)");
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			Toast.toast(ex.toString());
+		}
+	}
+	private void newGameAction() {
+		// get values from spinners
+		// no, that is what we used to do
+		// now let's set them in parameters
+		// and get the values from them
+		// sort of
+		// since we are loading parameters,
+		// we should set the spinners from the parameters.
+		// 7/15/21 spinners are set in initialization.
+		ModelTrees.setRootFromParameters(model);
+		Audio.play(Sound.challenge);
+	}
+	private void resetParametersAction() {
+		Parameters.resetAllAndStore();
+		newTopPanel.spinnerParameterOptions.setValuesInWidgetsFromCurrentValues();
+		newTopPanel.revalidate();
+		newTopPanel.repaint();
+	}
+	private void toggleTreeViewAction() {
+		if(myTreeView==null) {
+			myTreeView=new TreeView(null,model); // try old to see why we
+													// did this?
+			// old way seems to work.
+			// new way does not find ancestors!
+			model.addObserver(myTreeView);
+		} else {
+			model.deleteObserver(myTreeView);
+			myTreeView.frame.dispose();
+			myTreeView=null;
+		}
+		// try to fix unselected root
+		model.setChangedAndNotify(Event.newTree);
+	}
+	private void toggleConsoleViewAction() {
+		if(textView!=null) textView.frame.setVisible(!textView.frame.isVisible());
 	}
 	@Override public void update(Observable observable,Object hint) {
 		Logging.mainLogger.fine(model.name+" "+observable.getClass().getName()+", hint: "+hint);
@@ -395,5 +419,7 @@ class Mediator implements Observer,ActionListener {
 	double boardHeightInPixels=18*40*3/4.;
 	//
 	transient File lastLoadDirectory,lastSaveDirectory,lastOpenFile;
+	final Map<String,Runnable> actionHandlers=new LinkedHashMap<>();
 	static boolean useKeys=true;
 }
+

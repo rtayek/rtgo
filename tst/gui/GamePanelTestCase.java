@@ -17,12 +17,12 @@ public class GamePanelTestCase {
 	@Test public void test() {
 		for(float f=1.0f;f<2;f+=.1f) {
 			Point x=GamePanel.closest(new Point2D.Float(f,0));
-			System.out.println(f+" "+x.x);
+			//System.out.println(f+" "+x.x);
 		}
 		Jitter jitter=new Jitter(19,19);
 		List<Integer> x=Arrays.stream(jitter.xJitters).boxed().collect(Collectors.toList());
 		List<Integer> y=Arrays.stream(jitter.yJitters).boxed().collect(Collectors.toList());
-		System.out.println(Arrays.asList(x));
-		System.out.println(Arrays.asList(y));
+		//System.out.println(Arrays.asList(x));
+		//System.out.println(Arrays.asList(y));
 	}
 }

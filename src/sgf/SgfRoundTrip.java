@@ -1,13 +1,12 @@
 package sgf;
 import io.Logging;
 import static io.IOs.noIndent;
-import static com.tayek.util.io.FileIO.toReader;
 import static sgf.Parser.parentheses;
-import static sgf.Parser.restoreSgf;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.io.IOException;
+import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import static io.Logging.parserLogger;
 /**
@@ -32,7 +31,7 @@ public final class SgfRoundTrip {
     }
     public static SgfNode restoreAndSave(Reader reader,Writer writer) {
         if(reader==null) return null;
-        SgfNode games=restoreSgf(reader);
+        SgfNode games=SgfIo.restore(reader);
         if(games!=null) games.saveSgf(writer,noIndent);
         String actual=writer.toString();
         int p=parentheses(actual);
@@ -42,14 +41,14 @@ public final class SgfRoundTrip {
     }
     public static String restoreAndSave(String expectedSgf) {
         if(expectedSgf==null) return null;
-        return restoreAndSaveToString(toReader(expectedSgf));
+        return restoreAndSaveToString(FileIO.toReader(expectedSgf));
     }
     public static SgfNode saveAndRestore(SgfNode expected,StringWriter stringWriter) {
         SgfNode actualSgf=null;
         if(expected!=null) {
             String sgf=saveSgfToString(expected,noIndent);
             stringWriter.append(sgf);
-            actualSgf=restoreSgf(toReader(sgf));
+            actualSgf=SgfIo.restore(FileIO.toReader(sgf));
         }
         return actualSgf;
     }
@@ -61,7 +60,7 @@ public final class SgfRoundTrip {
         restoreAndSave(original,writer);
         String expected=writer.toString(); // cannonical form?
         writer=new StringWriter();
-        SgfNode games=restoreSgf(toReader(expected));
+        SgfNode games=SgfIo.restore(FileIO.toReader(expected));
         if(games!=null) games.saveSgf(writer,noIndent);
         // allow null for now (11/8/22).
         String actual=writer.toString();

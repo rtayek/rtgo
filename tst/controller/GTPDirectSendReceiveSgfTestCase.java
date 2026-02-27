@@ -64,7 +64,7 @@ import utilities.*;
         Response response=Response.response(string);
         String actualSgf=null;
         if(response.isOk()) {
-            actualSgf=model.save();
+            actualSgf=ModelTrees.save(model);
             //actualSgf=options.remove(actualSgf);
         } else {
             // reinitialize expected

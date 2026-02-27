@@ -4,8 +4,9 @@ import controller.*;
 import io.*;
 import io.IOs;
 import com.tayek.util.io.End.Holders;
+import com.tayek.util.io.FileIO;
 import model.Model;
-import model.ModelIo;
+import model.ModelTrees;
 import server.NamedThreadGroup;
 import sgf.HexAscii;
 public class Game {
@@ -31,8 +32,8 @@ public class Game {
         // no references to any back end stuff here.
         if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
-        ModelIo.restore(recorder,file);
-        String sgf=recorder.save();
+        ModelTrees.restore(recorder,FileIO.toReader(file));
+        String sgf=ModelTrees.save(recorder);
         sgf=HexAscii.encode(sgf.getBytes());
         String receiveCommand=Command.tgo_receive_sgf.name()+" "+sgf;
         Response response=game.recorderFixture.frontEnd.sendAndReceive(receiveCommand);
@@ -64,3 +65,4 @@ public class Game {
         NamedThreadGroup.printThraedsAtEnd();
     }
 }
+

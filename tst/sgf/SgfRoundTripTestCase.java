@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
+import model.ModelTrees;
 
 @RunWith(Parameterized.class) public class SgfRoundTripTestCase extends AbstractSgfParserTestCase {
     @Parameters(name="{0}") public static Collection<Object[]> parameters() {
@@ -119,7 +120,7 @@ import model.Model;
         runIfRoundTrip(() -> {
             Model model=SgfHarness.restoreNew(fixtureSgf());
             boolean hasMultipleGames=model.root().children().size()>1;
-            String sgfString=model.save();
+            String sgfString=ModelTrees.save(model);
             boolean containsRTNode=sgfString.contains("RT[Tgo root]");
             // when games.right!=null ==> multiple games
             // and we end up with an RT in the sgf!

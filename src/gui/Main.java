@@ -9,10 +9,11 @@ import javax.swing.Timer;
 import javax.swing.UIManager.LookAndFeelInfo;
 import com.tayek.util.io.Indent;
 import com.tayek.util.io.MainGetOpt;
+import com.tayek.util.io.FileIO;
 import com.tayek.util.misc.Tee;
 import io.*;
 import model.Model;
-import model.ModelIo;
+import model.ModelTrees;
 import utilities.*;
 public class Main extends MainGui implements ActionListener,ComponentListener {
 	public Main(MyJApplet applet,Model model,TextView textView) {
@@ -159,7 +160,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener {
 		Model model=new Model();
 		if(startWithFile!=null) {
 			Logging.mainLogger.info("restoring: "+startWithFile);
-			ModelIo.restore(model,startWithFile);
+			ModelTrees.restore(model,FileIO.toReader(startWithFile));
 			Logging.mainLogger.info("afer restore board is: "+model.board());
 		}
 		main=new Main(null,model,useTextView?textView:null);
@@ -302,3 +303,4 @@ public class Main extends MainGui implements ActionListener,ComponentListener {
 	}
 	@Override public void componentHidden(ComponentEvent e) {}
 }
+

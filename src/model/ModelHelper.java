@@ -19,8 +19,6 @@ import equipment.Board.Shape;
 import io.Logging;
 import sgf.*;
 import static io.IOs.noIndent;
-import static com.tayek.util.io.FileIO.toReader;
-import static sgf.Parser.restoreSgf;
 
 /**
  * Utilities for SGF round-tripping in tests.
@@ -35,10 +33,6 @@ public final class ModelHelper {
 
     private ModelHelper() {}
 
-    static Model newModelWithBoardFrom(Model original) {
-        return newModelWithBoardFrom(original, null);
-    }
-
     static Model newModelWithBoardFrom(Model original, String name) {
         Model model = name == null ? new Model() : new Model(name);
         if (original != null && original.board() != null) {
@@ -47,14 +41,14 @@ public final class ModelHelper {
             int depth = originalBoard.depth();
             Board.Topology topology = originalBoard.topology();
             Board.Shape shape = originalBoard.shape();
-            model.setRoot(width, depth, topology, shape);
+            ModelTrees.setRoot(model,width,depth,topology,shape);
             Board board = Board.factory.create(width, depth, topology, shape);
             model.setBoard(board);
         }
         return model;
     }
 
-    static GameNode toGameNode(Model model,sgf.MNode node) { return toGameNode(model,node,null); }
+    //static GameNode toGameNode(Model model,sgf.MNode node) { return toGameNode(model,node,null); }
     private static GameNode toGameNode(Model model,sgf.MNode node,GameNode parent) {
         if(node==null) return null;
         SgfNodeMapping mapping=SgfDomainActionMapper.mapNode(model.sgfMappingContext(),node);
@@ -242,7 +236,7 @@ public final class ModelHelper {
     }
     public static MNode modelRoundTrip(String expectedSgf,Writer writer,ModelSaveMode saveMode) {
         if(expectedSgf==null) return null;
-        SgfNode games=restoreSgf(toReader(expectedSgf));
+        SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
         if(games==null) return null;
         if(games.right!=null) Logging.mainLogger.info(" 2 more than one game!");
         if(saveMode==ModelSaveMode.sgfNodeChecked) {

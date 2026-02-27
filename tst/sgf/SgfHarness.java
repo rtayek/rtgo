@@ -18,9 +18,22 @@ import java.util.Set;
 import model.Model;
 import model.ModelHelper;
 import model.ModelHelper.ModelSaveMode;
-import model.ModelIo;
+import model.ModelTrees;
 import model.Navigate;
+import sgf.HexAscii;
+import sgf.MNode;
+import sgf.P;
+import sgf.Parser;
+import sgf.SgfAcceptor;
+import sgf.SgfAcceptorImpl;
+import sgf.SgfIo;
+import sgf.SgfNode;
+import sgf.SgfNodeFinder;
+import sgf.SgfProperty;
+import sgf.SgfRoundTrip;
+import sgf.Traverser;
 import sgf.SgfNode.SgfOptions;
+import sgf.SgfRoundTrip.MNodeSaveMode;
 import com.tayek.util.core.ParameterArray;
 import utilities.SgfTestParameters;
 
@@ -35,11 +48,13 @@ public final class SgfHarness {
 
     // Model IO helpers
     public static void restore(Model model,String sgf) {
-        ModelIo.restore(model,sgf);
+        if(model==null||sgf==null) return;
+        ModelTrees.restore(model,FileIO.toReader(sgf));
     }
 
     public static void restore(Model model,java.io.File file) {
-        ModelIo.restore(model,file);
+        if(model==null||file==null) return;
+        ModelTrees.restore(model,FileIO.toReader(file));
     }
 
     public static Model restoreNew(String sgf) {
@@ -53,7 +68,7 @@ public final class SgfHarness {
     }
 
     public static String save(Model model,String message) {
-        return TestIo.saveToString(message,writer->model.save(writer));
+        return TestIo.saveToString(message,writer->ModelTrees.save(model,writer));
     }
 
     public static String modelRoundTripToString(Reader reader) {
@@ -61,8 +76,7 @@ public final class SgfHarness {
     }
 
     static String modelRoundTripToString(Reader reader,ModelHelper.ModelSaveMode saveMode) {
-        if(reader==null) return null;
-        return TestIo.writeToString(writer->ModelHelper.modelRoundTrip(reader,writer,saveMode));
+        return ModelTrees.modelRoundTripToString(reader,saveMode);
     }
 
     public static String modelRoundTripToString(String sgf) {
@@ -71,7 +85,7 @@ public final class SgfHarness {
 
     public static String modelRoundTripToString(String sgf,ModelHelper.ModelSaveMode saveMode) {
         if(sgf==null) return null;
-        return modelRoundTripToString(FileIO.toReader(sgf),saveMode);
+        return ModelTrees.modelRoundTripToString(FileIO.toReader(sgf),saveMode);
     }
 
     public static String restoreAndSave(Model model,String sgf) {
@@ -112,53 +126,48 @@ public final class SgfHarness {
 
     // SGF IO helpers
     public static SgfNode restore(Reader reader) {
-        return Parser.restoreSgf(reader);
+        if(reader==null) return null;
+        return SgfIo.restore(reader);
     }
 
     public static SgfNode restore(String sgf) {
-        return restore(sgf!=null?FileIO.toReader(sgf):null);
+        return sgf!=null?SgfIo.restore(FileIO.toReader(sgf)):null;
     }
 
     public static MNode restoreMNode(String sgf) {
-        return sgf!=null?MNode.restore(FileIO.toReader(sgf)):null;
+        return sgf!=null?SgfIo.restoreMNode(FileIO.toReader(sgf)):null;
     }
 
     public static MNode quietLoadMNode(String sgf) {
-        return sgf!=null?MNode.quietLoad(FileIO.toReader(sgf)):null;
+        return sgf!=null?SgfIo.quietLoadMNode(FileIO.toReader(sgf)):null;
     }
 
     public static String mNodeRoundTrip(String sgf,SgfRoundTrip.MNodeSaveMode saveMode) {
-        if(sgf==null) return null;
-        return TestIo.writeToString(writer->SgfRoundTrip.mNodeRoundTrip(FileIO.toReader(sgf),writer,saveMode));
+        return sgf!=null?SgfIo.mNodeRoundTrip(FileIO.toReader(sgf),saveMode):null;
     }
 
     public static String save(SgfNode node,Indent indent) {
-        if(node==null) return null;
-        return SgfRoundTrip.saveSgfToString(node,indent);
+        return SgfIo.save(node,indent);
     }
 
     public static String save(SgfNode node) {
-        return save(node,IOs.noIndent);
+        return node!=null?SgfIo.save(node,IOs.noIndent):null;
     }
 
     public static SgfNode saveAndRestore(SgfNode expected) {
-        if(expected==null) return null;
-        return SgfRoundTrip.saveAndRestore(expected);
+        return SgfIo.saveAndRestore(expected);
     }
 
     public static String restoreAndSave(Reader reader) {
-        if(reader==null) return null;
-        return SgfRoundTrip.restoreAndSaveToString(reader);
+        return reader!=null?SgfIo.restoreAndSave(reader):null;
     }
 
     public static boolean roundTripTwice(String sgf) {
-        if(sgf==null) return true;
-        return SgfRoundTrip.roundTripTwice(FileIO.toReader(sgf));
+        return sgf==null||SgfIo.roundTripTwice(FileIO.toReader(sgf));
     }
 
     public static boolean roundTripTwice(Reader reader) {
-        if(reader==null) return true;
-        return SgfRoundTrip.roundTripTwice(reader);
+        return reader==null||SgfIo.roundTripTwice(reader);
     }
 
     // Parser support
@@ -379,7 +388,7 @@ public final class SgfHarness {
 
     private static String restoreAndSavePrepared(String sgf) {
         Model model=SgfHarness.restoreNew(sgf);
-        String saved=model.save();
+        String saved=ModelTrees.save(model);
         return prepareActual(saved);
     }
 
@@ -407,7 +416,7 @@ public final class SgfHarness {
     }
 
     public static boolean roundTripTwice(File file) {
-        return SgfHarness.roundTripTwice(FileIO.toReader(file));
+        return file==null||SgfIo.roundTripTwice(FileIO.toReader(file));
     }
 
     static boolean roundTripTwiceWithLogging(File file) {
@@ -417,8 +426,7 @@ public final class SgfHarness {
     }
 
     public static String restoreAndSave(String sgf) {
-        if(sgf==null) return null;
-        return SgfRoundTrip.restoreAndSave(sgf);
+        return sgf!=null?SgfIo.restoreAndSave(FileIO.toReader(sgf)):null;
     }
 
     static SgfNode restoreFromKey(Object key) {
@@ -546,5 +554,6 @@ public final class SgfHarness {
         }
     }
 }
+
 
 

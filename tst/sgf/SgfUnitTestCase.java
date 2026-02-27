@@ -32,6 +32,7 @@ import equipment.Stone;
 import org.junit.Ignore;
 import org.junit.Test;
 import model.Model;
+import model.ModelTrees;
 import model.MNodeAcceptor.MNodeFinder;
 import model.MNodeAcceptor.MakeList;
 import model.Move2;
@@ -280,7 +281,7 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testgenerateMoves() {
-        model.setRoot(5,5);
+        ModelTrees.setRoot(model,5,5);
         int n=model.movesToGenerate();
         Model.generateAndMakeMoves(model,n);
         //List<Move> expectedMoves=Model.movesToCurrentState(model);
@@ -308,7 +309,7 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testReplayMoves() {
-        model.setRoot(19,19);
+        ModelTrees.setRoot(model,19,19);
         int n=model.movesToGenerate();
         Model.generateAndMakeMoves(model,n);
         List<Move2> expectedMoves=model.movesToCurrentState();
@@ -362,7 +363,7 @@ public class SgfUnitTestCase {
         // 19x19?
         List<Move2> moves=model.movesToCurrentState();
         assertTrue(moves==null||moves.size()==0||moves.size()==1&&moves.get(0).equals(Move2.nullMove));
-        model.setRoot(5,5);
+        ModelTrees.setRoot(model,5,5);
         moves=model.movesToCurrentState();
         assertTrue(moves==null||moves.size()==0||moves.size()==1&&moves.get(0).equals(Move2.nullMove));
         model.move(model.turn(),new Point());
@@ -372,7 +373,7 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testListMoves2() {
-        model.setRoot(5,5);
+        ModelTrees.setRoot(model,5,5);
         model.move(Stone.black,new Point());
         model.move(Stone.white,new Point(1,1));
         model.move(Stone.black,new Point(2,2));
@@ -416,13 +417,13 @@ public class SgfUnitTestCase {
     @Test public void testSave() {
         File file=new File("tmp/saved.sgf");
         if(file.exists()) file.delete();
-        boolean ok=model.save(FileIO.toWriter(file));
+        boolean ok=ModelTrees.save(model,FileIO.toWriter(file));
         assertTrue(ok);
         assertTrue(file.exists());
     }
 
     @Test public void testIsLegalMove() {
-        model.setRoot();
+        ModelTrees.setRoot(model);
         Move2 move=new Move2(MoveType.move,model.turn(),new Point());
         Model.MoveResult actual=model.isLegalMove(move);
         assertEquals(Model.MoveResult.legal,actual);
@@ -645,7 +646,7 @@ public class SgfUnitTestCase {
 
     private Model newModelWithRoot(int size,boolean ensureBoard) {
         Model model=new Model();
-        model.setRoot(size,size);
+        ModelTrees.setRoot(model,size,size);
         if(ensureBoard) model.ensureBoard();
         return model;
     }
@@ -661,7 +662,7 @@ public class SgfUnitTestCase {
     }
 
     private void assertGenerateAndMakeMovesPreserveTurn(Integer size,int moves) {
-        if(size!=null) model.setRoot(size,size);
+        if(size!=null) ModelTrees.setRoot(model,size,size);
         Stone who=model.turn();
         Model.generateAndMakeMoves(model,moves);
         Stone expected=moves%2==0?who:who.otherColor();
@@ -678,7 +679,7 @@ public class SgfUnitTestCase {
     }
 
     private void assertGeneratedMovesRoundTrip(int size,boolean silly,boolean ensureBoards,boolean log) {
-        model.setRoot(size,size);
+        ModelTrees.setRoot(model,size,size);
         int n=model.movesToGenerate();
         if(log) Logging.mainLogger.info("start");
         if(silly) Model.generateSillyMoves(model,n);
@@ -707,12 +708,12 @@ public class SgfUnitTestCase {
     }
 
     private void assertRoundTripHasRt(Model model,boolean expectedBefore,boolean expectedAfter) {
-        boolean hasRT=Model.isSentinel(model.root());
+        boolean hasRT=ModelTrees.isSentinel(model.root());
         assertEquals("unexpected RT before round trip",expectedBefore,hasRT);
         String sgfString=SgfHarness.save(model);
         model=new Model();
         SgfHarness.restore(model,sgfString);
-        hasRT=Model.isSentinel(model.root());
+        hasRT=ModelTrees.isSentinel(model.root());
         assertEquals("unexpected RT after round trip",expectedAfter,hasRT);
     }
     private void assertRtRoundTrip(boolean withMove) {
@@ -838,7 +839,7 @@ public class SgfUnitTestCase {
     private String dtrt(Model m) {
         String actual=SgfHarness.restoreAndSave(m,sgf,restored->{
             Logging.mainLogger.info("restored, root: "+restored.root().toString());
-            boolean hasRT=Model.isSentinel(restored.root());
+            boolean hasRT=ModelTrees.isSentinel(restored.root());
             assertTrue(hasRT);
         });
         Logging.mainLogger.info("saved: "+actual);

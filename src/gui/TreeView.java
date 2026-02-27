@@ -6,10 +6,11 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
+import com.tayek.util.io.FileIO;
 import io.*;
 import model.Event;
 import model.Model;
-import model.ModelIo;
+import model.ModelTrees;
 import sgf.MNode;
 import utilities.*;
 @SuppressWarnings("serial") public class TreeView extends MainGui implements Observer,TreeSelectionListener,ActionListener {
@@ -100,7 +101,7 @@ import utilities.*;
 		if(e.getActionCommand().equals("Open ...")) {
 			GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(frame(),lastLoadDirectory);
 			if(selection!=null) {
-				ModelIo.restore(model,selection.file());
+				ModelTrees.restore(model,FileIO.toReader(selection.file()));
 				lastLoadDirectory=selection.directory();
 			}
 		}
@@ -179,7 +180,7 @@ import utilities.*;
 		TreeView myTreeView=new TreeView(null,model);
 		myTreeView.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		model.addObserver(myTreeView);
-		ModelIo.restore(model,new File("sgf/ff4_ex.sgf"));
+		ModelTrees.restore(model,FileIO.toReader(new File("sgf/ff4_ex.sgf")));
 		return myTreeView;
 	}
 	public final Model model;
@@ -189,3 +190,4 @@ import utilities.*;
 	File lastLoadDirectory;
 	// File file=new File("Simple.sgf");
 }
+

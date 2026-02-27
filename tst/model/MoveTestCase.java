@@ -94,7 +94,7 @@ public class MoveTestCase {
     }
     @Test public void testSelfCaptureDoesNotLeakToLaterMoves() {
         Model model=new Model();
-        model.setRoot(3,3);
+        ModelTrees.setRoot(model,3,3);
         model.sgfMakeMove(Stone.black,new Point(0,1));
         model.sgfMakeMove(Stone.black,new Point(1,0));
         model.sgfMakeMove(Stone.black,new Point(2,1));
@@ -113,7 +113,7 @@ public class MoveTestCase {
     @Test public void testRepeatedSelfCaptureIsLegalInMovePath() {
         Model model=new Model();
         model.setRole(Role.anything);
-        model.setRoot(3,3);
+        ModelTrees.setRoot(model,3,3);
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(0,1)));
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(1,0)));
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(2,1)));
@@ -129,7 +129,7 @@ public class MoveTestCase {
     @Test public void testRepeatedTwoStoneSelfCaptureIsLegalInMovePath() {
         Model model=new Model();
         model.setRole(Role.anything);
-        model.setRoot(4,4);
+        ModelTrees.setRoot(model,4,4);
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(0,1)));
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(2,1)));
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(1,0)));

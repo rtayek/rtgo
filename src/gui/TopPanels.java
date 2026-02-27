@@ -25,12 +25,12 @@ public class TopPanels {
             }
             // try to get rid of the instances
             ButtonsABC<Navigate>.ButtonWithEnum top=new ButtonWithEnum(Navigate.top);
-            ButtonsABC<Navigate>.ButtonWithEnum bottoml=new ButtonWithEnum(Navigate.bottom);
+            ButtonsABC<Navigate>.ButtonWithEnum bottom=new ButtonWithEnum(Navigate.bottom);
             ButtonsABC<Navigate>.ButtonWithEnum up=new ButtonWithEnum(Navigate.up);
             ButtonsABC<Navigate>.ButtonWithEnum down=new ButtonWithEnum(Navigate.down);
             ButtonsABC<Navigate>.ButtonWithEnum right=new ButtonWithEnum(Navigate.right);
             ButtonsABC<Navigate>.ButtonWithEnum left=new ButtonWithEnum(Navigate.left);
-            ButtonsABC<Navigate>.ButtonWithEnum deleye=new ButtonWithEnum(Navigate.delete,"Delete this branch");
+            ButtonsABC<Navigate>.ButtonWithEnum delete=new ButtonWithEnum(Navigate.delete,"Delete this branch");
         } // end of inner class
         public NewTopPanel(Mediator mediator) {
             setName("top  panel");

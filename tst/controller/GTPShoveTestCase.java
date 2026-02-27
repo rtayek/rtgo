@@ -16,7 +16,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
     // maybe just invent loadSGF command and send it!
     @Before public void setUp() throws Exception {
         // parameterize this and use parser map?
-        expected.setRoot(5,5);
+        ModelTrees.setRoot(expected,5,5);
         Board board=Board.factory.create(5);
         expected.setBoard(board);
         int n=expected.movesToGenerate();
@@ -81,7 +81,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
     @Test public void testPushOneGTPMoveDirect() throws Exception {
         // do to top and down instead of new model?
         Model model=new Model();
-        model.setRoot(5,5);
+        ModelTrees.setRoot(model,5,5);
         model.move(Stone.black,new Point());
         Model actual=ModelHelper2.pushGTPMovesToCurrentStateDirect(model,false);
         assertTrue(actual.board().isEqual(model.board()));
@@ -90,7 +90,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
         // do to top and down instead of new model?
         Model model=new Model("model");
         // maybe give backend it's own name?
-        model.setRoot(5,5);
+        ModelTrees.setRoot(model,5,5);
         model.move(Stone.black,new Point());
         Model actual=ModelHelper2.pushGTPMovesToCurrentStateBoth(model,true);
         assertTrue(actual.board().isEqual(model.board()));

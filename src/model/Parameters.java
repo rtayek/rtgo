@@ -27,6 +27,10 @@ public enum Parameters { // properties
         storeCurrentValuesInPropertiesFile(propertiesFilename);
     }
     public static void resetAll() { for(Parameters parameter:Parameters.values()) parameter.reset(); }
+    public static void resetAllAndStore() {
+        resetAll();
+        storeCurrentValuesInPropertiesFile(propertiesFilename);
+    }
     static void setCurrentValuesFromProperties(Properties properties) {
         EnumProperties.apply(properties,values(),(parameter,property)->parameter.currentValue=parameter.fromString(property),
                 (parameter)->Logging.mainLogger.info("can not find property: "+parameter.name()+" in "+properties));

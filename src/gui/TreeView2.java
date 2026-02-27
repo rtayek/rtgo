@@ -2,6 +2,7 @@ package gui;
 import java.io.StringReader;
 import javax.swing.JFrame;
 import model.Model;
+import model.ModelTrees;
 import utilities.MyJApplet;
 @SuppressWarnings("serial") public class TreeView2 extends TreeView { // why did i make
     // this?
@@ -25,7 +26,7 @@ import utilities.MyJApplet;
         model.addObserver(myTreeView);
         //model.restore(IO.toReader(new File("sgf/ff4.sgf")));
         StringReader stringReader=new StringReader("(;C[frog])");
-        model.restore(stringReader);
+        ModelTrees.restore(model,stringReader);
         return myTreeView;
     }
     public static void main(String[] args) { TreeView myTreeView=TreeView2.simple2(); }

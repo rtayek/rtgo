@@ -10,6 +10,7 @@ import java.util.*;
 import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.core.Et;
 import com.tayek.util.io.End;
+import com.tayek.util.io.FileIO;
 import equipment.*;
 import gui.*;
 import io.*;
@@ -299,7 +300,7 @@ public class GTPBackEnd implements Stopable {
                         if(true) { // 1/25/23 was true
                             Board board=Board.factory.create(n,n,model.boardTopology(),model.boardShape());
                             model.setBoard(board);
-                        } else model.setRoot(n,n,model.boardTopology(),model.boardShape());
+                        } else ModelTrees.setRoot(model,n,n,model.boardTopology(),model.boardShape());
                         // shape and type above come from parameters through model?
                         send(okCharacter,message.id,"");
                     } else send(badCharacter,message.id,Failure.unacceptable_size);
@@ -330,7 +331,7 @@ public class GTPBackEnd implements Stopable {
                 // Consecutive moves of the same color are not considered
                 // illegal from the protocol point of view.
                 if(message.arguments.length>2) {
-                    if(model.board()==null) model.setRoot();
+                    if(model.board()==null) ModelTrees.setRoot(model);
                     String color=message.arguments[1];
                     Stone who=null;
                     if(color.equalsIgnoreCase(Model.black)||color.equalsIgnoreCase("b")) who=Stone.black;
@@ -380,7 +381,7 @@ public class GTPBackEnd implements Stopable {
                 if(message.arguments.length>1) {
                     if(model.board()==null) {
                         Logging.mainLogger.fine("no board, calling setRoot().");
-                        model.setRoot();
+                        ModelTrees.setRoot(model);
                     }
                     String color=message.arguments[1];
                     Stone who=null;
@@ -451,11 +452,11 @@ public class GTPBackEnd implements Stopable {
                 Logging.mainLogger.config("received encoded sgf: "+sgfString);
                 if(useHexAscii) sgfString=decodeToString(sgfString);
                 Logging.mainLogger.config("decoded sgf: "+sgfString);
-                ModelIo.restore(model,sgfString);
+                ModelTrees.restore(model,FileIO.toReader(sgfString));
                 ok=send(okCharacter,message.id,"");
                 break;
             case tgo_send_sgf:
-                sgfString=model.save();
+                sgfString=ModelTrees.save(model);
                 if(useHexAscii) { sgfString=encode(sgfString); }
                 send(okCharacter,message.id,sgfString);
                 break;
@@ -703,3 +704,4 @@ public class GTPBackEnd implements Stopable {
     public static final String twoLineFeeds="\n\n";
     static final String pipeBrokenMessage="Pipe broken";
 }
+

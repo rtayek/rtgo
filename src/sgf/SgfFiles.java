@@ -1,8 +1,8 @@
 package sgf;
 import io.Logging;
-import static com.tayek.util.io.FileIO.toReader;
 import static sgf.Parser.*;
 import java.util.*;
+import com.tayek.util.io.FileIO;
 import io.Init;
 public class SgfFiles {
     public static void main(String[] arguments) {
@@ -20,7 +20,7 @@ public class SgfFiles {
                 Logging.mainLogger.info(" bad parentheses: "+p);
                 throw new RuntimeException(key+" bad parentheses: "+p);
             }
-            SgfNode games=expectedSgf!=null?restoreSgf(toReader(expectedSgf)):null;
+            SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
             games.preorderCheckFlags();
             String s="";
             if(games.hasASetupType) s+='S';

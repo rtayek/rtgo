@@ -123,7 +123,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public Model(String name) {
 		this.name=name;
-		setRoot();
+		ModelTrees.setRoot(this);
 	}
 	public void ensureBoard() {
 		if(board()==null) {
@@ -132,57 +132,10 @@ public class Model extends Observable { // model of a go game or problem forrest
 			setBoard(board);
 		}
 	}
-	public boolean save(Writer writer) {
-		MNode root=root();
-		boolean found=isSentinel(root); // RT is a sentinel extra-root marker;
-										// no-op in the engine, must round-trip
-										// unchanged.
-		// add new root if we don't already have one.
-		if(!found) {
-			root=new MNode(null);
-			root.children().add(root());
-			Logging.mainLogger.info("added null root");
-			// how are we going to know if we added this?
-		} else Logging.mainLogger.info("root has RT");
-		boolean ok=MNode.save(writer,root,new Indent(SgfNode.options.indent));
-		return ok;
-	}
-	public static boolean isSentinel(MNode root) { // RT is a sentinel
-													// extra-root marker;
-													// preserve for lossless
-													// round-trip.
-		boolean found=false;
-		for(SgfProperty p:root.sgfProperties()) {
-			if(p.p().equals(P.RT)) {
-				found=true;
-				break;
-			}
-		}
-		for(SgfProperty p:root.extraProperties()) {
-			if(p.p().equals(P.RT)) {
-				found=true;
-				break;
-			}
-		}
-		return found;
-	}
-	public String save() {
-		StringWriter stringWriter=new StringWriter();
-		save(stringWriter);
-		return stringWriter.toString();
-	}
-	public void restore(Reader reader) {
-		if(reader==null) {
-			Logging.mainLogger.info("restoring model from null reader!");
-		}
-		MNode games=MNode.restore(reader);
-		Logging.mainLogger.info("restored root"+games);
-		setRoot(games);
-	}
 	public Model(Model model,String name) { // copy constructor
 		this.name=name;
-		String string=model.save();
-		restore(toReader(string));
+		String string=ModelTrees.save(model);
+		ModelTrees.restore(this,toReader(string));
 	}
 	public static boolean canDelete(Model model) {
 		return model.currentNode().parent()!=null;
@@ -217,7 +170,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 			// maybe leave it at null
 			// and adjust display?
 			Logging.mainLogger.config("root is null!: ");
-			setRoot();
+			ModelTrees.setRoot(this);
 			return;
 		}
 		stack.clear();
@@ -247,79 +200,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public boolean isFromLittleGolem() {
 		return state.isFromLittleGolem;
 	}
-	public static void addProperty(MNode node,P p,String string) {
-		addProperty(node,p,new String[] {string});
-	}
-	static void addProperty(MNode node,P p,String[] strings) {
-		List<String> list=new ArrayList<>(Arrays.asList(strings));
-		addProperty(node,p,list);
-	}
-	static void addProperty(MNode node,P p,List<String> strings) {
-		SgfProperty property=new SgfProperty(p,strings);
-		node.sgfProperties().add(property);
-	}
-	private static void addSgfRegion_(int depth,MNode newRoot,List<Point> points) {
-		if(points.size()>0) {
-			List<String> strings=new ArrayList<>();
-			for(Point point:points) {
-				String string=Coordinates.toSgfCoordinates(point,depth);
-				strings.add(string);
-			}
-			Logging.mainLogger.warning("region string: "+strings);
-			addProperty(newRoot,P.RG,strings);
-		}
-	}
-	private static void addRegion(int width,int depth,Topology topology,Shape shape,MNode newRoot) {
-		List<Point> points=null;
-		if(topology==Topology.diamond) points=Board.getPointsForDiamondRegion(width,depth);
-		else points=Shape.getPointsForRegion(width,depth,shape);
-		addSgfRegion_(depth,newRoot,points);
-	}
-	public void setRootFromParameters() {
-		Logging.mainLogger.info("set root from parameters");
-		int width=(int)Parameters.width.currentValue();
-		int depth=(int)Parameters.depth.currentValue();
-		Board.Topology topology=(Board.Topology)Parameters.topology.currentValue();
-		Board.Shape shape=(Board.Shape)Parameters.shape.currentValue();
-		setRoot(width,depth,topology,shape);
-		// this should work.
-		// how come we get 19x19 board?
-	}
-	public void setRoot() {
-		setRoot(Board.standard,Board.standard);
-	}
-	public void setRoot(int width,int depth) {
-		setRoot(width,depth,Board.Topology.normal,Shape.normal);
-	}
-	public void setRoot(int width,int depth,Board.Topology topology,Board.Shape shape) {
-		// where is the board constructed?
-		Logging.mainLogger.config("setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
-		// IO.stackTrace(10);
-		MNode newRoot=new MNode(null);
-		// MNode main=new MNode(newRoot); // add extra root
-		MNode main=new MNode(null); // no extra root
-		addProperty(main,P.FF,"4");
-		addProperty(main,P.GM,"1");
-		addProperty(main,P.AP,sgfApplicationName);
-		addProperty(main,P.C,"comment");
-		if(!topology.equals(Topology.normal)) addProperty(main,P.C,sgfBoardTopology+topology);
-		if(!shape.equals(Shape.normal)) addProperty(main,P.C,sgfBoardShape+shape);
-		String string=Integer.valueOf(width).toString()+":"+Integer.valueOf(depth).toString();
-		if(width==depth) string=Integer.valueOf(width).toString();
-		boolean alwaysSetBoardSize=true;// was true
-		// false breaks a lot of tests
-		// 1/22/23
-		// trying false just to see who make the board // that is displayed by
-		// game panel.
-		if(alwaysSetBoardSize) addProperty(main,P.SZ,string);
-		// work needed here!
-		if(topology.equals(Topology.torus)) addProperty(main,P.KM,"4.5");
+	void setStoredBoardSizeFromSgf(int width,int depth) {
 		state.widthFromSgf=width;
 		state.depthFromSgf=depth;
-		addRegion(width,depth,topology,shape,main);
-		Logging.mainLogger.fine(name+" "+"new root is: "+main);
-		setRoot(main);
-		Logging.mainLogger.config("exit setRoot: "+name+" "+"board type is: "+topology+", shape is: "+shape);
 	}
 	public MNode currentNode() {
 		return state.node;
@@ -369,7 +252,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public Collection<Move2> mainLineFromState() {
 		while(Navigate.down.do_(this))
-			;
+			; //
 		return movesToCurrentState();
 	}
 	public List<String> gtpMovesToCurrentState() {
@@ -511,7 +394,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	void appendComment(String string) {
 		Logging.mainLogger.info("appending comment: "+string);
-		if(string!=null&&!string.isEmpty()) addProperty(currentNode(),P.C,string);
+		if(string!=null&&!string.isEmpty()) ModelTreeOps.addProperty(currentNode(),P.C,string);
 	}
 	public void sgfPassAction() {
 		state.sgfPass();
@@ -1273,11 +1156,11 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.mainLogger.info("root: "+model.root());
 		Logging.mainLogger.info("current node: "+model.currentNode());
 		Logging.mainLogger.info("children: "+model.currentNode().children());
-		model.save(new OutputStreamWriter(System.out));
+		ModelTrees.save(model,new OutputStreamWriter(System.out));
 		Logging.mainLogger.info("");
 		// if(true) return;
 		Logging.mainLogger.info("|||");
-		model.save(new OutputStreamWriter(System.out));
+		ModelTrees.save(model,new OutputStreamWriter(System.out));
 		Logging.mainLogger.info("after save.");
 		System.out.flush();
 		Logging.mainLogger.info(String.valueOf(model));
@@ -1483,9 +1366,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.mainLogger.info(String.valueOf(model.root()));
 		Logging.mainLogger.info(String.valueOf(model.root().parent()));
 		Logging.mainLogger.info(String.valueOf(model.currentNode()));
-		model.setRoot(5,5);
+		ModelTrees.setRoot(model,5,5);
 		strangeGame(model);
-		model.setRoot(5,5);
+		ModelTrees.setRoot(model,5,5);
 		int n=model.movesToGenerate();
 		Model.generateRandomMoves(model,n);
 		// randomeMovesUsingParameters(model);
@@ -1505,7 +1388,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(!color.equals(Stone.black)) {
 			Logging.mainLogger.info("expected black at A1, got "+color);
 		}
-		String expected=model.save();
+		String expected=ModelTrees.save(model);
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
 		Logging.mainLogger.info("expected: "+expected);
 		if(!color.equals(Stone.black)) {
@@ -1521,8 +1404,8 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// if(true) return;
 		// assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
-		m.restore(toReader(expected));
-		final String actual=m.save();
+		ModelTrees.restore(m,toReader(expected));
+		final String actual=ModelTrees.save(m);
 		Logging.mainLogger.info("expected: "+expected);
 		Logging.mainLogger.info("actual  : "+actual);
 	}
@@ -1531,7 +1414,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.setUpLogging();
 		Logging.setLevels(Level.OFF);
 		Model model=new Model("");
-		String sgf=model.save();
+		String sgf=ModelTrees.save(model);
 		dtrt(model);
 	}
 	public int verbosity;

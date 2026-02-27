@@ -551,6 +551,7 @@ public class GamePanel extends JPanel {
 			for(int y=0;y<board.depth();y++)
 				for(int x=0;x<board.width();x++)
 					if(board.at(x,y).equals(Stone.edge)) paintStone(g,x,y);
+			// these look the same?
 			for(int y=0;y<board.depth();y++)
 				for(int x=0;x<board.width();x++)
 					if(!board.at(x,y).equals(Stone.edge)) paintStone(g,x,y);

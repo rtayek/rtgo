@@ -6,7 +6,7 @@ import com.tayek.util.io.FileIO;
 public class FixSgf {
     void fix(File in,File out) {
         // looks like a round trip!
-        MNode root=MNode.restore(FileIO.toReader(in));
+        MNode root=SgfIo.restoreMNode(FileIO.toReader(in));
         boolean ok=MNode.save(FileIO.toWriter(out),root,null);
         if(!ok) parserLogger.severe("fix failed for: "+in);
     }

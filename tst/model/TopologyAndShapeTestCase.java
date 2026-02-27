@@ -12,7 +12,7 @@ public class TopologyAndShapeTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     private Model newModelWithRoot(Topology topology,Shape shape) {
         Model model=new Model();
-        model.setRoot(n,n,topology,shape);
+        ModelTrees.setRoot(model,n,n,topology,shape);
         assertEquals(topology,model.boardTopology());
         assertEquals(shape,model.boardShape());
         return model;

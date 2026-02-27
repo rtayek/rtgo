@@ -4,6 +4,7 @@ import java.util.*;
 import equipment.Board.*;
 import io.*;
 import model.Model;
+import model.ModelTrees;
 import com.tayek.util.core.Pair;
 public interface Board { // http://stackoverflow.com/questions/28681737/java-8-default-methods-as-traits-safe
     // make a subinterface called MutableBoard?
@@ -201,7 +202,7 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
             // get mdel out of this code
             model.setBoardTopology(Topology.normal);
             model.setBoardShape(shape);
-            model.setRoot(width,depth,topology,shape);
+            ModelTrees.setRoot(model,width,depth,topology,shape);
             // triangle?
             Board board=model.board();
             List<Point> points=topology==Topology.diamond?points=Board.getPointsForDiamondRegion(width,depth)

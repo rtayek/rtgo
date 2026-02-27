@@ -2,6 +2,7 @@ package controller;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
+import com.tayek.util.io.FileIO;
 import equipment.Board.*;
 import equipment.Point;
 import gui.*;
@@ -77,7 +78,7 @@ public class CommandLine {
             case 'o':
                 tokens=splitNext(command,1);
                 System.out.println(Arrays.asList(tokens));
-                if(tokens!=null&&tokens.length>=1) { ModelIo.restore(model,new File(tokens[0])); }
+                if(tokens!=null&&tokens.length>=1) { ModelTrees.restore(model,FileIO.toReader(new File(tokens[0]))); }
                 break;
             case 'g':
                 new Main(null,model,null);
@@ -86,7 +87,7 @@ public class CommandLine {
                 //
                 break;
             case 'n':
-                model.setRoot(9,9,Topology.normal,Shape.normal);
+                ModelTrees.setRoot(model,9,9,Topology.normal,Shape.normal);
                 break;
             case 'p':
                 print(model);
@@ -191,3 +192,4 @@ public class CommandLine {
             "T - toggle treeview.",
     };
 }
+

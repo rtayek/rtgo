@@ -19,11 +19,11 @@ public final class ModelHelper2 {
 		int depth=source.board().depth();
 		Board.Topology topology=source.board().topology();
 		Board.Shape shape=source.board().shape();
-		target.setRoot(width,depth,topology,shape);
+		ModelTrees.setRoot(target,width,depth,topology,shape);
 		target.setBoard(Board.factory.create(width,depth,topology,shape));
 	}
 	public static Model pushGTPMovesToCurrentStateDirect(Model original,boolean oneAtATime) {
-		Model model=ModelHelper.newModelWithBoardFrom(original);
+		Model model=ModelHelper.newModelWithBoardFrom(original, null);
 		// should set the board shape and topology also?
 		List<String> gtpMoves=original.gtpMovesToCurrentState();
 		boolean ok=GTPBackEnd.checkMoveCommandsDirect(model,gtpMoves,oneAtATime);
@@ -65,7 +65,7 @@ public final class ModelHelper2 {
     }
 	public static void main(String[] args) {
 		Model original=new Model();
-		original.setRoot(5,5);
+		ModelTrees.setRoot(original,5,5);
 		original.move(Stone.black,new Point());
 		original.move(Stone.white,new Point(1,1));
 		Model model=pushGTPMovesToCurrentStateDirect(original,false);

@@ -2,10 +2,10 @@ package sgf;
 import static io.IOs.*;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;
-import static com.tayek.util.io.FileIO.toReader;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
+import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
 import tree.*;
@@ -347,7 +347,7 @@ public class SgfNode {
     acdfgj
      */
     public static String preorderRouundTrip(String expectedSgf) throws IOException {
-        SgfNode games=restoreSgf(toReader(expectedSgf));
+        SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
         if(games!=null) Logging.mainLogger.info(String.valueOf(games.right));
         else Logging.mainLogger.info("'"+expectedSgf+"'");
         StringWriter stringWriter=new StringWriter();
@@ -401,7 +401,7 @@ public class SgfNode {
                 String expectedSgf=getSgfData(key);
                 expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
                 //Logging.mainLogger.info("expeced sgf "+expectedSgf);
-                SgfNode games=restoreSgf(toReader(expectedSgf));
+                SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
                 if(false) {
                     Logging.mainLogger.info(String.valueOf(key));
                     if(games!=null) if(games.right!=null) Logging.mainLogger.info(" 2");
@@ -428,7 +428,7 @@ public class SgfNode {
             Logging.mainLogger.info(String.valueOf(key));
             String expectedSgf=getSgfData(key);
             Logging.mainLogger.info(String.valueOf(expectedSgf));
-            SgfNode games=restoreSgf(toReader(expectedSgf));
+            SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
             StringWriter stringWriter=new StringWriter();
             games.saveSgf(stringWriter,standardIndent);
             String actualSgf=stringWriter.toString();
