@@ -22,39 +22,18 @@ public final class SgfIo {
     }
     private SgfIo() {}
 
+    // Independent operations
     public static SgfNode restore(Reader reader) {
         if(reader==null) return null;
         return Parser.restoreSgf(reader);
-    }
-
-    public static SgfNode restore(String sgf) {
-        return sgf!=null?restore(FileIO.toReader(sgf)):null;
     }
 
     public static MNode restoreMNode(Reader reader) {
         return MNode.restore(reader);
     }
 
-    public static MNode restoreMNode(String sgf) {
-        return sgf!=null?restoreMNode(FileIO.toReader(sgf)):null;
-    }
-
     public static MNode quietLoadMNode(Reader reader) {
         return MNode.quietLoad(reader);
-    }
-
-    public static String mNodeRoundTrip(Reader reader,MNodeSaveMode saveMode) {
-        StringWriter writer=new StringWriter();
-        mNodeRoundTrip(reader,writer,saveMode);
-        return writer.toString();
-    }
-
-    public static String save(SgfNode node,Indent indent) {
-        return saveSgfToString(node,indent);
-    }
-
-    public static String save(SgfNode node) {
-        return save(node,noIndent);
     }
 
     public static String saveSgfToString(SgfNode node,Indent indent) {
@@ -62,30 +41,6 @@ public final class SgfIo {
         StringWriter writer=new StringWriter();
         node.saveSgf(writer,indent);
         return writer.toString();
-    }
-
-    public static SgfNode saveAndRestore(SgfNode expected) {
-        return saveAndRestore(expected,new StringWriter());
-    }
-
-    public static SgfNode saveAndRestore(SgfNode expected,StringWriter stringWriter) {
-        SgfNode actualSgf=null;
-        if(expected!=null) {
-            String sgf=saveSgfToString(expected,noIndent);
-            stringWriter.append(sgf);
-            actualSgf=restore(FileIO.toReader(sgf));
-        }
-        return actualSgf;
-    }
-
-    public static String restoreAndSave(Reader reader) {
-        StringWriter stringWriter=new StringWriter();
-        restoreAndSave(reader,stringWriter);
-        return stringWriter.toString();
-    }
-
-    public static String restoreAndSave(String sgf) {
-        return sgf!=null?restoreAndSave(FileIO.toReader(sgf)):null;
     }
 
     public static SgfNode restoreAndSave(Reader reader,Writer writer) {

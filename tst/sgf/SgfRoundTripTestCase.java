@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import java.util.Collection;
 import java.util.List;
+import java.io.StringWriter;
+import com.tayek.util.io.FileIO;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -118,9 +120,12 @@ import model.ModelTrees;
 
     @Test public void testSaveMultupleGames() throws Exception {
         runIfRoundTrip(() -> {
-            Model model=ModelTrees.restoreNew(fixtureSgf());
+            Model model=new Model();
+            ModelTrees.restore(model,FileIO.toReader(fixtureSgf()));
             boolean hasMultipleGames=model.root().children().size()>1;
-            String sgfString=ModelTrees.save(model);
+            StringWriter sgfWriter=new StringWriter();
+            ModelTrees.save(model,sgfWriter);
+            String sgfString=sgfWriter.toString();
             boolean containsRTNode=sgfString.contains("RT[Tgo root]");
             // when games.right!=null ==> multiple games
             // and we end up with an RT in the sgf!
@@ -157,7 +162,9 @@ import model.ModelTrees;
 
     @Test public void testMultipleGames() throws Exception { // how does it do that?
         runIfRoundTrip(() -> {
-            String actualSgf=SgfIo.restoreAndSave(fixtureSgf());
+            StringWriter writer=new StringWriter();
+            SgfIo.restoreAndSave(FileIO.toReader(fixtureSgf()),writer);
+            String actualSgf=writer.toString();
             // assertFalse(expectedSgf.contains(P.RT.toString()));
             // why would we expect this?
         });

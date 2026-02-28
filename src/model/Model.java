@@ -12,7 +12,6 @@ import com.tayek.util.core.Et;
 import com.tayek.util.core.Histogram;
 import com.tayek.util.io.Indent;
 import com.tayek.util.io.End;
-//import org.junit.rules.ExpectedException;
 import audio.Audio;
 import controller.Command;
 import controller.GTPBackEnd;
@@ -134,7 +133,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public Model(Model model,String name) { // copy constructor
 		this.name=name;
-		String string=ModelTrees.save(model);
+		String string=saveModel(model);
 		ModelTrees.restore(this,toReader(string));
 	}
 	public static boolean canDelete(Model model) {
@@ -1388,7 +1387,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(!color.equals(Stone.black)) {
 			Logging.mainLogger.info("expected black at A1, got "+color);
 		}
-		String expected=ModelTrees.save(model);
+		String expected=saveModel(model);
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
 		Logging.mainLogger.info("expected: "+expected);
 		if(!color.equals(Stone.black)) {
@@ -1405,7 +1404,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
 		ModelTrees.restore(m,toReader(expected));
-		final String actual=ModelTrees.save(m);
+		final String actual=saveModel(m);
 		Logging.mainLogger.info("expected: "+expected);
 		Logging.mainLogger.info("actual  : "+actual);
 	}
@@ -1414,8 +1413,13 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.setUpLogging();
 		Logging.setLevels(Level.OFF);
 		Model model=new Model("");
-		String sgf=ModelTrees.save(model);
+		String sgf=saveModel(model);
 		dtrt(model);
+	}
+	private static String saveModel(Model model) {
+		StringWriter writer=new StringWriter();
+		ModelTrees.save(model,writer);
+		return writer.toString();
 	}
 	public int verbosity;
 	// move stuff like type, shape, and band to parameter

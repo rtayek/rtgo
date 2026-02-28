@@ -3,7 +3,9 @@ import io.Logging;
 import static org.junit.Assert.*;
 import static sgf.Parser.*;
 import java.util.*;
+import java.io.StringWriter;
 import com.tayek.util.core.ParameterArray;
+import com.tayek.util.io.FileIO;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -29,7 +31,7 @@ import utilities.*;
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();
-        ModelTrees.restore(original,expectedSgf);
+        ModelTrees.restore(original,FileIO.toReader(expectedSgf));
         String sendCommand=Command.tgo_send_sgf.name();
         String string=runGtpCommandString(original,sendCommand);
         Response response=Response.response(string);
@@ -64,7 +66,9 @@ import utilities.*;
         Response response=Response.response(string);
         String actualSgf=null;
         if(response.isOk()) {
-            actualSgf=ModelTrees.save(model);
+            StringWriter writer=new StringWriter();
+            ModelTrees.save(model,writer);
+            actualSgf=writer.toString();
             //actualSgf=options.remove(actualSgf);
         } else {
             // reinitialize expected

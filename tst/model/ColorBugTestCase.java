@@ -37,7 +37,7 @@ public class ColorBugTestCase {
         boolean ok=ModelTrees.save(model,FileIO.toWriter(temporaryFile));
         assertTrue(ok);
         Model actual=new Model();
-        ModelTrees.restore(model,"");
+        ModelTrees.restore(model,FileIO.toReader(""));
         fail("nyi");
         // go to the right move
         // how to test this?

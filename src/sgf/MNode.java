@@ -174,12 +174,6 @@ public class MNode {
 		}
 		return true; // for now
 	}
-	public static MNode mNodeRoundTrip(Reader reader,Writer writer) {
-		return SgfIo.mNodeRoundTrip(reader,writer,SgfIo.MNodeSaveMode.standard);
-	}
-	public static MNode mNodeDirectRoundTrip(Reader reader,Writer writer) {
-		return SgfIo.mNodeRoundTrip(reader,writer,SgfIo.MNodeSaveMode.direct);
-	}
 	public static MNode quietLoad(Reader reader) {
 		PrintStream old=System.out;
 		System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));

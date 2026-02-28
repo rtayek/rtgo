@@ -1,7 +1,7 @@
 package model;
 import utilities.MyTestWatcher;
 import io.Logging;
-import sgf.SgfTestIo;
+import com.tayek.util.io.FileIO;
 import static org.junit.Assert.*;
 import java.io.*;
 import org.junit.*;
@@ -18,13 +18,13 @@ public class SaveTestCase {
 		//model.move(Stone.white,"A2",model.board().width());
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
 		Model m=new Model("");
-		SgfTestIo.RoundTrip roundTrip=SgfTestIo.roundTrip(model,m);
-		final String expected=roundTrip.expected();
+		final String expected=saveModel(model);
 		Logging.mainLogger.info("expected: "+expected);
+		ModelTrees.restore(m,FileIO.toReader(expected));
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
 		Stone color=m.board().at(point);
 		//assertEquals(Stone.black,color);
-		final String actual=roundTrip.actual();
+		final String actual=saveModel(m);
 		Logging.mainLogger.info("actual: "+actual);
 		assertEquals(actual,expected);
 	}
@@ -34,6 +34,12 @@ public class SaveTestCase {
 	}
 	// @Test public void testA1A2restored() throws IOException {}
 	String foo="(;B[as];W[ar])";
+
+	private static String saveModel(Model model) {
+		StringWriter writer=new StringWriter();
+		ModelTrees.save(model,writer);
+		return writer.toString();
+	}
 }
 
 

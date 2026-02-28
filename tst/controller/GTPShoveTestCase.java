@@ -6,6 +6,7 @@ import io.Logging;
 import static org.junit.Assert.*;
 import static sgf.Parser.getSgfData;
 import java.util.List;
+import com.tayek.util.io.FileIO;
 import org.junit.*;
 import equipment.*;
 import model.*;
@@ -57,7 +58,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
     @Test public void testRestoreAndShoveMainLineDirect() throws Exception {
         String sgf=getSgfData("simpleWithVariations");
         Model original=new Model();
-        ModelTrees.restore(original,sgf);
+        ModelTrees.restore(original,FileIO.toReader(sgf));
         original.bottom();
         Model model=ModelHelper2.pushGTPMovesToCurrentStateDirect(original,false);
         assertTrue(model.board().isEqual(original.board()));

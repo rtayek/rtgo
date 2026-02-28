@@ -4,6 +4,7 @@ import org.junit.Rule;
 import utilities.MyTestWatcher;
 import io.Logging;
 import io.IOs;
+import io.TestIo;
 import com.tayek.util.io.FileIO;
 import static io.IOs.noIndent;
 import static io.IOs.standardIndent;
@@ -16,6 +17,7 @@ import static sgf.SgfNode.SgfOptions.*;
 import static com.tayek.util.io.FileIO.addFiles;
 import java.io.File;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -82,8 +84,10 @@ public class SgfUnitTestCase {
     @Test public void testModelRoundTrip() {
         Model original=new Model();
         Model restored=new Model();
-        SgfTestIo.RoundTrip roundTrip=SgfTestIo.roundTrip(original,restored);
-        assertEquals(roundTrip.expected(),roundTrip.actual());
+        String expected=saveModel(original);
+        ModelTrees.restore(restored,FileIO.toReader(expected));
+        String actual=saveModel(restored);
+        assertEquals(expected,actual);
     }
 
     @Test public void testLizzie() {
@@ -94,7 +98,7 @@ public class SgfUnitTestCase {
 
     @Test public void testOblong() {
         String expectedSgf=SgfHarness.loadExpectedSgf(new java.io.File("ogs/lecoblong.sgf"));
-        MNode games=SgfIo.restoreMNode(expectedSgf);
+        MNode games=SgfIo.restoreMNode(FileIO.toReader(expectedSgf));
         Model model=new Model("oblong");
         model.setRoot(games); // does this really trash everything correctly?
         model.down(0);
@@ -121,12 +125,12 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testRestoreEmpty() {
-        assertRestoresNull(SgfIo.restore(""));
+        assertRestoresNull(SgfIo.restore(FileIO.toReader("")));
     }
 
     @Test public void testSample() {
         SgfNode root=sample();
-        String expected=SgfIo.save(root,noIndent);
+        String expected=SgfIo.saveSgfToString(root,noIndent);
         Logging.mainLogger.info("sample sgf: "+expected);
         SgfHarness.assertSgfRestoreSaveStable(expected);
     }
@@ -183,13 +187,13 @@ public class SgfUnitTestCase {
         // Build properties with IDs not known to P2 to force them into extras.
         P customXX=new P("XX","1234","unknown","none",""){};
         P customYY=new P("YY","1234","unknown","none",""){};
-        SgfProperty keepRoot=SgfTestIo.property(customXX,"keepme");
-        SgfProperty keepChild=SgfTestIo.property(customYY,"alsokeep");
-        SgfProperty rootComment=SgfTestIo.property(P.C,"hello");
+        SgfProperty keepRoot=SgfIo.property(customXX,"keepme");
+        SgfProperty keepChild=SgfIo.property(customYY,"alsokeep");
+        SgfProperty rootComment=SgfIo.property(P.C,"hello");
 
         // Manually build MNode tree to avoid parser dropping unknown IDs
         MNode root=nodeWith(rootComment,keepRoot);
-        MNode child=nodeWith(root,SgfTestIo.property(P.B,"aa"),keepChild);
+        MNode child=nodeWith(root,SgfIo.property(P.B,"aa"),keepChild);
         root.children().add(child);
 
         Model model=new Model();
@@ -206,9 +210,9 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testMalformedPropertiesBecomeExtrasAndMappingIsPure() {
-        SgfProperty badMove=SgfTestIo.property(P.B,"a");
+        SgfProperty badMove=SgfIo.property(P.B,"a");
         SgfProperty emptyMove=new SgfProperty(P.W,List.of());
-        SgfProperty badSize=SgfTestIo.property(P.SZ,"x");
+        SgfProperty badSize=SgfIo.property(P.SZ,"x");
 
         MNode node=nodeWith(badMove,emptyMove,badSize);
         SgfNodeMapping mapping=mapNode(node);
@@ -440,7 +444,7 @@ public class SgfUnitTestCase {
         // hangs when ignore is remove from test go to node!
         String key="manyFacesTwoMovesAtA1AndR16";
         String sgfString=SgfHarness.loadExpectedSgf(key);
-        MNode root=SgfTestIo.quietLoadMNode(sgfString);
+        MNode root=SgfIo.quietLoadMNode(FileIO.toReader(sgfString));
         model.setRoot(root);
         if(model.board()!=null) {
             int expected=model.board().id();
@@ -486,7 +490,7 @@ public class SgfUnitTestCase {
 
     @Ignore @Test public void testKogosJosekiDictionary() throws Exception {
         withIgnoreMoveAndSetupFlags(true,() -> {
-            File file=SgfTestIo.firstExistingFile(
+            File file=SgfIo.firstExistingFile(
                     new File(Combine.pathToHere,kogoFilename),
                     new File("sgf",kogoFilename)
             );
@@ -494,7 +498,7 @@ public class SgfUnitTestCase {
                 assertTrue(kogoFilename+" not found",false);
                 return;
             }
-            boolean ok=SgfTestIo.roundTripTwiceWithLogging(file);
+            boolean ok=roundTripTwiceWithLogging(file);
             assertTrue(ok);
         });
     }
@@ -504,7 +508,7 @@ public class SgfUnitTestCase {
             List<File> files=loadStrangeFiles();
             failFast=false;
             for(File file:files) try {
-                SgfTestIo.roundTripTwiceWithLogging(file);
+                roundTripTwiceWithLogging(file);
             } catch(Exception e) {
                 parserLogger.warning(this+" caught: "+e);
             }
@@ -527,11 +531,11 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testSgfCoordinates() {
-        SgfNode expected=SgfTestIo.nodeWithProperty(P.B,"AB"); // what is AB?
+        SgfNode expected=SgfIo.nodeWithProperty(P.B,"AB"); // what is AB?
         String string=expected.sgfProperties.get(0).list().get(0);
         Point point=Coordinates.fromSgfCoordinates(string,Board.standard);
         String string2=Coordinates.toSgfCoordinates(point,Board.standard);
-        SgfNode actual=SgfTestIo.nodeWithProperty(P.B,string2);
+        SgfNode actual=SgfIo.nodeWithProperty(P.B,string2);
         assertEquals(expected,actual);
     }
 
@@ -555,7 +559,7 @@ public class SgfUnitTestCase {
     @Test public void testSentinelStructure() {
         MNode mRoot=new MNode(null);
         try {
-            mRoot.sgfProperties().add(SgfTestIo.property(P.RT,"Tgo root"));
+            mRoot.sgfProperties().add(SgfIo.property(P.RT,"Tgo root"));
         } catch(Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -610,7 +614,7 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testFinderWithSimple() {
-        SgfNode games=SgfTestIo.restoreFromKey(TestKeys.simpleWithVariations);
+        SgfNode games=SgfIo.restore(FileIO.toReader(SgfIo.loadExpectedSgf(TestKeys.simpleWithVariations)));
         SgfHarness.assertFinderMatches(games);
     }
 
@@ -641,7 +645,7 @@ public class SgfUnitTestCase {
     /*@Test*/ public void testSgfFileFromLittleGolem() {
         // Node root=quietLoad(new File("url.sgf"));
         Model model=new Model();
-        ModelTrees.restore(model,new File("url.sgf"));
+        ModelTrees.restore(model,FileIO.toReader(new File("url.sgf")));
     }
 
     private Model newModelWithRoot(int size,boolean ensureBoard) {
@@ -697,9 +701,10 @@ public class SgfUnitTestCase {
 
     private void assertCopyConstructorRoundTrip(String sgf,boolean log) {
         Model model=new Model();
-        String expected=SgfTestIo.restoreAndSave(model,sgf,"first save fails");
+        ModelTrees.restore(model,FileIO.toReader(sgf));
+        String expected=TestIo.saveToString("first save fails",writer->ModelTrees.save(model,writer));
         Model copy=new Model(model,model.name);
-        String actual=SgfTestIo.save(copy,"second save fails");
+        String actual=TestIo.saveToString("second save fails",writer->ModelTrees.save(copy,writer));
         if(log) {
             Logging.mainLogger.info("ex: "+expected);
             Logging.mainLogger.info("ac: "+actual);
@@ -710,9 +715,9 @@ public class SgfUnitTestCase {
     private void assertRoundTripHasRt(Model model,boolean expectedBefore,boolean expectedAfter) {
         boolean hasRT=ModelTrees.isSentinel(model.root());
         assertEquals("unexpected RT before round trip",expectedBefore,hasRT);
-        String sgfString=ModelTrees.save(model);
+        String sgfString=saveModel(model);
         model=new Model();
-        ModelTrees.restore(model,sgfString);
+        ModelTrees.restore(model,FileIO.toReader(sgfString));
         hasRT=ModelTrees.isSentinel(model.root());
         assertEquals("unexpected RT after round trip",expectedAfter,hasRT);
     }
@@ -723,7 +728,7 @@ public class SgfUnitTestCase {
     }
 
     private void assertMoveFlags(P id,boolean expectedMoveType,boolean expectedMove,boolean logChildren) {
-        SgfNode node=SgfTestIo.nodeWithProperty(id,"inside the brackets");
+        SgfNode node=SgfIo.nodeWithProperty(id,"inside the brackets");
         assertEquals(expectedMoveType,node.hasAMoveType);
         assertEquals(expectedMove,node.hasAMove);
         node.setFlags();
@@ -739,7 +744,7 @@ public class SgfUnitTestCase {
     }
 
     private void assertMoveFlagsOnRoot(P id,boolean expectedMoveType,boolean expectedMove) {
-        SgfNode node=SgfTestIo.nodeWithProperty(id,"inside the brackets");
+        SgfNode node=SgfIo.nodeWithProperty(id,"inside the brackets");
         assertEquals(expectedMoveType,node.hasAMoveType);
         assertEquals(expectedMove,node.hasAMove);
         MNode mNode=MNode.toGeneralTree(node);
@@ -769,8 +774,8 @@ public class SgfUnitTestCase {
         watcher.key=key;
         expectedStructureSgf=SgfHarness.loadExpectedSgf(key);
         if(expectedStructureSgf==null) { return; }
-        root1=SgfIo.restoreMNode(expectedStructureSgf);
-        root2=SgfIo.restoreMNode(expectedStructureSgf);
+        root1=SgfIo.restoreMNode(FileIO.toReader(expectedStructureSgf));
+        root2=SgfIo.restoreMNode(FileIO.toReader(expectedStructureSgf));
         MNode.label(root1,new Longs());
         MNode.label(root2,new Longs());
         list1=MakeList.toList(root1);
@@ -780,7 +785,7 @@ public class SgfUnitTestCase {
 
     private SgfNode restoreAndTraverse(SgfAcceptor acceptor) {
         ensureStructure();
-        SgfNode games=SgfIo.restore(expectedStructureSgf);
+        SgfNode games=SgfIo.restore(FileIO.toReader(expectedStructureSgf));
         if(games!=null) SgfHarness.traverse(acceptor,games);
         return games;
     }
@@ -808,7 +813,7 @@ public class SgfUnitTestCase {
                 return false;
             }
             Logging.mainLogger.warning("combined");
-            Logging.mainLogger.warning(String.valueOf(SgfIo.save(combined,standardIndent)));
+            Logging.mainLogger.warning(String.valueOf(SgfIo.saveSgfToString(combined,standardIndent)));
             Logging.mainLogger.warning("");
         } catch(Exception e) {
             Logging.mainLogger.warning("in testCombine()");
@@ -821,8 +826,14 @@ public class SgfUnitTestCase {
         return new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf");
     }
     private void assertRoundTripTwiceOrThrow(File file) throws Exception {
-        boolean ok=SgfTestIo.roundTripTwice(file);
+        boolean ok=SgfIo.roundTripTwice(FileIO.toReader(file));
         if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
+    }
+
+    private static boolean roundTripTwiceWithLogging(File file) {
+        boolean ok=SgfIo.roundTripTwice(FileIO.toReader(file));
+        if(!ok) Logging.mainLogger.info(file+" fails!");
+        return ok;
     }
 
     private static List<File> loadStrangeFiles() {
@@ -837,11 +848,11 @@ public class SgfUnitTestCase {
     }
 
     private String dtrt(Model m) {
-        String actual=SgfTestIo.restoreAndSave(m,sgf,restored->{
-            Logging.mainLogger.info("restored, root: "+restored.root().toString());
-            boolean hasRT=ModelTrees.isSentinel(restored.root());
-            assertTrue(hasRT);
-        });
+        ModelTrees.restore(m,FileIO.toReader(sgf));
+        Logging.mainLogger.info("restored, root: "+m.root().toString());
+        boolean hasRT=ModelTrees.isSentinel(m.root());
+        assertTrue(hasRT);
+        String actual=saveModel(m);
         Logging.mainLogger.info("saved: "+actual);
         return actual;
     }
@@ -854,7 +865,7 @@ public class SgfUnitTestCase {
     }
 
     private SgfNode comment(String string,SgfNode left,SgfNode right) {
-        SgfNode node=SgfTestIo.nodeWithProperty(P.C,string);
+        SgfNode node=SgfIo.nodeWithProperty(P.C,string);
         if(left==null&&right==null) return node;
         if(left!=null) left.left=node;
         else if(right!=null) right.right=node;
@@ -863,7 +874,7 @@ public class SgfUnitTestCase {
     }
 
     private void print(SgfNode node) {
-        Logging.mainLogger.info("saved sgf node "+SgfIo.save(node,noIndent));
+        Logging.mainLogger.info("saved sgf node "+SgfIo.saveSgfToString(node,noIndent));
         Logging.mainLogger.info("----------------");
     }
 
@@ -916,6 +927,12 @@ public class SgfUnitTestCase {
         String rawSgf=SgfHarness.loadExpectedSgf(key);
         return SgfHarness.prepareExpectedSgf(key,rawSgf);
     }
+
+    private static String saveModel(Model model) {
+        StringWriter writer=new StringWriter();
+        ModelTrees.save(model,writer);
+        return writer.toString();
+    }
     private interface ThrowingRunnable {
         void run() throws Exception;
     }
@@ -966,7 +983,9 @@ public class SgfUnitTestCase {
         basicModel.move(expectedMove);
         String expectedSgf=MNodeTestIo.save(basicModel.root());
         actualMove=basicModel.lastMove2();
-        String actualSgf2=SgfTestIo.mNodeRoundTrip(expectedSgf,SgfIo.MNodeSaveMode.standard);
+        StringWriter writer=new StringWriter();
+        SgfIo.mNodeRoundTrip(FileIO.toReader(expectedSgf),writer,SgfIo.MNodeSaveMode.standard);
+        String actualSgf2=writer.toString();
         assertEquals(expectedSgf,actualSgf2);
     }
 
@@ -1008,6 +1027,8 @@ public class SgfUnitTestCase {
 
     final Model sgfModel=newModelWithBoard(Board.standard);
 }
+
+
 
 
 

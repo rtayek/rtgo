@@ -456,7 +456,9 @@ public class GTPBackEnd implements Stopable {
                 ok=send(okCharacter,message.id,"");
                 break;
             case tgo_send_sgf:
-                sgfString=ModelTrees.save(model);
+                StringWriter writer=new StringWriter();
+                ModelTrees.save(model,writer);
+                sgfString=writer.toString();
                 if(useHexAscii) { sgfString=encode(sgfString); }
                 send(okCharacter,message.id,sgfString);
                 break;

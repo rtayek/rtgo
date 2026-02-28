@@ -1,5 +1,6 @@
 package sgf;
 import utilities.MyTestWatcher;
+import com.tayek.util.io.FileIO;
 import org.junit.*;
 import org.junit.runners.Parameterized;
 import utilities.TestKeys;
@@ -25,7 +26,7 @@ public abstract class AbstractSgfParserTestCase {
         return SgfHarness.restoreExpectedSgf(expectedSgf,key);
     }
     protected MNode restoreExpectedMNode() {
-        return SgfIo.restoreMNode(expectedSgf);
+        return SgfIo.restoreMNode(FileIO.toReader(expectedSgf));
     }
     @Before public void setUp() throws Exception {
         ensureKey();

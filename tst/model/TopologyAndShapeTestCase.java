@@ -1,8 +1,8 @@
 package model;
 import org.junit.Rule;
 import utilities.MyTestWatcher;
+import com.tayek.util.io.FileIO;
 import io.Logging;
-import sgf.SgfTestIo;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,13 +45,13 @@ public class TopologyAndShapeTestCase {
         Logging.mainLogger.info("topology: "+model.boardTopology());
         Logging.mainLogger.info("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
-        String expected=ModelTrees.save(model);
+        String expected=saveModel(model);
         Model m=new Model();
-        String actual=SgfTestIo.restoreAndSave(m,expected,restored->{
-            restored.ensureBoard();
-            restored.down(0); // need to execute the sgf
-            assertNotNull(restored.board());
-        });
+        ModelTrees.restore(m,FileIO.toReader(expected));
+        m.ensureBoard();
+        m.down(0); // need to execute the sgf
+        assertNotNull(m.board());
+        String actual=saveModel(m);
         assertEquals(expected,actual);
     }
     @Test public void testsetRoot() {
@@ -66,6 +66,11 @@ public class TopologyAndShapeTestCase {
     }
     @Test public void testsetRootWithHoleAndTorus() {
         assertRoot(Topology.torus,Shape.hole1,Stone.edge,false,false);
+    }
+    private static String saveModel(Model model) {
+        java.io.StringWriter writer=new java.io.StringWriter();
+        ModelTrees.save(model,writer);
+        return writer.toString();
     }
     final int n=19;
     final Board board=Board.factory.create(n,n,Topology.normal,Shape.hole1);

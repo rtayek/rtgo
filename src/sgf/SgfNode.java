@@ -316,7 +316,9 @@ public class SgfNode {
         return SgfIo.restoreAndSave(reader,writer);
     }
     public static String sgfRestoreAndSave(String expectedSgf) { //restore and save
-        return SgfIo.restoreAndSave(FileIO.toReader(expectedSgf));
+        StringWriter writer=new StringWriter();
+        SgfIo.restoreAndSave(FileIO.toReader(expectedSgf),writer);
+        return writer.toString();
     }
     // lets try to make everyone use this one
     // except for maybe a restore then a save and a restore.
@@ -325,7 +327,10 @@ public class SgfNode {
     // apr 23
     // maybe rename to restoreSave and saveRestore?
     public static SgfNode sgfSaveAndRestore(SgfNode expected,StringWriter stringWriter) {
-        return SgfIo.saveAndRestore(expected,stringWriter);
+        if(expected==null) return null;
+        String sgf=SgfIo.saveSgfToString(expected,noIndent);
+        stringWriter.append(sgf);
+        return SgfIo.restore(FileIO.toReader(sgf));
     }
     public static boolean sgfRoundTripTwice(Reader original) {
         return SgfIo.roundTripTwice(original);
