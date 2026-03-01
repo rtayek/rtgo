@@ -21,8 +21,8 @@ public class LoadExistingGameTestCase extends GameTestSupport {
         white = game.whiteFixture.backEnd.model;
     }
     @Ignore @Test public void testInit() throws InterruptedException { game.startGameThread(); game.checkStatus(); }
-    // ignoring just to clean up th eoutput
-    void restoreGame() {
+    // ignoring just to clean up the output
+    void loadGameFixture() {
         assertNotNull(game);
         game.startPlayerBackends();
         Game.loadExistinGame(file,recorder,game);
@@ -30,9 +30,9 @@ public class LoadExistingGameTestCase extends GameTestSupport {
         startGameThreadNow();
         Logging.mainLogger.info(recorder.role()+" "+black.role()+" "+white.role());
     }
-    @Test public void testLoadGame() throws InterruptedException { restoreGame(); }
+    @Test public void testLoadGame() throws InterruptedException { loadGameFixture(); }
     @Test public void test() throws InterruptedException {
-        restoreGame();
+        loadGameFixture();
         // the rest of these cases have been moved to role test case.
         assertEquals(Stone.vacant,white.board().at(point));
         white.setRole(Role.playWhite);

@@ -4,6 +4,7 @@ import utilities.MyTestWatcher;
 import com.tayek.util.io.FileIO;
 import io.Logging;
 import static org.junit.Assert.*;
+import static model.ModelTrees.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import equipment.*;
@@ -30,7 +31,7 @@ public class TopologyAndShapeTestCase {
         assertNotNull(b);
         assertEquals(expectedCenter,b.at(b.center()));
         model.move(Move2.blackMoveAtA1);
-        saveAndRestore(model);
+        doDown(model);
     }
     @Ignore @Test public void testFactory() {
         // this is failing. looks like board does not
@@ -40,14 +41,14 @@ public class TopologyAndShapeTestCase {
         // perhaps we should not be doing this (i.e. let the sgf do it)
         assertEquals(Stone.edge,board.at(board.center()));
     }
-    private void saveAndRestore(Model model) {
+    private void doDown(Model model) {
         Logging.mainLogger.info(String.valueOf(model.board().at(model.board().center())));
         Logging.mainLogger.info("topology: "+model.boardTopology());
         Logging.mainLogger.info("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
         String expected=saveModel(model);
         Model m=new Model();
-        ModelTrees.restore(m,FileIO.toReader(expected));
+        ModelTrees.restoreModel(m,FileIO.toReader(expected));
         m.ensureBoard();
         m.down(0); // need to execute the sgf
         assertNotNull(m.board());
@@ -66,11 +67,6 @@ public class TopologyAndShapeTestCase {
     }
     @Test public void testsetRootWithHoleAndTorus() {
         assertRoot(Topology.torus,Shape.hole1,Stone.edge,false,false);
-    }
-    private static String saveModel(Model model) {
-        java.io.StringWriter writer=new java.io.StringWriter();
-        ModelTrees.save(model,writer);
-        return writer.toString();
     }
     final int n=19;
     final Board board=Board.factory.create(n,n,Topology.normal,Shape.hole1);

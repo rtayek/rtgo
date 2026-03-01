@@ -7,7 +7,7 @@ public class FixSgf {
     void fix(File in,File out) {
         // looks like a round trip!
         MNode root=SgfIo.restoreMNode(FileIO.toReader(in));
-        boolean ok=MNode.save(FileIO.toWriter(out),root,null);
+        boolean ok=MNode.saveMNodes(FileIO.toWriter(out),root,null);
         if(!ok) parserLogger.severe("fix failed for: "+in);
     }
     void run(File directory) {

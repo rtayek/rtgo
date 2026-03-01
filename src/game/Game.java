@@ -32,9 +32,9 @@ public class Game {
         // no references to any back end stuff here.
         if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
-        ModelTrees.restore(recorder,FileIO.toReader(file));
+        ModelTrees.restoreModel(recorder,FileIO.toReader(file));
         StringWriter writer=new StringWriter();
-        ModelTrees.save(recorder,writer);
+        ModelTrees.saveModel(recorder,writer);
         String sgf=writer.toString();
         sgf=HexAscii.encode(sgf.getBytes());
         String receiveCommand=Command.tgo_receive_sgf.name()+" "+sgf;

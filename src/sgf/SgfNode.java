@@ -313,11 +313,11 @@ public class SgfNode {
         return true;
     }
     private static SgfNode sgfRestoreAndSave(Reader reader,Writer writer) {
-        return SgfIo.restoreAndSave(reader,writer);
+        return SgfIo.restoreAndSaveSGF(reader,writer);
     }
     public static String sgfRestoreAndSave(String expectedSgf) { //restore and save
         StringWriter writer=new StringWriter();
-        SgfIo.restoreAndSave(FileIO.toReader(expectedSgf),writer);
+        SgfIo.restoreAndSaveSGF(FileIO.toReader(expectedSgf),writer);
         return writer.toString();
     }
     // lets try to make everyone use this one
@@ -330,7 +330,7 @@ public class SgfNode {
         if(expected==null) return null;
         String sgf=SgfIo.saveSgfToString(expected,noIndent);
         stringWriter.append(sgf);
-        return SgfIo.restore(FileIO.toReader(sgf));
+        return SgfIo.restoreSGF(FileIO.toReader(sgf));
     }
     public static boolean sgfRoundTripTwice(Reader original) {
         return SgfIo.roundTripTwice(original);
@@ -352,7 +352,7 @@ public class SgfNode {
     acdfgj
      */
     public static String preorderRouundTrip(String expectedSgf) throws IOException {
-        SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
+        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
         if(games!=null) Logging.mainLogger.info(String.valueOf(games.right));
         else Logging.mainLogger.info("'"+expectedSgf+"'");
         StringWriter stringWriter=new StringWriter();
@@ -379,8 +379,8 @@ public class SgfNode {
                     String ex=getSgfData(key);
                     ex=SgfNode.options.prepareSgf(ex);
                     Logging.mainLogger.info("expected sgf "+ex);
-                    MNode mNode=MNode.restoreRedBean();
-                    String direct=MNode.saveDirectly(mNode);
+                    MNode mNode=MNode.restoreMNodesRedBean();
+                    String direct=MNode.saveMNodesDirectly(mNode);
                     Logging.mainLogger.info("direct       "+direct);
                     if(ex.equals(direct)) Logging.mainLogger.info("are equal!");
                     Node<String> string=tree.Node.reLabelCopy(redBean,i);
@@ -406,7 +406,7 @@ public class SgfNode {
                 String expectedSgf=getSgfData(key);
                 expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
                 //Logging.mainLogger.info("expeced sgf "+expectedSgf);
-                SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
+                SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
                 if(false) {
                     Logging.mainLogger.info(String.valueOf(key));
                     if(games!=null) if(games.right!=null) Logging.mainLogger.info(" 2");
@@ -433,7 +433,7 @@ public class SgfNode {
             Logging.mainLogger.info(String.valueOf(key));
             String expectedSgf=getSgfData(key);
             Logging.mainLogger.info(String.valueOf(expectedSgf));
-            SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
+            SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
             StringWriter stringWriter=new StringWriter();
             games.saveSgf(stringWriter,standardIndent);
             String actualSgf=stringWriter.toString();

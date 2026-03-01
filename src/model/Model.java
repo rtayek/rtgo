@@ -134,7 +134,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	public Model(Model model,String name) { // copy constructor
 		this.name=name;
 		String string=saveModel(model);
-		ModelTrees.restore(this,toReader(string));
+		ModelTrees.restoreModel(this,toReader(string));
 	}
 	public static boolean canDelete(Model model) {
 		return model.currentNode().parent()!=null;
@@ -1155,11 +1155,11 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.mainLogger.info("root: "+model.root());
 		Logging.mainLogger.info("current node: "+model.currentNode());
 		Logging.mainLogger.info("children: "+model.currentNode().children());
-		ModelTrees.save(model,new OutputStreamWriter(System.out));
+		ModelTrees.saveModel(model,new OutputStreamWriter(System.out));
 		Logging.mainLogger.info("");
 		// if(true) return;
 		Logging.mainLogger.info("|||");
-		ModelTrees.save(model,new OutputStreamWriter(System.out));
+		ModelTrees.saveModel(model,new OutputStreamWriter(System.out));
 		Logging.mainLogger.info("after save.");
 		System.out.flush();
 		Logging.mainLogger.info(String.valueOf(model));
@@ -1403,7 +1403,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// if(true) return;
 		// assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
-		ModelTrees.restore(m,toReader(expected));
+		ModelTrees.restoreModel(m,toReader(expected));
 		final String actual=saveModel(m);
 		Logging.mainLogger.info("expected: "+expected);
 		Logging.mainLogger.info("actual  : "+actual);
@@ -1416,9 +1416,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 		String sgf=saveModel(model);
 		dtrt(model);
 	}
-	private static String saveModel(Model model) {
+	static String saveModel(Model model) {
 		StringWriter writer=new StringWriter();
-		ModelTrees.save(model,writer);
+		ModelTrees.saveModel(model,writer);
 		return writer.toString();
 	}
 	public int verbosity;

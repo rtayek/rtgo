@@ -10,12 +10,12 @@ public final class TestIo {
         boolean write(Writer writer);
     }
     private TestIo() {}
-    public static String writeToString(WriterConsumer consumer) {
+    public static String toString(WriterConsumer consumer) {
         StringWriter writer=new StringWriter();
         consumer.write(writer);
         return writer.toString();
     }
-    public static String saveToString(String message,WriterBoolean consumer) {
+    public static String toString(String message,WriterBoolean consumer) {
         StringWriter writer=new StringWriter();
         boolean ok=consumer.write(writer);
         assertTrue(message,ok);

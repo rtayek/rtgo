@@ -101,7 +101,7 @@ import utilities.*;
 		if(e.getActionCommand().equals("Open ...")) {
 			GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(frame(),lastLoadDirectory);
 			if(selection!=null) {
-				ModelTrees.restore(model,FileIO.toReader(selection.file()));
+				ModelTrees.restoreModel(model,FileIO.toReader(selection.file()));
 				lastLoadDirectory=selection.directory();
 			}
 		}
@@ -180,7 +180,7 @@ import utilities.*;
 		TreeView myTreeView=new TreeView(null,model);
 		myTreeView.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		model.addObserver(myTreeView);
-		ModelTrees.restore(model,FileIO.toReader(new File("sgf/ff4_ex.sgf")));
+		ModelTrees.restoreModel(model,FileIO.toReader(new File("sgf/ff4_ex.sgf")));
 		return myTreeView;
 	}
 	public final Model model;

@@ -236,7 +236,7 @@ public final class ModelHelper {
     }
     public static MNode modelRoundTrip(String expectedSgf,Writer writer,ModelSaveMode saveMode) {
         if(expectedSgf==null) return null;
-        SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
+        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
         if(games==null) return null;
         if(games.right!=null) Logging.mainLogger.info(" 2 more than one game!");
         if(saveMode==ModelSaveMode.sgfNodeChecked) {
@@ -261,7 +261,7 @@ public final class ModelHelper {
     }
     private static String saveFromModelRoot(MNode root,ModelSaveMode saveMode) {
         if(saveMode==ModelSaveMode.direct) {
-            return MNode.saveDirectly(root);
+            return MNode.saveMNodesDirectly(root);
         }
         SgfNode sgfRoot=root.toBinaryTree();
         SgfNode actual=sgfRoot.left;

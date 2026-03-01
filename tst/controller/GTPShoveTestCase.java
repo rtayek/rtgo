@@ -58,7 +58,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
     @Test public void testRestoreAndShoveMainLineDirect() throws Exception {
         String sgf=getSgfData("simpleWithVariations");
         Model original=new Model();
-        ModelTrees.restore(original,FileIO.toReader(sgf));
+        ModelTrees.restoreModel(original,FileIO.toReader(sgf));
         original.bottom();
         Model model=ModelHelper2.pushGTPMovesToCurrentStateDirect(original,false);
         assertTrue(model.board().isEqual(original.board()));

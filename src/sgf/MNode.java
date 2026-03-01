@@ -152,13 +152,13 @@ public class MNode {
 			return targetFinder.ancestors.subList(index,targetFinder.ancestors.size());
 		} else return null;
 	}
-	public static MNode restore(Reader reader) {
+	public static MNode restoreMdodes(Reader reader) {
 		SgfNode games=restoreSgf(reader);
 		if(games!=null&&games.right()!=null) Logging.mainLogger.info("root has variations!");
 		MNode node=toGeneralTree(games);
 		return node;
 	}
-	public static boolean save(Writer writer,MNode root,Indent indent) {
+	public static boolean saveMNodes(Writer writer,MNode root,Indent indent) {
 		// this fails to save if there are variations on the *first* move!
 		// seems like it fails if the are any variations!
 		// was failing because we did not add the extra root node.
@@ -174,10 +174,10 @@ public class MNode {
 		}
 		return true; // for now
 	}
-	public static MNode quietLoad(Reader reader) {
+	public static MNode restoreMdodesQuietly(Reader reader) {
 		PrintStream old=System.out;
 		System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
-		MNode root=MNode.restore(reader);
+		MNode root=MNode.restoreMdodes(reader);
 		System.out.close();
 		System.setOut(old);
 		return root;
@@ -185,7 +185,7 @@ public class MNode {
 	private static MNode quietLoad(File file) {
 		Logging.mainLogger.info("loading: "+file);
 		Reader reader=FileIO.toReader(file);
-		MNode root=quietLoad(reader);
+		MNode root=restoreMdodesQuietly(reader);
 		return root;
 	}
 	@Override public String toString() {
@@ -210,36 +210,36 @@ public class MNode {
 			stringBuffer.append(i.next().toString());
 		return stringBuffer.toString();
 	}
-	private static void saveDirectly_(Writer writer,MNode root,Indent indent) throws IOException {
+	private static void saveMNodesDirectly_(Writer writer,MNode root,Indent indent) throws IOException {
 		if(root!=null) {
 			writer.write(toString(root));
 			ArrayList<MNode> children=root.children;
 			int n=children.size();
 			for(int i=0;i<children.size();++i) {
 				if(n>1) writer.write(indent.indent()+'(');
-				saveDirectly_(writer,children.get(i),indent);
+				saveMNodesDirectly_(writer,children.get(i),indent);
 				if(n>1) writer.write(indent.indent()+')');
 			}
 		}
 		return;
 	}
-	public static void saveDirectly(Writer writer,MNode root,Indent indent) throws IOException {
+	public static void saveMNodesDirectly(Writer writer,MNode root,Indent indent) throws IOException {
 		if(root==null) return;
 		if(indent==null) indent=new Indent(IOs.standardIndent);
 		writer.write(indent.indent()+'(');
-		saveDirectly_(writer,root,indent);
+		saveMNodesDirectly_(writer,root,indent);
 		writer.write(indent.indent()+')');
 	}
-	public static MNode restoreRedBean() {
+	public static MNode restoreMNodesRedBean() {
 		String expectedSgf=Parser.sgfExamleFromRedBean;
-		MNode mNode=restore(toReader(expectedSgf));
+		MNode mNode=restoreMdodes(toReader(expectedSgf));
 		return mNode;
 	}
-	public static String saveDirectly(MNode mNode) {
+	public static String saveMNodesDirectly(MNode mNode) {
 		StringWriter stringWriter=new StringWriter();
 		for(MNode child:mNode.children) // save all of the games
 			try {
-				saveDirectly(stringWriter,child,noIndent);
+				saveMNodesDirectly(stringWriter,child,noIndent);
 			} catch(IOException e) {
 				Logging.mainLogger.info("caught: "+e);
 			}
@@ -255,20 +255,20 @@ public class MNode {
 	public static void main(String[] args) throws IOException {
 		Logging.mainLogger.info(String.valueOf(Init.first));
 		if(true) {
-			MNode mNode=restoreRedBean();
-			String saved=saveDirectly(mNode);
+			MNode mNode=restoreMNodesRedBean();
+			String saved=saveMNodesDirectly(mNode);
 			Logging.mainLogger.info("saved directly: "+saved);
 			return;
 		}
 		// lookAtRoot();
 		String oneGame="(;GM[1];B[as];B[at])";
 		Logging.mainLogger.info(String.valueOf(oneGame));
-		MNode root=MNode.restore(toReader(oneGame));
-		boolean ok=MNode.save(new PrintWriter(System.out),root,standardIndent);
+		MNode root=MNode.restoreMdodes(toReader(oneGame));
+		boolean ok=MNode.saveMNodes(new PrintWriter(System.out),root,standardIndent);
 		String expected=getSgfData("smartgo43");
 		Logging.mainLogger.info(String.valueOf(expected));
-		root=MNode.restore(toReader(expected));
-		ok=MNode.save(new PrintWriter(System.out),root,standardIndent);
+		root=MNode.restoreMdodes(toReader(expected));
+		ok=MNode.saveMNodes(new PrintWriter(System.out),root,standardIndent);
 	}
 	public boolean hasAMove() {
 		return hasAMove;

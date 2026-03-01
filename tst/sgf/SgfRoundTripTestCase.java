@@ -121,10 +121,10 @@ import model.ModelTrees;
     @Test public void testSaveMultupleGames() throws Exception {
         runIfRoundTrip(() -> {
             Model model=new Model();
-            ModelTrees.restore(model,FileIO.toReader(fixtureSgf()));
+            ModelTrees.restoreModel(model,FileIO.toReader(fixtureSgf()));
             boolean hasMultipleGames=model.root().children().size()>1;
             StringWriter sgfWriter=new StringWriter();
-            ModelTrees.save(model,sgfWriter);
+            ModelTrees.saveModel(model,sgfWriter);
             String sgfString=sgfWriter.toString();
             boolean containsRTNode=sgfString.contains("RT[Tgo root]");
             // when games.right!=null ==> multiple games
@@ -163,7 +163,7 @@ import model.ModelTrees;
     @Test public void testMultipleGames() throws Exception { // how does it do that?
         runIfRoundTrip(() -> {
             StringWriter writer=new StringWriter();
-            SgfIo.restoreAndSave(FileIO.toReader(fixtureSgf()),writer);
+            SgfIo.restoreAndSaveSGF(FileIO.toReader(fixtureSgf()),writer);
             String actualSgf=writer.toString();
             // assertFalse(expectedSgf.contains(P.RT.toString()));
             // why would we expect this?

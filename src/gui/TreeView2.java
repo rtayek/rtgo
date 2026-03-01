@@ -26,7 +26,7 @@ import utilities.MyJApplet;
         model.addObserver(myTreeView);
         //model.restore(IO.toReader(new File("sgf/ff4.sgf")));
         StringReader stringReader=new StringReader("(;C[frog])");
-        ModelTrees.restore(model,stringReader);
+        ModelTrees.restoreModel(model,stringReader);
         return myTreeView;
     }
     public static void main(String[] args) { TreeView myTreeView=TreeView2.simple2(); }

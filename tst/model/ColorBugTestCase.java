@@ -34,10 +34,10 @@ public class ColorBugTestCase {
         }
         File temporaryFile=File.createTempFile("tgo-","sgf");
         temporaryFile.deleteOnExit();
-        boolean ok=ModelTrees.save(model,FileIO.toWriter(temporaryFile));
+        boolean ok=ModelTrees.saveModel(model,FileIO.toWriter(temporaryFile));
         assertTrue(ok);
         Model actual=new Model();
-        ModelTrees.restore(model,FileIO.toReader(""));
+        ModelTrees.restoreModel(model,FileIO.toReader(""));
         fail("nyi");
         // go to the right move
         // how to test this?

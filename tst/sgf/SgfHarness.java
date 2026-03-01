@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 import static sgf.SgfNode.SgfOptions.containsQuotedControlCharacters;
 import static com.tayek.util.core.Misc.implies;
 import com.tayek.util.io.FileIO;
+import static sgf.SgfIo.*;
+import static model.ModelTrees.*;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ public final class SgfHarness {
 
     static SgfNode restoreExpectedSgf(String expectedSgf,Object key,boolean checkDelimiters) {
         if(checkDelimiters) assertSgfDelimiters(expectedSgf,key);
-        return SgfIo.restore(FileIO.toReader(expectedSgf));
+        return SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
     }
 
     static SgfNode assertParse(Object key,String expectedSgf) {
@@ -121,14 +123,14 @@ public final class SgfHarness {
 
     static void assertSgfSaveAndRestore(Object key,String expectedSgf) {
         assertNoLineFeeds(expectedSgf);
-        SgfNode expected=SgfIo.restore(FileIO.toReader(expectedSgf));
-        SgfNode actualSgf=saveAndRestore(expected);
+        SgfNode expected=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
+        SgfNode actualSgf=saveAndRestoreSGF(expected);
         if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));
     }
 
     static void assertSgfRoundTrip(Object key,String expectedSgf) {
         if(expectedSgf==null) return;
-        String actualSgf=restoreAndSaveToString(expectedSgf);
+        String actualSgf=restoreAndSaveSGF(expectedSgf);
         actualSgf=prepareSgf(actualSgf);
         if(actualSgf.length()==expectedSgf.length()+1) if(actualSgf.endsWith(")")) {
             Logging.mainLogger.info(key+"removing extra ')' "+actualSgf.length());
@@ -146,7 +148,8 @@ public final class SgfHarness {
 
     static void assertSgfCannonical(Object key,String expectedSgf) {
         assertNoLineFeeds(expectedSgf);
-        assertSgfRestoreSaveStable(expectedSgf,key);
+        String[] actual=restoreAndSaveTwice(expectedSgf);
+		assertEquals(key.toString(),actual[0],actual[1]);
     }
 
     static void assertMNodeRoundTrip(Object key,String expectedSgf,SgfIo.MNodeSaveMode saveMode,boolean logExpected) {
@@ -159,12 +162,12 @@ public final class SgfHarness {
 
     // Model round-trip support
     static void assertModelRestoreAndSave(Object key,String expectedSgf) {
-        Model model=newModel("");
+        Model model=new Model("");
         assertModelRestoreAndSave(key,expectedSgf,model);
     }
 
     static void assertModelRestoreAndSave(Object key,String expectedSgf,Model model) {
-        ModelTrees.restore(model,FileIO.toReader(expectedSgf));
+        ModelTrees.restoreModel(model,FileIO.toReader(expectedSgf));
         String actualSgf=saveModel(model);
         assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
@@ -192,22 +195,24 @@ public final class SgfHarness {
     }
 
     static void assertSgfRestoreAndSave(Object key,String expectedSgf) {
-        String actualSgf=restoreAndSaveToString(expectedSgf);
+        String actualSgf=restoreAndSaveSGF(expectedSgf);
         assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
     static void assertModelRestoreAndSaveWithExplicitModel(Object key,String expectedSgf) {
-        Model model=newModel();
+        Model model=new Model();
         Logging.mainLogger.info("ex: "+expectedSgf);
-        ModelTrees.restore(model,FileIO.toReader(expectedSgf));
-        String actualSgf=TestIo.saveToString(key.toString(),writer->ModelTrees.save(model,writer));
+        ModelTrees.restoreModel(model,FileIO.toReader(expectedSgf));
+        String actualSgf=TestIo.toString(key.toString(),writer->ModelTrees.saveModel(model,writer));
         actualSgf=SgfNode.options.removeUnwanted(actualSgf);
         assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
     static void assertModelSaveFromMNode(Object key,String expectedSgf,MNode root) {
-        Model model=newModelWithRoot(root);
-        String actualSgf=TestIo.saveToString(key.toString(),writer->ModelTrees.save(model,writer));
+        Model model1=new Model();
+		model1.setRoot(root);
+		Model model=model1;
+        String actualSgf=TestIo.toString(key.toString(),writer->ModelTrees.saveModel(model,writer));
         assertPreparedRoundTrip(key,expectedSgf,actualSgf);
     }
 
@@ -222,18 +227,24 @@ public final class SgfHarness {
         }
     }
 
-    private static String restoreAndSavePrepared(String sgf) {
-        Model model=restoreNewModel(sgf);
+    static String restoreAndSavePrepared(String sgf) {
+        Model model1=new Model();
+		ModelTrees.restoreModel(model1,FileIO.toReader(sgf));
+		Model model=model1;
         String saved=saveModel(model);
         return prepareActual(saved);
     }
 
-    private static boolean checkBoardInRoot(Object key,String sgf) {
+    static boolean checkBoardInRoot(Object key,String sgf) {
         // move this?
         if(key==null) { Logging.mainLogger.info("key is null!"); return true; }
-        Model original=restoreNewModel(sgf);
+		Model model1=new Model();
+		ModelTrees.restoreModel(model1,FileIO.toReader(sgf));
+        Model original=model1;
         boolean hasABoard=original.board()!=null;
-        Model model=restoreNewModel(sgf);
+		Model model2=new Model();
+		ModelTrees.restoreModel(model2,FileIO.toReader(sgf));
+        Model model=model2;
         if(model.board()==null); // Logging.mainLogger.info("model has no board!");
         else Logging.mainLogger.info("model has a board!");
         Navigate.down.do_(model);
@@ -241,61 +252,14 @@ public final class SgfHarness {
         return hasABoard;
     }
 
-    static void assertSgfRestoreSaveStable(String sgf,Object key) {
-        String[] actual=restoreAndSaveTwice(sgf);
-        assertEquals(key.toString(),actual[0],actual[1]);
-    }
-
-    static void assertSgfRestoreSaveStable(String sgf) {
-        String[] actual=restoreAndSaveTwice(sgf);
-        assertEquals(actual[0],actual[1]);
-    }
-
-    private static Model newModel() {
-        return new Model();
-    }
-
-    private static Model newModel(String name) {
-        return new Model(name);
-    }
-
-    private static Model newModelWithRoot(MNode root) {
-        Model model=newModel();
-        model.setRoot(root);
-        return model;
-    }
-
-    private static String[] restoreAndSaveTwice(String sgf) {
-        String actual=restoreAndSaveToString(sgf);
-        String actual2=restoreAndSaveToString(actual);
+    static String[] restoreAndSaveTwice(String sgf) {
+        String actual=restoreAndSaveSGF(sgf);
+        String actual2=restoreAndSaveSGF(actual);
         return new String[] {actual,actual2};
     }
 
-    private static String restoreAndSaveToString(String sgf) {
-        StringWriter writer=new StringWriter();
-        SgfIo.restoreAndSave(FileIO.toReader(sgf),writer);
-        return writer.toString();
-    }
 
-    private static SgfNode saveAndRestore(SgfNode expected) {
-        if(expected==null) return null;
-        String sgf=SgfIo.saveSgfToString(expected,IOs.noIndent);
-        return SgfIo.restore(FileIO.toReader(sgf));
-    }
-
-    private static String saveModel(Model model) {
-        StringWriter writer=new StringWriter();
-        ModelTrees.save(model,writer);
-        return writer.toString();
-    }
-
-    private static Model restoreNewModel(String sgf) {
-        Model model=new Model();
-        ModelTrees.restore(model,FileIO.toReader(sgf));
-        return model;
-    }
-
-    private static String modelRoundTripToString(String sgf,ModelSaveMode saveMode) {
+    static String modelRoundTripToString(String sgf,ModelSaveMode saveMode) {
         StringWriter writer=new StringWriter();
         model.ModelHelper.modelRoundTrip(FileIO.toReader(sgf),writer,saveMode);
         return writer.toString();

@@ -452,12 +452,12 @@ public class GTPBackEnd implements Stopable {
                 Logging.mainLogger.config("received encoded sgf: "+sgfString);
                 if(useHexAscii) sgfString=decodeToString(sgfString);
                 Logging.mainLogger.config("decoded sgf: "+sgfString);
-                ModelTrees.restore(model,FileIO.toReader(sgfString));
+                ModelTrees.restoreModel(model,FileIO.toReader(sgfString));
                 ok=send(okCharacter,message.id,"");
                 break;
             case tgo_send_sgf:
                 StringWriter writer=new StringWriter();
-                ModelTrees.save(model,writer);
+                ModelTrees.saveModel(model,writer);
                 sgfString=writer.toString();
                 if(useHexAscii) { sgfString=encode(sgfString); }
                 send(okCharacter,message.id,sgfString);

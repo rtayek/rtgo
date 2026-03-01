@@ -160,7 +160,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener {
 		Model model=new Model();
 		if(startWithFile!=null) {
 			Logging.mainLogger.info("restoring: "+startWithFile);
-			ModelTrees.restore(model,FileIO.toReader(startWithFile));
+			ModelTrees.restoreModel(model,FileIO.toReader(startWithFile));
 			Logging.mainLogger.info("afer restore board is: "+model.board());
 		}
 		main=new Main(null,model,useTextView?textView:null);

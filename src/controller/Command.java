@@ -56,7 +56,7 @@ public enum Command { // should implement some interface? (probably)
     public static void doTGOSend(String key) {
         String expectedSgf=Parser.getSgfData(key);
         Model original=new Model();
-        ModelTrees.restore(original,FileIO.toReader(expectedSgf));
+        ModelTrees.restoreModel(original,FileIO.toReader(expectedSgf));
         original.bottom();
         String command=Command.tgo_send_sgf.name();
         String response=null;

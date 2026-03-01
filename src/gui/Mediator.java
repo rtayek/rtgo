@@ -223,7 +223,7 @@ class Mediator implements Observer,ActionListener {
 			GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(parent,lastLoadDirectory);
 			if(selection!=null) {
 				File file=selection.file();
-				ModelTrees.restore(model,FileIO.toReader(file));
+				ModelTrees.restoreModel(model,FileIO.toReader(file));
 				// maybe here is where i can check for my root node?
 				// it would be in the first child.
 				String comment="from: "+file;
@@ -247,7 +247,7 @@ class Mediator implements Observer,ActionListener {
 			GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseSaveSgf(parent,lastSaveDirectory);
 			if(selection!=null) {
 				File file=Model.insureExtension(selection.file(),Model.desiredExtension);
-				if(!ModelTrees.save(model,FileIO.toWriter(file))) {
+				if(!ModelTrees.saveModel(model,FileIO.toWriter(file))) {
 					Logging.mainLogger.warning(model.name+" "+"can not save to: "+file);
 				}
 				lastSaveDirectory=file.getParentFile();

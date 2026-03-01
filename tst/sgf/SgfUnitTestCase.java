@@ -85,7 +85,7 @@ public class SgfUnitTestCase {
         Model original=new Model();
         Model restored=new Model();
         String expected=saveModel(original);
-        ModelTrees.restore(restored,FileIO.toReader(expected));
+        ModelTrees.restoreModel(restored,FileIO.toReader(expected));
         String actual=saveModel(restored);
         assertEquals(expected,actual);
     }
@@ -121,18 +121,19 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testRestoreNullReader() {
-        assertRestoresNull(SgfIo.restore((Reader)null));
+        assertRestoresNull(SgfIo.restoreSGF((Reader)null));
     }
 
     @Test public void testRestoreEmpty() {
-        assertRestoresNull(SgfIo.restore(FileIO.toReader("")));
+        assertRestoresNull(SgfIo.restoreSGF(FileIO.toReader("")));
     }
 
     @Test public void testSample() {
         SgfNode root=sample();
         String expected=SgfIo.saveSgfToString(root,noIndent);
         Logging.mainLogger.info("sample sgf: "+expected);
-        SgfHarness.assertSgfRestoreSaveStable(expected);
+        String[] actual=SgfHarness.restoreAndSaveTwice(expected);
+		assertEquals(actual[0],actual[1]);
     }
 
     @Test public void testNybble() {
@@ -421,7 +422,7 @@ public class SgfUnitTestCase {
     @Test public void testSave() {
         File file=new File("tmp/saved.sgf");
         if(file.exists()) file.delete();
-        boolean ok=ModelTrees.save(model,FileIO.toWriter(file));
+        boolean ok=ModelTrees.saveModel(model,FileIO.toWriter(file));
         assertTrue(ok);
         assertTrue(file.exists());
     }
@@ -614,7 +615,7 @@ public class SgfUnitTestCase {
     }
 
     @Test public void testFinderWithSimple() {
-        SgfNode games=SgfIo.restore(FileIO.toReader(SgfIo.loadExpectedSgf(TestKeys.simpleWithVariations)));
+        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(SgfIo.loadExpectedSgf(TestKeys.simpleWithVariations)));
         SgfHarness.assertFinderMatches(games);
     }
 
@@ -645,7 +646,7 @@ public class SgfUnitTestCase {
     /*@Test*/ public void testSgfFileFromLittleGolem() {
         // Node root=quietLoad(new File("url.sgf"));
         Model model=new Model();
-        ModelTrees.restore(model,FileIO.toReader(new File("url.sgf")));
+        ModelTrees.restoreModel(model,FileIO.toReader(new File("url.sgf")));
     }
 
     private Model newModelWithRoot(int size,boolean ensureBoard) {
@@ -701,10 +702,10 @@ public class SgfUnitTestCase {
 
     private void assertCopyConstructorRoundTrip(String sgf,boolean log) {
         Model model=new Model();
-        ModelTrees.restore(model,FileIO.toReader(sgf));
-        String expected=TestIo.saveToString("first save fails",writer->ModelTrees.save(model,writer));
+        ModelTrees.restoreModel(model,FileIO.toReader(sgf));
+        String expected=TestIo.toString("first save fails",writer->ModelTrees.saveModel(model,writer));
         Model copy=new Model(model,model.name);
-        String actual=TestIo.saveToString("second save fails",writer->ModelTrees.save(copy,writer));
+        String actual=TestIo.toString("second save fails",writer->ModelTrees.saveModel(copy,writer));
         if(log) {
             Logging.mainLogger.info("ex: "+expected);
             Logging.mainLogger.info("ac: "+actual);
@@ -717,7 +718,7 @@ public class SgfUnitTestCase {
         assertEquals("unexpected RT before round trip",expectedBefore,hasRT);
         String sgfString=saveModel(model);
         model=new Model();
-        ModelTrees.restore(model,FileIO.toReader(sgfString));
+        ModelTrees.restoreModel(model,FileIO.toReader(sgfString));
         hasRT=ModelTrees.isSentinel(model.root());
         assertEquals("unexpected RT after round trip",expectedAfter,hasRT);
     }
@@ -785,7 +786,7 @@ public class SgfUnitTestCase {
 
     private SgfNode restoreAndTraverse(SgfAcceptor acceptor) {
         ensureStructure();
-        SgfNode games=SgfIo.restore(FileIO.toReader(expectedStructureSgf));
+        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedStructureSgf));
         if(games!=null) SgfHarness.traverse(acceptor,games);
         return games;
     }
@@ -848,7 +849,7 @@ public class SgfUnitTestCase {
     }
 
     private String dtrt(Model m) {
-        ModelTrees.restore(m,FileIO.toReader(sgf));
+        ModelTrees.restoreModel(m,FileIO.toReader(sgf));
         Logging.mainLogger.info("restored, root: "+m.root().toString());
         boolean hasRT=ModelTrees.isSentinel(m.root());
         assertTrue(hasRT);
@@ -930,7 +931,7 @@ public class SgfUnitTestCase {
 
     private static String saveModel(Model model) {
         StringWriter writer=new StringWriter();
-        ModelTrees.save(model,writer);
+        ModelTrees.saveModel(model,writer);
         return writer.toString();
     }
     private interface ThrowingRunnable {
@@ -981,7 +982,7 @@ public class SgfUnitTestCase {
         basicModel.move(Move2.blackMoveAtA1);
         moves=basicModel.moves();
         basicModel.move(expectedMove);
-        String expectedSgf=MNodeTestIo.save(basicModel.root());
+        String expectedSgf=TestIo.toString("save fails",writer1->MNode.saveMNodes(writer1,basicModel.root(),null));
         actualMove=basicModel.lastMove2();
         StringWriter writer=new StringWriter();
         SgfIo.mNodeRoundTrip(FileIO.toReader(expectedSgf),writer,SgfIo.MNodeSaveMode.standard);

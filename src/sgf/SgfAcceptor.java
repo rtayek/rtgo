@@ -117,11 +117,11 @@ class Traverser {
         File dir=new File(sgfPath);
         Logging.mainLogger.info("||||");
         File file=new File(dir,"1635215-056-rtayek-Sighris.sgf");
-        SgfNode games=SgfIo.restore(FileIO.toReader(file));
+        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(file));
         traverser.visit(games);
         Logging.mainLogger.info("||||");
         String sgfString=getSgfData("oneMoveAtA1");
-        games=SgfIo.restore(FileIO.toReader(sgfString));
+        games=SgfIo.restoreSGF(FileIO.toReader(sgfString));
         traverser.visit(games);
     }
     SgfAcceptor acceptor;

@@ -20,7 +20,7 @@ public class SgfFiles {
                 Logging.mainLogger.info(" bad parentheses: "+p);
                 throw new RuntimeException(key+" bad parentheses: "+p);
             }
-            SgfNode games=SgfIo.restore(FileIO.toReader(expectedSgf));
+            SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
             games.preorderCheckFlags();
             String s="";
             if(games.hasASetupType) s+='S';

@@ -18,7 +18,7 @@ public class NavigateTestCase {
     @Test public void testExample() {
         String filename="ff4_ex.sgf";
         File file=new File("sgf",filename);
-        ModelTrees.restore(model,FileIO.toReader(file));
+        ModelTrees.restoreModel(model,FileIO.toReader(file));
         for(Navigate navigate:Navigate.values()) {
             Boolean expected=navigate.equals(down)||navigate.equals(bottom);
             assertEquals(filename,expected,navigate.canDo(model));
@@ -27,7 +27,7 @@ public class NavigateTestCase {
     @Test public void testExampleAfterOneDown() {
         String filename="ff4_ex.sgf";
         File file=new File(Parser.sgfPath,filename);
-        ModelTrees.restore(model,FileIO.toReader(file));
+        ModelTrees.restoreModel(model,FileIO.toReader(file));
         down.do_(model);
         Boolean canDo=up.canDo(model);
         assertEquals(Boolean.TRUE,canDo);

@@ -5,6 +5,7 @@ import static sgf.Parser.getSgfData;
 import java.io.*;
 import org.junit.*;
 import equipment.*;
+import io.TestIo;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
 import sgf.*;
@@ -17,9 +18,9 @@ public class IllegalMoveTestCase {
     @Test public void testA1A2x() throws IOException {
         model.move(Stone.black,"A1",model.board().width());
         // what does using current node here mean?
-        MNodeTestIo.save(model.currentNode());
+        TestIo.toString("save fails",writer->MNode.saveMNodes(writer,model.currentNode(),null));
         model.move(Stone.black,"A2",model.board().width());
-        MNodeTestIo.save(model.currentNode());
+        TestIo.toString("save fails",writer1->MNode.saveMNodes(writer1,model.currentNode(),null));
         model.up();
     }
     @Test public void testIsLegalMoveOnOccupoedPoint() {

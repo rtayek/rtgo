@@ -31,7 +31,7 @@ import utilities.*;
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();
-        ModelTrees.restore(original,FileIO.toReader(expectedSgf));
+        ModelTrees.restoreModel(original,FileIO.toReader(expectedSgf));
         String sendCommand=Command.tgo_send_sgf.name();
         String string=runGtpCommandString(original,sendCommand);
         Response response=Response.response(string);
@@ -67,7 +67,7 @@ import utilities.*;
         String actualSgf=null;
         if(response.isOk()) {
             StringWriter writer=new StringWriter();
-            ModelTrees.save(model,writer);
+            ModelTrees.saveModel(model,writer);
             actualSgf=writer.toString();
             //actualSgf=options.remove(actualSgf);
         } else {
