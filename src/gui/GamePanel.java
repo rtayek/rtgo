@@ -349,7 +349,7 @@ public class GamePanel extends JPanel {
 		return Coordinates.toBoardCoordinates(screen,pUpperLeft,dp,depth);
 	}
 	private Point toModelBoardPoint(Point displayedBoardPoint) {
-		Point modelBoardPoint=new Point(mediator.model.offsetInverseX(displayedBoardPoint.x),mediator.model.offsetInverseY(displayedBoardPoint.y));
+		Point modelBoardPoint=new Point(offsetInverseX(displayedBoardPoint.x),offsetInverseY(displayedBoardPoint.y));
 		if(board!=null&&board.topology()==Topology.torus) {
 			modelBoardPoint.x=board.moduloWidth(modelBoardPoint.x);
 			modelBoardPoint.y=board.moduloDepth(modelBoardPoint.y);
@@ -521,7 +521,7 @@ public class GamePanel extends JPanel {
 		if(board.width()-band<=x&&x<board.width()) paintBandStone(g,stone,index,x-board.width(),y,paintMoveNumber);
 	}
 	private void paintStone(Graphics g,int x,int y) {
-		int xO=mediator.model.offsetX(x),yO=mediator.model.offsetY(y);
+		int xO=offsetX(x),yO=offsetY(y);
 		xO=board.moduloWidth(xO);
 		yO=board.moduloDepth(yO);
 		Stone stone=board.at(x,y);
@@ -607,7 +607,30 @@ public class GamePanel extends JPanel {
 		g.drawString(string,x,y);
 		g.setFont(old);
 	}
-	private final Mediator mediator;
+	public void resetOffset() {
+		xOffset=yOffset=0;
+	}
+	public void offset(int x,int y) {
+		xOffset+=x;
+		yOffset+=y;
+	}
+	public int offsetX(int x) {
+		if(board==null) return x;
+		return x+xOffset;
+	}
+	public int offsetInverseX(int x) {
+		if(board==null) return x;
+		return x-xOffset;
+	}
+	public int offsetY(int y) {
+		if(board==null) return y;
+		return y+yOffset;
+	}
+	public int offsetInverseY(int y) {
+		if(board==null) return y;
+		return y-yOffset;
+	}
+	private int xOffset,yOffset;	private final Mediator mediator;
 	private /* final */ Board board;
 	private int boardWidth,boardDepth;
 	private double lineWidth;

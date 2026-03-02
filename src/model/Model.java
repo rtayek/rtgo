@@ -1007,30 +1007,6 @@ public class Model extends Observable { // model of a go game or problem forrest
 		else extension=name.substring(i+1).toLowerCase();
 		return extension;
 	}
-	public void resetOffset() {
-		xOffset=yOffset=0;
-	}
-	public void offset(int x,int y) {
-		xOffset+=x;
-		yOffset+=y;
-		Logging.mainLogger.fine(name+" "+"offset "+xOffset+" "+yOffset);
-	}
-	public int offsetX(int x) {
-		if(board()==null) return x;
-		return x+xOffset;
-	}
-	public int offsetInverseX(int x) {
-		if(board()==null) return x;
-		return x-xOffset;
-	}
-	public int offsetY(int y) {
-		if(board()==null) return y;
-		return y+yOffset;
-	}
-	public int offsetInverseY(int y) {
-		if(board()==null) return y;
-		return y-yOffset;
-	}
 	public int prisoners(Stone color) {
 		switch(color) {
 			case black:
@@ -1311,7 +1287,8 @@ public class Model extends Observable { // model of a go game or problem forrest
 			moves--;
 			toggleTurn();
 		}
-		long hash(Board board) { // we may need to add prisoner counts and/or whose turn it is tp move.
+		long hash(Board board) { // we may need to add prisoner counts and/or
+									// whose turn it is tp move.
 			// does this belong in the board class?
 			long hash=0;
 			for(int x=0;x<board.width();x++)
@@ -1433,10 +1410,6 @@ public class Model extends Observable { // model of a go game or problem forrest
 	// or we can get the current values from the parameters. we are doing this
 	// now.
 	// 11/7/22 maybe getting topologu and shape from parametres is a bad idea.
-	private int xOffset,yOffset; // maybe should be in state as it is only used
-	// by the view?
-	// it does belong to the view, but where else can it go?
-	// maybe in belongs in game panel.
 	public GTPBackEnd gtp; // moved from mediator for command line.
 	private State state=new State();
 	/*private*/ Stack<State> stack=new Stack<>();

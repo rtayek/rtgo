@@ -67,27 +67,27 @@ public class SouthPanels {
                                 // maybe use the fact that some of the enum names are the same
                                 case scroll:
                                     buttons.enableAll(mediator);
-                                    mediator.model.resetOffset();
+                                    mediator.gamePanel.resetOffset();
                                     mediator.gamePanel.repaint();
                                     break;
                                 case reset:
-                                    mediator.model.resetOffset();
+                                    mediator.gamePanel.resetOffset();
                                     mediator.gamePanel.repaint();
                                     break;
                                 case up:
-                                    mediator.model.offset(0,1);
+                                    mediator.gamePanel.offset(0,1);
                                     mediator.gamePanel.repaint();
                                     break;
                                 case down:
-                                    mediator.model.offset(0,-1);
+                                    mediator.gamePanel.offset(0,-1);
                                     mediator.gamePanel.repaint();
                                     break;
                                 case left:
-                                    mediator.model.offset(-1,0);
+                                    mediator.gamePanel.offset(-1,0);
                                     mediator.gamePanel.repaint();
                                     break;
                                 case right:
-                                    mediator.model.offset(1,0);
+                                    mediator.gamePanel.offset(1,0);
                                     mediator.gamePanel.repaint();
                                     break;
                                 default:

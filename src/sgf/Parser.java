@@ -214,7 +214,7 @@ public class Parser {
 		if(!ok) throw new Exception("test fails");
 	}
 	public static Collection<Object> sgfDataKeySet() {
-		return new ArrayList<>(Parser.statocSgfData.keySet());
+		return new ArrayList<>(Parser.staticSgfData.keySet());
 	}
 	private static void collectSgfFiles(Set<Object> objects,File[] files) {
 		if(files!=null) {
@@ -260,7 +260,7 @@ public class Parser {
 		String sgf=null;
 		if(key==null) throw new RuntimeException(key+" key is null!");
 		if(key==null) return null;
-		if(key instanceof String) sgf=statocSgfData.get(key);
+		if(key instanceof String) sgf=staticSgfData.get(key);
 		else if(key instanceof File) sgf=FileIO.fromFile((File)key);
 		else {
 			Logging.mainLogger.info(key+" is not a string or a file!");
@@ -415,36 +415,36 @@ public class Parser {
 	public static final String smartgo4="(;GM[1])\n(;GM[2])\n(;GM[3])\n(;GM[4])";
 	public static final String smartgo42="(;GM[1];B[as])\n(;GM[2];B[as])\n(;GM[3];B[as])\n(;GM[4];B[as])";
 	public static final String smartgo43="(;GM[1];B[as];B[at])\n(;GM[2];B[as];B[at])\n(;GM[3];B[as];B[at])\n(;GM[4];B[as];B[at])";
-	private final static Map<String,String> statocSgfData=new LinkedHashMap<>();
+	private final static Map<String,String> staticSgfData=new LinkedHashMap<>();
 	private static void initializeMap() {
-		statocSgfData.put("sgfExamleFromRedBean",sgfExamleFromRedBean);
-		statocSgfData.put("startOfGame",startOfGame);
-		statocSgfData.put("oneMoveAtA1NoHeader",oneMoveAtA1NoHeader);
-		statocSgfData.put("oneMoveAtA1",oneMoveAtA1);
-		statocSgfData.put("comments1",comments1);
-		statocSgfData.put("simplevariations",simplevariations);
-		statocSgfData.put("comments1",comments1);
-		statocSgfData.put("consecutiveMoves",consecutiveMoves);
-		statocSgfData.put("emptyWithSemicolon",emptyWithSemicolon);
-		statocSgfData.put("twoEmptyWithSemicolon",twoEmptyWithSemicolon);
-		statocSgfData.put("noVariation",noVariation);
-		statocSgfData.put("simpleWithVariations",simpleWithVariations);
-		statocSgfData.put("oneVariationAtMoveThree",oneVariationAtMoveThree);
-		statocSgfData.put("twoVariationsAtMoveThree",twoVariationsAtMoveThree);
-		statocSgfData.put("twoVariationsAtDifferentMoves",twoVariationsAtDifferentMoves);
-		statocSgfData.put("variationOfAVariation",variationOfAVariation);
-		statocSgfData.put("manyFacesTwoMovesAtA1AndR16",manyFacesTwoMovesAtA1AndR16);
-		statocSgfData.put("manyFacesTwoMovesAtA1AndR16OnA9by9Board",manyFacesTwoMovesAtA1AndR16OnA9by9Board);
-		statocSgfData.put("newvariationsmf",newvariationsmf);
-		statocSgfData.put("newvariationsmfflat",newvariationsmfflat);
-		statocSgfData.put("newvariationssmall",newvariationssmall);
-		statocSgfData.put("smartgovariationsflat",smartgovariationsflat);
-		statocSgfData.put("twoGamesInOneFileFromSmartGo",twoGamesInOneFileFromSmartGo);
-		statocSgfData.put("twoverysmallgamesflat",twoverysmallgamesflat);
-		statocSgfData.put("twosmallgamesflat",twosmallgamesflat);
-		statocSgfData.put("smartgo4",smartgo4);
-		statocSgfData.put("smartgo42",smartgo42);
-		statocSgfData.put("smartgo43",smartgo43);
+		staticSgfData.put("sgfExamleFromRedBean",sgfExamleFromRedBean);
+		staticSgfData.put("startOfGame",startOfGame);
+		staticSgfData.put("oneMoveAtA1NoHeader",oneMoveAtA1NoHeader);
+		staticSgfData.put("oneMoveAtA1",oneMoveAtA1);
+		staticSgfData.put("comments1",comments1);
+		staticSgfData.put("simplevariations",simplevariations);
+		staticSgfData.put("comments1",comments1);
+		staticSgfData.put("consecutiveMoves",consecutiveMoves);
+		staticSgfData.put("emptyWithSemicolon",emptyWithSemicolon);
+		staticSgfData.put("twoEmptyWithSemicolon",twoEmptyWithSemicolon);
+		staticSgfData.put("noVariation",noVariation);
+		staticSgfData.put("simpleWithVariations",simpleWithVariations);
+		staticSgfData.put("oneVariationAtMoveThree",oneVariationAtMoveThree);
+		staticSgfData.put("twoVariationsAtMoveThree",twoVariationsAtMoveThree);
+		staticSgfData.put("twoVariationsAtDifferentMoves",twoVariationsAtDifferentMoves);
+		staticSgfData.put("variationOfAVariation",variationOfAVariation);
+		staticSgfData.put("manyFacesTwoMovesAtA1AndR16",manyFacesTwoMovesAtA1AndR16);
+		staticSgfData.put("manyFacesTwoMovesAtA1AndR16OnA9by9Board",manyFacesTwoMovesAtA1AndR16OnA9by9Board);
+		staticSgfData.put("newvariationsmf",newvariationsmf);
+		staticSgfData.put("newvariationsmfflat",newvariationsmfflat);
+		staticSgfData.put("newvariationssmall",newvariationssmall);
+		staticSgfData.put("smartgovariationsflat",smartgovariationsflat);
+		staticSgfData.put("twoGamesInOneFileFromSmartGo",twoGamesInOneFileFromSmartGo);
+		staticSgfData.put("twoverysmallgamesflat",twoverysmallgamesflat);
+		staticSgfData.put("twosmallgamesflat",twosmallgamesflat);
+		staticSgfData.put("smartgo4",smartgo4);
+		staticSgfData.put("smartgo42",smartgo42);
+		staticSgfData.put("smartgo43",smartgo43);
 		// Logging.mainLogger.info(sgfData.keySet());
 		// Logging.mainLogger.info(sgfData.size()+" sgf strings in parser map.");
 	}
