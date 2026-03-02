@@ -133,7 +133,7 @@ public class SgfUnitTestCase {
 
     @Test public void testSample() {
         SgfNode root=sample();
-        String expected=ModelIo.saveSgfToString(root,noIndent);
+        String expected=ModelIo.saveSgf(root,noIndent);
         Logging.mainLogger.info("sample sgf: "+expected);
         String[] actual=SgfTestHarness.restoreAndSaveTwice(expected);
 		assertEquals(actual[0],actual[1]);
@@ -819,7 +819,7 @@ public class SgfUnitTestCase {
                 return false;
             }
             Logging.mainLogger.warning("combined");
-            Logging.mainLogger.warning(String.valueOf(ModelIo.saveSgfToString(combined,standardIndent)));
+            Logging.mainLogger.warning(String.valueOf(ModelIo.saveSgf(combined,standardIndent)));
             Logging.mainLogger.warning("");
         } catch(Exception e) {
             Logging.mainLogger.warning("in testCombine()");
@@ -880,7 +880,7 @@ public class SgfUnitTestCase {
     }
 
     private void print(SgfNode node) {
-        Logging.mainLogger.info("saved sgf node "+ModelIo.saveSgfToString(node,noIndent));
+        Logging.mainLogger.info("saved sgf node "+ModelIo.saveSgf(node,noIndent));
         Logging.mainLogger.info("----------------");
     }
 

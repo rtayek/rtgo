@@ -363,8 +363,12 @@ public class SgfNode {
                     String ex=getSgfData(key);
                     ex=SgfNode.options.prepareSgf(ex);
                     Logging.mainLogger.info("expected sgf "+ex);
-                    MNode mNode=MNode.restoreMNodesRedBean();
-                    String direct=MNode.saveMNodesDirectly(mNode);
+                    String expectedSgf=Parser.sgfExamleFromRedBean;
+                    MNode mNode=MNode.restoreMNodes(FileIO.toReader(expectedSgf));
+                    StringWriter directWriter=new StringWriter();
+                    for(MNode child:mNode.children())
+                        MNode.saveMNodesDirectly(directWriter,child,noIndent);
+                    String direct=directWriter.toString();
                     Logging.mainLogger.info("direct       "+direct);
                     if(ex.equals(direct)) Logging.mainLogger.info("are equal!");
                     Node<String> string=tree.Node.reLabelCopy(redBean,i);

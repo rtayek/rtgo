@@ -40,7 +40,7 @@ public final class ModelIo {
         return new Parser().parse(reader);
     }
 
-    public static String saveSgfToString(SgfNode node,Indent indent) {
+    public static String saveSgf(SgfNode node,Indent indent) {
         if(node==null) return null;
         StringWriter writer=new StringWriter();
         node.saveSgf(writer,indent);
@@ -75,7 +75,7 @@ public final class ModelIo {
     public static MNode mNodeRoundTrip(Reader reader,Writer writer,MNodeSaveMode saveMode) {
         MNode root=MNode.restoreMNodes(reader);
         if(saveMode==MNodeSaveMode.direct) {
-            String actual=MNode.saveMNodesDirectly(root);
+            String actual=saveMNodesDirectlyToString(root);
             try {
                 writer.write(actual);
             } catch(IOException e) {
@@ -88,13 +88,17 @@ public final class ModelIo {
         return root;
     }
 
-    public static MNode modelRoundTrip(String expectedSgf,Writer writer,ModelHelper.ModelSaveMode saveMode) {
+    public static MNode modelRoundTrip(Reader reader,Writer writer,ModelHelper.ModelSaveMode saveMode) {
+        if(reader==null) return null;
+        StringBuffer sb=new StringBuffer();
+        FileIO.fromReader(sb,reader);
+        String expectedSgf=sb.toString();
         if(expectedSgf==null) return null;
         SgfNode games=restoreSGF(FileIO.toReader(expectedSgf));
         if(games==null) return null;
         if(games.right!=null) Logging.mainLogger.info(" 2 more than one game!");
         if(saveMode==ModelHelper.ModelSaveMode.sgfNodeChecked) {
-            saveSgfToString(games,noIndent);
+            saveSgf(games,noIndent);
         }
         MNode mNodes0=MNode.toGeneralTree(games);
         Model model=new Model();
@@ -108,21 +112,6 @@ public final class ModelIo {
             e.printStackTrace();
         }
         return mNodes;
-    }
-
-    public static MNode modelRoundTrip(Reader reader,Writer writer,ModelHelper.ModelSaveMode saveMode) {
-        if(reader==null) return null;
-        StringBuffer sb=new StringBuffer();
-        FileIO.fromReader(sb,reader);
-        return modelRoundTrip(sb.toString(),writer,saveMode);
-    }
-
-    public static MNode modelRoundTrip(Reader reader,Writer writer) {
-        return modelRoundTrip(reader,writer,ModelHelper.ModelSaveMode.sgfNode);
-    }
-
-    public static MNode modelRoundTrip2(String expectedSgf,Writer writer) {
-        return modelRoundTrip(expectedSgf,writer,ModelHelper.ModelSaveMode.sgfNodeChecked);
     }
 
     private static MNode rootForSave(Model model) {
@@ -139,10 +128,21 @@ public final class ModelIo {
 
     private static String saveFromModelRoot(MNode root,ModelHelper.ModelSaveMode saveMode) {
         if(saveMode==ModelHelper.ModelSaveMode.direct) {
-            return MNode.saveMNodesDirectly(root);
+            return saveMNodesDirectlyToString(root);
         }
         SgfNode sgfRoot=root.toBinaryTree();
         SgfNode actual=sgfRoot.left;
-        return saveSgfToString(actual,noIndent);
+        return saveSgf(actual,noIndent);
+    }
+
+    private static String saveMNodesDirectlyToString(MNode root) {
+        StringWriter stringWriter=new StringWriter();
+        try {
+            for(MNode child:root.children())
+                MNode.saveMNodesDirectly(stringWriter,child,noIndent);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        return stringWriter.toString();
     }
 }

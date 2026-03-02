@@ -82,7 +82,7 @@ public final class SgfTestHarness {
         SgfNode expected=ModelIo.restoreSGF(FileIO.toReader(expectedSgf));
         SgfNode actualSgf=null;
         if(expected!=null) {
-            String saved=ModelIo.saveSgfToString(expected,IOs.noIndent);
+            String saved=ModelIo.saveSgf(expected,IOs.noIndent);
             actualSgf=ModelIo.restoreSGF(FileIO.toReader(saved));
         }
         if(expected!=null) assertTrue(key.toString(),expected.deepEquals(actualSgf));

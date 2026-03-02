@@ -224,21 +224,6 @@ public class MNode {
 		saveMNodesDirectly_(writer,root,indent);
 		writer.write(indent.indent()+')');
 	}
-	public static MNode restoreMNodesRedBean() {
-		String expectedSgf=Parser.sgfExamleFromRedBean;
-		MNode mNode=restoreMNodes(toReader(expectedSgf));
-		return mNode;
-	}
-	public static String saveMNodesDirectly(MNode mNode) {
-		StringWriter stringWriter=new StringWriter();
-		for(MNode child:mNode.children) // save all of the games
-			try {
-				saveMNodesDirectly(stringWriter,child,noIndent);
-			} catch(IOException e) {
-				Logging.mainLogger.info("caught: "+e);
-			}
-		return stringWriter.toString();
-	}
 	public static void label(MNode node,final Iterator<Long> i) { // traverse
 																	// and set
 																	// labels
@@ -249,8 +234,12 @@ public class MNode {
 	public static void main(String[] args) throws IOException {
 		Logging.mainLogger.info(String.valueOf(Init.first));
 		if(true) {
-			MNode mNode=restoreMNodesRedBean();
-			String saved=saveMNodesDirectly(mNode);
+			String expectedSgf=Parser.sgfExamleFromRedBean;
+			MNode mNode=restoreMNodes(toReader(expectedSgf));
+			StringWriter stringWriter=new StringWriter();
+			for(MNode child:mNode.children)
+				saveMNodesDirectly(stringWriter,child,noIndent);
+			String saved=stringWriter.toString();
 			Logging.mainLogger.info("saved directly: "+saved);
 			return;
 		}
