@@ -3,6 +3,7 @@ import org.junit.Rule;
 import utilities.MyTestWatcher;
 import com.tayek.util.io.FileIO;
 import io.Logging;
+import io.TestIo;
 import static org.junit.Assert.*;
 import static model.ModelTrees.*;
 import org.junit.Ignore;
@@ -13,7 +14,7 @@ public class TopologyAndShapeTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     private Model newModelWithRoot(Topology topology,Shape shape) {
         Model model=new Model();
-        ModelTrees.setRoot(model,n,n,topology,shape);
+        ModelTreeOps.setRoot(model,n,n,topology,shape);
         assertEquals(topology,model.boardTopology());
         assertEquals(shape,model.boardShape());
         return model;
@@ -46,13 +47,13 @@ public class TopologyAndShapeTestCase {
         Logging.mainLogger.info("topology: "+model.boardTopology());
         Logging.mainLogger.info("shape: "+model.boardShape());
         //model.up(); // getting: restored root: ;(5)RT[Tgo root]
-        String expected=saveModel(model);
+        String expected=TestIo.toString("save expected fails",writer->ModelIo.saveModel(model,writer));
         Model m=new Model();
-        ModelTrees.restoreModel(m,FileIO.toReader(expected));
+        ModelIo.restoreModel(m,FileIO.toReader(expected));
         m.ensureBoard();
         m.down(0); // need to execute the sgf
         assertNotNull(m.board());
-        String actual=saveModel(m);
+        String actual=TestIo.toString("save actual fails",writer->ModelIo.saveModel(m,writer));
         assertEquals(expected,actual);
     }
     @Test public void testsetRoot() {

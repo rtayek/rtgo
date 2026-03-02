@@ -22,7 +22,7 @@ public class ShapeTestCase {
             Model model=new Model();
             model.setBoardTopology(Topology.normal);
             model.setBoardShape(shape);
-            ModelTrees.setRoot(model,width,depth,topology,shape);
+            ModelTreeOps.setRoot(model,width,depth,topology,shape);
             model.ensureBoard();
             // triange?
             Board board=model.board();

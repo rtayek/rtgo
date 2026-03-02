@@ -18,7 +18,7 @@ import utilities.*;
     private static final boolean verbose=false;
     @Before public void setUp() throws Exception {
         expectedSgf=getSgfData(key);
-        expectedSgf=SgfHarness.prepareExpectedSgf(key,expectedSgf);
+        expectedSgf=SgfTestHarness.prepareExpectedSgf(key,expectedSgf);
     }
     public GTPDirectSendReceiveSgfTestCase(Object key) { this.key=key; }
     @After public void tearDown() throws Exception {}
@@ -31,7 +31,7 @@ import utilities.*;
     }
     String getSgfFromModel(String expectedSgf) {
         original=new Model();
-        ModelTrees.restoreModel(original,FileIO.toReader(expectedSgf));
+        ModelIo.restoreModel(original,FileIO.toReader(expectedSgf));
         String sendCommand=Command.tgo_send_sgf.name();
         String string=runGtpCommandString(original,sendCommand);
         Response response=Response.response(string);
@@ -67,7 +67,7 @@ import utilities.*;
         String actualSgf=null;
         if(response.isOk()) {
             StringWriter writer=new StringWriter();
-            ModelTrees.saveModel(model,writer);
+            ModelIo.saveModel(model,writer);
             actualSgf=writer.toString();
             //actualSgf=options.remove(actualSgf);
         } else {

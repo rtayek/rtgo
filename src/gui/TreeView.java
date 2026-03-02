@@ -10,6 +10,7 @@ import com.tayek.util.io.FileIO;
 import io.*;
 import model.Event;
 import model.Model;
+import model.ModelIo;
 import model.ModelTrees;
 import sgf.MNode;
 import utilities.*;
@@ -101,7 +102,7 @@ import utilities.*;
 		if(e.getActionCommand().equals("Open ...")) {
 			GuiFileDialogs.FileSelection selection=GuiFileDialogs.chooseOpenSgf(frame(),lastLoadDirectory);
 			if(selection!=null) {
-				ModelTrees.restoreModel(model,FileIO.toReader(selection.file()));
+				ModelIo.restoreModel(model,FileIO.toReader(selection.file()));
 				lastLoadDirectory=selection.directory();
 			}
 		}
@@ -180,7 +181,7 @@ import utilities.*;
 		TreeView myTreeView=new TreeView(null,model);
 		myTreeView.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		model.addObserver(myTreeView);
-		ModelTrees.restoreModel(model,FileIO.toReader(new File("sgf/ff4_ex.sgf")));
+		ModelIo.restoreModel(model,FileIO.toReader(new File("sgf/ff4_ex.sgf")));
 		return myTreeView;
 	}
 	public final Model model;

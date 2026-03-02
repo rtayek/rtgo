@@ -122,7 +122,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public Model(String name) {
 		this.name=name;
-		ModelTrees.setRoot(this);
+		ModelTreeOps.setRoot(this,Board.standard,Board.standard,Topology.normal,Shape.normal);
 	}
 	public void ensureBoard() {
 		if(board()==null) {
@@ -133,8 +133,10 @@ public class Model extends Observable { // model of a go game or problem forrest
 	}
 	public Model(Model model,String name) { // copy constructor
 		this.name=name;
-		String string=saveModel(model);
-		ModelTrees.restoreModel(this,toReader(string));
+		StringWriter writer=new StringWriter();
+		ModelIo.saveModel(model,writer);
+		String string=writer.toString();
+		ModelIo.restoreModel(this,toReader(string));
 	}
 	public static boolean canDelete(Model model) {
 		return model.currentNode().parent()!=null;
@@ -169,7 +171,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 			// maybe leave it at null
 			// and adjust display?
 			Logging.mainLogger.config("root is null!: ");
-			ModelTrees.setRoot(this);
+			ModelTreeOps.setRoot(this,Board.standard,Board.standard,Topology.normal,Shape.normal);
 			return;
 		}
 		stack.clear();
@@ -784,7 +786,7 @@ public class Model extends Observable { // model of a go game or problem forrest
 	private void processProperty(SgfProperty property) {
 		ModelHelper.processProperty(this,state,property);
 	}
-	private void savethisprocessProperty(SgfProperty property) {
+	private void persistthisprocessProperty(SgfProperty property) {
 		// need a way to convert this/these to gtp?
 		Logging.mainLogger.config("property: "+property);
 		String string=null;
@@ -1155,11 +1157,11 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.mainLogger.info("root: "+model.root());
 		Logging.mainLogger.info("current node: "+model.currentNode());
 		Logging.mainLogger.info("children: "+model.currentNode().children());
-		ModelTrees.saveModel(model,new OutputStreamWriter(System.out));
+		ModelIo.saveModel(model,new OutputStreamWriter(System.out));
 		Logging.mainLogger.info("");
 		// if(true) return;
 		Logging.mainLogger.info("|||");
-		ModelTrees.saveModel(model,new OutputStreamWriter(System.out));
+		ModelIo.saveModel(model,new OutputStreamWriter(System.out));
 		Logging.mainLogger.info("after save.");
 		System.out.flush();
 		Logging.mainLogger.info(String.valueOf(model));
@@ -1365,9 +1367,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.mainLogger.info(String.valueOf(model.root()));
 		Logging.mainLogger.info(String.valueOf(model.root().parent()));
 		Logging.mainLogger.info(String.valueOf(model.currentNode()));
-		ModelTrees.setRoot(model,5,5);
+		ModelTreeOps.setRoot(model,5,5,Topology.normal,Shape.normal);
 		strangeGame(model);
-		ModelTrees.setRoot(model,5,5);
+		ModelTreeOps.setRoot(model,5,5,Topology.normal,Shape.normal);
 		int n=model.movesToGenerate();
 		Model.generateRandomMoves(model,n);
 		// randomeMovesUsingParameters(model);
@@ -1387,7 +1389,9 @@ public class Model extends Observable { // model of a go game or problem forrest
 		if(!color.equals(Stone.black)) {
 			Logging.mainLogger.info("expected black at A1, got "+color);
 		}
-		String expected=saveModel(model);
+		StringWriter writer=new StringWriter();
+		ModelIo.saveModel(model,writer);
+		String expected=writer.toString();
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
 		Logging.mainLogger.info("expected: "+expected);
 		if(!color.equals(Stone.black)) {
@@ -1403,8 +1407,10 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// if(true) return;
 		// assertEquals(Stone.black,color);
 		// this test passes but there is no stone there!
-		ModelTrees.restoreModel(m,toReader(expected));
-		final String actual=saveModel(m);
+		ModelIo.restoreModel(m,toReader(expected));
+		writer=new StringWriter();
+		ModelIo.saveModel(m,writer);
+		final String actual=writer.toString();
 		Logging.mainLogger.info("expected: "+expected);
 		Logging.mainLogger.info("actual  : "+actual);
 	}
@@ -1413,13 +1419,10 @@ public class Model extends Observable { // model of a go game or problem forrest
 		Logging.setUpLogging();
 		Logging.setLevels(Level.OFF);
 		Model model=new Model("");
-		String sgf=saveModel(model);
-		dtrt(model);
-	}
-	static String saveModel(Model model) {
 		StringWriter writer=new StringWriter();
-		ModelTrees.saveModel(model,writer);
-		return writer.toString();
+		ModelIo.saveModel(model,writer);
+		String sgf=writer.toString();
+		dtrt(model);
 	}
 	public int verbosity;
 	// move stuff like type, shape, and band to parameter

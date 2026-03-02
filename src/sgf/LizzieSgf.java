@@ -1,5 +1,6 @@
 package sgf;
 import io.Logging;
+import model.ModelIo;
 import java.io.File;
 import java.util.*;
 import com.tayek.util.io.FileIO;
@@ -454,7 +455,7 @@ class LizzieSgf {
         MyAcceptor myAcceptor=new MyAcceptor();
         Traverser traverser=new Traverser(myAcceptor);
         File file=new File("lizzie1.sgf");
-        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(file));
+        SgfNode games=ModelIo.restoreSGF(FileIO.toReader(file));
         traverser.visit(games);
         //Logging.mainLogger.info("lizzies nodes: "+myAcceptor.idToNode);
         for(Integer key:myAcceptor.idToNode.keySet()) {

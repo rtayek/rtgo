@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import com.tayek.util.io.FileIO;
 import io.*;
+import model.ModelIo;
 
 public interface SgfAcceptor {
     void accept(SgfNode node);
@@ -117,11 +118,11 @@ class Traverser {
         File dir=new File(sgfPath);
         Logging.mainLogger.info("||||");
         File file=new File(dir,"1635215-056-rtayek-Sighris.sgf");
-        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(file));
+        SgfNode games=ModelIo.restoreSGF(FileIO.toReader(file));
         traverser.visit(games);
         Logging.mainLogger.info("||||");
         String sgfString=getSgfData("oneMoveAtA1");
-        games=SgfIo.restoreSGF(FileIO.toReader(sgfString));
+        games=ModelIo.restoreSGF(FileIO.toReader(sgfString));
         traverser.visit(games);
     }
     SgfAcceptor acceptor;

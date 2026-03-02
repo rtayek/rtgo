@@ -1,6 +1,7 @@
 package model;
 import utilities.MyTestWatcher;
 import io.Logging;
+import io.TestIo;
 import com.tayek.util.io.FileIO;
 import static org.junit.Assert.*;
 import static model.ModelTrees.*;	
@@ -19,13 +20,13 @@ public class SaveTestCase {
 		//model.move(Stone.white,"A2",model.board().width());
 		// (;FF[4]GM[1]AP[RTGO]C[comment];B[as])
 		Model m=new Model("");
-		final String expected=saveModel(model);
+		final String expected=TestIo.toString("save expected fails",writer->ModelIo.saveModel(model,writer));
 		Logging.mainLogger.info("expected: "+expected);
-		ModelTrees.restoreModel(m,FileIO.toReader(expected));
+		ModelIo.restoreModel(m,FileIO.toReader(expected));
 		Point point=Coordinates.fromGtpCoordinateSystem("A1",19);
 		Stone color=m.board().at(point);
 		//assertEquals(Stone.black,color);
-		final String actual=saveModel(m);
+		final String actual=TestIo.toString("save actual fails",writer->ModelIo.saveModel(m,writer));
 		Logging.mainLogger.info("actual: "+actual);
 		assertEquals(actual,expected);
 	}

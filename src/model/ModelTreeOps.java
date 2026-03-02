@@ -19,8 +19,8 @@ import sgf.SgfNode;
 import sgf.SgfProperty;
 import com.tayek.util.io.Indent;
 
-final class ModelTreeOps {
-    static boolean isSentinel(MNode root) {
+public final class ModelTreeOps {
+    public static boolean isSentinel(MNode root) {
         // RT is a sentinel extra-root marker; preserve for lossless round-trip.
         boolean found=false;
         for(SgfProperty p:root.sgfProperties()) {
@@ -52,7 +52,7 @@ final class ModelTreeOps {
         node.sgfProperties().add(property);
     }
 
-    static void setRootFromParameters(Model model) {
+    public static void setRootFromParameters(Model model) {
         Logging.mainLogger.info("set root from parameters");
         int width=(int)Parameters.width.currentValue();
         int depth=(int)Parameters.depth.currentValue();
@@ -65,7 +65,7 @@ final class ModelTreeOps {
         setRoot(model,width,depth,Topology.normal,Shape.normal);
     }
 
-    static void setRoot(Model model,int width,int depth,Topology topology,Shape shape) {
+    public static void setRoot(Model model,int width,int depth,Topology topology,Shape shape) {
         Logging.mainLogger.config("setRoot: "+model.name+" board type is: "+topology+", shape is: "+shape);
         MNode main=new MNode(null); // no extra root
         addProperty(main,P.FF,"4");

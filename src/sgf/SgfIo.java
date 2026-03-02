@@ -1,16 +1,6 @@
 package sgf;
-import static io.IOs.noIndent;
-import static io.Logging.parserLogger;
-import static sgf.Parser.parentheses;
-import java.io.IOException;
 import java.io.File;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Arrays;
-import com.tayek.util.io.FileIO;
-import com.tayek.util.io.Indent;
-import io.IOs;
+import java.util.List;
 import io.Logging;
 /** Reusable SGF/MNode I/O helpers shared by source and tests. */
 public final class SgfIo {
@@ -18,71 +8,6 @@ public final class SgfIo {
 		standard,direct
 	}
 	private SgfIo() {}
-	static String restoreAndSaveSGF(String sgf) {
-		StringWriter writer=new StringWriter();
-		SgfIo.restoreAndSaveSGF(FileIO.toReader(sgf),writer);
-		return writer.toString();
-	}
-	static SgfNode saveAndRestoreSGF(SgfNode expected) {
-		if(expected==null) return null;
-		String sgf=SgfIo.saveSgfToString(expected,IOs.noIndent);
-		return SgfIo.restoreSGF(FileIO.toReader(sgf));
-	}
-	// Independent operations
-	public static SgfNode restoreSGF(Reader reader) {
-		if(reader==null) return null;
-		return Parser.restoreSgf(reader);
-	}
-	public static MNode restoreMNode(Reader reader) {
-		return MNode.restoreMdodes(reader);
-	}
-	public static MNode quietLoadMNode(Reader reader) {
-		return MNode.restoreMdodesQuietly(reader);
-	}
-	public static String saveSgfToString(SgfNode node,Indent indent) {
-		if(node==null) return null;
-		StringWriter writer=new StringWriter();
-		node.saveSgf(writer,indent);
-		return writer.toString();
-	}
-	public static SgfNode restoreAndSaveSGF(Reader reader,Writer writer) {
-		if(reader==null) return null;
-		SgfNode games=restoreSGF(reader);
-		if(games!=null) games.saveSgf(writer,noIndent);
-		String actual=writer.toString();
-		int p=parentheses(actual);
-		if(p!=0) Logging.mainLogger.info("actual parentheses count: "+p);
-		return games;
-	}
-	public static boolean roundTripTwice(Reader reader) {
-		Writer writer=new StringWriter();
-		restoreAndSaveSGF(reader,writer);
-		String expected=writer.toString();
-		writer=new StringWriter();
-		SgfNode games=restoreSGF(FileIO.toReader(expected));
-		if(games!=null) games.saveSgf(writer,noIndent);
-		String actual=writer.toString();
-		if(!actual.equals(expected)) {
-			parserLogger.severe(actual+"!="+reader);
-			return false;
-		}
-		return true;
-	}
-	public static MNode mNodeRoundTrip(Reader reader,Writer writer,MNodeSaveMode saveMode) {
-		MNode root=MNode.restoreMdodes(reader);
-		if(saveMode==MNodeSaveMode.direct) {
-			String actual=MNode.saveMNodesDirectly(root);
-			try {
-				writer.write(actual);
-			} catch(IOException e) {
-				throw new RuntimeException(e);
-			}
-		} else {
-			boolean ok=MNode.saveMNodes(writer,root,noIndent);
-			if(!ok) Logging.mainLogger.info("not ok!");
-		}
-		return root;
-	}
 	public static String loadExpectedSgf(Object key) {
 		if(key==null) throw new RuntimeException("key: "+key+" is nul!");
 		String sgf=Parser.getSgfData(key);
@@ -95,9 +20,8 @@ public final class SgfIo {
 		return sgf;
 	}
 	public static String prepareExpectedSgf(Object key,String sgf) {
-		String normalized=sgf;
+		String normalized=prepareSgf(sgf);
 		if(normalized!=null) {
-			normalized=SgfNode.options.prepareSgf(normalized);
 			if(SgfNode.options.removeLineFeed) if(normalized.contains("\n)")) {
 				Logging.mainLogger.info("lf badness");
 				System.exit(0);
@@ -123,18 +47,15 @@ public final class SgfIo {
 			if(file!=null&&file.exists()) return file;
 		return null;
 	}
-	public static SgfProperty property(P id,String value) {
-		return new SgfProperty(id,Arrays.asList(new String[] {value}));
-	}
-	public static SgfNode nodeWithProperty(P id,String value) {
-		SgfNode node=new SgfNode();
-		node.add(property(id,value));
-		return node;
-	}
 	public static File[] filesInDir(String dir,String... filenames) {
 		File[] files=new File[filenames.length];
 		for(int i=0;i<filenames.length;i++)
 			files[i]=new File(dir,filenames[i]);
 		return files;
+	}
+	public static SgfNode nodeWithProperty(P id,String value) {
+		SgfNode node=new SgfNode();
+		node.add(new SgfProperty(id,List.of(value)));
+		return node;
 	}
 }

@@ -6,11 +6,13 @@ import java.util.Random;
 import com.tayek.util.io.FileIO;
 import org.junit.*;
 import equipment.*;
+import equipment.Board.Shape;
+import equipment.Board.Topology;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
 public class ColorBugTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
-    @Before public void setUp() throws Exception { ModelTrees.setRoot(model); }
+    @Before public void setUp() throws Exception { ModelTreeOps.setRoot(model,Board.standard,Board.standard,Topology.normal,Shape.normal); }
     void randomMove2() {
         int width=model.board().width();
         int depth=model.board().depth();
@@ -34,10 +36,10 @@ public class ColorBugTestCase {
         }
         File temporaryFile=File.createTempFile("tgo-","sgf");
         temporaryFile.deleteOnExit();
-        boolean ok=ModelTrees.saveModel(model,FileIO.toWriter(temporaryFile));
+        boolean ok=ModelIo.saveModel(model,FileIO.toWriter(temporaryFile));
         assertTrue(ok);
         Model actual=new Model();
-        ModelTrees.restoreModel(model,FileIO.toReader(""));
+        ModelIo.restoreModel(model,FileIO.toReader(""));
         fail("nyi");
         // go to the right move
         // how to test this?
@@ -46,7 +48,7 @@ public class ColorBugTestCase {
         // or round trip the files? maybe not, could be big files like kogo's?
     }
     @Test public void test1() {
-        ModelTrees.setRoot(model,3,3);
+        ModelTreeOps.setRoot(model,3,3,Topology.normal,Shape.normal);
         model.ensureBoard();
         model.moveAndPlaySound(model.turn(),"A1",model.board().width());
         Navigate.up.do_(model);
@@ -55,7 +57,7 @@ public class ColorBugTestCase {
         Navigate.down.do_(model);
     }
     @Test public void testUpAndDown() {
-        ModelTrees.setRoot(model,3,3);
+        ModelTreeOps.setRoot(model,3,3,Topology.normal,Shape.normal);
         model.ensureBoard();
         model.moveAndPlaySound(model.turn(),"A1",model.board().width());
         Navigate.up.do_(model);

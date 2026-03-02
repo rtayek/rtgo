@@ -41,7 +41,7 @@ public final class ModelHelper {
             int depth = originalBoard.depth();
             Board.Topology topology = originalBoard.topology();
             Board.Shape shape = originalBoard.shape();
-            ModelTrees.setRoot(model,width,depth,topology,shape);
+            ModelTreeOps.setRoot(model,width,depth,topology,shape);
             Board board = Board.factory.create(width, depth, topology, shape);
             model.setBoard(board);
         }
@@ -222,51 +222,6 @@ public final class ModelHelper {
         } else Logging.mainLogger.warning(model.name+" "+"p2 is null!");
     }
 
-    public static MNode modelRoundTrip(Reader reader,Writer writer) {
-        return modelRoundTrip(reader,writer,ModelSaveMode.sgfNode);
-    }
-    public static MNode modelRoundTrip(Reader reader,Writer writer,ModelSaveMode saveMode) {
-        if(reader==null) return null;
-        StringBuffer sb=new StringBuffer();
-        FileIO.fromReader(sb,reader);
-        return modelRoundTrip(sb.toString(),writer,saveMode);
-    }
-    public static MNode modelRoundTrip2(String expectedSgf,Writer writer) {
-        return modelRoundTrip(expectedSgf,writer,ModelSaveMode.sgfNodeChecked);
-    }
-    public static MNode modelRoundTrip(String expectedSgf,Writer writer,ModelSaveMode saveMode) {
-        if(expectedSgf==null) return null;
-        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
-        if(games==null) return null;
-        if(games.right!=null) Logging.mainLogger.info(" 2 more than one game!");
-        if(saveMode==ModelSaveMode.sgfNodeChecked) {
-            SgfIo.saveSgfToString(games,noIndent);
-        }
-        MNode mNodes0=MNode.toGeneralTree(games);
-        Model model=new Model();
-        model.setRoot(mNodes0);
-        MNode mNodes=model.root();
-        if(mNodes!=null) {
-            if(mNodes.children().size()>1) {
-                //Logging.mainLogger.info("more than one child: "+mNodes.children);
-            }
-            String actualSgf=saveFromModelRoot(mNodes,saveMode);
-            if(actualSgf!=null) try {
-                writer.write(actualSgf);
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return mNodes;
-    }
-    private static String saveFromModelRoot(MNode root,ModelSaveMode saveMode) {
-        if(saveMode==ModelSaveMode.direct) {
-            return MNode.saveMNodesDirectly(root);
-        }
-        SgfNode sgfRoot=root.toBinaryTree();
-        SgfNode actual=sgfRoot.left;
-        return SgfIo.saveSgfToString(actual,noIndent);
-    }
 }
 
 

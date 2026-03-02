@@ -9,14 +9,15 @@ import java.util.List;
 import com.tayek.util.io.FileIO;
 import org.junit.*;
 import equipment.*;
+import equipment.Board.Shape;
+import equipment.Board.Topology;
 import model.*;
-import model.ModelHelper2;
 public class GTPShoveTestCase extends ControllerGtpTestSupport {
     // how to shove all variations?
     // maybe just invent loadSGF command and send it!
     @Before public void setUp() throws Exception {
         // parameterize this and use parser map?
-        ModelTrees.setRoot(expected,5,5);
+        ModelTreeOps.setRoot(expected,5,5,Topology.normal,Shape.normal);
         Board board=Board.factory.create(5);
         expected.setBoard(board);
         int n=expected.movesToGenerate();
@@ -58,7 +59,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
     @Test public void testRestoreAndShoveMainLineDirect() throws Exception {
         String sgf=getSgfData("simpleWithVariations");
         Model original=new Model();
-        ModelTrees.restoreModel(original,FileIO.toReader(sgf));
+        ModelIo.restoreModel(original,FileIO.toReader(sgf));
         original.bottom();
         Model model=ModelHelper2.pushGTPMovesToCurrentStateDirect(original,false);
         assertTrue(model.board().isEqual(original.board()));
@@ -81,7 +82,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
     @Test public void testPushOneGTPMoveDirect() throws Exception {
         // do to top and down instead of new model?
         Model model=new Model();
-        ModelTrees.setRoot(model,5,5);
+        ModelTreeOps.setRoot(model,5,5,Topology.normal,Shape.normal);
         model.move(Stone.black,new Point());
         Model actual=ModelHelper2.pushGTPMovesToCurrentStateDirect(model,false);
         assertTrue(actual.board().isEqual(model.board()));
@@ -90,7 +91,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
         // do to top and down instead of new model?
         Model model=new Model("model");
         // maybe give backend it's own name?
-        ModelTrees.setRoot(model,5,5);
+        ModelTreeOps.setRoot(model,5,5,Topology.normal,Shape.normal);
         model.move(Stone.black,new Point());
         Model actual=ModelHelper2.pushGTPMovesToCurrentStateBoth(model,true);
         assertTrue(actual.board().isEqual(model.board()));

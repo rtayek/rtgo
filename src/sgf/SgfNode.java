@@ -8,6 +8,7 @@ import java.util.function.*;
 import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
+import model.ModelIo;
 import tree.*;
 import com.tayek.util.core.Holder;
 import com.tayek.util.core.Iterators.Strings;
@@ -28,7 +29,9 @@ public class SgfNode {
                 expectedSgf=SgfNode.options.removeUnwanted(expectedSgf);
                 if(roundTripFirst) {
                     //printDifferences(expectedSgf,expectedSgf);
-                    expectedSgf=sgfRestoreAndSave(expectedSgf);
+                    StringWriter writer=new StringWriter();
+                    ModelIo.restoreAndSaveSGF(FileIO.toReader(expectedSgf),writer);
+                    expectedSgf=writer.toString();
                     //printDifferences(expectedSgf,expectedSgf);
                     //if(!expectedSgf.endsWith("\n")) expectedSgf+="\n";
                 } else {
@@ -84,8 +87,7 @@ public class SgfNode {
         this.right=right;
         this.sgfProperties=new ArrayList<>();
         if(properties!=null) this.sgfProperties.addAll(properties);
-        setFlags();
-        boolean ok=checkFlags();
+        boolean ok=setAndCheckFlags();
         if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
     }
     public void setFlags() {
@@ -106,6 +108,10 @@ public class SgfNode {
         }
         return ok;
     }
+    private boolean setAndCheckFlags() {
+        setFlags();
+        return checkFlags();
+    }
     public void preorder(Consumer<SgfNode> consumer) {
         BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,consumer);
     }
@@ -118,29 +124,16 @@ public class SgfNode {
     }
     static class SearhingFunction implements Predicate<SgfNode> {
         @Override public boolean test(SgfNode t) {
-            if(!done) { t.setFlags(); boolean ok=t.checkFlags(); if(!ok) { target=t; done=true; } }
+            if(!done) { if(!t.setAndCheckFlags()) { target=t; done=true; } }
             return done;
         }
         boolean done;
         SgfNode target;
     }
-    void preorderCheckFlags() {
-        SearhingFunction searhingFunction=new SearhingFunction();
-        preorder(searhingFunction);
-        if(searhingFunction.done) { Logging.mainLogger.info(searhingFunction.target+" is bad"); }
-    }
-    void oldPreorderCheckFlags() {
-        BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,node -> {
-            node.setFlags();
-            boolean ok=node.checkFlags();
-            if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
-        });
-    }
     void add(SgfProperty property) {
         if(sgfProperties==null) sgfProperties=new ArrayList<>();
         sgfProperties.add(property);
-        setFlags();
-        boolean ok=checkFlags();
+        boolean ok=setAndCheckFlags();
         if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
     }
     private SgfNode lastSibling_(Holder<Integer> h) {
@@ -188,8 +181,7 @@ public class SgfNode {
     private void saveSgf_(Writer writer,Indent indent) throws IOException {
         indent.in();
         writer.write(this.toString());
-        setFlags();
-        if(!checkFlags()) Logging.mainLogger.info("");
+        if(!setAndCheckFlags()) Logging.mainLogger.info("");
         if(left!=null) {
             if(left.right!=null) writer.write(indent.indent()+'(');
             left.saveSgf_(writer,indent);
@@ -225,7 +217,7 @@ public class SgfNode {
         for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {
             SgfProperty property=i.next();
             P p=property.p();
-            if(p.type.equals("move") &&(p==P.B||p==P.W)) { // was LegacyMove
+            if(isMoveProperty(p)) { // was LegacyMove
                 moves++;
                 holder.left=this;
                 holder.sgfProperties.clear();
@@ -250,7 +242,7 @@ public class SgfNode {
         for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {
             SgfProperty property=i.next();
             P p=property.p();
-            if(p.type.equals("move") &&(p==P.B||p==P.W)) { // was LegacyMove
+            if(isMoveProperty(p)) { // was LegacyMove
             	// the above can never happen nor could it ever happen.
             	// check the code in earlier versions and see if it was a P.Move               moves++;
                 if(true) throw new RuntimeException("&&&&&&&&&&&&&&&&&");
@@ -279,6 +271,9 @@ public class SgfNode {
             else break;
         }
         return false;
+    }
+    private static boolean isMoveProperty(P p) {
+        return p.type.equals("move") &&(p==P.B||p==P.W);
     }
     public SgfNode left() { return left; }
     public SgfNode right() { return right; }
@@ -312,29 +307,6 @@ public class SgfNode {
         } else if(!sgfProperties.equals(other.sgfProperties)) return false;
         return true;
     }
-    private static SgfNode sgfRestoreAndSave(Reader reader,Writer writer) {
-        return SgfIo.restoreAndSaveSGF(reader,writer);
-    }
-    public static String sgfRestoreAndSave(String expectedSgf) { //restore and save
-        StringWriter writer=new StringWriter();
-        SgfIo.restoreAndSaveSGF(FileIO.toReader(expectedSgf),writer);
-        return writer.toString();
-    }
-    // lets try to make everyone use this one
-    // except for maybe a restore then a save and a restore.
-    // maybe add third trip?
-    // like round trip o the nodes for above and on the sgf for below?
-    // apr 23
-    // maybe rename to restoreSave and saveRestore?
-    public static SgfNode sgfSaveAndRestore(SgfNode expected,StringWriter stringWriter) {
-        if(expected==null) return null;
-        String sgf=SgfIo.saveSgfToString(expected,noIndent);
-        stringWriter.append(sgf);
-        return SgfIo.restoreSGF(FileIO.toReader(sgf));
-    }
-    public static boolean sgfRoundTripTwice(Reader original) {
-        return SgfIo.roundTripTwice(original);
-    }
     /*
     (;FF[4]C[root](;C[a];C[b](;C[c])
     (;C[d];C[e]))
@@ -351,8 +323,20 @@ public class SgfNode {
     
     acdfgj
      */
+    // Dependent diagnostics
+    void preorderCheckFlags() {
+        SearhingFunction searhingFunction=new SearhingFunction();
+        preorder(searhingFunction);
+        if(searhingFunction.done) { Logging.mainLogger.info(searhingFunction.target+" is bad"); }
+    }
+    void oldPreorderCheckFlags() {
+        BinaryTreeSupport.preorder(this,node -> node.left,node -> node.right,node -> {
+            boolean ok=node.setAndCheckFlags();
+            if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
+        });
+    }
     public static String preorderRouundTrip(String expectedSgf) throws IOException {
-        SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
+        SgfNode games=ModelIo.restoreSGF(FileIO.toReader(expectedSgf));
         if(games!=null) Logging.mainLogger.info(String.valueOf(games.right));
         else Logging.mainLogger.info("'"+expectedSgf+"'");
         StringWriter stringWriter=new StringWriter();
@@ -406,7 +390,7 @@ public class SgfNode {
                 String expectedSgf=getSgfData(key);
                 expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
                 //Logging.mainLogger.info("expeced sgf "+expectedSgf);
-                SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
+                SgfNode games=ModelIo.restoreSGF(FileIO.toReader(expectedSgf));
                 if(false) {
                     Logging.mainLogger.info(String.valueOf(key));
                     if(games!=null) if(games.right!=null) Logging.mainLogger.info(" 2");
@@ -433,7 +417,7 @@ public class SgfNode {
             Logging.mainLogger.info(String.valueOf(key));
             String expectedSgf=getSgfData(key);
             Logging.mainLogger.info(String.valueOf(expectedSgf));
-            SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
+            SgfNode games=ModelIo.restoreSGF(FileIO.toReader(expectedSgf));
             StringWriter stringWriter=new StringWriter();
             games.saveSgf(stringWriter,standardIndent);
             String actualSgf=stringWriter.toString();

@@ -152,8 +152,8 @@ public class MNode {
 			return targetFinder.ancestors.subList(index,targetFinder.ancestors.size());
 		} else return null;
 	}
-	public static MNode restoreMdodes(Reader reader) {
-		SgfNode games=restoreSgf(reader);
+	public static MNode restoreMNodes(Reader reader) {
+		SgfNode games=new Parser().parse(reader);
 		if(games!=null&&games.right()!=null) Logging.mainLogger.info("root has variations!");
 		MNode node=toGeneralTree(games);
 		return node;
@@ -174,18 +174,12 @@ public class MNode {
 		}
 		return true; // for now
 	}
-	public static MNode restoreMdodesQuietly(Reader reader) {
+	public static MNode quietRestoreMdodes(Reader reader) {
 		PrintStream old=System.out;
 		System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
-		MNode root=MNode.restoreMdodes(reader);
+		MNode root=MNode.restoreMNodes(reader);
 		System.out.close();
 		System.setOut(old);
-		return root;
-	}
-	private static MNode quietLoad(File file) {
-		Logging.mainLogger.info("loading: "+file);
-		Reader reader=FileIO.toReader(file);
-		MNode root=restoreMdodesQuietly(reader);
 		return root;
 	}
 	@Override public String toString() {
@@ -232,7 +226,7 @@ public class MNode {
 	}
 	public static MNode restoreMNodesRedBean() {
 		String expectedSgf=Parser.sgfExamleFromRedBean;
-		MNode mNode=restoreMdodes(toReader(expectedSgf));
+		MNode mNode=restoreMNodes(toReader(expectedSgf));
 		return mNode;
 	}
 	public static String saveMNodesDirectly(MNode mNode) {
@@ -263,11 +257,11 @@ public class MNode {
 		// lookAtRoot();
 		String oneGame="(;GM[1];B[as];B[at])";
 		Logging.mainLogger.info(String.valueOf(oneGame));
-		MNode root=MNode.restoreMdodes(toReader(oneGame));
+		MNode root=MNode.restoreMNodes(toReader(oneGame));
 		boolean ok=MNode.saveMNodes(new PrintWriter(System.out),root,standardIndent);
 		String expected=getSgfData("smartgo43");
 		Logging.mainLogger.info(String.valueOf(expected));
-		root=MNode.restoreMdodes(toReader(expected));
+		root=MNode.restoreMNodes(toReader(expected));
 		ok=MNode.saveMNodes(new PrintWriter(System.out),root,standardIndent);
 	}
 	public boolean hasAMove() {

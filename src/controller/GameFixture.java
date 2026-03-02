@@ -268,7 +268,7 @@ public class GameFixture implements Stopable {
 						File file=new File(directory,"game"+fileId+".sgf");
 						Logging.mainLogger.info(String.valueOf(file));
 						Writer writer=FileIO.toWriter(file);
-						boolean wasSaved=ModelTrees.saveModel(recorderFixture.backEnd.model,writer);
+						boolean wasSaved=ModelIo.saveModel(recorderFixture.backEnd.model,writer);
 						writer.close();
 						if(!wasSaved) {
 							gameLogger.warning("save game failed!");

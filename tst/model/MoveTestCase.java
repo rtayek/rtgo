@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import java.util.List;
 import org.junit.Test;
 import equipment.*;
+import equipment.Board.Shape;
+import equipment.Board.Topology;
 import io.Logging;
 import model.Model.*;
 import static model.Move2.*;
@@ -94,7 +96,7 @@ public class MoveTestCase {
     }
     @Test public void testSelfCaptureDoesNotLeakToLaterMoves() {
         Model model=new Model();
-        ModelTrees.setRoot(model,3,3);
+        ModelTreeOps.setRoot(model,3,3,Topology.normal,Shape.normal);
         model.sgfMakeMove(Stone.black,new Point(0,1));
         model.sgfMakeMove(Stone.black,new Point(1,0));
         model.sgfMakeMove(Stone.black,new Point(2,1));
@@ -113,7 +115,7 @@ public class MoveTestCase {
     @Test public void testRepeatedSelfCaptureIsLegalInMovePath() {
         Model model=new Model();
         model.setRole(Role.anything);
-        ModelTrees.setRoot(model,3,3);
+        ModelTreeOps.setRoot(model,3,3,Topology.normal,Shape.normal);
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(0,1)));
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(1,0)));
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(2,1)));
@@ -129,7 +131,7 @@ public class MoveTestCase {
     @Test public void testRepeatedTwoStoneSelfCaptureIsLegalInMovePath() {
         Model model=new Model();
         model.setRole(Role.anything);
-        ModelTrees.setRoot(model,4,4);
+        ModelTreeOps.setRoot(model,4,4,Topology.normal,Shape.normal);
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(0,1)));
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(2,1)));
         assertEquals(MoveResult.legal,model.move(Stone.black,new Point(1,0)));

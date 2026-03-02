@@ -1,5 +1,6 @@
 package sgf.combine;
 import io.Logging;
+import model.ModelIo;
 import static io.IOs.standardIndent;
 import static sgf.Parser.*;
 import java.io.*;
@@ -54,13 +55,13 @@ public class Combine { // the purpose of this class is to combine two sgf files
         Logging.mainLogger.warning("process: "+name);
         //Parser parser=new Parser();
         File file=new File(new File(pathToOldGames,"annotated"),name);
-        SgfNode annotated=SgfIo.restoreSGF(FileIO.toReader(file));
+        SgfNode annotated=ModelIo.restoreSGF(FileIO.toReader(file));
         Logging.mainLogger.warning("annotated: "+name);
         PrintStream out=new PrintStream(System.err,true);
         Writer writer=new PrintWriter(out);
         annotated.saveSgf(writer,standardIndent);
         Logging.mainLogger.warning("");
-        SgfNode current=SgfIo.restoreSGF(FileIO.toReader(new File(pathToOldGames,name)));
+        SgfNode current=ModelIo.restoreSGF(FileIO.toReader(new File(pathToOldGames,name)));
         Logging.mainLogger.warning("current: "+name);
         current.saveSgf(writer,standardIndent);
         Logging.mainLogger.warning("");
@@ -85,7 +86,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
                 // not clear what this is doing other than parsing and printing.
                 // whatever it is may not belong here.
                 Logging.mainLogger.warning("key: "+key);
-                SgfNode games=SgfIo.restoreSGF(FileIO.toReader(getSgfData(key)));
+                SgfNode games=ModelIo.restoreSGF(FileIO.toReader(getSgfData(key)));
                 Logging.mainLogger.warning("game ************");
                 if(games!=null) {
                     OutputStreamWriter outputStreamWriter=new OutputStreamWriter(System.err);

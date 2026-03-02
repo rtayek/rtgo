@@ -1,9 +1,12 @@
 package controller;
 import static io.Init.first;
+import java.io.File;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import com.tayek.util.core.Texts;
+import com.tayek.util.io.FileIO;
 import io.Init;
 import utilities.SuiteSupport;
 @RunWith(Suite.class) @SuiteClasses({ //
@@ -19,7 +22,7 @@ import utilities.SuiteSupport;
     @BeforeClass public static void setUpBeforeClass() throws Exception { Init.first.testsRun.clear(); }
     @AfterClass public static void tearDownAfterClass() throws Exception {
         first.lastPrint();
-        first.saveTestsRun("fromSuite.txt");
+        FileIO.write(Texts.cat(first.testsRun),new File("fromSuite.txt"));
         
     }
 }

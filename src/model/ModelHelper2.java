@@ -7,6 +7,8 @@ import controller.GTPBackEnd;
 import controller.GTPFrontEnd;
 import controller.Response;
 import equipment.Board;
+import equipment.Board.Shape;
+import equipment.Board.Topology;
 import equipment.Point;
 import equipment.Stone;
 import io.Logging;
@@ -19,7 +21,7 @@ public final class ModelHelper2 {
 		int depth=source.board().depth();
 		Board.Topology topology=source.board().topology();
 		Board.Shape shape=source.board().shape();
-		ModelTrees.setRoot(target,width,depth,topology,shape);
+		ModelTreeOps.setRoot(target,width,depth,topology,shape);
 		target.setBoard(Board.factory.create(width,depth,topology,shape));
 	}
 	public static Model pushGTPMovesToCurrentStateDirect(Model original,boolean oneAtATime) {
@@ -65,7 +67,7 @@ public final class ModelHelper2 {
     }
 	public static void main(String[] args) {
 		Model original=new Model();
-		ModelTrees.setRoot(original,5,5);
+		ModelTreeOps.setRoot(original,5,5,Topology.normal,Shape.normal);
 		original.move(Stone.black,new Point());
 		original.move(Stone.white,new Point(1,1));
 		Model model=pushGTPMovesToCurrentStateDirect(original,false);

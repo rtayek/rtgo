@@ -35,7 +35,6 @@ public enum Init {
         //Logging.mainLogger.info(Parameters.topologies);
         Logging.mainLogger.info("once");
     }
-    private void restoreSystmeIO() { System.setOut(out); System.setErr(err); }
     public void twice() {
         once();
         if(verbose) Logging.mainLogger.info("5 enter twice()");
@@ -104,9 +103,6 @@ public enum Init {
         }
         Logging.mainLogger.info("counter: "+counter);
         wrapupTests_();
-    }
-    public void saveTestsRun(String fileName) {
-        FileIO.write(Texts.cat(testsRun),new File(fileName));
     }
     public void lastPrint() {
         NamedThreadGroup.printThraedsAtEnd();

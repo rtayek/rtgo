@@ -6,6 +6,7 @@ import io.IOs;
 import com.tayek.util.io.End.Holders;
 import com.tayek.util.io.FileIO;
 import model.Model;
+import model.ModelIo;
 import model.ModelTrees;
 import server.NamedThreadGroup;
 import sgf.HexAscii;
@@ -32,9 +33,9 @@ public class Game {
         // no references to any back end stuff here.
         if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
-        ModelTrees.restoreModel(recorder,FileIO.toReader(file));
+        ModelIo.restoreModel(recorder,FileIO.toReader(file));
         StringWriter writer=new StringWriter();
-        ModelTrees.saveModel(recorder,writer);
+        ModelIo.saveModel(recorder,writer);
         String sgf=writer.toString();
         sgf=HexAscii.encode(sgf.getBytes());
         String receiveCommand=Command.tgo_receive_sgf.name()+" "+sgf;

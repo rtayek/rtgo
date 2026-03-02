@@ -13,6 +13,7 @@ import com.tayek.util.io.FileIO;
 import com.tayek.util.misc.Tee;
 import io.*;
 import model.Model;
+import model.ModelIo;
 import model.ModelTrees;
 import utilities.*;
 public class Main extends MainGui implements ActionListener,ComponentListener {
@@ -160,7 +161,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener {
 		Model model=new Model();
 		if(startWithFile!=null) {
 			Logging.mainLogger.info("restoring: "+startWithFile);
-			ModelTrees.restoreModel(model,FileIO.toReader(startWithFile));
+			ModelIo.restoreModel(model,FileIO.toReader(startWithFile));
 			Logging.mainLogger.info("afer restore board is: "+model.board());
 		}
 		main=new Main(null,model,useTextView?textView:null);

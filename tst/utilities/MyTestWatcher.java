@@ -1,8 +1,11 @@
 package utilities;
 import static io.Init.first;
+import java.io.File;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import com.tayek.util.core.Et;
+import com.tayek.util.core.Texts;
+import com.tayek.util.io.FileIO;
 import io.*;
 import io.IOs;
 import server.NamedThreadGroup;
@@ -33,7 +36,7 @@ public class MyTestWatcher extends TestWatcher {
         if(tests==lastTest) {
             Logging.mainLogger.info("last test!");
             first.lastPrint();
-            if(saveTestsRun) first.saveTestsRun("fromwatcher"+lastTest+".txt");
+            if(saveTestsRun) FileIO.write(Texts.cat(first.testsRun),new File("fromwatcher"+lastTest+".txt"));
         }
     }
     @Override protected void failed(Throwable e,Description description) {

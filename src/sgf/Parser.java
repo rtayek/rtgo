@@ -1,6 +1,5 @@
 package sgf;
 import static io.Logging.parserLogger;
-import static sgf.SgfNode.sgfRoundTripTwice;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -9,10 +8,11 @@ import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
 import io.IOs;
+import model.ModelIo;
 import sgf.combine.Combine;
 // https://github.com/search?q=sgf4j
 public class Parser {
-	private Parser() {}
+	public Parser() {}
 	private char read() throws IOException {
 		int c=reader.read();
 		if(c==-1) {
@@ -173,11 +173,7 @@ public class Parser {
 		}
 		return sequence;
 	}
-	public static SgfNode restoreSgf(Reader reader) {
-		SgfNode games=new Parser().parse(reader);
-		return games;
-	}
-	private SgfNode parse(Reader reader) {
+	public SgfNode parse(Reader reader) {
 		if(reader==null) return null;
 		try {
 			this.reader=new PushbackReader(reader);
@@ -211,19 +207,10 @@ public class Parser {
 		parserLogger.severe("parser return null!");
 		return null;
 	}
-	private static void combineAndCheckKogosJosekiDictionary() throws IOException,Exception { // this
-																								// has
-																								// been
-																								// sorta
-																								// replaced
-																								// by
-																								// code
-																								// in
-																								// the
-																								// test
-																								// case.
+	private static void combineAndCheckKogosJosekiDictionary() throws IOException,Exception { 
+		// this has been sorta replaced by code in the test case.
 		Reader reader=FileIO.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
-		boolean ok=sgfRoundTripTwice(reader);
+		boolean ok=ModelIo.roundTripTwice(reader);
 		if(!ok) throw new Exception("test fails");
 	}
 	public static Collection<Object> sgfDataKeySet() {
@@ -289,7 +276,7 @@ public class Parser {
 			String sgf=getSgfData(key);
 			int p=parentheses(sgf);
 			if(p!=0) Logging.mainLogger.info("parentheses count: "+p);
-			SgfNode games=restoreSgf(FileIO.toReader(sgf));
+			SgfNode games=new Parser().parse(FileIO.toReader(sgf));
 			if(games!=null) if(games.right!=null) {
 				many.add(key);
 				Logging.mainLogger.info(key+" has more than one game: "+games.right);
@@ -318,7 +305,7 @@ public class Parser {
 			Logging.mainLogger.info("key: "+key);
 			String expectedSgf=getSgfData(key);
 			expectedSgf=SgfNode.options.prepareSgf(expectedSgf);
-			SgfNode games=expectedSgf!=null?restoreSgf(FileIO.toReader(expectedSgf)):null;
+			SgfNode games=expectedSgf!=null?new Parser().parse(FileIO.toReader(expectedSgf)):null;
 			if(games!=null) if(games.right!=null) Logging.mainLogger.info(key+" right: "+games.right);
 			// Logging.mainLogger.info(games);
 		}

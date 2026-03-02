@@ -1,5 +1,6 @@
 package sgf;
 import io.Logging;
+import model.ModelIo;
 import static sgf.Parser.*;
 import java.util.*;
 import com.tayek.util.io.FileIO;
@@ -20,7 +21,7 @@ public class SgfFiles {
                 Logging.mainLogger.info(" bad parentheses: "+p);
                 throw new RuntimeException(key+" bad parentheses: "+p);
             }
-            SgfNode games=SgfIo.restoreSGF(FileIO.toReader(expectedSgf));
+            SgfNode games=ModelIo.restoreSGF(FileIO.toReader(expectedSgf));
             games.preorderCheckFlags();
             String s="";
             if(games.hasASetupType) s+='S';

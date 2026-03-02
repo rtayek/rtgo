@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import com.tayek.util.io.FileIO;
 import equipment.Stone;
 import model.Model;
+import model.ModelIo;
 import model.ModelTrees;
 import sgf.Parser;
 // maybe move all of the gtp stuff into it's own package?
@@ -56,7 +57,7 @@ public enum Command { // should implement some interface? (probably)
     public static void doTGOSend(String key) {
         String expectedSgf=Parser.getSgfData(key);
         Model original=new Model();
-        ModelTrees.restoreModel(original,FileIO.toReader(expectedSgf));
+        ModelIo.restoreModel(original,FileIO.toReader(expectedSgf));
         original.bottom();
         String command=Command.tgo_send_sgf.name();
         String response=null;

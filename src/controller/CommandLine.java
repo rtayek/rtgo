@@ -78,7 +78,7 @@ public class CommandLine {
             case 'o':
                 tokens=splitNext(command,1);
                 System.out.println(Arrays.asList(tokens));
-                if(tokens!=null&&tokens.length>=1) { ModelTrees.restoreModel(model,FileIO.toReader(new File(tokens[0]))); }
+                if(tokens!=null&&tokens.length>=1) { ModelIo.restoreModel(model,FileIO.toReader(new File(tokens[0]))); }
                 break;
             case 'g':
                 new Main(null,model,null);
@@ -87,7 +87,7 @@ public class CommandLine {
                 //
                 break;
             case 'n':
-                ModelTrees.setRoot(model,9,9,Topology.normal,Shape.normal);
+                ModelTreeOps.setRoot(model,9,9,Topology.normal,Shape.normal);
                 break;
             case 'p':
                 print(model);
