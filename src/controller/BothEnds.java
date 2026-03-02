@@ -7,7 +7,7 @@ import io.*;
 import com.tayek.util.io.End;
 import com.tayek.util.io.End.Holder;
 import model.Model;
-import model.ModelHelper2;
+import model.ModelHelper;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.NamedThread;
 import com.tayek.util.core.Pair;
@@ -125,7 +125,7 @@ public class BothEnds { // has both a front end and a back end.
     }
     static void runBoth(Model expected,boolean useThread) throws Exception {
         Model actual=new Model();
-        ModelHelper2.configureModelWithBoardFrom(actual,expected);
+        ModelHelper.configureModelWithBoardFrom(actual,expected);
         List<String> gtpMoves=expected.gtpMovesToCurrentState();
         boolean ok=checkMoveCommandsDirect(actual,gtpMoves,false);
         if(!ok) Logging.mainLogger.severe("run both fails on: "+gtpMoves);

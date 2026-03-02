@@ -5,7 +5,6 @@ import com.tayek.util.io.FileIO;
 import io.Logging;
 import io.TestIo;
 import static org.junit.Assert.*;
-import static model.ModelTrees.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import equipment.*;

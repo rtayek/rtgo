@@ -4,7 +4,6 @@ import io.Logging;
 import io.TestIo;
 import com.tayek.util.io.FileIO;
 import static org.junit.Assert.*;
-import static model.ModelTrees.*;	
 import java.io.*;
 import org.junit.*;
 import equipment.Coordinates;

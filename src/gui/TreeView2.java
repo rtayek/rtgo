@@ -3,7 +3,6 @@ import java.io.StringReader;
 import javax.swing.JFrame;
 import model.Model;
 import model.ModelIo;
-import model.ModelTrees;
 import utilities.MyJApplet;
 @SuppressWarnings("serial") public class TreeView2 extends TreeView { // why did i make
     // this?

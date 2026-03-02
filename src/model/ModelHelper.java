@@ -33,18 +33,20 @@ public final class ModelHelper {
 
     private ModelHelper() {}
 
+    public static void configureModelWithBoardFrom(Model target,Model source) {
+        if(target==null||source==null||source.board()==null) return;
+        Board sourceBoard=source.board();
+        int width=sourceBoard.width();
+        int depth=sourceBoard.depth();
+        Board.Topology topology=sourceBoard.topology();
+        Board.Shape shape=sourceBoard.shape();
+        ModelTreeOps.setRoot(target,width,depth,topology,shape);
+        target.setBoard(Board.factory.create(width,depth,topology,shape));
+    }
+
     static Model newModelWithBoardFrom(Model original, String name) {
-        Model model = name == null ? new Model() : new Model(name);
-        if (original != null && original.board() != null) {
-            Board originalBoard = original.board();
-            int width = originalBoard.width();
-            int depth = originalBoard.depth();
-            Board.Topology topology = originalBoard.topology();
-            Board.Shape shape = originalBoard.shape();
-            ModelTreeOps.setRoot(model,width,depth,topology,shape);
-            Board board = Board.factory.create(width, depth, topology, shape);
-            model.setBoard(board);
-        }
+        Model model=name==null?new Model():new Model(name);
+        configureModelWithBoardFrom(model,original);
         return model;
     }
 

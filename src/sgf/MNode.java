@@ -10,6 +10,7 @@ import java.util.*;
 import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
+import model.ModelIo;
 import model.MNodeAcceptor.MNodeFinder;
 //  s      b       m       o
 // txt -> sgf -> mnode -> model
@@ -25,16 +26,10 @@ public class MNode {
 		this.sgfProperties.addAll(sgfProperties);
 	}
 	public void setFlags() {
-		// http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says:
-		// Therefore it's illegal to mix setup properties and move properties
-		// within the same node.
-		for(SgfProperty sgfProperty:sgfProperties) {
-			if(sgfProperty.p() instanceof Setup) hasASetupType=true;
-			if(sgfProperty.p() instanceof sgf.Move) {
-				hasAMoveType=true;
-			}
-			if((sgfProperty.p().equals(P.W)||sgfProperty.p().equals(P.B))) hasAMove=true;
-		}
+		PropertyFlags.Flags flags=PropertyFlags.analyze(sgfProperties);
+		hasAMove=flags.hasAMove;
+		hasAMoveType=flags.hasAMoveType;
+		hasASetupType=flags.hasASetupType;
 	}
 	@Override public int hashCode() {
 		return Objects.hash(sgfProperties,extraProperties);
@@ -49,7 +44,7 @@ public class MNode {
 	}
 	boolean checkFlags() {
 		boolean ok=true;
-		if(hasAMoveType&&hasASetupType) {
+		if(PropertyFlags.hasMixedMoveAndSetup(hasAMoveType,hasASetupType)) {
 			parserLogger.severe("node has move and setup type properties!");
 			Logging.mainLogger.info("node has move and setup type properties!");
 			if(!ignoreMoveAndSetupFlags) {
@@ -236,10 +231,7 @@ public class MNode {
 		if(true) {
 			String expectedSgf=Parser.sgfExamleFromRedBean;
 			MNode mNode=restoreMNodes(toReader(expectedSgf));
-			StringWriter stringWriter=new StringWriter();
-			for(MNode child:mNode.children)
-				saveMNodesDirectly(stringWriter,child,noIndent);
-			String saved=stringWriter.toString();
+			String saved=ModelIo.saveMNodesDirectlyToString(mNode);
 			Logging.mainLogger.info("saved directly: "+saved);
 			return;
 		}

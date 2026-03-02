@@ -91,16 +91,14 @@ public class SgfNode {
         if(!ok) Logging.mainLogger.info("node has move and setup type properties!");
     }
     public void setFlags() {
-        // http://www.red-bean.com/sgf/user_guide/index.html#move_vs_place says: Therefore it's illegal to mix setup properties and move properties within the same node.
-        for(SgfProperty property:sgfProperties) {
-            if(property.p() instanceof Setup) hasASetupType=true;
-            if(property.p() instanceof sgf.Move) { hasAMoveType=true; }
-            if((property.p().equals(P.W)||property.p().equals(P.B))) hasAMove=true;
-        }
+        PropertyFlags.Flags flags=PropertyFlags.analyze(sgfProperties);
+        hasAMove=flags.hasAMove;
+        hasAMoveType=flags.hasAMoveType;
+        hasASetupType=flags.hasASetupType;
     }
     boolean checkFlags() {
         boolean ok=true;
-        if(hasAMoveType&&hasASetupType) {
+        if(PropertyFlags.hasMixedMoveAndSetup(hasAMoveType,hasASetupType)) {
             parserLogger.severe("node has move and setup type properties!");
             Logging.mainLogger.info("node has move and setup type properties!");
             if(!ignoreMoveAndSetupFlags) { IOs.stackTrace(10); System.exit(1); }
@@ -365,10 +363,7 @@ public class SgfNode {
                     Logging.mainLogger.info("expected sgf "+ex);
                     String expectedSgf=Parser.sgfExamleFromRedBean;
                     MNode mNode=MNode.restoreMNodes(FileIO.toReader(expectedSgf));
-                    StringWriter directWriter=new StringWriter();
-                    for(MNode child:mNode.children())
-                        MNode.saveMNodesDirectly(directWriter,child,noIndent);
-                    String direct=directWriter.toString();
+                    String direct=ModelIo.saveMNodesDirectlyToString(mNode);
                     Logging.mainLogger.info("direct       "+direct);
                     if(ex.equals(direct)) Logging.mainLogger.info("are equal!");
                     Node<String> string=tree.Node.reLabelCopy(redBean,i);

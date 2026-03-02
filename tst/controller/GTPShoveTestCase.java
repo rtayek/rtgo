@@ -69,7 +69,7 @@ public class GTPShoveTestCase extends ControllerGtpTestSupport {
         expected.up();
         List<String> gtpMoves=expected.gtpMovesToCurrentState();
         Model actual=new Model("actual");
-        ModelHelper2.configureModelWithBoardFrom(actual,expected);
+        ModelHelper.configureModelWithBoardFrom(actual,expected);
         Response[] responses=runGtpCommands(actual,gtpMoves);
         for(Response response:responses) assertTrue(response.isOk());
         Logging.mainLogger.info(String.valueOf(expected));

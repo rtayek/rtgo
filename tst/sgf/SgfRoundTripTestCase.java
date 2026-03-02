@@ -14,7 +14,6 @@ import org.junit.runners.Parameterized.Parameters;
 import model.MNodeAcceptor.MakeList;
 import model.Model;
 import model.ModelIo;
-import model.ModelTrees;
 
 @RunWith(Parameterized.class) public class SgfRoundTripTestCase extends AbstractSgfParserTestCase {
     @Parameters(name="{0}") public static Collection<Object[]> parameters() {

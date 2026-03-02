@@ -37,7 +37,6 @@ import org.junit.Test;
 import model.Model;
 import model.ModelIo;
 import model.ModelTreeOps;
-import model.ModelTrees;
 import model.MNodeAcceptor.MNodeFinder;
 import model.MNodeAcceptor.MakeList;
 import model.Move2;
@@ -832,12 +831,12 @@ public class SgfUnitTestCase {
         return new File(new File(Combine.pathToOldGames,"annotated"),"test.sgf");
     }
     private void assertRoundTripTwiceOrThrow(File file) throws Exception {
-        boolean ok=ModelIo.roundTripTwice(FileIO.toReader(file));
+        boolean ok=ModelIo.sgfRoundTripTwice(FileIO.toReader(file));
         if(!ok) { Logging.mainLogger.warning("failure"); throw new Exception("test fails"); }
     }
 
     private static boolean roundTripTwiceWithLogging(File file) {
-        boolean ok=ModelIo.roundTripTwice(FileIO.toReader(file));
+        boolean ok=ModelIo.sgfRoundTripTwice(FileIO.toReader(file));
         if(!ok) Logging.mainLogger.info(file+" fails!");
         return ok;
     }

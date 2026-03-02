@@ -11,7 +11,6 @@ import io.*;
 import model.Event;
 import model.Model;
 import model.ModelIo;
-import model.ModelTrees;
 import sgf.MNode;
 import utilities.*;
 @SuppressWarnings("serial") public class TreeView extends MainGui implements Observer,TreeSelectionListener,ActionListener {

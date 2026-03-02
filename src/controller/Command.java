@@ -5,7 +5,6 @@ import com.tayek.util.io.FileIO;
 import equipment.Stone;
 import model.Model;
 import model.ModelIo;
-import model.ModelTrees;
 import sgf.Parser;
 // maybe move all of the gtp stuff into it's own package?
 public enum Command { // should implement some interface? (probably)

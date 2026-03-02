@@ -210,7 +210,7 @@ public class Parser {
 	private static void combineAndCheckKogosJosekiDictionary() throws IOException,Exception { 
 		// this has been sorta replaced by code in the test case.
 		Reader reader=FileIO.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
-		boolean ok=ModelIo.roundTripTwice(reader);
+		boolean ok=ModelIo.sgfRoundTripTwice(reader);
 		if(!ok) throw new Exception("test fails");
 	}
 	public static Collection<Object> sgfDataKeySet() {

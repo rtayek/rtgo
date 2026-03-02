@@ -6,7 +6,6 @@ import controller.Command;
 import controller.GTPBackEnd;
 import controller.GTPFrontEnd;
 import controller.Response;
-import equipment.Board;
 import equipment.Board.Shape;
 import equipment.Board.Topology;
 import equipment.Point;
@@ -15,15 +14,6 @@ import io.Logging;
 import com.tayek.util.io.End.Holder;
 public final class ModelHelper2 {
 	private ModelHelper2() {}
-	public static void configureModelWithBoardFrom(Model target,Model source) {
-		if(target==null||source==null||source.board()==null) return;
-		int width=source.board().width();
-		int depth=source.board().depth();
-		Board.Topology topology=source.board().topology();
-		Board.Shape shape=source.board().shape();
-		ModelTreeOps.setRoot(target,width,depth,topology,shape);
-		target.setBoard(Board.factory.create(width,depth,topology,shape));
-	}
 	public static Model pushGTPMovesToCurrentStateDirect(Model original,boolean oneAtATime) {
 		Model model=ModelHelper.newModelWithBoardFrom(original, null);
 		// should set the board shape and topology also?

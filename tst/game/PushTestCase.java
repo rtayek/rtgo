@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.*;
 import controller.GameFixture;
 import model.*;
+import model.ModelHelper;
 import model.ModelHelper2;
 public class PushTestCase {
     @Before public void setUp() throws Exception {}
@@ -17,8 +18,8 @@ public class PushTestCase {
         Model black=game.blackFixture.backEnd.model;
         Model white=game.whiteFixture.backEnd.model;
         if(expected.board()!=null) { // normally no access to both of these at the same time
-            ModelHelper2.configureModelWithBoardFrom(black,expected);
-            ModelHelper2.configureModelWithBoardFrom(white,expected);
+            ModelHelper.configureModelWithBoardFrom(black,expected);
+            ModelHelper.configureModelWithBoardFrom(white,expected);
         } else Logging.mainLogger.info("expected has null board!");
         game.printStatus();
         assertTrue(game.namedThread==null);

@@ -44,7 +44,7 @@ public final class ModelIo {
 		if(p!=0) Logging.mainLogger.info("actual parentheses count: "+p);
 		return games;
 	}
-	public static boolean roundTripTwice(Reader reader) {
+	public static boolean sgfRoundTripTwice(Reader reader) {
 		Writer writer=new StringWriter();
 		restoreAndSaveSGF(reader,writer);
 		String expected=writer.toString();
@@ -116,7 +116,7 @@ public final class ModelIo {
 		SgfNode actual=sgfRoot.left;
 		return saveSgf(actual,noIndent);
 	}
-	private static String saveMNodesDirectlyToString(MNode root) {
+	public static String saveMNodesDirectlyToString(MNode root) {
 		StringWriter stringWriter=new StringWriter();
 		try {
 			for(MNode child:root.children())

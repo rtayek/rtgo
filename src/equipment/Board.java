@@ -5,7 +5,6 @@ import equipment.Board.*;
 import io.*;
 import model.Model;
 import model.ModelTreeOps;
-import model.ModelTrees;
 import com.tayek.util.core.Pair;
 public interface Board { // http://stackoverflow.com/questions/28681737/java-8-default-methods-as-traits-safe
     // make a subinterface called MutableBoard?

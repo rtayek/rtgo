@@ -104,7 +104,7 @@ public final class SgfTestHarness {
 
     static void assertRoundTripTwice(Object key,String expectedSgf) {
         assertNoLineFeeds(expectedSgf);
-        boolean isOk=ModelIo.roundTripTwice(FileIO.toReader(expectedSgf));
+        boolean isOk=ModelIo.sgfRoundTripTwice(FileIO.toReader(expectedSgf));
         assertTrue(key.toString(),isOk);
     }
 

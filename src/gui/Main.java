@@ -14,7 +14,6 @@ import com.tayek.util.misc.Tee;
 import io.*;
 import model.Model;
 import model.ModelIo;
-import model.ModelTrees;
 import utilities.*;
 public class Main extends MainGui implements ActionListener,ComponentListener {
 	public Main(MyJApplet applet,Model model,TextView textView) {
