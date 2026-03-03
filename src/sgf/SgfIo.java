@@ -9,7 +9,7 @@ public final class SgfIo {
 	}
 	private SgfIo() {}
 	public static String loadExpectedSgf(Object key) {
-		if(key==null) throw new RuntimeException("key: "+key+" is nul!");
+		if(key==null) throw new RuntimeException("key: "+key+" is null!");
 		String sgf=Parser.getSgfData(key);
 		if(sgf==null) return null;
 		int p=Parser.parentheses(sgf);

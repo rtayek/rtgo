@@ -5,7 +5,7 @@ import io.Logging;
 import sgf.*;
 interface Acceptor<T extends Enumeration<T>> {
     // maybe we can generalize like this?
-    // maybe hace preorder, inorder, postorder for the enumertors
+    // maybe have preorder, inorder, postorder for the enumerators
     void accept(T t,Traverser<T> traverser);
     static class Traverser<T extends Enumeration<T>> { // half of a visitor
         // looks like it lists all of the variations?
@@ -92,7 +92,7 @@ public interface MNodeAcceptor {
             Traverser traverser=new Traverser(finder);
             traverser.visit(games);
             if(!finder.ancestors.contains(target))
-                Logging.mainLogger.warning(""+" "+"ancesters does not contain target!");
+                Logging.mainLogger.warning(""+" "+"ancestors does not contain target!");
             return finder;
         }
         public static MNodeFinder find(MNode target,MNode games,BiPredicate<MNode,MNode> predicate) {

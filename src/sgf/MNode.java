@@ -161,7 +161,7 @@ public class MNode {
 		SgfNode games=null;
 		if(root!=null) {
 			int children=root.children.size();
-			games=root.toBinaryTree(); // ths is where root gets tossed.
+			games=root.toBinaryTree(); // this is where root gets tossed.
 			// that's why none of the sgf in the root is not coming out.
 			// Logging.mainLogger.info("discarding: "+root);
 			if(games.left!=null) games.left.saveSgf(writer,indent);
@@ -169,7 +169,7 @@ public class MNode {
 		}
 		return true; // for now
 	}
-	public static MNode quietRestoreMNodes(Reader reader) {
+	public static MNode restoreMNodesQuietly(Reader reader) {
 		PrintStream old=System.out;
 		System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
 		MNode root=MNode.restoreMNodes(reader);
@@ -182,6 +182,7 @@ public class MNode {
 		if(data!=null) stringBuffer.append("("+data+")");
 		for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();)
 			stringBuffer.append(i.next().toString());
+		// these extra properties are new (january 2026).
 		for(Iterator<SgfProperty> i=extraProperties.iterator();i.hasNext();)
 			stringBuffer.append(i.next().toString());
 		return stringBuffer.toString();
@@ -191,17 +192,15 @@ public class MNode {
 		Collection<SgfNode> path=finder.pathToTarget;
 		return path;
 	}
-	public static String toString(MNode mNode) {
-		StringBuffer stringBuffer=new StringBuffer(";");
-		// if(false) { stringBuffer.append("{id="+sgfId);
-		// stringBuffer.append("}"); }
-		for(Iterator<SgfProperty> i=mNode.sgfProperties.iterator();i.hasNext();)
-			stringBuffer.append(i.next().toString());
-		return stringBuffer.toString();
+	private static void saveMNode(Writer writer,MNode node) throws IOException {
+		// intentionally emits only SGF properties, not extra properties.
+		writer.write(';');
+		for(Iterator<SgfProperty> i=node.sgfProperties.iterator();i.hasNext();)
+			writer.write(i.next().toString());
 	}
 	private static void saveMNodesDirectly_(Writer writer,MNode root,Indent indent) throws IOException {
 		if(root!=null) {
-			writer.write(toString(root));
+			saveMNode(writer,root);
 			ArrayList<MNode> children=root.children;
 			int n=children.size();
 			for(int i=0;i<children.size();++i) {

@@ -97,16 +97,16 @@ public class CommandLine {
             case 's':
                 if(model.gtp==null) {
                     ok=Model.connectToServer(model);
-                    if(ok) System.out.println("conected.");
+                    if(ok) System.out.println("connected.");
                     else System.out.println("connect fails!");
-                } else System.out.println("already conected!");
+                } else System.out.println("already connected!");
                 break;
             case 'S':
                 if(model.gtp!=null) {
                     ok=Model.disconnectFromServer(model);
-                    if(ok) System.out.println("disconected.");
+                    if(ok) System.out.println("disconnected.");
                     else System.out.println("disconnect fails!");
-                } else System.out.println("already disconected!");
+                } else System.out.println("already disconnected!");
                 break;
             case 'T':
                 if(myTreeView==null) {

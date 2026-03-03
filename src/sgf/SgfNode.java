@@ -134,7 +134,7 @@ public class SgfNode {
 		}
 		int n;
 	}
-	static class SearhingFunction implements Predicate<SgfNode> {
+	static class SearchingFunction implements Predicate<SgfNode> {
 		@Override public boolean test(SgfNode t) {
 			if(!done) {
 				if(!t.setAndCheckFlags()) {
@@ -182,7 +182,7 @@ public class SgfNode {
 	}
 	private void addDescendant(SgfNode node) {
 		BinaryTreeSupport.appendDescendant(this,n->n.left,(parent,child)->parent.left=child,node);
-		// Logging.mainLogger.warning("added node "+node.id+" as desendent of
+		// Logging.mainLogger.warning("added node "+node.id+" as descendant of
 		// node
 		// "+last.id);
 	}
@@ -370,10 +370,10 @@ public class SgfNode {
 	 */
 	// Dependent diagnostics
 	void preorderCheckFlags() {
-		SearhingFunction searhingFunction=new SearhingFunction();
-		preorder(searhingFunction);
-		if(searhingFunction.done) {
-			Logging.mainLogger.info(searhingFunction.target+" is bad");
+		SearchingFunction searchingFunction=new SearchingFunction();
+		preorder(searchingFunction);
+		if(searchingFunction.done) {
+			Logging.mainLogger.info(searchingFunction.target+" is bad");
 		}
 	}
 	void oldPreorderCheckFlags() {
@@ -448,15 +448,15 @@ public class SgfNode {
 					else Logging.mainLogger.info(" 1");
 					else Logging.mainLogger.info(" 0");
 				}
-				String preorderSsgf=null;
+				String preorderSgf=null;
 				if(games!=null) {
 					StringWriter stringWriter=new StringWriter();
 					games.preorderSaveSgf(stringWriter,noIndent);
-					preorderSsgf=stringWriter.toString();
+					preorderSgf=stringWriter.toString();
 				}
 				Logging.mainLogger.info("expeced sgf  "+expectedSgf);
-				Logging.mainLogger.info("preordered   "+preorderSsgf);
-				boolean ok=expectedSgf.equals(preorderSsgf);
+				Logging.mainLogger.info("preordered   "+preorderSgf);
+				boolean ok=expectedSgf.equals(preorderSgf);
 				if(!ok) Logging.mainLogger.info(" "+ok);
 				if(true) break;
 			}

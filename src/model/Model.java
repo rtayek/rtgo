@@ -806,8 +806,8 @@ public class Model extends Observable { // model of a go game or problem forrest
 		// seems t work, but the test are real slow.
 		List<MNode> list=root().lca(currentNode(),target);
 		if(list!=null) {
-			MNode ancester=list.get(0);
-			while(currentNode()!=ancester) {
+			MNode ancestor=list.get(0);
+			while(currentNode()!=ancestor) {
 				if(!Navigate.up.canDo(this)) {
 					Logging.mainLogger.info("can't do up!");
 				}
@@ -818,11 +818,11 @@ public class Model extends Observable { // model of a go game or problem forrest
 			// maybe i need a real equals bases on id?
 			// or ?
 			if(!currentNode().equals(target)) for(int i=1;i<list.size();i++) {
-				ancester=list.get(i);
-				int index=currentNode().children().indexOf(ancester);
+				ancestor=list.get(i);
+				int index=currentNode().children().indexOf(ancestor);
 				if(index>=0) down(index);
 				else {
-					Logging.mainLogger.warning(name+" "+"at "+currentNode()+", can not find ancester "+ancester+" in children: "+currentNode().children());
+					Logging.mainLogger.warning(name+" "+"at "+currentNode()+", cannot find ancestor "+ancestor+" in children: "+currentNode().children());
 					return false;
 				}
 			}
