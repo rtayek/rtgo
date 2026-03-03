@@ -447,7 +447,7 @@ public class SgfUnitTestCase {
         // hangs when ignore is remove from test go to node!
         String key="manyFacesTwoMovesAtA1AndR16";
         String sgfString=SgfIo.loadExpectedSgf(key);
-        MNode root=MNode.quietRestoreMdodes(FileIO.toReader(sgfString));
+        MNode root=MNode.quietRestoreMNodes(FileIO.toReader(sgfString));
         model.setRoot(root);
         if(model.board()!=null) {
             int expected=model.board().id();
@@ -556,7 +556,6 @@ public class SgfUnitTestCase {
 
     @Test public void testConstructor() {
         SgfNode sgfNode=new SgfNode();
-        sgfNode.sgfProperties=new ArrayList<>();
     }
 
     @Test public void testSentinelStructure() {

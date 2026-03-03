@@ -248,7 +248,7 @@ class Mediator implements Observer,ActionListener {
 			if(selection!=null) {
 				File file=Model.insureExtension(selection.file(),Model.desiredExtension);
 				if(!ModelIo.saveModel(model,FileIO.toWriter(file))) {
-					Logging.mainLogger.warning(model.name+" "+"can not save to: "+file);
+					Logging.mainLogger.warning(model.name+" "+"cannot save to: "+file);
 				}
 				lastSaveDirectory=file.getParentFile();
 			}

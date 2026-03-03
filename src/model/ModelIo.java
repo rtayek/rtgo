@@ -25,18 +25,15 @@ public final class ModelIo {
 		return MNode.saveMNodes(writer,ensureSentinel(model),new Indent(SgfNode.options.indent));
 	}
 	public static SgfNode restoreSGF(Reader reader) {
-		if(reader==null) return null;
 		return new Parser().parse(reader);
 	}
 	public static String saveSgf(SgfNode node,Indent indent) {
-		if(node==null) return null;
 		StringWriter writer=new StringWriter();
 		node.saveSgf(writer,indent);
 		return writer.toString();
 	}
 	// Dependent operations
 	public static SgfNode restoreAndSaveSGF(Reader reader,Writer writer) {
-		if(reader==null) return null;
 		SgfNode games=restoreSGF(reader);
 		if(games!=null) games.saveSgf(writer,noIndent);
 		String actual=writer.toString();
@@ -105,10 +102,10 @@ public final class ModelIo {
 			Logging.mainLogger.info("root has RT");
 			return root;
 		}
-		MNode senrinel=new MNode(null); // not reall the sentinel.
-		senrinel.children().add(root);  // should i add the RT property so it is a sentinel?
+		MNode sentinel=new MNode(null); // not the real sentinel.
+		sentinel.children().add(root);
 		Logging.mainLogger.info("added null root");
-		return senrinel;
+		return sentinel;
 	}
 	private static String saveFromModelRoot(MNode root,ModelHelper.ModelSaveMode saveMode) {
 		if(saveMode==ModelHelper.ModelSaveMode.direct) { return saveMNodesDirectlyToString(root); }

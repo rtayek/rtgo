@@ -11,7 +11,7 @@ import io.Logging;
 import model.*;
 import model.Model.MoveResult;
 import model.Move2.MoveType;
-import view.CommandLIneView;
+import view.CommandLineView;
 public class CommandLine {
     // we need the command line options
     // and we need the commands for the command line.
@@ -33,7 +33,7 @@ public class CommandLine {
                 usage();
                 break;
             case 'c':
-                model.addObserver(new CommandLIneView(model));
+                model.addObserver(new CommandLineView(model));
                 break;
             case 'u':
                 model.up();

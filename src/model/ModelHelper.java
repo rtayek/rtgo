@@ -124,7 +124,7 @@ public final class ModelHelper {
                     boolean isPass=string.equals("");
                     model.ensureBoard();
                     if(model.board().width()<=Board.standard&&model.board().depth()<=Board.standard&&string.equals("tt"))
-                        isPass=true; // hack for some sgf wierdness/
+                        isPass=true; // hack for some SGF weirdness/
                     if(isPass) {
                         Logging.mainLogger.config(model.name+" "+"passing");
                         state.sgfPass();

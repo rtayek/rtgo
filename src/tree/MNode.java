@@ -26,8 +26,8 @@ public class MNode<T> {
             if(i==0) {
                 if(child!=null) {
                     left=tail=from(child);
-                    if(left.right!=null) throw new RuntimeException("wierdness!");
-                } else Logging.mainLogger.info("first chile is null!");
+                    if(left.right!=null) throw new RuntimeException("weirdness!");
+                } else Logging.mainLogger.info("first child is null!");
             } else {
                 Node<T> newRight=from(child);
                 tail.right=newRight;

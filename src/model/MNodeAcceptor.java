@@ -22,7 +22,7 @@ interface Acceptor<T extends Enumeration<T>> {
     }
     static class AcceptorImpl<T extends Enumeration<T>> implements Acceptor<T> {
         @Override public void accept(T t,Traverser<T> traverser) {
-            // TODO Auto-generated method stub
+            // no-op
         }
     }
     class GenericPrintAcceptor<T extends Enumeration<T>> implements Acceptor<T> {

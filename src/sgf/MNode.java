@@ -67,8 +67,8 @@ public class MNode {
 			if(i==0) {
 				if(child!=null) {
 					left=tail=child.toBinaryTree();
-					if(left.right!=null) throw new RuntimeException("wierdness!");
-				} else Logging.mainLogger.info("first chile is null!");
+					if(left.right!=null) throw new RuntimeException("weirdness!");
+				} else Logging.mainLogger.info("first child is null!");
 			} else {
 				SgfNode newRight=child.toBinaryTree();
 				tail.right=newRight;
@@ -112,7 +112,7 @@ public class MNode {
 		}
 		SgfNode extra=new SgfNode();
 		extra.left=node; // might be null
-		MNode sentenel=new MNode(null);
+		MNode sentinel=new MNode(null);
 		// 1/21/23
 		// maybe we don't need and extra node if we already have one?
 		// maybe this can not happen?
@@ -120,17 +120,17 @@ public class MNode {
         try {
             // RT is a sentinel extra-root marker; it is a no-op in the engine and must round-trip unchanged.
             SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
-			sentenel.sgfProperties.add(property);
+			sentinel.sgfProperties.add(property);
 			Logging.mainLogger.info("toGeneralTree() added RT property to extra root node");
 		} catch(Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-		sentenel.data=sentenel.id; // just so it's not null
+		sentinel.data=sentinel.id; // just so it's not null
 		// Logging.mainLogger.info("new root and children: "+mRoot+"
 		// "+mRoot.children);
-		@SuppressWarnings("unused") MNode mNode=toGeneralTree(extra.left,sentenel);
-		return sentenel;
+		@SuppressWarnings("unused") MNode mNode=toGeneralTree(extra.left,sentinel);
+		return sentinel;
 	}
 	public List<MNode> lca(MNode current,MNode target) {
 		// another find in sgf!
@@ -169,7 +169,7 @@ public class MNode {
 		}
 		return true; // for now
 	}
-	public static MNode quietRestoreMdodes(Reader reader) {
+	public static MNode quietRestoreMNodes(Reader reader) {
 		PrintStream old=System.out;
 		System.setOut(new PrintStream(new ByteArrayOutputStream(1_000_000)));
 		MNode root=MNode.restoreMNodes(reader);

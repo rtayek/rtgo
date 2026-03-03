@@ -13,7 +13,6 @@ public class Combine { // the purpose of this class is to combine two sgf files
         if(annotated==null) return null;
         Logging.mainLogger.warning("walk old");
         SgfNode holder=new SgfNode();
-        holder.sgfProperties=new ArrayList<>(1);
         SgfNode.moves=0;
         annotated.lastMove(holder);
         if(holder.left==null) { Logging.mainLogger.warning("no moves in first variation"); return null; }

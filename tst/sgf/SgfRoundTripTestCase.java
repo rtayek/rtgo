@@ -37,7 +37,7 @@ import model.ModelIo;
         if(expectedSgf==null) return;
         if(expectedSgf.equals("")) return;
         expectedSgf=SgfIo.prepareSgf(expectedSgf);
-        String actualSgf=SgfNode.preorderRouundTrip(expectedSgf);
+        String actualSgf=SgfNode.preorderRoundTrip(expectedSgf);
         SgfIo.logBadParentheses(expectedSgf,key,"ex");
         assertEquals(key.toString(),expectedSgf,actualSgf);
     }
