@@ -9,6 +9,7 @@ import io.Logging.MyFormatter;
 public class LoggingTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
+    		//watcher.verbosity=true;
         Logging.useColor=false;
         LogManager.getLogManager().reset();
         logger=Logger.getLogger(getClass().getName());
@@ -47,6 +48,14 @@ public class LoggingTestCase {
         handler.flush();
         String actual=baos.toString();
         assertTrue(actual.contains(string));
+    }
+    @Test public void testSetUpLoggingAfterResetReattachesHandlers() {
+        Logging.setUpLogging();
+        assertTrue(Logging.mainLogger.getHandlers().length>0);
+        LogManager.getLogManager().reset();
+        assertEquals(0,Logging.mainLogger.getHandlers().length);
+        Logging.setUpLogging();
+        assertTrue(Logging.mainLogger.getHandlers().length>0);
     }
     Logger logger;
     Handler[] handlers;

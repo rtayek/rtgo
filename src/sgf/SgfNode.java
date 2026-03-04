@@ -5,6 +5,7 @@ import static sgf.Parser.*;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.Level;
 import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
@@ -392,6 +393,8 @@ public class SgfNode {
 		return actualSgf;
 	}
 	public static void main(String[] args) throws IOException {
+        Logging.setUpLogging();
+        Logging.setLevels(Level.ALL);
 		Logging.mainLogger.warning(String.valueOf(Init.first));
 		if(true) {
 			Logging.setUpLogging();

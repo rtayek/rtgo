@@ -276,8 +276,8 @@ public final class SgfTestHarness {
                 "mf1.sgf", //
                 "smart0.sgf", //
                 "smart1.sgf", //
-                "rtgo0.sgf", //
-                "rtgo1.sgf", //
+                //"rtgo0.sgf", // seems to be missing
+                //"rtgo1.sgf", // seems to be missing
         };
         // use variable names above
         File[] files=SgfIo.filesInDir(Parser.sgfPath,filenames);

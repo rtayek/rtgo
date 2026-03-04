@@ -11,6 +11,7 @@ import io.IOs;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.Check;
 public class MyTestWatcher extends TestWatcher {
+	// maybe this should have it's own logger?
     public MyTestWatcher(Class<? extends Object> klass) { this.klass=klass; this.verbosity=defaultVerbosity; }
     public String ets() { return "at: "+first.et+", after: "+et; }
     @Override protected void starting(Description description) {

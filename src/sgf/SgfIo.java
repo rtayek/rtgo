@@ -11,7 +11,10 @@ public final class SgfIo {
 	public static String loadExpectedSgf(Object key) {
 		if(key==null) throw new RuntimeException("key: "+key+" is null!");
 		String sgf=Parser.getSgfData(key);
-		if(sgf==null) return null;
+		if(sgf==null) {
+			System.out.println("sgf data is null for key: "+key);
+			return null;
+		}
 		int p=Parser.parentheses(sgf);
 		if(p!=0) {
 			Logging.mainLogger.info(" bad parentheses: "+p);

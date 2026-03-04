@@ -13,183 +13,183 @@ import model.Model.MoveResult;
 import model.Move2.MoveType;
 import view.CommandLineView;
 public class CommandLine {
-    // we need the command line options
-    // and we need the commands for the command line.
-    private static void usage() {
-        for(String line:usageLines) System.out.println(line);
-    }
-    private String[] splitNext(String command,int i) {
-        while(command.charAt(i)==' ') i++;
-        String[] tokens=command.substring(i).split(" ");
-        return tokens;
-    }
-    private void process(String command) {
-        if(command.length()==0) return;
-        System.out.println("process got a command: "+command.charAt(0));
-        String[] tokens=null;
-        boolean ok=false;
-        switch(command.charAt(0)) {
-            case 'h':
-                usage();
-                break;
-            case 'c':
-                model.addObserver(new CommandLineView(model));
-                break;
-            case 'u':
-                model.up();
-                break;
-            case 'd':
-                model.down(0);
-                break;
-            case 'D':
-                model.delete();
-                break;
-            case 'r':
-                model.right();
-                break;
-            case 'l':
-                model.left();
-                break;
-            case 't':
-                model.top();
-                break;
-            case 'b':
-                model.bottom();
-                break;
-            case 'm':
-                if(model.hasABoard()) {
-                    tokens=splitNext(command,1);
-                    System.out.println(Arrays.asList(tokens));
-                    int x=Integer.parseInt(tokens[0]);
-                    int y=Integer.parseInt(tokens[1]);
-                    Point point=new Point(x,y);
-                    // should be the same as other places?
-                    //String move=Coordinates.toGtpCoordinateSystem(point,
-                    //        model.board().depth());
-                    Move2 move=new Move2(MoveType.move,model.turn(),point);
-                    MoveResult wasLegal=model.move(move);
-                    if(wasLegal!=MoveResult.legal) System.out.println("illegal move");
-                } else System.out.println("no board, can not move!");
-                break;
-            case 'M':
-                if(!model.hasABoard()) { System.out.println("start a game first."); usage(); break; }
-                model.delete();
-                break;
-            case 'o':
-                tokens=splitNext(command,1);
-                System.out.println(Arrays.asList(tokens));
-                if(tokens!=null&&tokens.length>=1) { ModelIo.restoreModel(model,FileIO.toReader(new File(tokens[0]))); }
-                break;
-            case 'g':
-                new Main(null,model,null);
-                // need a way to make sure this guy is just an observer.
-                // haha - but we would like to let him add variations.
-                //
-                break;
-            case 'n':
-                ModelTreeOps.setRoot(model,9,9,Topology.normal,Shape.normal);
-                break;
-            case 'p':
-                print(model);
-                break;
-            case 'q':
-                break;
-            case 's':
-                if(model.gtp==null) {
-                    ok=Model.connectToServer(model);
-                    if(ok) System.out.println("connected.");
-                    else System.out.println("connect fails!");
-                } else System.out.println("already connected!");
-                break;
-            case 'S':
-                if(model.gtp!=null) {
-                    ok=Model.disconnectFromServer(model);
-                    if(ok) System.out.println("disconnected.");
-                    else System.out.println("disconnect fails!");
-                } else System.out.println("already disconnected!");
-                break;
-            case 'T':
-                if(myTreeView==null) {
-                    myTreeView=new TreeView(null,model);
-                    model.addObserver(myTreeView);
-                } else {
-                    model.deleteObserver(myTreeView);
-                    myTreeView.frame.dispose();
-                    myTreeView=null;
-                }
-                // try to fix unselected root
-                model.setChangedAndNotify(Event.newTree);
-                //TreeView2 treeView2=TreeView2.simple2();
-                // gui code uses the old view?
-                //model.setRoot(treeView2.model.root());
-                break;
-            default:
-                System.out.println("huh?");
-                break;
-        }
-        System.out.println("exit process()");
-    }
-    public static void print(Model model) { System.out.println("model: "+model.name+"\n"+model); }
-    void run() throws IOException {
-        BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(System.in));
-        String string=null;
-        usage();
-        print(model);
-        System.out.println("type a command");
-        while((string=bufferedReader.readLine())!=null) {
-            if(string.equals("q")) break;
-            try {
-                process(string);
-                System.out.println("((((((");
-                print(model);
-                System.out.println("))))))");
-            } catch(Exception e) {
-                System.out.println("run() "+this+" caught: "+e+" "+this);
-            }
-            System.out.println("type a command");
-        }
-        System.out.println("exiting run()");
-    }
-    void startup() { for(String command:startup) process(command); }
-    public static void main(String[] arguments) throws IOException {
-        System.out.println(Init.first);
-        Logging.useColor=false;
-        // Initialize logging before constructing the model so early messages are captured.
-        Logging.setUpLogging();
-        Logging.setLevels(Level.CONFIG);
-        CommandLine commandLine=new CommandLine();
-        Logging.mainLogger.config("constructed command line: "+commandLine);
-        commandLine.startup();
-        commandLine.run();
-    }
-    List<String> startup=Arrays.asList(new String[] { //
-            //"o sgf/ff4_ex.sgf", //
-            //"t,"
-            "c","s",});
-    Model model=new Model("cl model");
-    TreeView myTreeView;
-    private static final String[] usageLines=new String[] {
-            "usage:",
-            // "CommandLine.main() -role black, white, obseever, anything.",
-            "h - help.",
-            "c - add a new command line view.",
-            "m x y - move at (x,y).",
-            "M - unmove.",
-            "u - up.",
-            "d - down.",
-            "r - right.",
-            "l - left.",
-            "t - top.",
-            "b - bottom.",
-            "D - delete.",
-            "o file - open file (no spaces allowed!",
-            "n - new game.",
-            "g - new gui for model.",
-            "p - print view.",
-            "q - quit.",
-            "s - connect to server",
-            "S - disconnect from server",
-            "T - toggle treeview.",
-    };
+	// we need the command line options
+	// and we need the commands for the command line.
+	private static void usage() {
+		for(String line:usageLines)
+			System.out.println(line);
+	}
+	private String[] splitNext(String command,int i) {
+		while(command.charAt(i)==' ')
+			i++;
+		String[] tokens=command.substring(i).split(" ");
+		return tokens;
+	}
+	private void process(String command) throws IOException {
+		if(command.length()==0) return;
+		System.out.println("process got a command: "+command.charAt(0));
+		String[] tokens=null;
+		boolean ok=false;
+		switch(command.charAt(0)) {
+			case 'h':
+				usage();
+				break;
+			case 'c':
+				model.addObserver(new CommandLineView(model));
+				break;
+			case 'u':
+				model.up();
+				break;
+			case 'd':
+				model.down(0);
+				break;
+			case 'D':
+				model.delete();
+				break;
+			case 'r':
+				model.right();
+				break;
+			case 'l':
+				model.left();
+				break;
+			case 't':
+				model.top();
+				break;
+			case 'b':
+				model.bottom();
+				break;
+			case 'm':
+				if(model.hasABoard()) {
+					tokens=splitNext(command,1);
+					System.out.println(Arrays.asList(tokens));
+					int x=Integer.parseInt(tokens[0]);
+					int y=Integer.parseInt(tokens[1]);
+					Point point=new Point(x,y);
+					// should be the same as other places?
+					// String move=Coordinates.toGtpCoordinateSystem(point,
+					// model.board().depth());
+					Move2 move=new Move2(MoveType.move,model.turn(),point);
+					MoveResult wasLegal=model.move(move);
+					if(wasLegal!=MoveResult.legal) System.out.println("illegal move");
+				} else System.out.println("no board, can not move!");
+				break;
+			case 'M':
+				if(!model.hasABoard()) {
+					System.out.println("start a game first.");
+					usage();
+					break;
+				}
+				model.delete();
+				break;
+			case 'o':
+				tokens=splitNext(command,1);
+				System.out.println(Arrays.asList(tokens));
+				if(tokens!=null&&tokens.length>=1) {
+					File file=new File(tokens[0]);
+					ModelIo.restoreModel(model,FileIO.toReaderOrThrow(file));
+				}
+				break;
+			case 'g':
+				new Main(null,model,null);
+				// need a way to make sure this guy is just an observer.
+				// haha - but we would like to let him add variations.
+				//
+				break;
+			case 'n':
+				ModelTreeOps.setRoot(model,9,9,Topology.normal,Shape.normal);
+				break;
+			case 'p':
+				print(model);
+				break;
+			case 'q':
+				break;
+			case 's':
+				if(model.gtp==null) {
+					ok=Model.connectToServer(model);
+					if(ok) System.out.println("connected.");
+					else System.out.println("connect fails!");
+				} else System.out.println("already connected!");
+				break;
+			case 'S':
+				if(model.gtp!=null) {
+					ok=Model.disconnectFromServer(model);
+					if(ok) System.out.println("disconnected.");
+					else System.out.println("disconnect fails!");
+				} else System.out.println("already disconnected!");
+				break;
+			case 'T':
+				if(myTreeView==null) {
+					myTreeView=new TreeView(null,model);
+					model.addObserver(myTreeView);
+				} else {
+					model.deleteObserver(myTreeView);
+					myTreeView.frame.dispose();
+					myTreeView=null;
+				}
+				// try to fix unselected root
+				model.setChangedAndNotify(Event.newTree);
+				// TreeView2 treeView2=TreeView2.simple2();
+				// gui code uses the old view?
+				// model.setRoot(treeView2.model.root());
+				break;
+			default:
+				System.out.println("huh?");
+				break;
+		}
+		System.out.println("exit process()");
+	}
+	public static void print(Model model) {
+		System.out.println("model: "+model.name+"\n"+model);
+	}
+	void run() throws IOException {
+		BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(System.in));
+		String string=null;
+		usage();
+		print(model);
+		System.out.println("type a command");
+		while((string=bufferedReader.readLine())!=null) {
+			if(string.equals("q")) break;
+			try {
+				process(string);
+				System.out.println("((((((");
+				print(model);
+				System.out.println("))))))");
+			} catch(Exception e) {
+				System.out.println("run() "+this+" caught: "+e+" "+this);
+			}
+			System.out.println("type a command");
+		}
+		System.out.println("exiting run()");
+	}
+	void startup() {
+		for(String command:startup)
+			try {
+				process(command);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
+	public static void main(String[] arguments) throws IOException {
+		System.out.println(Init.first);
+		Logging.useColor=false;
+		// Initialize logging before constructing the model so early messages
+		// are captured.
+		Logging.setUpLogging();
+		Logging.setLevels(Level.CONFIG);
+		CommandLine commandLine=new CommandLine();
+		Logging.mainLogger.config("constructed command line: "+commandLine);
+		commandLine.startup();
+		commandLine.run();
+	}
+	List<String> startup=Arrays.asList(new String[] { //
+			// "o sgf/ff4_ex.sgf", //
+			// "t,"
+			"c","s",});
+	Model model=new Model("cl model");
+	TreeView myTreeView;
+	private static final String[] usageLines=new String[] {"usage:",
+			// "CommandLine.main() -role black, white, obseever, anything.",
+			"h - help.","c - add a new command line view.","m x y - move at (x,y).","M - unmove.","u - up.","d - down.","r - right.","l - left.","t - top.",
+			"b - bottom.","D - delete.","o file - open file (no spaces allowed!","n - new game.","g - new gui for model.","p - print view.","q - quit.",
+			"s - connect to server","S - disconnect from server","T - toggle treeview.",};
 }
-

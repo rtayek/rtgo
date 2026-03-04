@@ -1,3 +1,5 @@
 use tmp dir and files.
 split out test files that do io.
 refactor to use jar.
+
+figuyre out why to reador or throw does not work in rtgo

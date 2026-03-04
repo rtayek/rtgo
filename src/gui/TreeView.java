@@ -12,6 +12,7 @@ import model.Event;
 import model.Model;
 import model.ModelIo;
 import sgf.MNode;
+import sgf.Parser;
 import utilities.*;
 @SuppressWarnings("serial") public class TreeView extends MainGui implements Observer,TreeSelectionListener,ActionListener {
 	public TreeView(MyJApplet applet,Model model) {
@@ -180,7 +181,7 @@ import utilities.*;
 		TreeView myTreeView=new TreeView(null,model);
 		myTreeView.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		model.addObserver(myTreeView);
-		ModelIo.restoreModel(model,FileIO.toReader(new File("sgf/ff4_ex.sgf")));
+		ModelIo.restoreModel(model,FileIO.toReader(new File(Parser.sgfPath,"ff4_ex.sgf")));
 		return myTreeView;
 	}
 	public final Model model;

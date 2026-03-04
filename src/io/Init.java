@@ -30,7 +30,7 @@ public enum Init {
         if(true) {
             Logging.setUpLogging();
             Logging.setLevels(Logging.initialLoggingLevel); // do this last or level is null!
-            Logging.parserLogger.setLevel(defaultParserLoggerLevel);
+            //Logging.parserLogger.setLevel(defaultParserLoggerLevel);
         }
         //Logging.mainLogger.info(Parameters.topologies);
         Logging.mainLogger.info("once");

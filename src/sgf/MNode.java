@@ -7,7 +7,6 @@ import java.io.*;
 //http://en.wikipedia.org/wiki/Binary_tree#Encoding_general_trees_as_binary_trees
 //http://blogs.msdn.com/b/ericlippert/archive/2010/04/19/every-binary-tree-there-is.aspx
 import java.util.*;
-import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
 import model.ModelIo;
@@ -55,12 +54,12 @@ public class MNode {
 		}
 		return ok;
 	}
+	public SgfNode toBinaryTree() {
 	// standard convention
 	// left pointer → first child
 	// right pointer → next sibling
 	// what have we been doing?
 	// https://chatgpt.com/share/6958f58b-fb8c-8008-a2a5-3ef7cc6ce710
-	public SgfNode toBinaryTree() {
 		SgfNode left=null,tail=null;
 		for(int i=0;i<children.size();++i) {
 			MNode child=children.get(i);
@@ -83,7 +82,11 @@ public class MNode {
 	}
 	private static MNode toGeneralTree(SgfNode node,MNode grandParent) {
 		if(node==null) {
-			if(grandParent!=null) grandParent.children.add(null);
+			//if(true) throw new RuntimeException("node is null in toGeneralTree()");
+			if(grandParent!=null) {
+				System.out.println("adding null child to grandparent.");
+				grandParent.children.add(null);
+			}
 			return null;
 		}
 		MNode parent=new MNode(grandParent);
@@ -116,7 +119,7 @@ public class MNode {
 		// 1/21/23
 		// maybe we don't need and extra node if we already have one?
 		// maybe this can not happen?
-		// apparently there is a way and we ar not doing it now.
+		// apparently there is a way and we are not doing it now.
         try {
             // RT is a sentinel extra-root marker; it is a no-op in the engine and must round-trip unchanged.
             SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));

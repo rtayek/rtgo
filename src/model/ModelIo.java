@@ -32,6 +32,16 @@ public final class ModelIo {
 		node.saveSgf(writer,indent);
 		return writer.toString();
 	}
+	public static String saveMNodesDirectlyToString(MNode root) {
+		StringWriter stringWriter=new StringWriter();
+		try {
+			for(MNode child:root.children())
+				MNode.saveMNodesDirectly(stringWriter,child,noIndent);
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+		return stringWriter.toString();
+	}
 	// Dependent operations
 	public static SgfNode restoreAndSaveSGF(Reader reader,Writer writer) {
 		SgfNode games=restoreSGF(reader);
@@ -56,6 +66,7 @@ public final class ModelIo {
 	}
 	public static MNode mNodeRoundTrip(Reader reader,Writer writer,MNodeSaveMode saveMode) {
 		// only used by tests
+		// move there when the dust settles
 		MNode root=MNode.restoreMNodes(reader);
 		if(saveMode==MNodeSaveMode.direct) {
 			String actual=saveMNodesDirectlyToString(root);
@@ -112,15 +123,5 @@ public final class ModelIo {
 		SgfNode sgfRoot=root.toBinaryTree();
 		SgfNode actual=sgfRoot.left;
 		return saveSgf(actual,noIndent);
-	}
-	public static String saveMNodesDirectlyToString(MNode root) {
-		StringWriter stringWriter=new StringWriter();
-		try {
-			for(MNode child:root.children())
-				MNode.saveMNodesDirectly(stringWriter,child,noIndent);
-		} catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-		return stringWriter.toString();
 	}
 }

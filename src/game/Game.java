@@ -28,11 +28,11 @@ public class Game {
         game.whiteFixture.setupBackEnd(holders.second.back,game.whiteName(),game.id);
         return game;
     }
-    public static void loadExistinGame(File file,Model recorder,GameFixture game) {
+    public static void loadExistinGame(File file,Model recorder,GameFixture game) throws IOException {
         // no references to any back end stuff here.
         if(game.namedThread!=null) throw new RuntimeException("game already started!");
         if(!file.exists()) Logging.mainLogger.warning(file+" does not exist!");
-        ModelIo.restoreModel(recorder,FileIO.toReader(file));
+        ModelIo.restoreModel(recorder,FileIO.toReaderOrThrow(file));
         StringWriter writer=new StringWriter();
         ModelIo.saveModel(recorder,writer);
         String sgf=writer.toString();

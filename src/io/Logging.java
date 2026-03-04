@@ -30,41 +30,51 @@ public class Logging {
         public static final String format="%05d %"+maxThreadNameLength+"s %7s %32s in %s"/*+" at %s*/+"\n";
     }
     private static void log(Logger l) { System.out.println(); logEachLevel(l); }
+    private static void clearHandlers(Logger logger) {
+        Handler[] handlers=logger.getHandlers();
+        for(Handler handler:handlers) {
+            logger.removeHandler(handler);
+            try {
+                handler.close();
+            } catch(Exception ignored) {}
+        }
+    }
     public static void setupLogger(Logger logger,Formatter formatter) {
-        if(logger!=null) {
-            if(!loggerNames.contains(logger.getName())) {
-                loggerNames.add(logger.getName());
-                //System.out.println("System.err: "+System.err);
-                Handler handler=new ConsoleHandler();
-                handler.setLevel(Level.ALL);
-                logger.setUseParentHandlers(false);
-                handler.setFormatter(formatter);
-                logger.addHandler(handler);
-                Handler handler2;
-                boolean what=true;
-                if(what) try {
-                    File dir=new File("logs");
-                    if(!dir.exists()) dir.mkdirs();
-                    if(dir.exists()) {
-                        handler2=new FileHandler("logs/log",50_000,10,false);
-                        handler2.setLevel(Level.ALL);
-                        logger.addHandler(handler2);
-                    } else throw new RuntimeException(dir+" not found!");
-                } catch(SecurityException|IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else System.out.println("logger is null!");
+        if(logger==null) {
+            System.out.println("logger is null!");
+            return;
+        }
+        loggerNames.add(logger.getName());
+        clearHandlers(logger);
+        logger.setUseParentHandlers(false);
+        Handler consoleHandler=new ConsoleHandler();
+        consoleHandler.setLevel(Level.ALL);
+        consoleHandler.setFormatter(formatter);
+        logger.addHandler(consoleHandler);
+        try {
+            File dir=new File("logs");
+            if(!dir.exists()) dir.mkdirs();
+            if(!dir.exists()) throw new RuntimeException(dir+" not found!");
+            Handler fileHandler=new FileHandler("logs/log",50_000,10,false);
+            fileHandler.setLevel(Level.ALL);
+            fileHandler.setFormatter(formatter);
+            logger.addHandler(fileHandler);
+        } catch(SecurityException|IOException e) {
+            throw new RuntimeException("failed to configure logger '"+logger.getName()+'\'',e);
+        }
     }
     public static void deleteLogfiles() {
         File dir=new File("logs");
         if(dir.exists()) {
-            String[] filenames=dir.list();
-            System.out.println("deleting "+filenames.length+" files");
-            for(String filename:filenames) {
-                //System.out.println("deleting: "+filename);
-                boolean file=new File(filename).delete();
-                //System.out.println(file);
+            File[] files=dir.listFiles();
+            if(files==null) return;
+            System.out.println("deleting "+files.length+" files");
+            for(File file:files) {
+                if(file.isFile()) {
+                    //System.out.println("deleting: "+file);
+                    boolean ignored=file.delete();
+                    //System.out.println(ignored);
+                }
             }
         }
     }

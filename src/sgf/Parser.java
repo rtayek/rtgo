@@ -3,11 +3,11 @@ import static io.Logging.parserLogger;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import com.tayek.util.core.Et;
 import com.tayek.util.io.FileIO;
 import com.tayek.util.io.Indent;
 import io.*;
-import io.IOs;
 import model.ModelIo;
 import sgf.combine.Combine;
 // https://github.com/search?q=sgf4j
@@ -118,6 +118,13 @@ public class Parser {
 		}
 		return(node);
 	}
+	private String sequenceToString(SgfNode node) {
+		// like main line?
+		StringBuffer s=new StringBuffer();
+		for(SgfNode n=node;n!=null;n=n.left)
+			s.append(n);
+		return s.toString();
+	}
 	private SgfNode sequence() throws IOException {
 		SgfNode first=node();
 		Logging.mainLogger.fine("first node: "+first);
@@ -126,13 +133,6 @@ public class Parser {
 			node.left=node();
 		}
 		return first;
-	}
-	private String sequenceToString(SgfNode node) {
-		// like main line?
-		StringBuffer s=new StringBuffer();
-		for(SgfNode n=node;n!=null;n=n.left)
-			s.append(n);
-		return s.toString();
 	}
 	private SgfNode parse() throws IOException { // recursive
 		SgfNode sequence=null;
@@ -202,15 +202,12 @@ public class Parser {
 			if(first==null) parserLogger.warning("first is null! (no games)");
 			else if(first.siblings()>0) parserLogger.info("returning more than one game!");
 			return first;
-		} catch(IOException e) {}
+		} catch(IOException e) {
+			e.printStackTrace();
+			;
+		}
 		parserLogger.severe("parser return null!");
 		return null;
-	}
-	private static void combineAndCheckKogosJosekiDictionary() throws IOException,Exception { 
-		// this has been sorta replaced by code in the test case.
-		Reader reader=FileIO.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
-		boolean ok=ModelIo.sgfRoundTripTwice(reader);
-		if(!ok) throw new Exception("test fails");
 	}
 	public static Collection<Object> sgfDataKeySet() {
 		return new ArrayList<>(Parser.staticSgfData.keySet());
@@ -221,9 +218,8 @@ public class Parser {
 				if(file.isFile()) {
 					if(file.exists()) {
 						if(file.getName().endsWith(".sgf")) {
-							if(!file.getName().startsWith("KogosJosekiDictionary")) // exclude
-																					// for
-																					// now
+							if(!file.getName().startsWith("KogosJosekiDictionary"))
+								// exclude for now
 								// Logging.mainLogger.info("ok "+file);
 								if(!badSgfFiles.contains(file)) objects.add(file);
 						} else Logging.mainLogger.info(file+" is not an sgf file!");
@@ -236,6 +232,34 @@ public class Parser {
 			// Logging.mainLogger.info("files is null!");
 		}
 	}
+	public static String getSgfData(Object key) {
+		String sgf=null;
+		if(key==null) throw new RuntimeException(key+" key is null!");
+		if(key==null) return null;
+		if(key instanceof String) sgf=staticSgfData.get(key);
+		else if(key instanceof File) {
+			File file=(File)key;
+			if(!file.exists()) throw new RuntimeException("SGF file not found: "+file);
+			if(!file.isFile()) throw new RuntimeException("SGF path is not a file: "+file);
+			sgf=FileIO.fromFile(file);
+			if(sgf==null) throw new RuntimeException("failed reading SGF file: "+file);
+		} else {
+			Logging.mainLogger.info(key+" is not a string or a file!");
+			IOs.stackTrace(10);
+			// System.exit(1);
+			throw new RuntimeException(key+" is not a string or a file!");
+		}
+		return sgf;
+	}
+	public static int parentheses(String string) { // parentheses
+		int count=0;
+		if(string!=null) for(Character c:string.toCharArray()) {
+			if(c.equals('(')) ++count;
+			else if(c.equals(')')) --count;
+			if(count<0) Logging.mainLogger.info("count is negative!");
+		}
+		return count;
+	}
 	private static void collectSgfFiles(String dir,Set<Object> objects) {
 		Logging.mainLogger.info(String.valueOf(new File(dir)));
 		File[] files=new File(dir).listFiles();
@@ -247,27 +271,13 @@ public class Parser {
 	public static String sgfPath="data/sgf";
 	public static String strangePath="data/strangesgf";
 	public static String ogsPath="data/ogs";
-	public static Collection<Object> sgfFiles() {
-		return sgfFiles(sgfPath);
-	}
 	public static Collection<Object> sgfFiles(String dir) {
 		Set<Object> objects=new LinkedHashSet<>();
 		collectSgfFiles(dir,objects);
 		return objects;
 	}
-	public static String getSgfData(Object key) {
-		String sgf=null;
-		if(key==null) throw new RuntimeException(key+" key is null!");
-		if(key==null) return null;
-		if(key instanceof String) sgf=staticSgfData.get(key);
-		else if(key instanceof File) sgf=FileIO.fromFile((File)key);
-		else {
-			Logging.mainLogger.info(key+" is not a string or a file!");
-			IOs.stackTrace(10);
-			// System.exit(1);
-			throw new RuntimeException(key+" is not a string or a file!");
-		}
-		return sgf;
+	public static Collection<Object> sgfFiles() {
+		return sgfFiles(sgfPath);
 	}
 	public static Set<Object> findMultipleGames(Set<Object> objects) {
 		Set<Object> many=new LinkedHashSet<>();
@@ -283,20 +293,20 @@ public class Parser {
 		}
 		return many;
 	}
-	public static int parentheses(String string) { // parentheses
-		int count=0;
-		if(string!=null) for(Character c:string.toCharArray()) {
-			if(c.equals('(')) ++count;
-			else if(c.equals(')')) --count;
-			if(count<0) Logging.mainLogger.info("count is negative!");
-		}
-		return count;
+	private static void combineAndCheckKogosJosekiDictionary() throws IOException,Exception {
+		// this has been sorta replaced by code in the test case.
+		Reader reader=FileIO.toReader(new File(Combine.pathToHere,"KogosJosekiDictionary.sgf"));
+		boolean ok=ModelIo.sgfRoundTripTwice(reader);
+		if(!ok) throw new Exception("test fails");
 	}
 	public static void main(String[] argument) throws Exception {
-		Logging.mainLogger.info(String.valueOf(Init.first));
+		Init.first.twice(); // do this in all main programs!
+		Logging.setLevels(Level.INFO);
 		// Logging.mainLogger.info("main "+god.et);
 		// combineAndCheckKogosJosekiDictionary();
-		// Logging.mainLogger.info(sgfData);
+		System.out.println(illegalSgfKeys);
+		System.out.println(staticSgfData);
+		if(true) return;
 		List<Object> objects=new ArrayList<>();
 		objects.addAll(sgfDataKeySet());
 		// objects.addAll(sgfFiles());
@@ -341,7 +351,7 @@ public class Parser {
 			(;C[d];C[e]))
 			(;C[f](;C[g];C[h];C[i])
 			(;C[j])))
-			"""; // removed traling line feed
+			"""; // removed trailing line feed
 	public static final String startOfGame="(;GM[1]FF[4]VW[]CA[UTF-8])";
 	public static final String oneMoveAtA1NoHeader="(;B[as])";
 	public static final String oneMoveAtA1="(;FF[4];B[as])";
@@ -405,12 +415,10 @@ public class Parser {
 			TM[1800.0]OT[20 / 5]BL[1800.0]OM[20]OP[300.0];B[dq]V[0.0]BL[1799.6];W[oq]
 			;B[dd]V[0.0]BL[1799.5];W[oc];B[dp]V[0.0]BL[1799.4])
 			""";
-	public static final String twoverysmallgamesflat="(;B[as])\n(;B[at])"; // not
-																			// flat
-																			// anymore!
+	public static final String twoverysmallgamesflat="(;B[as])\n(;B[at])";
+	// not flat anymore!
 	public static final String twosmallgamesflat="(;FF[4];B[as])\n(;FF[4];B[at])"; // not
-																					// flat
-																					// anymore!
+	// not flat anymore!
 	public static final String smartgo4="(;GM[1])\n(;GM[2])\n(;GM[3])\n(;GM[4])";
 	public static final String smartgo42="(;GM[1];B[as])\n(;GM[2];B[as])\n(;GM[3];B[as])\n(;GM[4];B[as])";
 	public static final String smartgo43="(;GM[1];B[as];B[at])\n(;GM[2];B[as];B[at])\n(;GM[3];B[as];B[at])\n(;GM[4];B[as];B[at])";
@@ -445,7 +453,8 @@ public class Parser {
 		staticSgfData.put("smartgo42",smartgo42);
 		staticSgfData.put("smartgo43",smartgo43);
 		// Logging.mainLogger.info(sgfData.keySet());
-		// Logging.mainLogger.info(sgfData.size()+" sgf strings in parser map.");
+		// Logging.mainLogger.info(sgfData.size()+" sgf strings in parser
+		// map.");
 	}
 	static {
 		// Logging.mainLogger.info("static parser init");
@@ -483,4 +492,3 @@ public class Parser {
 		badSgfFiles.add(new File("strangesgf/variations/5er, some vars, defect 1.sgf"));
 	}
 }
-

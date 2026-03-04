@@ -78,7 +78,7 @@ public class Combine { // the purpose of this class is to combine two sgf files
     // do not put a ./ in front of the "sgf"!
     // File(atHome?"i:/ray/workspace/sgf2":"c:/ray/root/com/tayek/games/go/sgf");
     public static final String pathToOldGames="sgf/old";
-    static final String pathToSgf="sgf";
+    static final String pathToSgf="sgf"; // use sgf path in parser?
     public static void main(String args[]) {
         try {
             for(Object key:Parser.sgfDataKeySet()) {

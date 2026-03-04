@@ -1,6 +1,7 @@
 package game;
 import static org.junit.Assert.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import org.junit.*;
 import equipment.*;
@@ -22,7 +23,7 @@ public class LoadExistingGameTestCase extends GameTestSupport {
     }
     @Ignore @Test public void testInit() throws InterruptedException { game.startGameThread(); game.checkStatus(); }
     // ignoring just to clean up the output
-    void loadGameFixture() {
+    void loadGameFixture() throws IOException {
         assertNotNull(game);
         game.startPlayerBackends();
         Game.loadExistinGame(file,recorder,game);
@@ -30,8 +31,8 @@ public class LoadExistingGameTestCase extends GameTestSupport {
         startGameThreadNow();
         Logging.mainLogger.info(recorder.role()+" "+black.role()+" "+white.role());
     }
-    @Test public void testLoadGame() throws InterruptedException { loadGameFixture(); }
-    @Test public void test() throws InterruptedException {
+    @Test public void testLoadGame() throws InterruptedException, IOException { loadGameFixture(); }
+    @Test public void test() throws InterruptedException, IOException {
         loadGameFixture();
         // the rest of these cases have been moved to role test case.
         assertEquals(Stone.vacant,white.board().at(point));

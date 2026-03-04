@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 import static model.MNodeAcceptor.MNodeFinder.*;
 import static sgf.HexAscii.*;
 import static sgf.SgfNode.SgfOptions.*;
+import static sgf.Parser.*;
 import static com.tayek.util.io.FileIO.addFiles;
 import java.io.File;
 import java.io.Reader;
@@ -75,7 +76,18 @@ public class SgfUnitTestCase {
         }
     }
 
-    @Ignore @Test public void testOgsRoundTripIgnored() {
+    @Test public void testReadAllSgfDataKeys() {
+        for(Object key:Parser.sgfDataKeySet()) {
+        		System.out.println(key);
+            String sgf=SgfIo.loadExpectedSgf(key);
+            assertNotNull("missing SGF for key: "+key,sgf);
+            assertFalse("empty SGF for key: "+key,sgf.isEmpty());
+            SgfNode games=ModelIo.restoreSGF(FileIO.toReader(sgf));
+            assertNotNull("parse failed for key: "+key,games);
+        }
+    }
+
+    @Test public void testOgsRoundTripIgnored() {
         Set<Object> objects=new LinkedHashSet<>(Parser.sgfFiles("ogs"));
         for(Object key:objects) {
             String expectedSgf=prepareExpectedSgf(key);
@@ -98,8 +110,18 @@ public class SgfUnitTestCase {
         assertNotNull(p);
     }
 
+    @Test public void testMissingSgfFileFailsFast() {
+        File missing=new File(Parser.sgfPath,"missing-"+System.nanoTime()+".sgf");
+        try {
+            SgfIo.loadExpectedSgf(missing);
+            fail("expected missing SGF file to throw");
+        } catch(RuntimeException e) {
+            assertTrue("unexpected message: "+e.getMessage(),e.getMessage().contains("not found"));
+        }
+    }
+
     @Test public void testOblong() {
-        String expectedSgf=SgfIo.loadExpectedSgf(new java.io.File("ogs/lecoblong.sgf"));
+        String expectedSgf=SgfIo.loadExpectedSgf(new java.io.File("data/ogs","lecoblong.sgf"));
         MNode games=MNode.restoreMNodes(FileIO.toReader(expectedSgf));
         Model model=new Model("oblong");
         model.setRoot(games); // does this really trash everything correctly?
@@ -711,6 +733,8 @@ public class SgfUnitTestCase {
             Logging.mainLogger.info("ex: "+expected);
             Logging.mainLogger.info("ac: "+actual);
         }
+        System.out.println(expected);
+        System.out.println(actual);
         assertEquals(expected,actual);
     }
 

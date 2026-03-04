@@ -3,9 +3,12 @@ import utilities.MyTestWatcher;
 import static model.Navigate.*;
 import static org.junit.Assert.*;
 import java.io.File;
+import java.io.Reader;
 import com.tayek.util.io.FileIO;
+import io.Logging;
 import org.junit.*;
 import model.*;
+import sgf.MNode;
 import sgf.Parser;
 public class NavigateTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
@@ -16,7 +19,7 @@ public class NavigateTestCase {
     }
     @Test public void testExample() {
         String filename="ff4_ex.sgf";
-        File file=new File("sgf",filename);
+        File file=new File(Parser.sgfPath,filename);
         ModelIo.restoreModel(model,FileIO.toReader(file));
         for(Navigate navigate:Navigate.values()) {
             Boolean expected=navigate.equals(down)||navigate.equals(bottom);
