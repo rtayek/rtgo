@@ -448,6 +448,8 @@ controller.GTPDirectSendReceiveSgfTestCase.testGetSgfFromModel[data\sgf\redbeans
 controller.GTPDirectSendReceiveSgfTestCase.testSendSgfToModel[data\sgf\redbeansmart.sgf]
 controller.GTPDirectSendReceiveSgfTestCase.testGetSgfFromModel[data\sgf\savedflat.sgf]
 controller.GTPDirectSendReceiveSgfTestCase.testSendSgfToModel[data\sgf\savedflat.sgf]
+controller.GTPDirectSendReceiveSgfTestCase.testGetSgfFromModel[data\sgf\selfcapture.sgf]
+controller.GTPDirectSendReceiveSgfTestCase.testSendSgfToModel[data\sgf\selfcapture.sgf]
 controller.GTPDirectSendReceiveSgfTestCase.testGetSgfFromModel[data\sgf\smart0.sgf]
 controller.GTPDirectSendReceiveSgfTestCase.testSendSgfToModel[data\sgf\smart0.sgf]
 controller.GTPDirectSendReceiveSgfTestCase.testGetSgfFromModel[data\sgf\smart1.sgf]
