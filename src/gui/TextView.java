@@ -1,4 +1,5 @@
 package gui;
+import static io.Init.first;
 import static io.Logging.flushingStreamHandler;
 import java.awt.*;
 import java.io.*;
@@ -47,6 +48,7 @@ import io.Logging.MyFormatter;
         tee2.printStream.println("tee2 ps");
     }
     public static void main(String[] args) throws InterruptedException,IOException {
+		first.twice(); // do this first in all main programs!
         PrintStream out=System.out;
         PrintStream err=System.err;
         final TextView textView=new TextView();

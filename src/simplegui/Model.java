@@ -1,5 +1,6 @@
 package simplegui;
 import io.Logging;
+import static io.Init.first;
 import java.util.Observable;
 public class Model extends Observable {
     public Model() {}
@@ -13,6 +14,7 @@ public class Model extends Observable {
     public void setChangedAndNotify(Object object) { setChanged(); notifyObservers(object); }
     @Override public String toString() { return "Model [temperature="+temperature+", humidity="+humidity+"]"; }
     public static void main(String[] args) throws Exception {
+		first.twice(); // do this first in all main programs!
         Model model=new Model();
         Logging.mainLogger.info(String.valueOf(model.toString()));
     }

@@ -1,5 +1,6 @@
 package sgf;
 import io.Logging;
+import static io.Init.first;
 import static sgf.Parser.getSgfData;
 import static sgf.Parser.sgfDataKeySet;
 import static sgf.Parser.sgfFiles;
@@ -15,6 +16,7 @@ public class SgfData {
 	// collectSgfFiles in parser gets bad sgf files
 	// sgfFiles(String dir)
 	public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
 		Set<Object> objects=new LinkedHashSet<>();
 
 		Collection<Object> staticSgfData=sgfDataKeySet();

@@ -1,4 +1,5 @@
 package controller;
+import static io.Init.first;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
@@ -170,7 +171,7 @@ public class CommandLine {
 			}
 	}
 	public static void main(String[] arguments) throws IOException {
-		System.out.println(Init.first);
+		first.twice(); // do this first in all main programs!
 		Logging.useColor=false;
 		// Initialize logging before constructing the model so early messages
 		// are captured.

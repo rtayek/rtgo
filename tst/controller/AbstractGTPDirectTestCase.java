@@ -373,6 +373,7 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
         assertFalse(actual.isOk());
     }
     public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
         Logging.mainLogger.info(String.valueOf(Init.first));
         first.suiteControls=true;
         JUnitCore jUnitCore=new JUnitCore();

@@ -300,7 +300,7 @@ public class Parser {
 		if(!ok) throw new Exception("test fails");
 	}
 	public static void main(String[] argument) throws Exception {
-		Init.first.twice(); // do this in all main programs!
+		Init.first.twice(); // do this first in all main programs!
 		Logging.setLevels(Level.INFO);
 		// Logging.mainLogger.info("main "+god.et);
 		// combineAndCheckKogosJosekiDictionary();

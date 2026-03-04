@@ -1,5 +1,6 @@
 package tree;
 import io.Logging;
+import static io.Init.first;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import com.tayek.util.core.Holder;
@@ -82,6 +83,7 @@ public class So {
         trees3[4]=tree5;
     }
     public static void main(String[] arguments) {
+		first.twice(); // do this first in all main programs!
         makeTrees();
         MyConsumer c2=new MyConsumer();
         for(int nodes=0;nodes<all.length;++nodes) {

@@ -1,4 +1,5 @@
 package equipment;
+import static io.Init.first;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import io.Logging;
@@ -74,6 +75,7 @@ public class Coordinates {
         return new Point(p0.x+(board.x)*dp.x,p0.y+(depth-1-board.y)*dp.y);
     }
     public static void main(String[] args) { // explain the coordinate systems
+		first.twice(); // do this first in all main programs!
         int n=Board.standard;
         Point point=new Point(0,0);
         Logging.mainLogger.info("board coordinate system is right handed, origin is lower left: "+point);

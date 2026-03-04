@@ -1,6 +1,8 @@
 package audio;
+import static io.Init.first;
 import java.io.InputStream;
 import com.tayek.util.audio.AudioClips;
+import io.Init;
 import io.Logging;
 import model.Model.Where;
 import server.NamedThreadGroup;
@@ -62,6 +64,7 @@ public class Audio implements Runnable {
         }
     }
     public static void main(String[] args) throws InterruptedException {
+		first.twice(); // do this first in all main programs!
         Logging.mainLogger.info("sounds");
         for(Sound sound:Sound.values()) {
             Logging.mainLogger.info(String.valueOf(sound));

@@ -1,5 +1,6 @@
 package tree;
 import io.Logging;
+import static io.Init.first;
 import static tree.MNode.print;
 import java.util.*;
 import tree.G2.Generator;
@@ -91,6 +92,7 @@ public class RedBean {
         return trees.get(tree);
     }
     public static void main(String[] arguments) {
+		first.twice(); // do this first in all main programs!
         //example();
         Node<Character> bRoot=binary();
         Logging.mainLogger.info(String.valueOf(G2.pPrint(bRoot)));

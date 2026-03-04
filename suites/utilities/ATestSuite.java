@@ -1,4 +1,5 @@
 package utilities;
+import static io.Init.first;
 import static org.junit.Assert.assertTrue;
 // move this to suites/
 import org.junit.Test;
@@ -17,6 +18,7 @@ public class ATestSuite extends SuiteSupport {
         @Test public void test2() { assertTrue(true); }
     }
     public static void main(String[] args) { // should work both ways
+		first.twice(); // do this first in all main programs!
         boolean suite=true;
         if(!suite) {
             JUnitCore junit=new JUnitCore();

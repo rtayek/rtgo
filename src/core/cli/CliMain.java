@@ -1,4 +1,5 @@
 package core.cli;
+import static io.Init.first;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -10,6 +11,7 @@ import games.ttt.*;
 public final class CliMain {
 
     public static void main(String[] args) throws Exception {
+		first.twice(); // do this first in all main programs!
         CliMain cli = new CliMain(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out, true));
         cli.run(args);
     }

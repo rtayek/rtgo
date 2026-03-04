@@ -1,4 +1,5 @@
 package game;
+import static io.Init.first;
 import java.io.*;
 import controller.*;
 import io.*;
@@ -55,6 +56,7 @@ public class Game {
         NamedThreadGroup.printThraedsAtEnd();
     }
     public static void main(String[] args) throws Exception {
+		first.twice(); // do this first in all main programs!
         Logging.mainLogger.info(String.valueOf(Init.first));
         for(int i=0;i<1;++i) { //
             for(int port:IOs.ports) try {

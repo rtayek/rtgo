@@ -1,4 +1,5 @@
 package sgf;
+import static io.Init.first;
 import static sgf.Parser.*;
 import java.io.*;
 import java.util.*;
@@ -113,6 +114,7 @@ class Traverser {
         if(!x.equals(node)) throw new RuntimeException();
     }
     public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
         SgfAcceptor sgfAcceptor=new SgfPrintAcceptor();
         Traverser traverser=new Traverser(sgfAcceptor);
         File dir=new File(sgfPath);

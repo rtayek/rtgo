@@ -1,5 +1,6 @@
 package sgf;
 import static io.IOs.*;
+import static io.Init.first;
 import static io.Logging.parserLogger;
 import static sgf.Parser.*;
 import java.io.*;
@@ -393,6 +394,7 @@ public class SgfNode {
 		return actualSgf;
 	}
 	public static void main(String[] args) throws IOException {
+		first.twice(); // do this first in all main programs!
         Logging.setUpLogging();
         Logging.setLevels(Level.ALL);
 		Logging.mainLogger.warning(String.valueOf(Init.first));

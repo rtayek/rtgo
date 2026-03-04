@@ -1,4 +1,5 @@
 package gui;
+import static io.Init.first;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -235,6 +236,7 @@ public class Main extends MainGui implements ActionListener,ComponentListener {
 		}
 	}
 	public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
 		Logging.mainLogger.info(String.valueOf(Arrays.asList(args)));
 		LookAndFeelInfo[] plafs=UIManager.getInstalledLookAndFeels();
 		Logging.mainLogger.info(String.valueOf(Arrays.asList(plafs)));
@@ -303,4 +305,3 @@ public class Main extends MainGui implements ActionListener,ComponentListener {
 	}
 	@Override public void componentHidden(ComponentEvent e) {}
 }
-

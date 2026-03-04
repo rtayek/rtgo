@@ -1,5 +1,6 @@
 package server;
 import io.Logging;
+import static io.Init.first;
 import org.junit.*;
 import org.junit.runner.*;
 import io.IOs;
@@ -11,6 +12,7 @@ public class ConcreteGoServerTestCase extends AbstractGoServerTestCase {
     }
     @Override @After public void tearDown() throws Exception { Logging.mainLogger.info("teardown"); super.tearDown(); }
     public static void main(String[] args) throws Exception {
+		first.twice(); // do this first in all main programs!
         // run a few test methods
         JUnitCore junit=new JUnitCore();
         Class<ConcreteGoServerTestCase> clazz=ConcreteGoServerTestCase.class;

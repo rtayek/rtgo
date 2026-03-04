@@ -1,4 +1,5 @@
 package gui;
+import static io.Init.first;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -46,7 +47,10 @@ class Mediator implements Observer,ActionListener {
 			@Override public void keyReleased(KeyEvent arg0) {}
 			@Override public void keyPressed(KeyEvent arg0) {
 				Logging.mainLogger.info(Mediator.this.model.name+" "+this+" key listener "+arg0);
-				if(arg0.getKeyCode()==KeyEvent.VK_DELETE) { Logging.mainLogger.info(Mediator.this.model.name+" "+"unmove from keyPressed() in "+this); Mediator.this.model.delete(); }
+				if(arg0.getKeyCode()==KeyEvent.VK_DELETE) {
+					Logging.mainLogger.info(Mediator.this.model.name+" "+"unmove from keyPressed() in "+this);
+					Mediator.this.model.delete();
+				}
 			}
 		});
 		Logging.mainLogger.info("end mediator init.");
@@ -197,7 +201,9 @@ class Mediator implements Observer,ActionListener {
 		KeyStroke keyStroke=KeyStroke.getKeyStroke(keyCode,InputEvent.ALT_DOWN_MASK);
 		menuBar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke,actionKey);
 		menuBar.getActionMap().put(actionKey,new AbstractAction() {
-			@Override public void actionPerformed(ActionEvent event) { MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[] {menuBar,menu,menu.getPopupMenu()}); }
+			@Override public void actionPerformed(ActionEvent event) {
+				MenuSelectionManager.defaultManager().setSelectedPath(new MenuElement[] {menuBar,menu,menu.getPopupMenu()});
+			}
 		});
 	}
 	@Override public void actionPerformed(ActionEvent e) {
@@ -339,8 +345,8 @@ class Mediator implements Observer,ActionListener {
 		} else throw new RuntimeException("not a model!");
 	}
 	private void refreshStatusText() {
-		status.setText(""+model.prisoners(Stone.black)+" captured black stones"+", "+model.prisoners(Stone.white)+" captured white stones"+", "+model.komi()+" komi"
-				+", "+model.moves()+" moves.");
+		status.setText(""+model.prisoners(Stone.black)+" captured black stones"+", "+model.prisoners(Stone.white)+" captured white stones"+", "+model.komi()
+				+" komi"+", "+model.moves()+" moves.");
 		lastMove.setText("last move: "+model.lastMove2()+"\\nfoo\\nbar");
 		MNode currentNode=model.currentNode();
 		if(currentNode!=null) {
@@ -400,7 +406,8 @@ class Mediator implements Observer,ActionListener {
 			gamePanel.repaint();
 		}
 	}
-	public static void main(String[] args) { //
+	public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
 	}
 	final Main main;
 	final Model model;
@@ -422,4 +429,3 @@ class Mediator implements Observer,ActionListener {
 	final Map<String,Runnable> actionHandlers=new LinkedHashMap<>();
 	static boolean useKeys=true;
 }
-

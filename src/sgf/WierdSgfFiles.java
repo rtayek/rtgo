@@ -1,10 +1,12 @@
 package sgf;
 import io.Logging;
+import static io.Init.first;
 import java.io.File;
 import java.util.List;
 import com.tayek.util.io.FileIO;
 public class WierdSgfFiles {
     public static void main(String[] argument) throws Exception {
+		first.twice(); // do this first in all main programs!
         File fileList=new File("sgffiles.txt");
         List<String> lines=FileIO.toStrings(fileList);
         for(String line:lines) {

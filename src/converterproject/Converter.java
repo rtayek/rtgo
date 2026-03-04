@@ -30,6 +30,7 @@
  */
 package converterproject;
 import io.Logging;
+import static io.Init.first;
 import java.awt.*;
 /*
  * A application that requires the following files:
@@ -140,6 +141,7 @@ public class Converter {
         frame.setVisible(true);
     }
     public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() { @Override public void run() { createAndShowGUI(); } });

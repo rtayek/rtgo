@@ -1,5 +1,6 @@
 package tree;
 import io.Logging;
+import static io.Init.first;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.function.Consumer;
@@ -165,6 +166,7 @@ public class G2 {
         Logging.mainLogger.info("collect data2: "+data2);
     }
     public static void main(String[] arguments) {
+		first.twice(); // do this first in all main programs!
         List<String> x=ManagementFactory.getRuntimeMXBean().getInputArguments();
         Logging.mainLogger.info(String.valueOf(x));
         Logging.mainLogger.info("in eclipse: "+inEclipse());

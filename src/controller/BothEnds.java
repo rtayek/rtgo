@@ -1,5 +1,6 @@
 package controller;
 import static controller.GTPBackEnd.*;
+import static io.Init.first;
 import java.io.IOException;
 import java.util.List;
 import equipment.Board;
@@ -163,6 +164,7 @@ public class BothEnds { // has both a front end and a back end.
         NamedThreadGroup.printThraedsAtEnd();
     }
     public static void main(String[] args) throws Exception {
+		first.twice(); // do this first in all main programs!
         //run();
         //Model model=new Model();
         //model.setBoard(Board.factory.create(7));

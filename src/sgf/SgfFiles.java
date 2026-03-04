@@ -1,13 +1,17 @@
 package sgf;
 import io.Logging;
 import model.ModelIo;
+import static io.Init.first;
 import static sgf.Parser.*;
 import java.util.*;
+import java.util.logging.Level;
 import com.tayek.util.io.FileIO;
 import io.Init;
 public class SgfFiles {
     public static void main(String[] arguments) {
+		first.twice(); // do this first in all main programs!
         Logging.mainLogger.info(String.valueOf(Init.first));
+        Logging.setLevels(Level.WARNING);
         int n=0;
         Set<Object> objects=new LinkedHashSet<>();
         objects.addAll(sgfDataKeySet());
@@ -22,6 +26,7 @@ public class SgfFiles {
                 throw new RuntimeException(key+" bad parentheses: "+p);
             }
             SgfNode games=ModelIo.restoreSGF(FileIO.toReader(expectedSgf));
+            if(games.siblings()>0) System.out.println(key+" has "+(games.siblings()+1)+" games.");
             games.preorderCheckFlags();
             String s="";
             if(games.hasASetupType) s+='S';

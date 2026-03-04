@@ -23,6 +23,7 @@ public class ATestCase {
     // [{ExactMatcher:fDisplayName=main(java.lang.String[])], {LeadingIdentifierMatcher:fClassName=suitetest.ATestCase,fLeadingIdentifier=main]] from org.junit.internal.requests.ClassRequest@574caa3f
     @Test public void test() {}
     public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
         Logging.mainLogger.info(String.valueOf(Init.first));
         first.suiteControls=true;
         JUnitCore jUnitCore=new JUnitCore();

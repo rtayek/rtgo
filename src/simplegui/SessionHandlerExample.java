@@ -1,4 +1,5 @@
 package simplegui;
+import static io.Init.first;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -28,6 +29,7 @@ public class SessionHandlerExample implements ActionListener {
         invalidationTimer.restart();
     }
     public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
         SwingUtilities.invokeLater(new Runnable() { @Override public void run() { new SessionHandlerExample(); } });
     }
     private static final int SESSION_TIMEOUT=3*1000; // 30 sec timeout for testing purposes

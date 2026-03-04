@@ -1,4 +1,5 @@
 package equipment;
+import static io.Init.first;
 import java.io.FileNotFoundException;
 import java.util.*;
 import equipment.Board.*;
@@ -194,6 +195,7 @@ public interface Board { // http://stackoverflow.com/questions/28681737/java-8-d
         }
     }
     public static void main(String[] args) throws FileNotFoundException {
+		first.twice(); // do this first in all main programs!
         //x(); 
         int width=23,depth=19;
         Topology topology=Topology.normal;

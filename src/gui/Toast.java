@@ -1,4 +1,5 @@
 package gui;
+import static io.Init.first;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
@@ -39,6 +40,7 @@ public class Toast extends JFrame {
         toast.display();
     }
     public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
         Toast message=new Toast("Welcome to TutorialsPoint.Com");
         message.display();
     }

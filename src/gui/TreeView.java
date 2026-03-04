@@ -1,4 +1,5 @@
 package gui;
+import static io.Init.first;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -174,6 +175,7 @@ import utilities.*;
 		frame.setJMenuBar(menuBar);
 	}
 	public static void main(String[] args) {
+		first.twice(); // do this first in all main programs!
 		TreeView myTreeView=TreeView.simple();
 	}
 	public static TreeView simple() {
