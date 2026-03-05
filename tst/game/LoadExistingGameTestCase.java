@@ -21,7 +21,7 @@ public class LoadExistingGameTestCase extends GameTestSupport {
 		black=game.blackFixture.backEnd.model;
 		white=game.whiteFixture.backEnd.model;
 	}
-	/*@Ignore*/ @Test public void testStatus() throws InterruptedException {
+	@Test public void testStatus() throws InterruptedException {
 		game.startGameThread();
 		game.checkStatus();
 	}

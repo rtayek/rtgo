@@ -494,6 +494,36 @@ public class SgfUnitTestCase {
         assertRtRoundTrip(true);
     }
 
+    @Test public void testMultiGameUsesInternalSentinelButDoesNotSerializeRt() {
+        String multiGameSgf="(;FF[4]GM[1]SZ[19];B[aa])(;FF[4]GM[1]SZ[19];W[bb])";
+        Model model=new Model();
+        ModelIo.restoreModel(model,FileIO.toReader(multiGameSgf));
+        assertTrue("expected internal sentinel for multi-game SGF",ModelTreeOps.isSentinel(model.root()));
+        assertTrue("expected more than one game under sentinel",model.root().children().size()>1);
+        String saved=TestIo.toString("save model fails",writer->ModelIo.saveModel(model,writer));
+        assertFalse("RT sentinel must remain internal and not be serialized",saved.contains("RT[Tgo root]"));
+    }
+
+    @Test public void testExistingRtWrapperDoesNotCreateNestedRtNodes() {
+        String sgf="(;RT[Tgo root];FF[4]GM[1]SZ[19];B[aa])";
+        MNode root=MNode.restoreMNodes(FileIO.toReader(sgf));
+        assertTrue(ModelTreeOps.isSentinel(root));
+        assertFalse(root.children().isEmpty());
+        MNode firstGameRoot=root.children().get(0);
+        assertFalse(MNode.hasProperty(firstGameRoot,P.RT));
+    }
+
+    @Test public void testMixedRtAndRootPropertiesAreSplitFromSentinel() {
+        String sgf="(;RT[Tgo root]FF[4]GM[1]SZ[19];B[aa])";
+        MNode root=MNode.restoreMNodes(FileIO.toReader(sgf));
+        assertTrue(ModelTreeOps.isSentinel(root));
+        assertFalse(MNode.hasProperty(root,P.FF));
+        assertFalse(root.children().isEmpty());
+        MNode firstGameRoot=root.children().get(0);
+        assertTrue(MNode.hasProperty(firstGameRoot,P.FF));
+        assertFalse(MNode.hasProperty(firstGameRoot,P.RT));
+    }
+
     @Ignore @Test public void testCombineSimple() {
         assertCombine("simple.sgf");
     }

@@ -22,20 +22,7 @@ import com.tayek.util.io.Indent;
 public final class ModelTreeOps {
     public static boolean isSentinel(MNode root) {
         // RT is a sentinel extra-root marker; preserve for lossless round-trip.
-        boolean found=false;
-        for(SgfProperty p:root.sgfProperties()) {
-            if(p.p().equals(P.RT)) {
-                found=true;
-                break;
-            }
-        }
-        for(SgfProperty p:root.extraProperties()) {
-            if(p.p().equals(P.RT)) {
-                found=true;
-                break;
-            }
-        }
-        return found;
+        return MNode.hasProperty(root,P.RT);
     }
 
     static void addProperty(MNode node,P p,String string) {

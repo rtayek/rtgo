@@ -413,15 +413,14 @@ class BoardImpl extends BoardABC {
         super(width,depth,topology,shape,id);
         stones=new Stone[width*depth];
         setAll(Stone.vacant);
-        if(topology.equals(Topology.diamond)) {
-            // need to set the unused regions to edge!
-            // not sure this is the right place to do this.
-            // other boards with holes look like the do something else wth nodes and regions.
-            // yes they do/did something else, but i think we broke that by tossing parent mnode.
-            // seems like they shapes should all be setup here?
-            List<Point> points=Board.getPointsForDiamondRegion(width(),depth());
-            for(Point point:points) setAt(point,Stone.edge);
-        }
+        // Keep board factory behavior aligned with ModelTreeOps.addRegion():
+        // diamond topology uses diamond mask; otherwise apply shape mask.
+        List<Point> points=topology.equals(Topology.diamond)
+                ?Board.getPointsForDiamondRegion(width(),depth())
+                //:Shape.getPointsForRegion(width(),depth(),shape);
+        			:new ArrayList<>();
+        for(Point point:points)
+            setAt(point,Stone.edge);
     }
     @Override public Stone[] stones() { return stones; }
     public static boolean isLeft(Point a,Point b,Point c) { return ((b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x))>0; }

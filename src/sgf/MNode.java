@@ -106,12 +106,49 @@ public class MNode {
 		} else; // Logging.mainLogger.severe("binaryNode.right is null!");
 		return parent;
 	}
+	private static boolean hasProperty(List<SgfProperty> properties,P property) {
+		if(properties==null||property==null) return false;
+		for(SgfProperty p:properties)
+			if(p.p().equals(property)) return true;
+		return false;
+	}
+	private static boolean hasProperty(SgfNode node,P property) {
+		return node!=null&&hasProperty(node.sgfProperties,property);
+	}
+	public static boolean hasProperty(MNode node,P property) {
+		if(node==null) return false;
+		return hasProperty(node.sgfProperties(),property)||hasProperty(node.extraProperties(),property);
+	}
+	private static List<SgfProperty> propertiesMatching(SgfNode node,P property,boolean includeMatches) {
+		List<SgfProperty> properties=new ArrayList<>();
+		if(node==null) return properties;
+		for(SgfProperty p:node.sgfProperties)
+			if(p.p().equals(property)==includeMatches) properties.add(p);
+		return properties;
+	}
 	public static MNode toGeneralTree(SgfNode node) {
 		// this looks broken. see red bean test case.
 		// if(node==null) return null; // maybe return and empty root! (my MNode
 		// root)
 		if(node!=null&&node.right!=null) {
 			Logging.mainLogger.info("binaryNode.right is non null!");
+		}
+		if(hasProperty(node,P.RT)) {
+			// Input already has RT at the root. Keep RT on sentinel and normalize
+			// non-RT root properties into a child node to avoid RT nesting.
+			MNode sentinel=new MNode(null);
+			List<SgfProperty> rtProperties=propertiesMatching(node,P.RT,true);
+			List<SgfProperty> nonRtProperties=propertiesMatching(node,P.RT,false);
+			sentinel.sgfProperties.addAll(rtProperties);
+			sentinel.data=sentinel.id;
+			if(nonRtProperties.isEmpty()) {
+				if(node.left!=null) toGeneralTree(node.left,sentinel);
+			} else {
+				SgfNode normalizedRoot=new SgfNode(nonRtProperties,null,node.left);
+				toGeneralTree(normalizedRoot,sentinel);
+			}
+			if(node.right!=null) toGeneralTree(node.right,sentinel);
+			return sentinel;
 		}
 		SgfNode extra=new SgfNode();
 		extra.left=node; // might be null
@@ -122,7 +159,7 @@ public class MNode {
 		// apparently there is a way and we are not doing it now.
         try {
             // RT is a sentinel extra-root marker; it is a no-op in the engine and must round-trip unchanged.
-            SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo root"}));
+            SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo sentinel"}));
 			sentinel.sgfProperties.add(property);
 			Logging.mainLogger.info("toGeneralTree() added RT property to extra root node");
 		} catch(Exception e) {

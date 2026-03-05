@@ -16,6 +16,6 @@ public class RunOneTestMethod {
 	}
 	public static void main(String[] args) {
 		first.twice(); // do this first in all main programs!
-q		runMethods();
+		runMethods();
 	}
 }

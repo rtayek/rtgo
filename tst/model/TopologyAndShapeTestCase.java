@@ -2,76 +2,85 @@ package model;
 import org.junit.Rule;
 import utilities.MyTestWatcher;
 import com.tayek.util.io.FileIO;
+import com.tayek.util.io.End.Holder;
+import controller.BothEnds;
 import io.Logging;
 import io.TestIo;
 import static org.junit.Assert.*;
+import java.io.StringWriter;
+import java.io.Writer;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import equipment.*;
 import equipment.Board.*;
 public class TopologyAndShapeTestCase {
-    @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
-    private Model newModelWithRoot(Topology topology,Shape shape) {
-        Model model=new Model();
-        ModelTreeOps.setRoot(model,n,n,topology,shape);
-        assertEquals(topology,model.boardTopology());
-        assertEquals(shape,model.boardShape());
-        return model;
-    }
-    private void assertRoot(Topology topology,Shape shape,Stone expectedCenter,boolean ensureBoard,
-            boolean allowNullBoard) {
-        Model model=newModelWithRoot(topology,shape);
-        if(ensureBoard) model.ensureBoard();
-        Board b=model.board();
-        if(b==null&&allowNullBoard) {
-            // board topology may not be set yet.
-            b=Board.factory.create(n,n,model.boardTopology(),model.boardShape());
-            model.setBoard(b);
-        }
-        assertNotNull(b);
-        assertEquals(expectedCenter,b.at(b.center()));
-        model.move(Move2.blackMoveAtA1);
-        doDown(model);
-    }
-    @Ignore @Test public void testFactory() {
-        // this is failing. looks like board does not
-        // put the holes in!
-        // maybe because we turned off the add node switch in save?
-        // no, fails either way.
-        // perhaps we should not be doing this (i.e. let the sgf do it)
-        assertEquals(Stone.edge,board.at(board.center()));
-    }
-    private void doDown(Model model) {
-        Logging.mainLogger.info(String.valueOf(model.board().at(model.board().center())));
-        Logging.mainLogger.info("topology: "+model.boardTopology());
-        Logging.mainLogger.info("shape: "+model.boardShape());
-        //model.up(); // getting: restored root: ;(5)RT[Tgo root]
-        String expected=TestIo.toString("save expected fails",writer->ModelIo.saveModel(model,writer));
-        Model m=new Model();
-        ModelIo.restoreModel(m,FileIO.toReader(expected));
-        m.ensureBoard();
-        m.down(0); // need to execute the sgf
-        assertNotNull(m.board());
-        String actual=TestIo.toString("save actual fails",writer->ModelIo.saveModel(m,writer));
-        assertEquals(expected,actual);
-    }
-    @Test public void testsetRoot() {
-        // failing because we added a new root in save
-        assertRoot(Topology.normal,Shape.normal,Stone.vacant,false,true);
-    }
-    @Test public void testsetRootWithHole1() {
-        assertRoot(Topology.normal,Shape.hole1,Stone.edge,false,false);
-    }
-    @Test public void testsetRootWithTorus() {
-        assertRoot(Topology.torus,Shape.normal,Stone.vacant,true,false);
-    }
-    @Test public void testsetRootWithHoleAndTorus() {
-        assertRoot(Topology.torus,Shape.hole1,Stone.edge,false,false);
-    }
-    final int n=19;
-    final Board board=Board.factory.create(n,n,Topology.normal,Shape.hole1);
+	@Before public void setUp() throws Exception {
+	}
+	@Rule public final MyTestWatcher watcher=new MyTestWatcher(getClass());
+	private Model newModelWithRoot(Topology topology,Shape shape) {
+		Model model=new Model();
+		ModelTreeOps.setRoot(model,n,n,topology,shape);
+		assertEquals(topology,model.boardTopology());
+		assertEquals(shape,model.boardShape());
+		return model;
+	}
+	private void assertRoot(Topology topology,Shape shape,Stone expectedCenter,boolean ensureBoard,boolean allowNullBoard) {
+		Model model=newModelWithRoot(topology,shape);
+		if(ensureBoard) model.ensureBoard();
+		Board b=model.board();
+		if(b==null&&allowNullBoard) {
+			// board topology may not be set yet.
+			b=Board.factory.create(n,n,model.boardTopology(),model.boardShape());
+			model.setBoard(b);
+		}
+		System.out.println(b.at(9,9));
+		assertNotNull(b);
+		assertEquals(expectedCenter,b.at(b.center()));
+		model.move(Move2.blackMoveAtA1);
+		doDown(model);
+		Writer writer=new StringWriter();
+		boolean ok=ModelIo.saveModel(model,writer);
+		String sgf=writer.toString();
+		
+		System.out.println(topology+" "+shape+" "+expectedCenter+" "+ensureBoard+" "+allowNullBoard);
+		System.out.println(sgf);
+	}
+	@Ignore @Test public void testFactory() {
+		// this is failing. looks like board does not
+		// put the holes in!
+		// maybe because we turned off the add node switch in save?
+		// no, fails either way.
+		// perhaps we should not be doing this (i.e. let the sgf do it)
+		assertEquals(Stone.edge,board.at(board.center()));
+	}
+	private void doDown(Model model) {
+		Logging.mainLogger.info(String.valueOf(model.board().at(model.board().center())));
+		Logging.mainLogger.info("topology: "+model.boardTopology());
+		Logging.mainLogger.info("shape: "+model.boardShape());
+		// model.up(); // getting: restored root: ;(5)RT[Tgo root]
+		String expected=TestIo.toString("save expected fails",writer->ModelIo.saveModel(model,writer));
+		Model m=new Model();
+		ModelIo.restoreModel(m,FileIO.toReader(expected));
+		m.ensureBoard();
+		m.down(0); // need to execute the sgf
+		assertNotNull(m.board());
+		String actual=TestIo.toString("save actual fails",writer->ModelIo.saveModel(m,writer));
+		assertEquals(expected,actual);
+	}
+	@Test public void testsetRoot() {
+		// failing because we added a new root in save
+		assertRoot(Topology.normal,Shape.normal,Stone.vacant,false,true);
+	}
+	@Test public void testsetRootWithHole1() {
+		assertRoot(Topology.normal,Shape.hole1,Stone.edge,false,false);
+	}
+	@Test public void testsetRootWithTorus() {
+		assertRoot(Topology.torus,Shape.normal,Stone.vacant,true,false);
+	}
+	@Test public void testsetRootWithHoleAndTorus() {
+		assertRoot(Topology.torus,Shape.hole1,Stone.edge,false,false);
+	}
+	final int n=19;
+	final Board board=Board.factory.create(n,n,Topology.normal,Shape.hole1);
 }
-
-
-
-
