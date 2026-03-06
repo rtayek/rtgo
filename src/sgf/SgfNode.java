@@ -227,6 +227,15 @@ public class SgfNode {
 		indent.out();
 		writer.flush();
 	}
+	public void saveSgf(Writer writer,Indent indent) {
+		try {
+			writer.write(indent.indent()+'(');
+			saveSgf_(writer,indent);
+			// writer.write(indent.indent()+')');
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
 	private void preorderSaveSgf_(Writer writer,Indent indent) throws IOException {
 		// hard to get the parentheses correct.
 		writer.write(toString());
@@ -245,15 +254,6 @@ public class SgfNode {
 		writer.write('(');
 		preorderSaveSgf_(writer,indent);
 		writer.write(')');
-	}
-	public void saveSgf(Writer writer,Indent indent) {
-		try {
-			writer.write(indent.indent()+'(');
-			saveSgf_(writer,indent);
-			// writer.write(indent.indent()+')');
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
 	}
 	void lastMove_(SgfNode holder) {
 		for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();) {

@@ -264,6 +264,16 @@ public class NamedThreadGroup { // one set of named threads.
         }
         return namedThread;
     }
+    public static synchronized boolean add(NamedThreadGroup namedThreadGroup) {
+        if(namedThreadGroup==null) return false;
+        if(!groupIdToNamedThreadGroup.containsKey(namedThreadGroup.groupId)) {
+            groupIdToNamedThreadGroup.put(namedThreadGroup.groupId,namedThreadGroup);
+            return true;
+        } else {
+            Logging.mainLogger.severe("duplicate game id: "+namedThreadGroup.groupId);
+            return false;
+        }
+    }
     public static void printNamedThreads(Set<NamedThread> threads,String name,boolean printAll) {
         if(name!=null&&threads.size()>0) Logging.mainLogger.info(name+" "+threads.size()+" threads:");
         int i=0,n=4;
@@ -364,6 +374,11 @@ public class NamedThreadGroup { // one set of named threads.
     //public static final Map<String,Set<NamedThread>> nameToNamedThreadSet=new TreeMap<>();
     public static final Map<String,Integer> nameToColorIndex=new LinkedHashMap<>();
     public static final Map<Long,NamedThreadGroup> groupIdToNamedThreadGroup=new TreeMap<>();
+    private static void bootstrapGroup(long groupId) {
+        if(!groupIdToNamedThreadGroup.containsKey(groupId)) {
+            groupIdToNamedThreadGroup.put(groupId,new NamedThreadGroup(groupId));
+        }
+    }
     // just sets of named threads associated with a name.
     // nothing to do with named thread group.
     // currently there is one set named allKey.
@@ -374,5 +389,7 @@ public class NamedThreadGroup { // one set of named threads.
         nameToColorIndex.put("black",3);
         nameToColorIndex.put("white",4);
         nameToColorIndex.put("model",5);
+        bootstrapGroup(groupZero);
+        bootstrapGroup(standAlone);
     }
 }

@@ -1,14 +1,14 @@
 package server;
-import static io.Logging.flushingStreamHandler;
+import static com.tayek.util.log.JulLogging.flushingStreamHandler;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.logging.Handler;
 import javax.swing.*;
+import com.tayek.util.log.MyFormatter;
 import com.tayek.util.misc.Tee;
 import gui.TextView;
 import io.*;
-import io.Logging.MyFormatter;
 import model.Model;
 import utilities.*;
 public class ServerGui extends MainGui implements ActionListener { // this is the main ui.
@@ -247,14 +247,14 @@ public class ServerGui extends MainGui implements ActionListener { // this is th
             tee.addOutputStream(new PrintStream(err));
             // old copies of sysout and syserr will show up.
             // since we are adding sysout here
-            // why are we doing a setOut below?
+        // why are we doing a setOut below?
         }
         tee.setOut();
         tee.setErr();
         // why not just add these like above??
         // oh, new stuff written to sysout and syserr will show up.
         Handler handler=flushingStreamHandler(tee.printStream);
-        handler.setFormatter(new MyFormatter());
+        handler.setFormatter(new MyFormatter(Logging.useColor));
         Logging.mainLogger.addHandler(handler);
         Tee.printStuff(tee.printStream,out,err);
         return tee;

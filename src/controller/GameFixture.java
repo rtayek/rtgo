@@ -510,7 +510,7 @@ public class GameFixture implements Stopable {
 	{
 		//synchronized(this) {
 			NamedThreadGroup namedThreadGroup=new NamedThreadGroup(id);
-			first.add(namedThreadGroup); // ??
+			NamedThreadGroup.add(namedThreadGroup); // ??
 		//}
 	}
 	public static long fileIds=maxId(); // for saving

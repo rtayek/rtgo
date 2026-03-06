@@ -55,11 +55,11 @@ public class MNode {
 		return ok;
 	}
 	public SgfNode toBinaryTree() {
-	// standard convention
-	// left pointer → first child
-	// right pointer → next sibling
-	// what have we been doing?
-	// https://chatgpt.com/share/6958f58b-fb8c-8008-a2a5-3ef7cc6ce710
+		// standard convention
+		// left pointer → first child
+		// right pointer → next sibling
+		// what have we been doing?
+		// https://chatgpt.com/share/6958f58b-fb8c-8008-a2a5-3ef7cc6ce710
 		SgfNode left=null,tail=null;
 		for(int i=0;i<children.size();++i) {
 			MNode child=children.get(i);
@@ -67,7 +67,11 @@ public class MNode {
 				if(child!=null) {
 					left=tail=child.toBinaryTree();
 					if(left.right!=null) throw new RuntimeException("weirdness!");
-				} else Logging.mainLogger.info("first child is null!");
+				} else {
+					Logging.mainLogger.info("first child is null!");
+					// maybe allow this for parsing null or ""?
+					throw new RuntimeException("first child is null!");
+				}
 			} else {
 				SgfNode newRight=child.toBinaryTree();
 				tail.right=newRight;
@@ -82,7 +86,8 @@ public class MNode {
 	}
 	private static MNode toGeneralTree(SgfNode node,MNode grandParent) {
 		if(node==null) {
-			//if(true) throw new RuntimeException("node is null in toGeneralTree()");
+			// if(true) throw new RuntimeException("node is null in
+			// toGeneralTree()");
 			if(grandParent!=null) {
 				System.out.println("adding null child to grandparent.");
 				grandParent.children.add(null);
@@ -134,7 +139,8 @@ public class MNode {
 			Logging.mainLogger.info("binaryNode.right is non null!");
 		}
 		if(hasProperty(node,P.RT)) {
-			// Input already has RT at the root. Keep RT on sentinel and normalize
+			// Input already has RT at the root. Keep RT on sentinel and
+			// normalize
 			// non-RT root properties into a child node to avoid RT nesting.
 			MNode sentinel=new MNode(null);
 			List<SgfProperty> rtProperties=propertiesMatching(node,P.RT,true);
@@ -157,9 +163,10 @@ public class MNode {
 		// maybe we don't need and extra node if we already have one?
 		// maybe this can not happen?
 		// apparently there is a way and we are not doing it now.
-        try {
-            // RT is a sentinel extra-root marker; it is a no-op in the engine and must round-trip unchanged.
-            SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo sentinel"}));
+		try {
+			// RT is a sentinel extra-root marker; it is a no-op in the engine
+			// and must round-trip unchanged.
+			SgfProperty property=new SgfProperty(P.RT,Arrays.asList(new String[] {"Tgo sentinel"}));
 			sentinel.sgfProperties.add(property);
 			Logging.mainLogger.info("toGeneralTree() added RT property to extra root node");
 		} catch(Exception e) {
@@ -194,16 +201,10 @@ public class MNode {
 		return node;
 	}
 	public static boolean saveMNodes(Writer writer,MNode root,Indent indent) {
-		// this fails to save if there are variations on the *first* move!
-		// seems like it fails if the are any variations!
-		// was failing because we did not add the extra root node.
 		if(indent==null) indent=new Indent(IOs.standardIndent);
 		SgfNode games=null;
 		if(root!=null) {
-			int children=root.children.size();
-			games=root.toBinaryTree(); // this is where root gets tossed.
-			// that's why none of the sgf in the root is not coming out.
-			// Logging.mainLogger.info("discarding: "+root);
+			games=root.toBinaryTree();
 			if(games.left!=null) games.left.saveSgf(writer,indent);
 			Logging.mainLogger.info("games.right: "+games.right);
 		}
@@ -216,16 +217,6 @@ public class MNode {
 		System.out.close();
 		System.setOut(old);
 		return root;
-	}
-	@Override public String toString() {
-		StringBuffer stringBuffer=new StringBuffer(";");
-		if(data!=null) stringBuffer.append("("+data+")");
-		for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();)
-			stringBuffer.append(i.next().toString());
-		// these extra properties are new (january 2026).
-		for(Iterator<SgfProperty> i=extraProperties.iterator();i.hasNext();)
-			stringBuffer.append(i.next().toString());
-		return stringBuffer.toString();
 	}
 	public static Collection<SgfNode> findPathToNode(MNode target,SgfNode root) {
 		SgfNodeFinder finder=SgfNodeFinder.finder(target.toBinaryTree(),root);
@@ -258,12 +249,21 @@ public class MNode {
 		saveMNodesDirectly_(writer,root,indent);
 		writer.write(indent.indent()+')');
 	}
-	public static void label(MNode node,final Iterator<Long> i) { // traverse
-																	// and set
-																	// labels
+	public static void label(MNode node,final Iterator<Long> i) { 
+		// traverse and set labels
 		node.label=i.next();
 		for(MNode n:node.children)
 			label(n,i);
+	}
+	@Override public String toString() {
+		StringBuffer stringBuffer=new StringBuffer(";");
+		if(data!=null) stringBuffer.append("("+data+")");
+		for(Iterator<SgfProperty> i=sgfProperties.iterator();i.hasNext();)
+			stringBuffer.append(i.next().toString());
+		// these extra properties are new (january 2026).
+		for(Iterator<SgfProperty> i=extraProperties.iterator();i.hasNext();)
+			stringBuffer.append(i.next().toString());
+		return stringBuffer.toString();
 	}
 	public static void main(String[] args) throws IOException {
 		Logging.mainLogger.info(String.valueOf(Init.first));
@@ -324,4 +324,3 @@ public class MNode {
 	private static boolean ignoreMoveAndSetupFlags=true; // was false
 	private static int ids;
 }
-

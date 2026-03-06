@@ -1,7 +1,3 @@
-Here is a clear, candid answer.
-
----
-
 ## What I remember about you (persisted context)
 
 From prior conversations, I have durable memory of the following **work-relevant preferences and background**:

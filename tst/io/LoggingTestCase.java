@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.logging.*;
 import org.junit.*;
-import io.Logging.MyFormatter;
+import com.tayek.util.log.MyFormatter;
 public class LoggingTestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     @Before public void setUp() throws Exception {
@@ -41,7 +41,7 @@ public class LoggingTestCase {
     }
     @Test public void testAddStreamHandler() {
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        Handler handler=new StreamHandler(baos,new MyFormatter());
+        Handler handler=new StreamHandler(baos,new MyFormatter(Logging.useColor));
         logger.addHandler(handler);
         String string="info 3";
         logger.info(string);

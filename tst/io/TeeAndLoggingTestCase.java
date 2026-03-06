@@ -1,12 +1,12 @@
 package io;
 import static com.tayek.util.io.Constants.lineSeparator;
-import static io.Logging.flushingStreamHandler;
+import static com.tayek.util.log.JulLogging.flushingStreamHandler;
 import static org.junit.Assert.*;
 import java.io.*;
 import java.util.logging.*;
 import com.tayek.util.misc.Tee;
 import org.junit.*;
-import io.Logging.MyFormatter;
+import com.tayek.util.log.MyFormatter;
 public class TeeAndLoggingTestCase {
 	@Before public void setUp() throws Exception {
 		byteArrayOutputStream.reset(); //
@@ -40,7 +40,7 @@ public class TeeAndLoggingTestCase {
 		// tee.addOutputStream(console.err); // works fine
 		logger.setLevel(Level.INFO);
 		logger.info("info 4");
-		Handler handler=new StreamHandler(tee,new MyFormatter());
+		Handler handler=new StreamHandler(tee,new MyFormatter(Logging.useColor));
 		logger.addHandler(handler);
 		logger.info("info 4b");
 		handler.flush();
@@ -58,7 +58,7 @@ public class TeeAndLoggingTestCase {
 		// tee.addOutputStream(console.err); // works fine
 		logger.setLevel(Level.INFO);
 		logger.info("info 5");
-		Handler handler=new StreamHandler(tee,new MyFormatter());
+		Handler handler=new StreamHandler(tee,new MyFormatter(Logging.useColor));
 		logger.addHandler(handler);
 		String string="info 6";
 		logger.info(string);
@@ -89,7 +89,7 @@ public class TeeAndLoggingTestCase {
 		Logging.mainLogger.warning("hello from console.err after set");
 		Logging.mainLogger.info("---");
 		Logger logger=Logger.getLogger("frog");
-		Logging.setupLogger(logger,new MyFormatter());
+		Logging.setupLogger(logger,new MyFormatter(Logging.useColor));
 		logger.info("logger");
 		ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
 		TestTee tee=new TestTee(byteArrayOutputStream,console);
@@ -145,7 +145,7 @@ public class TeeAndLoggingTestCase {
 			if(true) { // works (or at least it used to)
 				// now it only works by itself!.
 				logger=Logger.getLogger("frog");
-				Logging.setupLogger(logger,new MyFormatter());
+				Logging.setupLogger(logger,new MyFormatter(Logging.useColor));
 			} else { // does not work
 				Logging.setUpLogging();
 				logger=Logging.mainLogger;
@@ -157,10 +157,10 @@ public class TeeAndLoggingTestCase {
 			Handler[] handlers=logger.getHandlers();
 			if(true||handlers.length==0) {
 				Logging.mainLogger.info("no handlers!");
-				Handler handler=new StreamHandler(tee.printStream,new MyFormatter());
+				Handler handler=new StreamHandler(tee.printStream,new MyFormatter(Logging.useColor));
 				handler.setLevel(Level.ALL);
 				logger.setUseParentHandlers(false);
-				handler.setFormatter(new MyFormatter());
+				handler.setFormatter(new MyFormatter(Logging.useColor));
 				logger.addHandler(handler);
 				// does not help in false case.
 			}
@@ -190,7 +190,7 @@ public class TeeAndLoggingTestCase {
 	}
 	@Test public void testTwoTeeesWithLogger() {
 		Logger logger=Logger.getLogger("frog");
-		Logging.setupLogger(logger,new MyFormatter());
+		Logging.setupLogger(logger,new MyFormatter(Logging.useColor));
 		logger.info("logger 0");
 		TestTee tee=new TestTee(byteArrayOutputStream,console);
 		tee.addOutputStream(console.out);
@@ -236,7 +236,7 @@ public class TeeAndLoggingTestCase {
 		Logging.mainLogger.severe("before handler was added 1");
 		Handler handler=flushingStreamHandler(tee);
 		handler.setLevel(Level.ALL);
-		handler.setFormatter(new MyFormatter());
+		handler.setFormatter(new MyFormatter(Logging.useColor));
 		Logging.mainLogger.addHandler(handler);
 		Logging.mainLogger.severe("after handler was added 1");
 		tee.printStream.println("ps from tee 1");

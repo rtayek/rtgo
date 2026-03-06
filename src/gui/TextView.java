@@ -1,14 +1,14 @@
 package gui;
 import static io.Init.first;
-import static io.Logging.flushingStreamHandler;
+import static com.tayek.util.log.JulLogging.flushingStreamHandler;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.*;
 import javax.swing.*;
+import com.tayek.util.log.MyFormatter;
 import com.tayek.util.misc.Tee;
 import io.Logging;
-import io.Logging.MyFormatter;
 @SuppressWarnings("serial") public class TextView extends JPanel {
     public TextView() {
         setLayout(new BorderLayout());
@@ -56,7 +56,7 @@ import io.Logging.MyFormatter;
         Thread.sleep(1500); // yikes, make this smalller!
         textView.setupTees();
         Handler handler=flushingStreamHandler(textView.tee.printStream);
-        handler.setFormatter(new MyFormatter());
+        handler.setFormatter(new MyFormatter(Logging.useColor));
         Logging.mainLogger.addHandler(handler);
         Logging.mainLogger.setLevel(Level.ALL);
         //Tee.printStuff(tee.printStream,out,err);
