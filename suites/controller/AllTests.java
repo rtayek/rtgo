@@ -10,7 +10,6 @@ import com.tayek.util.io.FileIO;
 import io.BS;
 import io.Init;
 import utilities.SuiteSupport;
-import io.TestLifecycle;
 @RunWith(Suite.class) @SuiteClasses({ //
 		AbstractGTPDirectTestCase.GTPDirectTestSuite.class, //
 		AbstractBothTestCase.BothTestSuite.class, //
@@ -25,7 +24,7 @@ import io.TestLifecycle;
 		Init.first.testsRun.clear();
 	}
 	@AfterClass public static void tearDownAfterClass() throws Exception {
-		TestLifecycle.lastPrint(BS.testsRun);
+		Init.first.lastPrint();
 		FileIO.write(Texts.cat(first.testsRun),new File("fromSuite.txt"));
 	}
 }

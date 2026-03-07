@@ -8,6 +8,7 @@ import com.tayek.util.core.Texts;
 import com.tayek.util.io.FileIO;
 import io.*;
 import io.IOs;
+import com.tayek.util.log.ConsoleAndLogColors;
 import server.NamedThreadGroup;
 import server.NamedThreadGroup.Check;
 public class MyTestWatcher extends TestWatcher {
@@ -60,7 +61,7 @@ public class MyTestWatcher extends TestWatcher {
     public static final int unknowm=-1,controller=311,controllerSuite=261,game=83,server=37;
     public static int lastTest=unknowm;
     public static boolean defaultVerbosity=true;
-    public static final String reset=com.tayek.util.log.ColorLogs.color_RESET;
+    public static final String reset=ConsoleAndLogColors.color_RESET;
     static {
         //Init.Main.main(null);
     }
