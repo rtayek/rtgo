@@ -13,6 +13,7 @@ import io.*;
 import com.tayek.util.io.End.Holder;
 import model.Model;
 import utilities.*;
+import utilities.TestLifecycleHelper;
 public abstract class AbstractBothTestCase extends ControllerHolderTestSupport {
     // currently does NOT extend any test case.
     // these setup a front end and a back end (Both).
@@ -31,12 +32,12 @@ public abstract class AbstractBothTestCase extends ControllerHolderTestSupport {
             Logging.mainLogger.info(String.valueOf(Init.first));
             Logging.mainLogger.info("set up suite class");
             // do not bump wrapup counter
-            first.suiteControls=true;
+            TestLifecycleHelper.suiteControls=true;
         }
         @AfterClass public static void tearDownClass() {
             Logging.mainLogger.info("tear down suite class");
             // use a map of thread to ?
-            first.wrapupTests_();
+            TestLifecycleHelper.wrapupTests_();
         }
     }
     @Ignore @RunWith(Parameterized.class) public static class ParameterizedBothTestSuitee extends BothTestSuite {

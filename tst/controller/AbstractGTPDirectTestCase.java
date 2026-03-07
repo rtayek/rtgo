@@ -11,6 +11,7 @@ import equipment.*;
 import io.*;
 import model.*;
 import sgf.HexAscii;
+import utilities.TestLifecycleHelper;
 //@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 // some of these need to be done directly in the model.
 // as well as b the bac end when we have role=something!
@@ -375,7 +376,7 @@ public abstract class AbstractGTPDirectTestCase extends ControllerGtpTestSupport
     public static void main(String[] args) {
 		first.twice(); // do this first in all main programs!
         Logging.mainLogger.info(String.valueOf(Init.first));
-        first.suiteControls=true;
+        TestLifecycleHelper.suiteControls=true;
         JUnitCore jUnitCore=new JUnitCore();
         jUnitCore.run(GTPDirectTestSuite.class);
     }

@@ -8,6 +8,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import io.Init;
 import suitetest.ATestCase.Hide.AllTests2Suite;
+import utilities.TestLifecycleHelper;
 public class ATestCase {
     @Rule public final MyTestWatcher watcher = new MyTestWatcher(getClass());
     public interface I {}
@@ -25,7 +26,7 @@ public class ATestCase {
     public static void main(String[] args) {
 		first.twice(); // do this first in all main programs!
         Logging.mainLogger.info(String.valueOf(Init.first));
-        first.suiteControls=true;
+        TestLifecycleHelper.suiteControls=true;
         JUnitCore jUnitCore=new JUnitCore();
         jUnitCore.run(AllTests2Suite.class);
     }

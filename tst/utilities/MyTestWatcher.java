@@ -27,11 +27,11 @@ public class MyTestWatcher extends TestWatcher {
 		if(verbosity) Logging.mainLogger.info("starting test: "+key+" "+klass.getName()+"."+description.getMethodName()+" "+ets());
 		if(IOs.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread!");
 		// fix this so there is only one test et!
-		first.testsRun.add(klass.getName()+"."+description.getMethodName());
+		TestLifecycleHelper.testsRun.add(klass.getName()+"."+description.getMethodName());
 		check.startCheck();
 	}
 	@Override protected void finished(Description description) {
-		String finished="finished test "+first.testsRun.size()+" "+ets();
+		String finished="finished test "+TestLifecycleHelper.testsRun.size()+" "+ets();
 		if(verbosity) Logging.mainLogger.info(String.valueOf(finished));
 		if(IOs.currentThreadIsTimeLimited()) Logging.mainLogger.severe("time limited thread! "+ets());
 		String beforeEndCheck=NamedThreadGroup.allNamedThreads.size()+"/"+NamedThreadGroup.ids;
@@ -42,8 +42,8 @@ public class MyTestWatcher extends TestWatcher {
 				.info(beforeEndCheck+" "+afterEndCheck+" finished(): "+klass.getSimpleName()+"."+description.getMethodName()+" "+ets()+" "+tests+" tests.");
 		if(tests==lastTest) {
 			Logging.mainLogger.info("last test!");
-			NamedThreadGroup.lastPrint(first.testsRun);
-			if(saveTestsRun) FileIO.write(Texts.cat(first.testsRun),new File("fromwatcher"+lastTest+".txt"));
+			NamedThreadGroup.lastPrint(TestLifecycleHelper.testsRun);
+			if(saveTestsRun) FileIO.write(Texts.cat(TestLifecycleHelper.testsRun),new File("fromwatcher"+lastTest+".txt"));
 		}
 	}
 	@Override protected void failed(Throwable e,Description description) {

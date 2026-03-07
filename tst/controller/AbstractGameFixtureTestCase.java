@@ -15,6 +15,7 @@ import io.*;
 import com.tayek.util.io.End.Holder;
 import model.*;
 import utilities.*;
+import utilities.TestLifecycleHelper;
 public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSupport {
     // no threads are started by this class except for recorder thread
     // maybe this belongs in some both test case?
@@ -112,7 +113,7 @@ public abstract class AbstractGameFixtureTestCase extends ControllerHolderTestSu
     public static void main(String[] args) {
 		first.twice(); // do this first in all main programs!
         Logging.mainLogger.info(String.valueOf(Init.first));
-        first.suiteControls=true;
+        TestLifecycleHelper.suiteControls=true;
         JUnitCore jUnitCore=new JUnitCore();
         jUnitCore.run(AbstractGameFixtureTestCase.ParameterizedTestSuite.class);
         Logging.mainLogger.info("exit main");

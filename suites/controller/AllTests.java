@@ -1,5 +1,4 @@
 package controller;
-import static io.Init.first;
 import java.io.File;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -11,6 +10,7 @@ import server.NamedThreadGroup;
 import io.BS;
 import io.Init;
 import utilities.SuiteSupport;
+import utilities.TestLifecycleHelper;
 @RunWith(Suite.class) @SuiteClasses({ //
 		AbstractGTPDirectTestCase.GTPDirectTestSuite.class, //
 		AbstractBothTestCase.BothTestSuite.class, //
@@ -22,10 +22,10 @@ import utilities.SuiteSupport;
 		TeardownOrderTestCase.class, //
 }) public class AllTests extends SuiteSupport {
 	@BeforeClass public static void setUpBeforeClass() throws Exception {
-		Init.first.testsRun.clear();
+		TestLifecycleHelper.testsRun.clear();
 	}
 	@AfterClass public static void tearDownAfterClass() throws Exception {
-		NamedThreadGroup.lastPrint(first.testsRun);
-		FileIO.write(Texts.cat(first.testsRun),new File("fromSuite.txt"));
+		NamedThreadGroup.lastPrint(TestLifecycleHelper.testsRun);
+		FileIO.write(Texts.cat(TestLifecycleHelper.testsRun),new File("fromSuite.txt"));
 	}
 }

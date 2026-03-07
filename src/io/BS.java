@@ -43,7 +43,7 @@ public class BS {
 	}
 	public static void main(String[] args) {
 		BS bs=new BS();
-		// bs.once();
+		bs.once();
 		System.out.println("------------");
 		bs.twice();
 	}
