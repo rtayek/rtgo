@@ -7,23 +7,25 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import com.tayek.util.core.Texts;
 import com.tayek.util.io.FileIO;
+import io.BS;
 import io.Init;
 import utilities.SuiteSupport;
+import io.TestLifecycle;
 @RunWith(Suite.class) @SuiteClasses({ //
-    AbstractGTPDirectTestCase.GTPDirectTestSuite.class, //
-    AbstractBothTestCase.BothTestSuite.class, //
-    AbstractGameFixtureTestCase.ParameterizedTestSuite.class, //
-    //
-    AbstractKnownCommandsTestCase.ParameterizedTestCase.class, //
-    GTPDirectNavigationTestCase.class, //
-    GTPDirectSendReceiveSgfTestCase.class, //
-    TeardownOrderTestCase.class, //
+		AbstractGTPDirectTestCase.GTPDirectTestSuite.class, //
+		AbstractBothTestCase.BothTestSuite.class, //
+		AbstractGameFixtureTestCase.ParameterizedTestSuite.class, //
+		//
+		AbstractKnownCommandsTestCase.ParameterizedTestCase.class, //
+		GTPDirectNavigationTestCase.class, //
+		GTPDirectSendReceiveSgfTestCase.class, //
+		TeardownOrderTestCase.class, //
 }) public class AllTests extends SuiteSupport {
-    @BeforeClass public static void setUpBeforeClass() throws Exception { Init.first.testsRun.clear(); }
-    @AfterClass public static void tearDownAfterClass() throws Exception {
-        first.lastPrint();
-        FileIO.write(Texts.cat(first.testsRun),new File("fromSuite.txt"));
-        
-    }
+	@BeforeClass public static void setUpBeforeClass() throws Exception {
+		Init.first.testsRun.clear();
+	}
+	@AfterClass public static void tearDownAfterClass() throws Exception {
+		TestLifecycle.lastPrint(BS.testsRun);
+		FileIO.write(Texts.cat(first.testsRun),new File("fromSuite.txt"));
+	}
 }
-

@@ -7,7 +7,7 @@ import controller.GTPBackEnd;
 import io.*;
 import com.tayek.util.concurrent.Stopable;
 import com.tayek.util.core.Et;
-import com.tayek.util.log.ColorLogs;
+import com.tayek.util.log.ConsoleAndLogColors;
 public class NamedThreadGroup { // one set of named threads.
     public static class Check {
         public Check(boolean doCheck) { this.doCheck=doCheck; }
@@ -257,7 +257,7 @@ public class NamedThreadGroup { // one set of named threads.
         NamedThread namedThread=namedThreadGroup.new NamedThread(name,runnable);
         // maybe constructor can add it in?
         namedThreadGroup.addNamedThread(namedThread);
-        if(ColorLogs.containsKey(namedThread.getName())==null) {
+        if(ConsoleAndLogColors.containsKey(namedThread.getName())==null) {
             // the above is very broken.
             Logging.mainLogger.info("'"+namedThread+"' can not find color for this named thread!");
             //IO.stackTrace(8);
