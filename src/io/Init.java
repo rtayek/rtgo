@@ -59,15 +59,6 @@ public enum Init {
         once();
         twice();
     }
-    public boolean add(NamedThreadGroup namedThreadGroup) {
-        if(!NamedThreadGroup.groupIdToNamedThreadGroup.containsKey(namedThreadGroup.groupId)) {
-            NamedThreadGroup.groupIdToNamedThreadGroup.put(namedThreadGroup.groupId,namedThreadGroup);
-            return true;
-        } else {
-            Logging.mainLogger.severe("duplicate game id: "+namedThreadGroup.groupId);
-            return false;
-        }
-    }
     // put this stuff below into the named thread class.
     // and keep this init code as small as possible.
     public void initiaizeTests() {
@@ -103,16 +94,6 @@ public enum Init {
         }
         Logging.mainLogger.info("counter: "+counter);
         wrapupTests_();
-    }
-    public void lastPrint() {
-        NamedThreadGroup.printThraedsAtEnd();
-        int n=NamedThreadGroup.printNamedThreadGroups(true);
-        Logging.mainLogger.info(String.valueOf(n));
-        IOs.printThreads(IOs.activeThreads(),"last",true);
-        Logging.mainLogger.info("tests run: "+first.testsRun);
-    }
-    public static void init(String[] argument) {
-        Logging.mainLogger.info("1.5 Init.Main.main(), first: "+first); // needs to be here
     }
     public static void main(String[] args) {
         Logging.mainLogger.setLevel(Level.ALL);

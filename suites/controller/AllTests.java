@@ -7,6 +7,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import com.tayek.util.core.Texts;
 import com.tayek.util.io.FileIO;
+import server.NamedThreadGroup;
 import io.BS;
 import io.Init;
 import utilities.SuiteSupport;
@@ -24,7 +25,7 @@ import utilities.SuiteSupport;
 		Init.first.testsRun.clear();
 	}
 	@AfterClass public static void tearDownAfterClass() throws Exception {
-		Init.first.lastPrint();
+		NamedThreadGroup.lastPrint(first.testsRun);
 		FileIO.write(Texts.cat(first.testsRun),new File("fromSuite.txt"));
 	}
 }

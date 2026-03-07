@@ -1,4 +1,5 @@
 package io;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.LogManager;
@@ -19,15 +20,14 @@ public class BS {
 			// maybe omit this stuff below?
 			if(true) {
 				Logging.setUpLogging();
-				Logging.setLevels(Logging.initialLoggingLevel); 
-				// do this last or level is  null!
+				Logging.setLevels(Logging.initialLoggingLevel);
+				// do this last or level is null!
 				// Logging.parserLogger.setLevel(defaultParserLoggerLevel);
 			}
-			Logging.mainLogger.info("once");
+			started.set(true);
 		}
 		System.out.println("once is executing");
-		started.set(true);
-		//twice(); maybe not a good idea.
+		// twice(); maybe not a good idea.
 		System.out.println("exit once");
 	}
 	public synchronized void twice() {
@@ -37,10 +37,13 @@ public class BS {
 		et.reset();
 		System.out.println("exiy twice");
 	}
-	private BS() {}
+	private BS() {
+		out=System.out;
+		err=System.err;
+	}
 	public static void main(String[] args) {
 		BS bs=new BS();
-		//bs.once();
+		// bs.once();
 		System.out.println("------------");
 		bs.twice();
 	}
@@ -51,6 +54,7 @@ public class BS {
 		System.out.println("instance init");
 	}
 	public final Et et=new Et();
+	public final PrintStream out,err;
 	private final AtomicBoolean started=new AtomicBoolean();
 	public static final ArrayList<String> testsRun=new ArrayList<>();
 }
