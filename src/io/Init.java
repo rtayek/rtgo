@@ -42,7 +42,7 @@ public enum Init {
 	}
 	public abstract static class Main {
 		public static void main(String[] argument) {
-			//System.out.println("1.5 Init.Main.main(), first: "+first);
+			System.out.println("1.5 Init.Main.main(), first: "+first);
 		}
 	}
 	private Init() {
