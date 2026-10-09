@@ -73,12 +73,12 @@ checkstyleTest {
 // add other roots of source trees.
 
 application {
-  mainClass = "utilities.Dispatcher"
+  mainClass = "gui.Main"
 }
 
 jar {
   manifest {
-    attributes "Main-Class": "utilities.Dispatcher"
+    attributes "Main-Class": "gui.Main"
   }
 }
 
