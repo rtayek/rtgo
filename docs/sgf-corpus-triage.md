@@ -38,3 +38,12 @@ From `mf`: `./gradlew sgfCorpus -PsgfDir=../rtgo`.
 5. Update path references and rerun the `mf` corpus baseline; retain negative tests instead of silently dropping them.
 
 **No SGF files have been moved by this triage.**
+
+## Review decision (2026-10-09)
+
+- The local RTGo corpus contains 828 SGF files; `mf` parsed 771 and rejected 57. These are parser outcomes, not necessarily SGF validity judgments.
+- A Git-tracked duplicate inventory found 579 SGF files in 30 duplicate-content groups; duplicate paths may have served distinct test scenarios.
+- A local `find`/MD5 check found 70 files named `default.sgf`, representing two distinct contents: 69 identical copies and one different file. The separate tracked inventory was based on Git blobs, so its counts need not match the local working tree.
+- RTGo has recursive SGF discovery code, but the two broad unusual-SGF tests inspected, `testWierd` and `testFirstNodeOfWierd` in `tst/sgf/SgfUnitTestCase.java`, are annotated `@Ignore`. Other active tests may still read some of these files; complete usage was not established.
+
+**Decision:** Defer further classification and corpus cleanup. Keep the existing files and paths for now. There is no demonstrated need for every duplicate, but no immediate benefit from removing them either. Revisit individual fixtures when they reveal a parser compatibility issue, regression, or maintenance problem. The provisional move plan above is not approved work and should not be undertaken without renewed review.
